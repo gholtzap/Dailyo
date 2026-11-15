@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#1c1d1f">
+  <meta name="description" content="Plan subway routes from memory. Six guesses per journey.">
+  <title>trainrot | dailyo</title>
+  <link rel="icon" type="image/png" href="assets/train-logo.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="rewards.css">
+  <link rel="stylesheet" href="/site.css">
+</head>
+<body>
+  <header class="site-masthead">
+    <a class="site-brand" href="/">dailyo</a>
+    <nav class="site-games" aria-label="Games">
+      <a href="/" aria-current="page">trainrot</a>
+      <a href="/flags/">flagrot</a>
+      <a href="/languages/">langrot</a>
+    </nav>
+  </header>
+  <div class="site-header">
+    <div class="game-modes" role="group" aria-label="Game mode"><button id="daily-mode" aria-pressed="true">Daily</button><button id="practice-mode" aria-pressed="false">Practice</button></div>
+    <label class="difficulty-control">Difficulty <select id="difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
+    <button id="help" class="quiet-button">How to play</button>
+  </div>
+  <main class="game-layout" id="app">
+    <section class="planner" aria-label="Plan your journey"><div class="loading" role="status">Loading subway data…</div></section>
+    <section class="map-panel" aria-label="Subway map">
+      <div class="map-caption" hidden><span id="map-caption" hidden></span></div>
+      <svg id="city-map" role="img" aria-label="Subway map. Start and finish markers are shown; subway lines are hidden." viewBox="0 0 1000 900" tabindex="0"><title>Subway puzzle map</title></svg>
+      <span class="demo-map-label" hidden></span>
+    </section>
+  </main>
+  <dialog id="help-dialog" aria-labelledby="help-title">
+    <div class="dialog-top"><h2 id="help-title">How to play</h2><button id="close-help" class="quiet-button">Close</button></div>
+    <p>Find the fastest subway route from A to B. The daily journey resets at midnight in New York. Play unlimited journeys in practice.</p>
+    <ol class="how-list"><li><span>Tap the trains you would take, in order.</span>You don’t need to choose transfer stations.</li><li><span>Tap “Check route.”</span></li><li><span>See how you did!</span>Compare your route with the fastest route.</li></ol>
+    <button id="start-playing" class="primary-button">Play</button>
+  </dialog>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

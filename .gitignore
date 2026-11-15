@@ -1,0 +1,13 @@
+node_modules/
+test-results/
+playwright-report/
+*.tgz
+.DS_Store
+.vercel/
+.env*
+/dist/LICENSE.txt
+/dist/THIRD_PARTY_NOTICES.md
+
+# Optional local NYC data inputs
+/scripts/original-challenges.json
+/dist/data/

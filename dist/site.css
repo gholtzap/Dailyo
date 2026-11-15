@@ -1,0 +1,47 @@
+.site-masthead {
+  min-height: 72px;
+  padding: 8px 32px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  background: #1c1d1f;
+  border-bottom: 1px solid var(--line);
+}
+.site-masthead a { background: #1c1d1f; }
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+.site-games {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.site-games a {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  color: var(--muted);
+  text-decoration: none;
+}
+.site-games a:hover, .site-games a[aria-current="page"] {
+  color: var(--ink);
+  background: #383b40;
+}
+.site-masthead a:focus-visible {
+  outline: 2px solid #e4e5e7;
+  outline-offset: 2px;
+}
+@media (max-width: 700px) {
+  .site-masthead { min-height: 60px; padding: 8px 16px; column-gap: 12px; }
+  .site-brand { font-size: 16px; }
+  .site-games a { padding-inline: 4px; }
+}
