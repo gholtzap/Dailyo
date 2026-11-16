@@ -40,6 +40,10 @@ try{
    assert.equal(await page.locator('.choice:disabled').count(),4);await page.reload();await page.locator('#next').waitFor({state:'visible'});
    assert.match(await page.locator('.feedback').innerText(),i%2===0?/Correct!/:/Correct answer:/);
    assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: ${i%2===0?'correct':'incorrect'}`);
+   if(i%2!==0){
+    assert.equal(await page.locator('.selected-answer').innerText(),`Your answer: ${pick}`);
+    assert.equal(await page.locator('#next').getAttribute('aria-describedby'),'answer-feedback');
+   }
    if(kind==='vocabulary')assert.equal(await page.locator('.example').innerText(),vocabulary.find(x=>x.id===prompt).example);
    await other.getByRole('button',{name:await answer(other),exact:true}).click();await Promise.all([page.locator('#next').click(),other.locator('#next').click()]);
   }

@@ -72,10 +72,15 @@ function draw(){
     prompt.append(make('h2',item.id,'vocabulary-word'));
   }else{const index=hash(`${seed}:sample`)%item.samples.length;const text=make('p',item.samples[index],'sample');text.dir='auto';prompt.append(text);}
   const choices=make('div',undefined,'choices');choices.setAttribute('role','group');choices.setAttribute('aria-label',kind==='flags'?'Choose a place':vocabulary?'Choose a definition':'Choose a language');
-  for(const option of quizOptions(items,kind,item,seed)){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>choose(option.id,item);choices.append(button);}
+  const options=quizOptions(items,kind,item,seed);
+  for(const option of options){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>choose(option.id,item);choices.append(button);}
   const feedback=make('p',selected===null?'':statusText(selected,item),'feedback');feedback.setAttribute('role','status');
+  if(selected!==null)feedback.id='answer-feedback';
+  const wrong=options.find(option=>option.id===selected&&selected!==item.id);
+  if(wrong){
+    feedback.append(make('span',`Your answer: ${wrong.name}`,'selected-answer'));
+  }
   if(vocabulary&&selected!==null){
-    feedback.id='answer-feedback';
     feedback.append(make('span',item.example,'example'));
   }
   const next=make('button',mode==='daily'&&s.index===4?'See results':'Next question','primary');next.id='next';next.type='button';next.hidden=selected===null;next.onclick=advance;
