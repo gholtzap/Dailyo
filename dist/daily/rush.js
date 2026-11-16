@@ -19,7 +19,8 @@ const $=selector=>document.querySelector(selector);
 const panel=$('#feed-game'),status=$('#rush-status'),clock=$('#rush-clock');
 const actions=$('.feed-actions'),retry=$('#rush-retry'),next=$('#rush-next');
 const scores=games.map(()=>0);
-let phase='loading',index=0,round=0,frame,deadline,timer,ticker;
+let phase='loading',index=0,round=0,current,visible,deadline,timer,ticker;
+const upcoming=new Map();
 
 function stopClock(){
   clearTimeout(timer);
@@ -27,46 +28,81 @@ function stopClock(){
   clock.textContent='';
 }
 
+function makeRound(gameIndex,roundIndex){
+  const frame=document.createElement('iframe');
+  frame.src=`${games[gameIndex].path}?rush=${roundIndex}`;
+  frame.className='feed-loading';
+  frame.inert=true;
+  panel.append(frame);
+  return {frame,ready:false};
+}
+
+function preload(gameIndex,roundIndex){
+  const key=`${gameIndex}:${roundIndex}`;
+  if(games[gameIndex]&&!upcoming.has(key))upcoming.set(key,makeRound(gameIndex,roundIndex));
+}
+
 function openRound(gameIndex,roundIndex=0){
   stopClock();
+  if(current?.frame!==visible)current?.frame.remove();
   index=gameIndex;
   round=roundIndex;
   const game=games[index];
   if(!game){showRecap();return;}
   phase='loading';
-  panel.hidden=false;
   retry.hidden=true;
+  panel.hidden=false;
+  if(visible)visible.inert=true;
+  const key=`${index}:${round}`;
+  current=upcoming.get(key);
+  upcoming.delete(key);
+  for(const [other,slot] of upcoming){
+    if(other===`${index+1}:0`)continue;
+    slot.frame.remove();
+    upcoming.delete(other);
+  }
+  current??=makeRound(index,round);
+  if(current.ready){showRound();return;}
   status.textContent=`Loading ${game.label}…`;
-  frame=document.createElement('iframe');
-  frame.title=game.label;
-  frame.src=`${game.path}?rush=${round}`;
-  frame.className='feed-loading';
-  panel.replaceChildren(frame);
   timer=setTimeout(showError,12000);
 }
 
 function showError(){
   stopClock();
   phase='error';
-  frame.remove();
-  frame=null;
+  current.frame.remove();
+  current=null;
   status.textContent=`${games[index].label} didn’t load.`;
   retry.hidden=false;
   retry.focus();
 }
 
-function startClock(){
+function showRound(){
   stopClock();
   phase='playing';
-  frame.classList.remove('feed-loading');
+  const {frame}=current;
   const game=games[index];
+  frame.title=game.label;
+  frame.classList.remove('feed-loading');
+  if(visible)frame.classList.add('rush-enter');
+  visible?.remove();
+  visible=frame;
+  frame.inert=false;
   status.textContent=`${game.label} · Round ${round+1}`;
-  deadline=round===0?Infinity:performance.now()+game.seconds[Math.min(round,game.seconds.length)-1]*1000;
-  frame.contentDocument.querySelector('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
-  if(round>0){
+  const timedRound=round+Number(index>0);
+  if(timedRound){
+    deadline=performance.now()+game.seconds[Math.min(timedRound,game.seconds.length)-1]*1000;
     updateClock();
     ticker=setInterval(updateClock,100);
-  }else clock.textContent='Untimed';
+  }else{
+    deadline=Infinity;
+    clock.textContent='Untimed';
+  }
+  frame.contentDocument.querySelector('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
+  if(!document.hidden&&!navigator.connection?.saveData){
+    preload(index,round+1);
+    preload(index+1,0);
+  }
 }
 
 function updateClock(){
@@ -82,17 +118,19 @@ function finishRound(correct,expired=false){
   const game=games[index];
   if(correct)scores[index]++;
   status.textContent=expired?'Time’s up':correct?'Correct':'Missed';
-  if(expired)frame.contentWindow.postMessage('rush-timeout',location.origin);
+  if(expired)visible.contentWindow.postMessage('rush-timeout',location.origin);
   // Disable further input while leaving the answer visible.
-  frame.inert=true;
+  visible.inert=true;
   status.focus({preventScroll:true});
   timer=setTimeout(()=>correct?openRound(index,round+1):openRound(index+1),
-    correct?800:game.path==='/trainrot/'?4200:2600);
+    correct?180:game.path==='/trainrot/'?2200:1300);
 }
 
 function showRecap(){
   phase='recap';
-  frame=null;
+  current=null;
+  visible=null;
+  upcoming.clear();
   panel.replaceChildren();
   panel.hidden=true;
   actions.hidden=true;
@@ -116,10 +154,22 @@ function showRecap(){
 }
 
 window.addEventListener('message',event=>{
-  if(!frame||event.origin!==location.origin||event.source!==frame.contentWindow)return;
+  if(event.origin!==location.origin)return;
   const {type,phase:reported,correct}=event.data??{};
   if(type!=='rush-game')return;
-  if(phase==='loading'&&reported==='ready')startClock();
+  if(event.source!==current?.frame.contentWindow){
+    for(const [key,slot] of upcoming){
+      if(event.source!==slot.frame.contentWindow)continue;
+      if(reported==='ready')slot.ready=true;
+      if(reported==='error'){
+        slot.frame.remove();
+        upcoming.delete(key);
+      }
+      break;
+    }
+    return;
+  }
+  if(phase==='loading'&&reported==='ready')showRound();
   if(phase==='loading'&&reported==='error')showError();
   if(phase==='playing'&&reported==='answered'&&typeof correct==='boolean'){
     const expired=performance.now()>=deadline;
