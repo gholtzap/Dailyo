@@ -48,7 +48,7 @@ function withCurrentProgress(action){
   if(navigator.locks)return navigator.locks.request(key(`daily:${date}`),update);
   update();
 }
-function question(){const s=modeState[mode],seed=mode==='daily'?`${rushRound===null?'daily':'rush'}:${kind}:${day}`:s.seed;return {item:shuffle(items,seed)[s.index],seed:`${seed}:${s.index}`};}
+function question(){const s=modeState[mode],seed=mode==='daily'?(rushRound===null?`daily:${kind}:${day}`:`rush:${kind}:${day}`):s.seed;return {item:shuffle(items,seed)[s.index],seed:`${seed}:${s.index}`};}
 function statusText(selected,item){
   if(selected===item.id)return vocabulary?`Correct! ${item.name}.`:'Correct!';
   return `Correct answer: ${item.name}${vocabulary?'.':''}`;

@@ -6,6 +6,7 @@ const params=new URLSearchParams(location.search);
 const round=params.get('rush');
 export const rushRound=window.parent!==window&&/^[0-2]$/.test(round)?Number(round):null;
 export const inFeed=window.parent!==window&&(params.get('feed')==='1'||rushRound!==null);
+export const rushSeed=kind=>`rush:${kind}:${dailyDate()}`;
 export const startPractice=!inFeed&&params.get('practice')==='1';
 if(inFeed)document.documentElement.dataset.dailyFeed='';
 if(rushRound!==null)document.documentElement.dataset.rush='';
