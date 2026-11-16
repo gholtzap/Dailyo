@@ -35,6 +35,20 @@ try {
   await page.getByRole('button',{name:'Daily',exact:true}).click();await page.getByRole('button',{name:'Copy results',exact:true}).waitFor();assert.deepEqual(await journey(page),daily);
   await context.close();console.log(`${width}px daily, sharing, persistence, and practice passed`);
  }
+ const shared=await browser.newContext();
+ const finished=await shared.newPage(),stale=await shared.newPage();
+ for(const tab of [finished,stale]){
+  await tab.goto(base);
+  await tab.locator('[data-route]').first().waitFor();
+ }
+ await finished.getByRole('button',{name:'Show answer',exact:true}).click();
+ await finished.getByRole('button',{name:'Copy results',exact:true}).waitFor();
+ await stale.getByRole('button',{name:'Practice',exact:true}).click();
+ await finished.reload();
+ await finished.getByRole('button',{name:'Skip',exact:true}).waitFor();
+ await finished.getByRole('button',{name:'Daily',exact:true}).click();
+ await finished.getByRole('button',{name:'Copy results',exact:true}).waitFor({timeout:3000});
+ await shared.close();
  const rollover=await browser.newPage();await rollover.clock.install({time:new Date('2026-11-09T16:00:00Z')});await rollover.goto(base);await rollover.locator('[data-route]').first().waitFor();
  const previous=await rollover.locator('.endpoint strong').allTextContents();await rollover.locator('#show-answer').click();await rollover.locator('#copy-results').waitFor();
  await rollover.clock.setFixedTime(new Date('2026-11-10T16:00:00Z'));await rollover.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
