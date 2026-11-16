@@ -1,8 +1,9 @@
+import {dailyDate as dateToday,inFeed,reportDaily} from '../daily/bridge.js';
+
 const kind=document.body.dataset.game;
 const vocabulary=kind==='vocabulary';
 const quiz=document.querySelector('#quiz');
 const controls={daily:document.querySelector('#daily'),practice:document.querySelector('#practice')};
-const dateToday=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 const key=part=>`trainrot:${kind}:v1:${part}`;
 const read=key=>{try{return JSON.parse(localStorage.getItem(key));}catch{return null;}};
 const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));}catch{}};
@@ -62,7 +63,8 @@ function dailyProgress(){
 function result(){
   const s=modeState.daily,deck=shuffle(items,`daily:${kind}:${day}`),score=s.answers.filter((answer,i)=>answer===deck[i].id).length;
   const box=make('div',undefined,'result'),title=make('h2',`${score} out of 5`),description=make('p','Next daily set at midnight in New York.'),button=make('button','Play practice','secondary');
-  title.tabIndex=-1;button.type='button';button.onclick=()=>selectMode('practice');box.append(title,dailyProgress(),description,button);quiz.replaceChildren(box);
+  title.tabIndex=-1;button.type='button';button.onclick=()=>selectMode('practice');box.append(title,dailyProgress(),description);if(!inFeed)box.append(button);quiz.replaceChildren(box);
+  reportDaily('complete',title.textContent,day);
 }
 function draw(){
   for(const [id,button] of Object.entries(controls))button.setAttribute('aria-pressed',String(id===mode));
@@ -87,6 +89,7 @@ function draw(){
   if(feedback.id)next.setAttribute('aria-describedby',feedback.id);
   if(mode==='daily')quiz.replaceChildren(head,dailyProgress(),prompt,choices,feedback,next);
   else quiz.replaceChildren(head,prompt,choices,feedback,next);
+  reportDaily('playing',undefined,day);
 }
 async function start(){
   const response=await fetch(`/games/data/${kind}.json`);if(!response.ok)throw new Error('Could not load game data');items=await response.json();
@@ -97,8 +100,8 @@ async function start(){
     ||item.distractors.some(option=>typeof option!=='string'||!option.trim())
     ||new Set([item.name,...item.distractors]).size!==4
   )))throw new Error('Invalid vocabulary data');
-  modeState.daily=dailyState();modeState.practice=practiceState();const saved=read(key('mode'));mode=saved==='practice'?'practice':'daily';
+  modeState.daily=dailyState();modeState.practice=practiceState();const saved=read(key('mode'));mode=!inFeed&&saved==='practice'?'practice':'daily';
   controls.daily.onclick=()=>selectMode('daily');controls.practice.onclick=()=>selectMode('practice');
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)resetDay();});setInterval(resetDay,30000);draw();
 }
-start().catch(()=>{const message=make('p','The game could not load.');const button=make('button','Reload game','primary');button.type='button';button.onclick=()=>location.reload();quiz.replaceChildren(message,button);});
+start().catch(()=>{reportDaily('error');const message=make('p','The game could not load.');const button=make('button','Reload game','primary');button.type='button';button.onclick=()=>location.reload();quiz.replaceChildren(message,button);});

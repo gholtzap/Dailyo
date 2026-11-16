@@ -1,6 +1,7 @@
 import {createRouter,transition,formatTime,MAX_GUESSES} from './router.js';
 import {createMap} from './map.js';
 import {createRewards} from './rewards.js';
+import {dailyDate as dateToday,inFeed,reportDaily} from './daily/bridge.js';
 
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -43,7 +44,6 @@ async function start(){
   let recent=[{from:state.challenge.from,to:state.challenge.to}];
   const pair=c=>({from:c.from,to:c.to});
   let mode='practice',dailyDate='';
-  const dateToday=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const dailyKey=date=>`trainrot-daily-v2:${network.metadata.feedVersion}:${date}`;
   const storedState=()=>({phase:state.phase,legs:state.legs,guesses:state.guesses??[],assisted:!!state.assisted,skipped:!!state.skipped});
   function save(){
@@ -185,6 +185,7 @@ async function start(){
     if($('#skip'))$('#skip').onclick=nextJourney;
     $('#show-answer').onclick=()=>{state=transition(state,{type:'show-answer'},router);recordResult();};
     if($('#hint'))$('#hint').onclick=()=>{state=transition(state,{type:'hint'},router);save();map.showNetwork();drawPlanning();if(matchMedia('(max-width:700px)').matches)$('.map-panel').scrollIntoView({behavior:'instant',block:'start'});$('#city-map').focus({preventScroll:true});};
+    reportDaily('playing',undefined,dailyDate);
   }
   function resultLegs(legs){const walk=w=>`Walk to ${escape(network.stations[w.to].label)} · ${formatTime(w.seconds)}${w.fareControl?' · Exit and re-enter subway (another fare may apply)':''}`;return `<ol class="result-legs">${legs.map(l=>{const p=network.patterns[l.patternIndex],arrival=l.walkAfter?.from??l.to;return `${l.walkBefore?`<li><p>${walk(l.walkBefore)}</p></li>`:''}<li>${badge(l.route)}<p>To ${escape(network.stations[arrival].label)}<small>${escape(routeSymbol(l.route))} toward ${escape(p.headsign)} · ${l.stops} ${l.stops===1?'stop':'stops'}</small></p></li>${l.walkAfter?`<li><p>${walk(l.walkAfter)}</p></li>`:''}`;}).join('')}</ol>`;}
   function drawResult(displayed=state){
@@ -233,6 +234,7 @@ async function start(){
         catch{planner.querySelector('.share-fallback')?.remove();const status=$('#copy-status');status.textContent='Select and copy your results:';const field=document.createElement('textarea');field.className='share-fallback';field.setAttribute('aria-label','Results to copy');field.value=text;status.after(field);field.focus();field.select();}
       };
     }else $('#next').onclick=nextJourney;
+    reportDaily('complete',displayed.skipped?'Answer shown':displayed.assisted?'Map used':`${r.score??0} points`,dailyDate);
   }
   function nextJourney(){
       if(mode!=='practice')return;
@@ -263,10 +265,12 @@ async function start(){
     }else{map.reveal(state.result);drawResult();}
   }
   let initialMode;try{initialMode=localStorage.getItem('trainrot-game-mode-v2');}catch{}
-  if(initialMode==='practice'){difficultyControl.closest('label').hidden=false;$('#daily-mode').setAttribute('aria-pressed','false');$('#practice-mode').setAttribute('aria-pressed','true');save();draw();}
+  if(inFeed){mode='daily';openDaily();draw();}
+  else if(initialMode==='practice'){difficultyControl.closest('label').hidden=false;$('#daily-mode').setAttribute('aria-pressed','false');$('#practice-mode').setAttribute('aria-pressed','true');save();draw();}
   else selectMode('daily');
   setInterval(()=>{if(mode==='daily'&&dailyDate!==dateToday()){openDaily();save();draw();}},30000);
 }
 start().catch(error=>{
+  reportDaily('error');
   console.error(error);document.querySelector('.map-panel').hidden=true;document.querySelector('.game-layout').classList.add('error-layout');planner.innerHTML='<h1>The network didn’t load.</h1><button id="reload" class="primary-button">Reload game</button>';$('#reload').onclick=()=>location.reload();
 });

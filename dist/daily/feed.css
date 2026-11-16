@@ -1,0 +1,37 @@
+.daily-feed {
+  min-height: 320px;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.feed-header { min-height: 60px; gap: 0 16px; }
+.feed-header h1 { font-size: 24px; font-weight: 500; margin: 0; }
+.feed-header p { color: var(--muted); margin: 0 0 0 auto; }
+.feed-body { min-height: 0; overflow: auto; }
+#feed-game { height: 100%; }
+#feed-game iframe { width: 100%; height: 100%; border: 0; display: block; }
+#feed-game > p { padding: 16px; margin: 0; text-align: center; }
+.feed-actions {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #1c1d1f;
+  border-top: 1px solid var(--line);
+}
+.feed-actions > button { width: auto; }
+#feed-continue { width: min(100%, 320px); touch-action: pan-x; }
+.feed-swipe { display: none; }
+@media (pointer: coarse) {
+  .feed-swipe { display: block; padding-top: 8px; text-align: center; color: var(--muted); }
+}
+#feed-results { list-style: none; padding: 0; margin: 16px 0 24px; }
+#feed-results li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+#feed-results span { color: var(--muted); }
