@@ -18,24 +18,46 @@ function knownAnswer(id){
   if(vocabulary&&/:[1-3]$/.test(id))id=id.slice(0,-2);
   return items.some(item=>item.id===id);
 }
-function dailyState(){const stored=read(key(`daily:${day}`));if(stored&&Number.isInteger(stored.index)&&stored.index>=0&&stored.index<=5&&Array.isArray(stored.answers)&&stored.answers.length>=stored.index&&stored.answers.length<=Math.min(5,stored.index+1)&&stored.answers.every(knownAnswer)&&(stored.index!==5||stored.answers.length===5))return stored;return {index:0,answers:[]};}
+function dailyState(fallback){const stored=read(key(`daily:${day}`));if(stored&&Number.isInteger(stored.index)&&stored.index>=0&&stored.index<=5&&Array.isArray(stored.answers)&&stored.answers.length>=stored.index&&stored.answers.length<=Math.min(5,stored.index+1)&&stored.answers.every(knownAnswer)&&(stored.index!==5||stored.answers.length===5))return stored;return fallback??{index:0,answers:[]};}
 function practiceState(){const s=read(key('practice'));if(s&&typeof s.seed==='string'&&s.seed.length<100&&Number.isInteger(s.index)&&s.index>=0&&s.index<items.length&&Number.isInteger(s.total)&&s.total>=0&&Number.isInteger(s.correct)&&s.correct>=0&&s.correct<=s.total&&(s.selected===null||knownAnswer(s.selected)))return s;return {seed:randomSeed(),index:0,total:0,correct:0,selected:null};}
 function save(){write(key(mode==='daily'?`daily:${day}`:'practice'),modeState[mode]);}
 function resetDay(){const today=dateToday();if(day===today)return false;day=today;modeState.daily=dailyState();if(mode==='daily')draw();return true;}
-function selectMode(next){resetDay();if(next===mode)return;save();mode=next;write(key('mode'),mode);draw();}
+function selectMode(next){
+  resetDay();if(next===mode)return;
+  mode=next;
+  if(mode==='daily')modeState.daily=dailyState(modeState.daily);
+  else if(!read(key('practice')))save();
+  write(key('mode'),mode);draw();
+}
+function withCurrentProgress(action){
+  if(mode!=='daily')return action();
+  const current=modeState.daily,date=day;
+  const update=()=>{
+    if(mode!=='daily'||day!==date||modeState.daily!==current)return;
+    if(resetDay()){document.querySelector('#question-title')?.focus();return;}
+    const latest=dailyState(current);
+    if(latest.index!==current.index||latest.answers.length!==current.answers.length||
+      latest.answers.some((id,index)=>id!==current.answers[index])){
+      modeState.daily=latest;draw();
+      (document.querySelector('.result h2')??document.querySelector('#question-title'))?.focus();
+      return;
+    }
+    action();
+  };
+  if(navigator.locks)return navigator.locks.request(key(`daily:${date}`),update);
+  update();
+}
 function question(){const s=modeState[mode],seed=mode==='daily'?`daily:${kind}:${day}`:s.seed;return {item:shuffle(items,seed)[s.index],seed:`${seed}:${s.index}`};}
 function statusText(selected,item){
   if(selected===item.id)return vocabulary?`Correct! ${item.name}.`:'Correct!';
   return `Correct answer: ${item.name}${vocabulary?'.':''}`;
 }
 function choose(id,item){
-  if(mode==='daily'&&resetDay()){document.querySelector('#question-title')?.focus();return;}
   const s=modeState[mode];if(mode==='daily'){if(s.index>=5||s.answers.length>s.index)return;s.answers.push(id);}
   else{if(s.selected!==null)return;s.selected=id;s.total++;if(id===item.id)s.correct++;}
   save();draw();document.querySelector('#next')?.focus();
 }
 function advance(){
-  if(mode==='daily'&&resetDay()){document.querySelector('#question-title')?.focus();return;}
   const s=modeState[mode];
   if(mode==='daily'){if(s.index>=5||s.answers.length!==s.index+1)return;s.index++;}
   else{if(s.selected===null)return;const previous=question().item.id;s.index++;s.selected=null;if(s.index>=items.length){s.index=0;do{s.seed=randomSeed();}while(shuffle(items,s.seed)[0].id===previous&&items.length>1);}}
@@ -75,7 +97,7 @@ function draw(){
   }else{const index=hash(`${seed}:sample`)%item.samples.length;const text=make('p',item.samples[index],'sample');text.dir='auto';prompt.append(text);}
   const choices=make('div',undefined,'choices');choices.setAttribute('role','group');choices.setAttribute('aria-label',kind==='flags'?'Choose a place':vocabulary?'Choose a definition':'Choose a language');
   const options=quizOptions(items,kind,item,seed);
-  for(const option of options){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>choose(option.id,item);choices.append(button);}
+  for(const option of options){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>withCurrentProgress(()=>choose(option.id,item));choices.append(button);}
   const feedback=make('p',selected===null?'':statusText(selected,item),'feedback');feedback.setAttribute('role','status');
   if(selected!==null)feedback.id='answer-feedback';
   const wrong=options.find(option=>option.id===selected&&selected!==item.id);
@@ -85,7 +107,7 @@ function draw(){
   if(vocabulary&&selected!==null){
     feedback.append(make('span',item.example,'example'));
   }
-  const next=make('button',mode==='daily'&&s.index===4?'See results':'Next question','primary');next.id='next';next.type='button';next.hidden=selected===null;next.onclick=advance;
+  const next=make('button',mode==='daily'&&s.index===4?'See results':'Next question','primary');next.id='next';next.type='button';next.hidden=selected===null;next.onclick=()=>withCurrentProgress(advance);
   if(feedback.id)next.setAttribute('aria-describedby',feedback.id);
   if(mode==='daily')quiz.replaceChildren(head,dailyProgress(),prompt,choices,feedback,next);
   else quiz.replaceChildren(head,prompt,choices,feedback,next);
