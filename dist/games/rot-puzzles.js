@@ -1,0 +1,145 @@
+export const roundCount = 5;
+
+export function shuffle(items, seed) {
+  let hash = 2166136261;
+  for (const character of seed) hash = Math.imul(hash ^ character.charCodeAt(0), 16777619) >>> 0;
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    hash = (Math.imul(hash, 1664525) + 1013904223) >>> 0;
+    const j = hash % (i + 1);
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+const isCoordinate = point => Array.isArray(point) && point.length === 2 &&
+  point.every((value, index) => Number.isFinite(value) && Math.abs(value) <= [180, 90][index]);
+const distinct = values => new Set(values).size === values.length;
+
+export function distanceKm([lonA, latA], [lonB, latB]) {
+  const radians = Math.PI / 180;
+  const arc = Math.sin((latB - latA) * radians / 2) ** 2 +
+    Math.cos(latA * radians) * Math.cos(latB * radians) * Math.sin((lonB - lonA) * radians / 2) ** 2;
+  return Math.round(12_742 * Math.asin(Math.sqrt(Math.min(1, arc))));
+}
+
+function shortestRoutes(graph, start) {
+  const routes = new Map([[start, [start]]]);
+  for (const [country, path] of routes) {
+    for (const neighbour of graph.get(country).neighbours) {
+      if (!routes.has(neighbour)) routes.set(neighbour, [...path, neighbour]);
+    }
+  }
+  return routes;
+}
+
+export function preparePuzzles(kind, raw) {
+  if (kind === 'maprot') {
+    if (typeof raw?.land !== 'string' || !/^M[MLZ\d.,-]+$/.test(raw.land) ||
+        !Array.isArray(raw.places) || raw.places.length < roundCount ||
+        !raw.places.every(row => Array.isArray(row) && row.length === 4 &&
+          row.slice(0, 2).every(value => typeof value === 'string' && value.trim()) &&
+          isCoordinate(row.slice(2)))) throw new Error('Invalid atlas');
+    return { land: raw.land, items: raw.places };
+  }
+  if (kind === 'yearrot') {
+    if (!Array.isArray(raw) || raw.length < roundCount + 2 ||
+        !raw.every(row => Array.isArray(row) && row.length === 2 && Number.isInteger(row[0]) &&
+          typeof row[1] === 'string' && row[1].trim()) ||
+        !distinct(raw.map(row => row[0]))) throw new Error('Invalid timeline');
+    return { items: raw };
+  }
+  if (kind !== 'borderrot' || !Array.isArray(raw) ||
+      !raw.every(row => Array.isArray(row) && row.length === 3 && /^[A-Z]{2}$/.test(row[0]) &&
+        typeof row[1] === 'string' && row[1].trim() && Array.isArray(row[2]) && distinct(row[2]))) {
+    throw new Error('Invalid land borders');
+  }
+  const graph = new Map(raw.map(([id, name, neighbours]) => [id, { id, name, neighbours }]));
+  if (graph.size !== raw.length || raw.some(([id, , neighbours]) =>
+    neighbours.some(next => next === id || !graph.get(next)?.neighbours.includes(id)))) {
+    throw new Error('Invalid land borders');
+  }
+  const items = [];
+  for (const country of graph.keys()) {
+    for (const [target, route] of shortestRoutes(graph, country)) {
+      if (country < target && route.length >= 4 && route.length <= 7) items.push(route);
+    }
+  }
+  if (items.length < roundCount) throw new Error('No land routes');
+  return { graph, items };
+}
+
+export function makeSet(kind, data, seed) {
+  const deck = shuffle(data.items, seed);
+  const questions = deck.slice(0, roundCount);
+  if (kind === 'yearrot') {
+    const anchors = deck.slice(roundCount, roundCount + 2);
+    return questions.map((event, index) => ({
+      event, timeline: [...anchors, ...questions.slice(0, index)].sort((a, b) => a[0] - b[0]),
+    }));
+  }
+  if (kind === 'borderrot') {
+    return questions.map((route, index) => (index % 2 ? [...route].reverse() : route));
+  }
+  return questions;
+}
+
+export const newSession = seed => ({ seed, index: 0, answers: [], draft: [] });
+export const phase = state => state.index === roundCount ? 'complete' :
+  state.answers.length > state.index ? 'review' : 'guess';
+
+function validPath(graph, question, path) {
+  if (!Array.isArray(path) || path.length >= graph.size || !distinct([question[0], ...path])) return false;
+  return path.every((country, index) => graph.get(index ? path[index - 1] : question[0])?.neighbours.includes(country) &&
+    (country !== question.at(-1) || index === path.length - 1));
+}
+
+export function restoreSession(kind, data, questions, candidate, seed) {
+  if (candidate?.seed !== seed || !Number.isInteger(candidate.index) || candidate.index < 0 ||
+      candidate.index > roundCount || !Array.isArray(candidate.answers) || !Array.isArray(candidate.draft) ||
+      candidate.answers.length < candidate.index ||
+      candidate.answers.length > Math.min(candidate.index + 1, roundCount)) return newSession(seed);
+  const valid = candidate.answers.every((answer, index) => {
+    const question = questions[index];
+    if (kind === 'maprot') return isCoordinate(answer);
+    if (kind === 'yearrot') return Number.isInteger(answer) && answer >= 0 && answer <= question.timeline.length;
+    return answer === null || (validPath(data.graph, question, answer) && answer.at(-1) === question.at(-1));
+  });
+  const draft = candidate.draft;
+  const validDraft = draft.length === 0 || (phase(candidate) === 'guess' && (kind === 'maprot' ?
+    isCoordinate(draft) : kind === 'borderrot' && validPath(data.graph, questions[candidate.index], draft) &&
+    draft.at(-1) !== questions[candidate.index].at(-1)));
+  return valid && validDraft ? candidate : newSession(seed);
+}
+
+export function transition(kind, data, questions, state, action) {
+  const current = phase(state);
+  if (current === 'review' && action.type === 'next') return { ...state, index: state.index + 1 };
+  if (current !== 'guess') return state;
+  const question = questions[state.index];
+  const submit = answer => ({ ...state, answers: [...state.answers, answer], draft: [] });
+
+  if (kind === 'maprot') {
+    if (action.type === 'position' && isCoordinate(action.point)) return { ...state, draft: action.point };
+    if (action.type === 'submit' && isCoordinate(state.draft)) return submit(state.draft);
+  } else if (kind === 'yearrot') {
+    if (action.type === 'place' && Number.isInteger(action.slot) && action.slot >= 0 &&
+        action.slot <= question.timeline.length) return submit(action.slot);
+  } else {
+    if (action.type === 'skip') return submit(null);
+    if (action.type === 'undo' && state.draft.length) return { ...state, draft: state.draft.slice(0, -1) };
+    if (action.type === 'add') {
+      const path = [...state.draft, action.country];
+      if (validPath(data.graph, question, path)) {
+        return action.country === question.at(-1) ? submit(path) : { ...state, draft: path };
+      }
+    }
+  }
+  return state;
+}
+
+export function scoreAnswer(kind, question, answer) {
+  if (kind === 'maprot') return distanceKm(question.slice(2), answer);
+  if (kind === 'yearrot') return Number(answer === question.timeline.filter(([year]) => year < question.event[0]).length);
+  return Number(answer !== null && answer.length === question.length - 1);
+}
