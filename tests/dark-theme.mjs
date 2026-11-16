@@ -9,9 +9,19 @@ try{
     assert.equal(await page.locator('meta[name=theme-color]').getAttribute('content'),'#1c1d1f');
     const actual=await page.evaluate(()=>({scheme:getComputedStyle(document.documentElement).colorScheme,background:getComputedStyle(document.querySelector('.planner')).backgroundColor,land:getComputedStyle(document.querySelector('#city-map path')).fill,water:getComputedStyle(document.querySelector('.map-panel')).backgroundColor}));
     assert.deepEqual(actual,{scheme:'dark',background:'rgb(28, 29, 31)',land:'rgb(41, 43, 46)',water:'rgb(21, 25, 29)'});
-    await page.getByRole('button',{name:'How to play',exact:true}).click();
-    assert.equal(await page.locator('#help-dialog').evaluate(n=>getComputedStyle(n).backgroundColor),'rgb(28, 29, 31)');
-    await page.keyboard.press('Escape');await page.screenshot({path:`test-results/${width}-${colorScheme}-dark-default.png`,fullPage:true});
+    const helpButton=page.getByRole('button',{name:'How to play',exact:true});
+    const helpDialog=page.getByRole('dialog',{name:'How to play'});
+    await helpButton.press('Enter');
+    await helpDialog.waitFor();
+    assert.equal(await helpDialog.evaluate(n=>getComputedStyle(n).backgroundColor),'rgb(28, 29, 31)');
+    await helpDialog.getByRole('button',{name:'Close',exact:true}).click();
+    await helpDialog.waitFor({state:'hidden'});
+    assert.equal(await helpButton.evaluate(n=>n===document.activeElement),true);
+    await helpButton.click();
+    await helpDialog.waitFor();
+    await page.keyboard.press('Escape');
+    await helpDialog.waitFor({state:'hidden'});
+    await page.screenshot({path:`test-results/${width}-${colorScheme}-dark-default.png`,fullPage:true});
     reports.push({width,systemPreference:colorScheme,...actual});await page.close();
   }
   console.log(JSON.stringify(reports,null,2));

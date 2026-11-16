@@ -34,12 +34,13 @@
   <div class="site-header">
     <div class="game-modes" role="group" aria-label="Game mode"><button id="daily-mode" aria-pressed="true">Daily</button><button id="practice-mode" aria-pressed="false">Practice</button></div>
     <label class="difficulty-control">Difficulty <select id="difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
-    <button id="help" class="quiet-button">How to play</button>
   </div>
   <main class="game-layout" id="app">
     <section class="planner" aria-label="Plan your journey"><div class="loading" role="status">Loading subway data…</div></section>
     <section class="map-panel" aria-label="Subway map">
       <div class="map-caption" hidden><span id="map-caption" hidden></span></div>
+      <button id="help" type="button" aria-label="How to play" aria-haspopup="dialog" data-ui-tooltip="help-tooltip"></button>
+      <span id="help-tooltip" role="tooltip">How to play</span>
       <svg id="city-map" role="img" aria-label="Subway map. Start and finish markers are shown; subway lines are hidden." viewBox="0 0 1000 900" tabindex="0"><title>Subway puzzle map</title></svg>
       <span class="demo-map-label" hidden></span>
     </section>

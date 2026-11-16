@@ -47,7 +47,7 @@
   .site-games a { padding-inline: 4px; }
 }
 
-[data-daily-feed] :is(.site-masthead, .modes, .game-modes, .difficulty-control, #start-practice, .standalone-only) {
+[data-daily-feed] :is(.site-masthead, .modes, .site-header, #start-practice, .standalone-only) {
   display: none;
 }
 

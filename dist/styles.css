@@ -51,13 +51,13 @@
 .map-controls{display:block;padding:0}.map-controls>summary{cursor:pointer;font-size:12px;padding:8px 12px;min-height:32px;line-height:16px}.map-controls>div{display:flex;gap:8px;padding:8px}.map-controls>summary:focus-visible{outline:2px solid #2c6650;outline-offset:4px}.map-caption button{padding:6px 8px;line-height:16px}
 .result-heading h1.result-score small{font-size:24px;color:var(--ink);margin-left:4px}
 
-.site-header>#help{margin-left:auto}.train-choice .train-badge{width:32px;height:32px;font-size:18px}.train-choice{padding:6px}.train-badge.shuttle-badge{position:relative;min-width:32px;min-height:32px;font-size:18px}.shuttle-symbol{transform:translate(-3px,-3px)}.shuttle-suffix{position:absolute;right:2px;bottom:1px;font-size:12px;line-height:12px;font-weight:500}
+.train-choice .train-badge{width:32px;height:32px;font-size:18px}.train-choice{padding:6px}.train-badge.shuttle-badge{position:relative;min-width:32px;min-height:32px;font-size:18px}.shuttle-symbol{transform:translate(-3px,-3px)}.shuttle-suffix{position:absolute;right:2px;bottom:1px;font-size:12px;line-height:12px;font-weight:500}
 .train-choice .train-badge{font-size:14px}
 .shuttle-suffix{right:4px;bottom:3px}
 
 #view-route-map{margin-bottom:16px}
 
-.difficulty-control{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);white-space:nowrap}.difficulty-control select{width:auto;min-height:40px}.site-header>#help{margin-left:0}@media(max-width:700px){.site-header{gap:8px}.difficulty-control{gap:4px}.difficulty-control select{padding:8px}.brand-description{display:none}}
+.difficulty-control{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);white-space:nowrap}.difficulty-control select{width:auto;min-height:40px}@media(max-width:700px){.site-header{gap:8px}.difficulty-control{gap:4px}.difficulty-control select{padding:8px}.brand-description{display:none}}
 
 .site-header{height:auto;min-height:60px;gap:8px;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
 .game-modes{display:flex;gap:8px}
@@ -69,3 +69,39 @@
 .map-hint{margin-top:8px;color:var(--muted);font-size:12px}.map-hint summary{cursor:pointer;min-height:40px;padding:12px 8px;line-height:16px}.map-hint summary:focus-visible{outline:2px solid #e4e5e7;outline-offset:3px}.map-hint p{margin:8px 0;line-height:1.5}.map-hint .secondary-button{font-size:12px}
 
 .demo-map-label{position:absolute;right:12px;bottom:8px;padding:4px 8px;border-radius:6px;background:var(--paper);color:var(--muted);font-size:12px;pointer-events:none}
+
+.map-panel > #help {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#help::before { content: "?" / ""; }
+
+#help-tooltip {
+  display: none;
+  position: absolute;
+  top: 56px;
+  right: 12px;
+  z-index: 3;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+}
+#help:is(:hover, :focus-visible) + #help-tooltip,
+#help-tooltip:hover {
+  display: block;
+}
