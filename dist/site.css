@@ -50,3 +50,17 @@
 [data-daily-feed] :is(.site-masthead, .modes, .game-modes, .difficulty-control, #start-practice, .standalone-only) {
   display: none;
 }
+
+.home-star {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.home-star::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  flex: none;
+  background: #ffd45c;
+  clip-path: polygon(50% 0%, 62% 35%, 100% 38%, 71% 62%, 80% 100%, 50% 77%, 20% 100%, 29% 62%, 0% 38%, 38% 35%);
+}

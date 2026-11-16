@@ -9,7 +9,7 @@ const best=createRouter(read('network')).best(challenge.from,challenge.to);
 const browser=await chromium.launch();
 try{
  for(const width of [390,1440])for(const reveal of [false,true]){
-  const page=await browser.newPage({viewport:{width,height:844},reducedMotion:'reduce'});await page.route('**/data/challenges.json',r=>r.fulfill({json:[challenge]}));await page.goto(base);await page.locator('.map-hint summary').waitFor();
+  const page=await browser.newPage({viewport:{width,height:844},reducedMotion:'reduce'});await page.route('**/data/challenges.json',r=>r.fulfill({json:[challenge]}));await page.goto(new URL('/trainrot/',base).href);await page.locator('.map-hint summary').waitFor();
   await page.locator('.map-hint summary').click();assert.match(await page.locator('.map-hint').innerText(),/makes this journey unscored/);
   if(reveal){await page.locator('#hint').click();assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Subway lines are shown/);assert.equal(await page.locator('.map-hint').count(),0);}
   else{await page.locator('.map-hint summary').click();assert.equal(await page.locator('.map-hint').getAttribute('open'),null);assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Subway lines are hidden/);}

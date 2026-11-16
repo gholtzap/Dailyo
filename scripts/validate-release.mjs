@@ -27,7 +27,7 @@ for(const game of ['flags','languages']){
   assert.ok(items.length>=(game==='flags'?253:50));assert.equal(new Set(items.map(item=>item.id)).size,items.length);assert.equal(new Set(items.map(item=>item.name)).size,items.length);
   for(const item of items){assert.ok(item.id&&item.name);if(game==='flags')assert.ok(fs.statSync(new URL(`games/flags/${item.id}.svg`,root)).size>0);else assert.ok(item.samples.length>=5&&item.samples.every(sample=>typeof sample==='string'&&sample.length>=40));}
 }
-for(const file of ['assets/train-logo.png','index.html','rewards.js','rewards.css','theme.css','styles.css','app.js','map.js','router.js','data/boroughs.json'])assert.ok(fs.statSync(new URL(file,root)).size>0,`${file} is missing`);
+for(const file of ['assets/train-logo.png','index.html','trainrot/index.html','rewards.js','rewards.css','theme.css','styles.css','app.js','map.js','router.js','data/boroughs.json'])assert.ok(fs.statSync(new URL(file,root)).size>0,`${file} is missing`);
 const data=JSON.parse(fs.readFileSync(new URL('data/network.json',root)));
 const challenges=JSON.parse(fs.readFileSync(new URL('data/challenges.json',root)));
 const demo=data.metadata.feedVersion==='dailyo-demo-v1';

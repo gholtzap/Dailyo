@@ -44,9 +44,26 @@ try{
     const enterFeed=()=>page.getByRole('link',{name:'Daily Feed',exact:true}).click();
 
     await page.goto(base);
+    await page.getByRole('heading',{name:'Daily Feed',exact:true}).waitFor();
+    assert.equal(new URL(page.url()).pathname,'/');
+    await page.goto(new URL('/daily/',base).href);
+    await page.waitForURL(url=>url.pathname==='/');
+    const directory=page.getByText('Games',{exact:true});
+    await directory.press('Enter');
+    const nav=page.getByRole('navigation',{name:'Games'});
+    assert.equal(await nav.getByRole('link').count(),11);
+    const bounds=await nav.boundingBox();
+    assert.ok(bounds.x>=0&&bounds.x+bounds.width<=width);
+    await inspect('directory');
+    await nav.getByRole('link',{name:'trainrot',exact:true}).press('Enter');
+    await page.waitForURL(url=>url.pathname==='/trainrot/');
     await page.locator('[data-route]').first().waitFor();
     await page.getByRole('button',{name:'Practice',exact:true}).click();
+    const home=page.getByRole('link',{name:'Daily Feed',exact:true});
+    assert.equal(await home.getAttribute('href'),'/');
+    assert.equal(await home.evaluate(node=>getComputedStyle(node,'::before').backgroundColor),'rgb(255, 212, 92)');
     await enterFeed();
+    await page.waitForURL(url=>url.pathname==='/');
     const train=frame('trainrot');
     const map=train.locator('#city-map');
     await map.waitFor({state:'visible'});
@@ -72,7 +89,7 @@ try{
     }else if(mobile){
       await next.tap();
     }else{
-      await page.goto(base);
+      await page.goto(new URL('/trainrot/',base).href);
       await page.locator('#skip').waitFor();
       await page.getByRole('button',{name:'Daily',exact:true}).click();
       await page.getByRole('button',{name:'Copy results',exact:true}).waitFor();

@@ -24,5 +24,9 @@
       "*": false,
       "main": true
     }
-  }
+  },
+  "redirects": [
+    {"source": "/daily", "destination": "/", "permanent": true},
+    {"source": "/daily/", "destination": "/", "permanent": true}
+  ]
 }

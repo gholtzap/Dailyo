@@ -20,9 +20,9 @@ try {
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
       if (ui) reports.push({ width: viewport.width, state, ...await checkPage(page, policy) });
     };
-    await page.goto(base);
+    await page.goto(new URL('/trainrot/',base).href);
     const games = page.getByRole('navigation', { name: 'Games' });
-    for (const [game, path] of [['flagrot', '/flags/'], ['langrot', '/languages/'], ['trainrot', '/']]) {
+    for (const [game, path] of [['flagrot', '/flags/'], ['langrot', '/languages/'], ['trainrot', '/trainrot/']]) {
       await games.getByRole('link', { name: game, exact: true }).press('Enter');
       await page.waitForURL(url => url.pathname === path);
       assert.equal(await page.title(), `${game} | dailyo`);

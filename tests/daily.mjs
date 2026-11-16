@@ -11,7 +11,7 @@ try {
  for(const width of [390,1440]){
   const context=await browser.newContext({viewport:{width,height:844},permissions:['clipboard-read','clipboard-write']});
   const page=await context.newPage(),other=await context.newPage();
-  await Promise.all([page.goto(base),other.goto(base)]);await Promise.all([page.locator('[data-route]').first().waitFor(),other.locator('[data-route]').first().waitFor()]);
+  await Promise.all([page.goto(new URL('/trainrot/',base).href),other.goto(new URL('/trainrot/',base).href)]);await Promise.all([page.locator('[data-route]').first().waitFor(),other.locator('[data-route]').first().waitFor()]);
   const journey=p=>p.locator('.endpoint strong').allTextContents();
   const daily=await journey(page);assert.deepEqual(await journey(other),daily);
   const challenge=challenges.find(c=>c.fromTitle===daily[0]&&c.toTitle===daily[1]);
@@ -38,7 +38,7 @@ try {
  const shared=await browser.newContext();
  const finished=await shared.newPage(),stale=await shared.newPage();
  for(const tab of [finished,stale]){
-  await tab.goto(base);
+  await tab.goto(new URL('/trainrot/',base).href);
   await tab.locator('[data-route]').first().waitFor();
  }
  await finished.getByRole('button',{name:'Show answer',exact:true}).click();
@@ -49,7 +49,7 @@ try {
  await finished.getByRole('button',{name:'Daily',exact:true}).click();
  await finished.getByRole('button',{name:'Copy results',exact:true}).waitFor({timeout:3000});
  await shared.close();
- const rollover=await browser.newPage();await rollover.clock.install({time:new Date('2026-11-09T16:00:00Z')});await rollover.goto(base);await rollover.locator('[data-route]').first().waitFor();
+ const rollover=await browser.newPage();await rollover.clock.install({time:new Date('2026-11-09T16:00:00Z')});await rollover.goto(new URL('/trainrot/',base).href);await rollover.locator('[data-route]').first().waitFor();
  const previous=await rollover.locator('.endpoint strong').allTextContents();await rollover.locator('#show-answer').click();await rollover.locator('#copy-results').waitFor();
  await rollover.clock.setFixedTime(new Date('2026-11-10T16:00:00Z'));await rollover.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
  assert.equal(await rollover.locator('#copy-results').count(),0);await rollover.locator('[data-route]').first().waitFor();assert.notDeepEqual(await rollover.locator('.endpoint strong').allTextContents(),previous);await rollover.close();console.log('Daily rollover passed');

@@ -14,7 +14,7 @@ $('#close-help').onclick=$('#start-playing').onclick=()=>help.close();
 
 async function start(){
   const [network,boroughs,challenges]=await Promise.all(['network','boroughs','challenges'].map(async name=>{
-    const response=await fetch(`data/${name}.json`);
+    const response=await fetch(`/data/${name}.json`);
     if(!response.ok)throw new Error(`Could not load ${name}`);
     return response.json();
   }));
@@ -228,7 +228,7 @@ async function start(){
           const assessment=router.assess(c.from,c.to,guess);
           return assessment.valid?'🟩':assessment.brokenLeg!==undefined?'⬛':'🟨';
         }).join('');
-        const text=`trainrot ${dailyDate}\n${outcome} · ${displayed.guesses?.length??0}/${MAX_GUESSES} checks${history?`\n${history}`:''}\nhttps://trainrot.vercel.app/`;
+        const text=`trainrot ${dailyDate}\n${outcome} · ${displayed.guesses?.length??0}/${MAX_GUESSES} checks${history?`\n${history}`:''}\nhttps://trainrot.vercel.app/trainrot/`;
         try{await navigator.clipboard.writeText(text);$('#copy-status').textContent='Copied';}
         catch{planner.querySelector('.share-fallback')?.remove();const status=$('#copy-status');status.textContent='Select and copy your results:';const field=document.createElement('textarea');field.className='share-fallback';field.setAttribute('aria-label','Results to copy');field.value=text;status.after(field);field.focus();field.select();}
       };

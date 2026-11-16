@@ -5,7 +5,7 @@ const browser=await chromium.launch();
 try {
   for(const width of [320,390,700,1440]){
     const page=await browser.newPage({viewport:{width,height:844}});
-    await page.goto(base);await page.locator('[data-route]').first().waitFor();
+    await page.goto(new URL('/trainrot/',base).href);await page.locator('[data-route]').first().waitFor();
     const failures=await page.evaluate(async()=>{
       const [{createMap},network,boroughs,challenges]=await Promise.all([
         import('/map.js'),...['network','boroughs','challenges'].map(n=>fetch(`/data/${n}.json`).then(r=>r.json()))

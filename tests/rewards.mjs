@@ -10,7 +10,7 @@ try{
     const page=await browser.newPage({viewport:{width,height:1000},reducedMotion,colorScheme:'dark'});
     let puzzle=data.find(c=>c.from==='L08'&&c.to==='M18');
     await page.route('**/data/challenges.json',r=>r.fulfill({json:[puzzle]}));
-    await page.goto(base);await page.locator('#practice-mode').click();await page.locator('#reveal').waitFor();
+    await page.goto(new URL('/trainrot/',base).href);await page.locator('#practice-mode').click();await page.locator('#reveal').waitFor();
     const add=route=>page.locator(`[data-route="${route}"]`).click();
     const check=()=>page.locator('#reveal').click();
     const score=()=>page.locator('.reward-number').textContent();

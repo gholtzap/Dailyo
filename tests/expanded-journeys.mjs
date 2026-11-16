@@ -13,7 +13,7 @@ for(const [i,c] of original.entries()){const {daily,...same}=expanded[i];assert.
 const browser=await chromium.launch();
 try{
  for(const width of [390,1440]){
-  const page=await browser.newPage({viewport:{width,height:844}});await page.clock.install({time:new Date('2026-11-14T16:00:00Z')});await page.goto(base);await page.locator('[data-route]').first().waitFor();
+  const page=await browser.newPage({viewport:{width,height:844}});await page.clock.install({time:new Date('2026-11-14T16:00:00Z')});await page.goto(new URL('/trainrot/',base).href);await page.locator('[data-route]').first().waitFor();
   const oldDeck=seedDeck('trainrot-daily-v2',original.filter(c=>c.difficulty==='easy'));
   const day=Math.floor(Date.parse('2026-11-14T00:00:00Z')/86400000),old=oldDeck[day%oldDeck.length];
   assert.deepEqual(await page.locator('.endpoint strong').allTextContents(),[old.fromTitle,old.toTitle]);

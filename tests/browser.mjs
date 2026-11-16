@@ -33,9 +33,9 @@ try{
   for(const size of [{width:1440,height:1000},{width:390,height:844}]){
     const context=await browser.newContext({viewport:size,isMobile:size.width<700,hasTouch:size.width<700,colorScheme:'light',reducedMotion:'reduce'});
     const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));const prefix=String(size.width);
-    await page.goto(base);
+    await page.goto(new URL('/trainrot/',base).href);
     const games=page.getByRole('navigation',{name:'Games',exact:true});
-    for(const [game,path] of [['flagrot','/flags/'],['langrot','/languages/'],['trainrot','/']]){
+    for(const [game,path] of [['flagrot','/flags/'],['langrot','/languages/'],['trainrot','/trainrot/']]){
       await games.getByRole('link',{name:game,exact:true}).press('Enter');
       await page.waitForURL(url=>url.pathname===path);
       assert.equal(await page.title(),`${game} | dailyo`);

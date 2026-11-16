@@ -1,7 +1,7 @@
 import {dailyDate} from './bridge.js';
 
 const games=[
-  {id:'train',label:'trainrot',path:'/'},
+  {id:'train',label:'trainrot',path:'/trainrot/'},
   {id:'flags',label:'flagrot',path:'/flags/'},
   {id:'languages',label:'langrot',path:'/languages/'},
   {id:'vocabulary',label:'Vocabulary',path:'/vocabulary/'},

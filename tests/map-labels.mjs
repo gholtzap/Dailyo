@@ -7,11 +7,11 @@ const reports=[];
 try {
   for(const width of [390,768,1440]){
     const page=await browser.newPage({viewport:{width,height:1000}});
-    await page.goto(base);await page.getByRole('group',{name:'Add a train',exact:true}).waitFor();
+    await page.goto(new URL('/trainrot/',base).href);await page.getByRole('group',{name:'Add a train',exact:true}).waitFor();
     const report=await page.evaluate(async()=>{
       const [{createMap},network,boroughs,challenges]=await Promise.all([
-        import('./map.js'),fetch('./data/network.json').then(r=>r.json()),
-        fetch('./data/boroughs.json').then(r=>r.json()),fetch('./data/challenges.json').then(r=>r.json())
+        import('/map.js'),fetch('/data/network.json').then(r=>r.json()),
+        fetch('/data/boroughs.json').then(r=>r.json()),fetch('/data/challenges.json').then(r=>r.json())
       ]);
       const old=document.querySelector('#city-map'),svg=old.cloneNode(false);
       document.querySelector('.map-labels').remove();old.replaceWith(svg);

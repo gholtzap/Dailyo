@@ -8,7 +8,7 @@ try {
   const mobile = await browser.newContext({viewport: {width: 390, height: 844}, colorScheme: 'dark'});
   const desktop = await browser.newContext({viewport: {width: 1440, height: 1000}, colorScheme: 'dark'});
   const train = await desktop.newPage();
-  await train.goto(base);
+  await train.goto(new URL('/trainrot/',base).href);
   const routes = await train.evaluate(async () => {
     const [{dailyChallenge, dailyDate}, {createRouter}, network, challenges] = await Promise.all([
       import('/daily/puzzles.js'), import('/router.js'),
@@ -22,7 +22,7 @@ try {
   await train.locator('.daily-rank').getByText('First finisher today', {exact: true}).waitFor();
   await train.waitForFunction(() => document.querySelector('.result-score')?.textContent.includes('100'));
   const skipped = await mobile.newPage();
-  await skipped.goto(base);
+  await skipped.goto(new URL('/trainrot/',base).href);
   await skipped.locator('#show-answer').click();
   assert.equal(await skipped.locator('.daily-rank').count(), 0);
   await skipped.close();

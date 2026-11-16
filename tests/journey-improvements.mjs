@@ -12,7 +12,7 @@ try{
   const others=all.filter(c=>c.difficulty==='easy'&&c!==start&&c!==reverse).slice(0,8);
   const fixture=[start,reverse,...others];
   await page.route('**/data/challenges.json',r=>r.fulfill({json:fixture}));
-  await page.goto(base);await page.locator('[data-route]').first().waitFor();await page.locator('#practice-mode').click();
+  await page.goto(new URL('/trainrot/',base).href);await page.locator('[data-route]').first().waitFor();await page.locator('#practice-mode').click();
   await page.evaluate(fixture=>{const key=Object.keys(localStorage).find(k=>k.startsWith('trainrot-endless-v1:'));const s=JSON.parse(localStorage.getItem(key));s.position=0;s.challenge=fixture[0];s.deck=fixture.map(({from,to})=>({from,to}));s.recent=[s.challenge];s.state={phase:'planning',legs:[],guesses:[]};localStorage.setItem(key,JSON.stringify(s));},fixture);
   await page.reload();await page.locator('#skip').waitFor();
   const observed=[];

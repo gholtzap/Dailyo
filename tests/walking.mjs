@@ -11,7 +11,7 @@ try {
     const page=await browser.newPage({viewport:{width,height:844}});
     await page.route('**/data/challenges.json',route=>route.fulfill({json:[challenge]}));
     await page.addInitScript(()=>localStorage.setItem('trainrot-game-mode-v2','practice'));
-    await page.goto(base);
+    await page.goto(new URL('/trainrot/',base).href);
     await page.locator('[data-route="A"]').click();
     await page.locator('#reveal').click();
     await page.locator('#next').waitFor({state:'visible'});
@@ -30,7 +30,7 @@ try {
     localStorage.setItem('trainrot-game-mode-v2','practice');
     localStorage.setItem(`trainrot-endless-v1:${feed}`,JSON.stringify({seed:'endless:test',position:0,difficulty:retired.difficulty,challenge:{from:retired.from,to:retired.to},state:{phase:'planning',legs:[{route:'R'}],guesses:[]}}));
   },{retired,feed:network.metadata.feedVersion});
-  await page.goto(base);await page.locator('#skip').waitFor();
+  await page.goto(new URL('/trainrot/',base).href);await page.locator('#skip').waitFor();
   assert.deepEqual(await page.locator('.endpoint strong').allTextContents(),[retired.fromTitle,retired.toTitle]);
   assert.equal(await page.locator('.train-sequence li').count(),1);
   console.log('An in-progress retired journey remains playable');

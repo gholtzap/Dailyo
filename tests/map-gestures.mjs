@@ -7,7 +7,7 @@ const view=async page=>(await page.locator('#city-map').getAttribute('viewBox'))
 try{
   for(const width of [390,1440]){
     const context=await browser.newContext({viewport:{width,height:844},hasTouch:true,isMobile:width<700});
-    const page=await context.newPage();await page.goto(base);await page.locator('#reveal').waitFor();
+    const page=await context.newPage();await page.goto(new URL('/trainrot/',base).href);await page.locator('#reveal').waitFor();
     assert.equal(await page.locator('.map-controls').count(),0);
     const initial=await view(page),rect=await page.locator('#city-map').boundingBox();
     const x=rect.x+rect.width*.55,y=rect.y+rect.height*.5;
