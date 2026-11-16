@@ -45,6 +45,7 @@ try{
     };
     const status=page.locator('#rush-status');
     const timer=page.getByRole('timer');
+    const track=page.locator('.rush-track');
     const game=name=>page.frameLocator(`iframe[title="${name}"]`);
     const loadJson=async path=>(await page.request.get(new URL(path,base).href)).json();
 
@@ -63,6 +64,7 @@ try{
     await timer.filter({hasText:'Untimed'}).waitFor();
     await page.clock.fastForward(30000);
     assert.equal(await timer.textContent(),'Untimed');
+    assert.equal(await track.isVisible(),false);
     assert.equal(await flag.locator('#question-title').evaluate(node=>node===document.activeElement),true);
     await inspect('flagrot',true);
     const preloadedFlag=page.locator('iframe[src="/flags/?rush=1"]');
@@ -73,6 +75,25 @@ try{
     await page.clock.fastForward(200);
     await timer.filter({hasText:'8s'}).waitFor();
     assert.equal(await page.locator('iframe[title=flagrot][data-preload-check]').count(),1);
+    await page.emulateMedia({reducedMotion:'reduce'});
+    await track.waitFor({state:'visible'});
+    const meter=()=>track.evaluate(node=>{
+      const fill=node.firstElementChild;
+      const {backgroundColor}=getComputedStyle(fill);
+      const [red,green]=backgroundColor.match(/\d+/g).map(Number);
+      return {width:fill.getBoundingClientRect().width,red,green};
+    });
+    const full=await meter();
+    assert.ok(full.width>30 && full.green>full.red);
+    await page.clock.fastForward(4000);
+    const half=await meter();
+    assert.equal(await timer.textContent(),'4s');
+    assert.ok(half.width/full.width>0.45 && half.width/full.width<0.55);
+    await page.clock.fastForward(3500);
+    const low=await meter();
+    assert.equal(await timer.textContent(),'1s');
+    assert.ok(low.width/full.width<0.1 && low.red>low.green);
+    await page.emulateMedia({reducedMotion:'no-preference'});
     for(const [round,seconds] of [[1,6],[2,4],[3,4],[4,4]]){
       await flag.getByRole('button',{name:flagDeck[round].name,exact:true}).click();
       await status.filter({hasText:'Correct'}).waitFor();
