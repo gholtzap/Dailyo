@@ -1,7 +1,7 @@
 import {
   makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition,
 } from './rot-puzzles.js';
-import { dailyDate as today, inFeed, reportDaily } from '../daily/bridge.js';
+import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 
 const kind = document.body.dataset.game;
@@ -315,6 +315,7 @@ async function start() {
   const response = await fetch(`/games/data/${kind}.json`);
   if (!response.ok) throw new Error('Game data unavailable');
   data = preparePuzzles(kind, await response.json());
+  await waitForFeedActivation();
   const saved = read('practice');
   const seed = typeof saved?.seed === 'string' && saved.seed.length < 100 ? saved.seed : randomSeed();
   sessions.practice = mountSession('practice', seed);

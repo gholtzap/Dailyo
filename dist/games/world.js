@@ -1,4 +1,4 @@
-import {dailyDate as dateToday,inFeed,reportDaily} from '../daily/bridge.js';
+import {dailyDate as dateToday,inFeed,reportDaily,waitForFeedActivation} from '../daily/bridge.js';
 import {hash,shuffle,quizDeck,quizOptions,quizPuzzle} from '../daily/puzzles.js';
 import {showRank} from '../daily/rank.js';
 
@@ -12,7 +12,7 @@ const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));}c
 const randomSeed=()=>`${Date.now()}:${Math.random()}`;
 const make=(tag,text,className)=>{const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(className)el.className=className;return el;};
 const modeState={daily:null,practice:null};
-let mode='daily',day=dateToday(),items=[];
+let mode='daily',day,items=[];
 function knownAnswer(id){
   if(typeof id!=='string')return false;
   if(vocabulary&&/:[1-3]$/.test(id))id=id.slice(0,-2);
@@ -122,6 +122,8 @@ async function start(){
     ||item.distractors.some(option=>typeof option!=='string'||!option.trim())
     ||new Set([item.name,...item.distractors]).size!==4
   )))throw new Error('Invalid vocabulary data');
+  await waitForFeedActivation();
+  day=dateToday();
   modeState.daily=dailyState();modeState.practice=practiceState();const saved=read(key('mode'));mode=!inFeed&&saved==='practice'?'practice':'daily';
   controls.daily.onclick=()=>selectMode('daily');controls.practice.onclick=()=>selectMode('practice');
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)resetDay();});setInterval(resetDay,30000);draw();
