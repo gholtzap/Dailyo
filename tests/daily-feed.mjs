@@ -69,6 +69,7 @@ try{
       await next.tap();
     }else{
       await page.goto(base);
+      await page.locator('#skip').waitFor();
       await page.getByRole('button',{name:'Daily',exact:true}).click();
       await page.getByRole('button',{name:'Copy results',exact:true}).waitFor();
       await page.getByRole('button',{name:'Practice',exact:true}).click();
@@ -145,6 +146,7 @@ try{
       const check=await context.newPage();
       await check.clock.setFixedTime(date);
       await check.goto(`${base}/${kind}/`);
+      await check.locator('.choice,.result h2').first().waitFor();
       await check.getByRole('button',{name:'Daily',exact:true}).click();
       const result=await check.locator('.result h2').innerText();
       await check.close();
