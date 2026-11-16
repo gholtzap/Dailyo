@@ -62,6 +62,8 @@ With the local server running in another terminal, run `npm run test:e2e` for de
 
 `python3 scripts/build-atlas-data.py land.geojson places.geojson countryInfo.txt` rebuilds the map and border data from local Natural Earth 110m land and populated-place GeoJSON files and the GeoNames country information extract. See the [data sources](THIRD_PARTY_NOTICES.md).
 
+`python3 scripts/build-border-map.py ne_50m_admin_0_map_units.geojson` rebuilds Borderrot’s country outlines and label positions from Natural Earth 50m map units.
+
 ## Transit data tools
 
 `scripts/build-data.py` converts a local GTFS archive, borough GeoJSON, and optional station CSV to trainrot's JSON format. `scripts/build-challenges.mjs` builds the NYC puzzle deck from that network and a locally supplied `scripts/original-challenges.json` seed file. For these scripts, supply your own source files and check their terms. See [third-party notices](THIRD_PARTY_NOTICES.md).

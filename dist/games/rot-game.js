@@ -17,7 +17,7 @@ const mapGame = kind === 'maprot';
 const yearGame = kind === 'yearrot';
 const sessions = {};
 let mode = startPractice || (!inFeed && read('mode') === 'practice') ? 'practice' : 'daily';
-let data, day;
+let data, day, borderGeometry;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -201,6 +201,52 @@ function drawTimeline(question, state, reviewing) {
   return [heading, list];
 }
 
+function drawBorderMap(start, target, guesses) {
+  if (!borderGeometry) return null;
+  const { paths, anchors } = borderGeometry;
+  const selected = new Set([start, ...guesses]);
+  const points = [...selected, target].map(id => anchors[id]);
+  const xs = points.map(([x]) => x), ys = points.map(([, y]) => y);
+  const west = Math.min(...xs), east = Math.max(...xs);
+  const north = Math.min(...ys), south = Math.max(...ys);
+  const width = Math.max(26, (east - west) * 1.4 + 12, (south - north) * 2.8 + 12);
+  const height = width / 2;
+  const left = (west + east - width) / 2;
+  const top = (north + south - height) / 2;
+  const panel = element('div', undefined, 'border-map');
+  const map = element('canvas', undefined, 'rot-map');
+  map.width = 1440;
+  map.height = 720;
+  const context = map.getContext('2d');
+  const scale = map.width / width;
+  context.setTransform(scale, 0, 0, scale, -left * scale, -top * scale);
+  context.strokeStyle = '#18222b';
+  context.lineWidth = 2.4 / scale;
+  for (const [id, path] of paths) {
+    context.fillStyle = selected.has(id) ? '#39735c' : id === target ? '#735d36' : '#354551';
+    context.fill(path, 'evenodd');
+  }
+  for (const [, path] of paths) context.stroke(path);
+  panel.append(map);
+  for (const id of new Set([start, target, ...guesses])) {
+    const [x, y] = anchors[id];
+    const guessed = guesses.includes(id);
+    const name = guessed ? data.graph.get(id).name : undefined;
+    const marker = element('span', undefined, 'border-marker');
+    marker.style.left = `${(x - left) / width * 100}%`;
+    marker.style.top = `${(y - top) / height * 100}%`;
+    marker.classList.toggle('border-destination', !selected.has(id));
+    if (name) marker.title = name;
+    if (id === guesses.at(-1)) {
+      marker.append(element('span', name, 'border-map-label'));
+      marker.classList.toggle('border-label-left', x > left + width / 2);
+    }
+    panel.append(marker);
+  }
+  panel.setAttribute('aria-hidden', 'true');
+  return panel;
+}
+
 function drawBorders(question, state, reviewing) {
   const start = question[0], target = question.at(-1);
   const name = id => data.graph.get(id).name;
@@ -218,8 +264,9 @@ function drawBorders(question, state, reviewing) {
     const feedback = element('p', path === null ? `One shortest route crosses ${best} borders.` :
       correct ? `Shortest route · ${best} borders` : `Your route crossed ${path.length} borders. A shortest route crosses ${best}.`, 'rot-feedback');
     feedback.setAttribute('role', 'status');
-    if (correct || !path) return [heading, feedback, chain(path ? [start, ...path] : question, 'Shortest route')];
-    return [heading, chain([start, ...path], 'Your route'), feedback, chain(question, 'Shortest route')];
+    const map = drawBorderMap(start, target, path ?? question.slice(1));
+    if (correct || !path) return [heading, map, feedback, chain(path ? [start, ...path] : question, 'Shortest route')];
+    return [heading, map, chain([start, ...path], 'Your route'), feedback, chain(question, 'Shortest route')];
   }
 
   const selected = [start, ...state.draft];
@@ -269,7 +316,7 @@ function drawBorders(question, state, reviewing) {
     document.querySelector('#country-search').focus();
   }));
   actions.append(button('Show shortest route', () => update({ type: 'skip' })));
-  return [heading, chain(selected, 'Your route'), label, input, choices, feedback, actions];
+  return [heading, drawBorderMap(start, target, state.draft), chain(selected, 'Your route'), label, input, choices, feedback, actions];
 }
 
 function summary(session) {
@@ -343,14 +390,20 @@ function draw() {
       () => update({ type: 'next' }), 'primary rot-next'));
     content.push(next);
   }
-  quiz.replaceChildren(...(rushRound===null?[counter,...content]:content));
+  quiz.replaceChildren(...(rushRound===null?[counter,...content]:content).filter(Boolean));
   reportDaily(current === 'complete' ? 'complete' : 'playing', current === 'complete' ? heading.textContent : undefined, day);
 }
 
 async function start() {
+  const geometry = kind === 'borderrot' ? fetch('/games/data/border-map.json')
+    .then(response => response.ok ? response.json() : null).catch(() => null) : null;
   const response = await fetch(`/games/data/${kind}.json`);
   if (!response.ok) throw new Error('Game data unavailable');
   data = preparePuzzles(kind, await response.json());
+  borderGeometry = await geometry;
+  if (borderGeometry) {
+    borderGeometry.paths = borderGeometry.paths.map(([id, path]) => [id, new Path2D(path)]);
+  }
   if(rushRound!==null){
     const seed=rushSeed(kind);
     const position=rushRound%data.items.length;

@@ -68,10 +68,16 @@ async function answerYear(page, { event, timeline }, index) {
   assert.equal(await page.locator('.highlight time').textContent(), String(event[0]));
 }
 
-async function answerBorder(page, route, index, graph) {
+async function answerBorder(page, route, index, graph, inspect) {
+  const map = page.locator('.border-map');
+  await map.waitFor();
+  assert.equal(await map.locator('[title]').count(), 0);
+  assert.equal(await map.locator('.border-destination').count(), 1);
+  const drawing = () => map.locator('canvas').evaluate(canvas => canvas.toDataURL());
   if (index === 4) {
     await page.getByRole('button', { name: 'Show shortest route' }).click();
     assert.equal(await page.getByRole('list', { name: 'Shortest route' }).locator('li').count(), route.length);
+    assert.equal(await map.locator('[title]').count(), route.length - 1);
     return;
   }
   const search = page.getByRole('searchbox', { name: 'Add a country' });
@@ -82,18 +88,29 @@ async function answerBorder(page, route, index, graph) {
   }
   if (index === 0) {
     const wrong = [...graph.keys()].find(id => !route.includes(id) && !graph.get(route[0]).neighbours.includes(id));
+    const initialDrawing = await drawing();
     await add(wrong);
+    assert.equal(await drawing(), initialDrawing);
+    assert.equal(await map.locator('[title]').count(), 0);
     assert.match(await page.locator('.rot-feedback').innerText(), /share a land border/);
     assert.equal(await page.getByRole('list', { name: 'Your route' }).locator('li').count(), 1);
     await add(route[1]);
+    assert.notEqual(await drawing(), initialDrawing);
+    assert.equal(await map.locator('.border-map-label').innerText(), graph.get(route[1]).name);
+    await inspect('partial route');
     await page.reload();
     await search.waitFor();
+    assert.equal(await map.locator('.border-map-label').innerText(), graph.get(route[1]).name);
     assert.equal(await page.getByRole('list', { name: 'Your route' }).locator('li').count(), 2);
     await page.getByRole('button', { name: 'Undo last country' }).click();
+    assert.equal(await drawing(), initialDrawing);
+    assert.equal(await map.locator('[title]').count(), 0);
     assert.equal(await page.getByRole('list', { name: 'Your route' }).locator('li').count(), 1);
   }
   for (const id of route.slice(1)) await add(id);
   assert.match(await page.locator('.rot-feedback').innerText(), /Shortest route/);
+  assert.equal(await map.locator('.border-destination').count(), 0);
+  assert.equal(await map.locator('[title]').count(), route.length - 1);
   assert.deepEqual(await page.getByRole('list', { name: 'Shortest route' }).locator('li').allTextContents(),
     route.map(id => graph.get(id).name));
 }
@@ -170,7 +187,7 @@ try {
       }
       await inspect('question');
       for (const [index, question] of questions.entries()) {
-        await play(page, question, index, data.graph);
+        await play(page, question, index, data.graph, inspect);
         const next = page.getByRole('button', { name: index === 4 ? 'See results' : 'Next question', exact: true });
         if (index === 0) {
           assert.ok(await next.evaluate(node => node === document.activeElement));

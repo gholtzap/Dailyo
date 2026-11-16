@@ -86,3 +86,36 @@
 .swap-board { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
 .swap-board .swap-tile { min-height: 44px; padding: 4px; font-size: 14px; }
 .swap-board .swap-tile[aria-pressed=true] { background: #264332; border-color: #83c896; }
+
+.border-map {
+  position: relative;
+  contain: paint;
+  margin-bottom: 12px;
+}
+.border-marker {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #151d26;
+  border-radius: 50%;
+  background: #b0e6c6;
+  transform: translate(-50%, -50%);
+}
+.border-destination { background: #f3ce78; }
+.border-map-label {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 11px;
+  transform: translateY(-50%);
+  padding: 4px 8px;
+  width: max-content;
+  max-width: 108px;
+  overflow-wrap: anywhere;
+  border: 1px solid #527568;
+  border-radius: 5px;
+  color: #effcf4;
+  background: #20392f;
+  font-size: 12px;
+}
+.border-label-left .border-map-label { left: auto; right: 11px; }

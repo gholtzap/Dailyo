@@ -19,7 +19,15 @@ for (const game of extraGames) {
 }
 for (const game of ['maprot','yearrot','borderrot']) {
   assert.ok(fs.statSync(new URL(`${game}/index.html`,root)).size>0);
-  preparePuzzles(game,JSON.parse(fs.readFileSync(new URL(`games/data/${game}.json`,root))));
+  const data = preparePuzzles(game, JSON.parse(fs.readFileSync(new URL(`games/data/${game}.json`, root))));
+  if (game === 'borderrot') {
+    const { paths, anchors } = JSON.parse(fs.readFileSync(new URL('games/data/border-map.json', root)));
+    const mappedCodes = new Set(paths.filter(([, path]) => path.startsWith('M')).map(([code]) => code));
+    for (const code of data.graph.keys()) {
+      const point = anchors[code];
+      assert.ok(mappedCodes.has(code) && point?.length === 2 && point.every(Number.isFinite), `Missing map geometry for ${code}`);
+    }
+  }
 }
 for(const game of ['flags','languages']){
   assert.ok(fs.statSync(new URL(`${game}/index.html`,root)).size>0);
