@@ -25,6 +25,7 @@ try{
   const dots=page.locator('.daily-progress .progress-dot');
   const prompts=[];
   for(let i=0;i<5;i++){
+   await other.locator(`.daily-progress [aria-label="Question ${i+1}: current"]`).waitFor();
    assert.equal(await dots.count(),5);assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: current`);
    assert.equal(await page.locator('.choice').count(),4);const prompt=await content(page);assert.equal(await content(other),prompt);prompts.push(prompt);
    const name=await answer(page),options=await page.locator('.choice').allTextContents();assert.equal(new Set(options).size,4);assert.ok(options.includes(name));
@@ -33,7 +34,8 @@ try{
     assert.deepEqual(new Set(options),new Set([item.name,...item.distractors]));
     assert.equal(await page.locator('.example').count(),0);
    }
-   const pick=i%2===0?name:options.find(x=>x!==name);if(i===0){await page.getByRole('button',{name:pick,exact:true}).focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#next').evaluate(n=>n===document.activeElement),true);}else await page.getByRole('button',{name:pick,exact:true}).click();
+   const pick=i%2===0?name:options.find(x=>x!==name);if(i===0){await page.getByRole('button',{name:pick,exact:true}).focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>document.activeElement?.id==='next');}else await page.getByRole('button',{name:pick,exact:true}).click();
+   await page.locator('#next').waitFor();
    assert.match(await page.locator('.feedback').innerText(),i%2===0?/Correct!/:new RegExp('Correct answer:'));
    assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: ${i%2===0?'correct':'incorrect'}`);
    assert.equal(await dots.nth(i).innerText(),i%2===0?'✓':'×');
@@ -51,7 +53,7 @@ try{
   await page.reload();assert.equal(await page.locator('.result h2').innerText(),'3 out of 5');
   await page.getByRole('button',{name:'Play practice'}).click();assert.equal(await dots.count(),0);const practicePrompts=[];
   for(let i=0;i<10;i++){
-   const prompt=await content(page);practicePrompts.push(prompt);const name=await answer(page);await page.getByRole('button',{name,exact:true}).click();assert.match(await page.locator('.feedback').innerText(),/^Correct!/);await page.locator('#next').click();assert.equal(await page.locator('#question-title').evaluate(n=>n===document.activeElement),true);
+   const prompt=await content(page);practicePrompts.push(prompt);const name=await answer(page);await page.getByRole('button',{name,exact:true}).click();assert.match(await page.locator('.feedback').innerText(),/^Correct!/);await page.locator('#next').click();await page.waitForFunction(()=>document.activeElement?.id==='question-title');
   }
   assert.equal(new Set(practicePrompts).size,10);assert.match(await page.locator('.round-head').innerText(),/10 correct/);
   await page.reload();await page.locator('.choice').first().waitFor();assert.equal(await page.locator('#practice').getAttribute('aria-pressed'),'true');assert.match(await page.locator('.round-head').innerText(),/10 correct/);
@@ -60,6 +62,23 @@ try{
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);
   await ctx.close();await otherCtx.close();console.log(`${kind} ${width}px: five daily questions, results, reload, next day, and ten practice rounds passed`);
  }
+ const shared=await browser.newContext();
+ await shared.route('**/api/daily-score',route=>route.fulfill({status:404}));
+ const old=await shared.newPage(),fresh=await shared.newPage();
+ for(const tab of [old,fresh]){
+  await tab.goto(`${base}/vocabulary/`);
+  await tab.locator('.choice').first().waitFor();
+ }
+ for(let i=0;i<5;i++){
+  await fresh.locator('.choice').first().click();
+  await fresh.locator('#next').click();
+ }
+ const completed=await fresh.locator('.result h2').innerText();
+ await old.locator('.choice').last().click();
+ await old.locator('.result h2').waitFor({timeout:3000});
+ await fresh.reload();
+ assert.equal(await fresh.locator('.result h2').innerText(),completed);
+ await shared.close();
  const exhaustive=await browser.newPage({viewport:{width:320,height:844}});await exhaustive.goto(`${base}/flags/`);await exhaustive.locator('#practice').click();const seen=new Set();let previous;
  for(let i=0;i<flags.length+1;i++){
   const src=await exhaustive.locator('.flag').getAttribute('src'),id=decodeURIComponent(src.split('/').at(-1).replace('.svg',''));
@@ -74,7 +93,10 @@ try{
   const prompt=midnight.locator('.vocabulary-word');
   const previous=await prompt.innerText();
   const choice=midnight.locator('.choice').first();
-  if(action==='advance')await choice.click();
+  if(action==='advance'){
+   await choice.click();
+   await midnight.locator('#next').waitFor();
+  }
   await midnight.clock.setFixedTime(new Date('2026-11-16T05:00:01Z'));
   if(action==='advance')await midnight.locator('#next').click();else await choice.click();
   await midnight.waitForFunction(word=>document.querySelector('.vocabulary-word')?.textContent!==word,previous,{timeout:3000});

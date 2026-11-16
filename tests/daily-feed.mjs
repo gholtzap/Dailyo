@@ -127,6 +127,7 @@ try{
 
     const words=frame('Vocabulary');
     await words.locator('.choice').first().click();
+    await words.locator('.example').waitFor();
     const word=await words.locator('.vocabulary-word').innerText();
     await page.reload();
     await words.locator('.example').waitFor();
