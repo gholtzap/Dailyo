@@ -49,6 +49,8 @@ try{
     const train=frame('trainrot');
     const map=train.locator('#city-map');
     await map.waitFor({state:'visible'});
+    assert.ok((await map.getAttribute('viewBox')).split(' ').slice(-2).every(size=>Number(size)>0));
+    assert.equal(await train.locator('.map-marker:visible').count(),2);
     assert.equal(await progress.innerText(),'Game 1 of 7');
     assert.equal(await train.getByRole('button',{name:'Practice',exact:true}).count(),0);
     const touch=mobile&&engine===chromium?await context.newCDPSession(page):null;

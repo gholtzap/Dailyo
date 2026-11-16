@@ -69,7 +69,7 @@ function showGame(position){
   frame=document.createElement('iframe');
   frame.title=game.label;
   frame.src=`${game.path}?feed=1`;
-  frame.hidden=true;
+  frame.classList.add('feed-loading');
   gamePanel.append(frame);
   timeout=setTimeout(showError,12000);
 }
@@ -104,7 +104,7 @@ window.addEventListener('message',event=>{
   if(phase==='loading'){
     if(reported==='complete'||skipped.has(game.id)){showGame(index+1);return;}
     clearTimeout(timeout);
-    frame.hidden=false;
+    frame.classList.remove('feed-loading');
     gamePanel.querySelector('p').remove();
     if(focusOnReady)progress.focus();
     focusOnReady=false;
