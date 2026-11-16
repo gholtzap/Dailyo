@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
 import {checkPage} from 'lintapple';
 import {seededDeck,shuffle} from '../dist/daily/puzzles.js';
-import {makeSet,preparePuzzles} from '../dist/games/rot-puzzles.js';
+import {makeSet,preparePuzzles,roundCount} from '../dist/games/rot-puzzles.js';
 import {extraPuzzle,prepareExtra} from '../dist/games/extra-puzzles.js';
 import {createRouter} from '../dist/router.js';
 
@@ -63,15 +63,18 @@ try{
     await status.filter({hasText:'Correct'}).waitFor();
     await page.clock.fastForward(900);
     await timer.filter({hasText:'8s'}).waitFor();
-    await flag.getByRole('button',{name:flagDeck[1].name,exact:true}).click();
-    await status.filter({hasText:'Correct'}).waitFor();
-    await page.clock.fastForward(900);
-    await timer.filter({hasText:'6s'}).waitFor();
+    for(const [round,seconds] of [[1,6],[2,4],[3,4],[4,4]]){
+      await flag.getByRole('button',{name:flagDeck[round].name,exact:true}).click();
+      await status.filter({hasText:'Correct'}).waitFor();
+      await page.clock.fastForward(900);
+      await timer.filter({hasText:`${seconds}s`}).waitFor();
+      assert.equal(await status.textContent(),`flagrot · Round ${round+2}`);
+    }
     await flag.getByRole('group',{name:'Choose a place'}).getByRole('button').filter({
-      hasNotText:flagDeck[2].name,
+      hasNotText:flagDeck[5].name,
     }).first().click();
     await status.filter({hasText:'Missed'}).waitFor();
-    await flag.locator('.feedback').filter({hasText:flagDeck[2].name}).waitFor();
+    await flag.locator('.feedback').filter({hasText:flagDeck[5].name}).waitFor();
     await inspect('miss',true);
     await page.clock.fastForward(2700);
 
@@ -104,13 +107,18 @@ try{
     await page.clock.fastForward(900);
     await timer.filter({hasText:'35s'}).waitFor();
     const next=page.getByRole('button',{name:'Next game'});
-    const rot=async kind=>{
+    const rot=async (kind,round=0)=>{
       const data=preparePuzzles(kind,await loadJson(`/games/data/${kind}.json`));
-      return {data,question:makeSet(kind,data,`rush:${kind}:${day}`)[0]};
+      const index=round%roundCount;
+      return {data,question:makeSet(kind,data,`rush:${kind}:${day}`,round-index)[index]};
     };
     const extra=async (kind,...datasets)=>{
       const data=prepareExtra(kind,...await Promise.all(datasets.map(name=>loadJson(`/games/data/${name}.json`))));
       return extraPuzzle(kind,data,`rush:${kind}:${day}:0`);
+    };
+    const placeYear=async (child,round=0)=>{
+      const {question:{event,timeline}}=await rot('yearrot',round);
+      await child.locator('.rot-slot').nth(timeline.filter(([year])=>year<event[0]).length).click();
     };
     const slots=[
       ['Vocabulary',12,async child=>{
@@ -128,10 +136,7 @@ try{
         await map.click({position});
         await child.getByRole('button',{name:'Check pin'}).click();
       }],
-      ['yearrot',14,async child=>{
-        const {question:{event,timeline}}=await rot('yearrot');
-        await child.locator('.rot-slot').nth(timeline.filter(([year])=>year<event[0]).length).click();
-      }],
+      ['yearrot',14,placeYear],
       ['borderrot',45,async child=>{
         const {data,question}=await rot('borderrot');
         for(const country of question.slice(1)){
@@ -174,10 +179,18 @@ try{
       await status.filter({hasText:'Correct'}).waitFor();
       await page.clock.fastForward(900);
       await timer.filter({hasText:`${seconds}s`}).waitFor();
+      if(name==='yearrot'){
+        for(let round=1;round<=roundCount;round++){
+          await placeYear(game(name),round);
+          await status.filter({hasText:'Correct'}).waitFor();
+          await page.clock.fastForward(900);
+          await status.filter({hasText:`yearrot · Round ${round+2}`}).waitFor();
+        }
+      }
     }
     await next.click();
     await page.getByRole('heading',{name:'Rush recap'}).waitFor();
-    assert.equal(await page.locator('#rush-score').textContent(),'12 correct · Best run: 2 in flagrot');
+    assert.equal(await page.locator('#rush-score').textContent(),'20 correct · Best run: 6 in yearrot');
     assert.deepEqual(await page.evaluate(()=>Object.keys(localStorage)),[]);
     assert.deepEqual(writes,[]);
     await inspect('recap');

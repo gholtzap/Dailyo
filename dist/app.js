@@ -292,7 +292,8 @@ async function start(){
     mode='rush';
     difficultyControl.closest('label').hidden=true;
     const easy=challenges.filter(c=>c.difficulty==='easy');
-    const challenge=seededDeck(rushSeed('train'),easy.length>=3?easy:challenges)[rushRound];
+    const rushDeck=seededDeck(rushSeed('train'),easy.length>=3?easy:challenges);
+    const challenge=rushDeck[rushRound%rushDeck.length];
     state={phase:'planning',challenge,legs:[],assisted:true};
     onRushTimeout(()=>finishRush(false));
     draw();

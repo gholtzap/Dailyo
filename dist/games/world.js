@@ -94,7 +94,7 @@ function result(){
 }
 function draw(){
   for(const [id,button] of Object.entries(controls))button.setAttribute('aria-pressed',String(id===mode));
-  const s=modeState[mode];if(mode==='daily'&&s.index===5){result();return;}
+  const s=modeState[mode];if(rushRound===null&&mode==='daily'&&s.index===5){result();return;}
   const {item,seed}=question(),selected=mode==='daily'?(s.answers[s.index]??null):s.selected;
   const head=make('div',undefined,'round-head'),counter=make('p',mode==='daily'?`Question ${s.index+1} of 5`:`Practice · ${s.total+(selected===null?1:0)}`),score=make('p',mode==='daily'?`${s.answers.slice(0,s.index+(selected!==null?1:0)).filter((v,i)=>v===shuffle(items,`daily:${kind}:${day}`)[i].id).length} correct`:`${s.correct} correct`);
   head.append(counter,score);
@@ -135,7 +135,7 @@ async function start(){
   await waitForFeedActivation();
   day=dateToday();
   if(rushRound!==null){
-    modeState.daily={index:rushRound,answers:[]};
+    modeState.daily={index:rushRound%items.length,answers:[]};
     onRushTimeout(()=>choose('',question().item));
     draw();
     await quiz.querySelector('img')?.decode();

@@ -4,7 +4,8 @@ export {dailyDate};
 
 const params=new URLSearchParams(location.search);
 const round=params.get('rush');
-export const rushRound=window.parent!==window&&/^[0-2]$/.test(round)?Number(round):null;
+const roundIndex=Number(round);
+export const rushRound=window.parent!==window&&/^\d+$/.test(round)&&Number.isSafeInteger(roundIndex)?roundIndex:null;
 export const inFeed=window.parent!==window&&(params.get('feed')==='1'||rushRound!==null);
 export const rushSeed=kind=>`rush:${kind}:${dailyDate()}`;
 export const startPractice=!inFeed&&params.get('practice')==='1';
