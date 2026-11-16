@@ -45,6 +45,23 @@ test('chooses the fast express and accepts an equally fast alternative', () => {
   assert.equal(router.evaluate('a','d',[{route:'Z',to:'d'}]).score,100);
   assert.equal(router.evaluate('a','d',[{route:'X',to:'d'}]).score,100);
 });
+test('keeps discovery order when an improved route ties another station', () => {
+  const router = createRouter({
+    ...data,
+    metadata: { transferSeconds: 0 },
+    patterns: [
+      {route:'A', stations:['a','b'],seconds:[12]},
+      {route:'B', stations:['a','c'],seconds:[4]},
+      {route:'C', stations:['a','d'],seconds:[8]},
+      {route:'D', stations:['c','b'],seconds:[4]},
+      {route:'E', stations:['b','e'],seconds:[12]},
+      {route:'F', stations:['d','e'],seconds:[12]},
+    ],
+  });
+  const best = router.best('a','e');
+  assert.equal(best.seconds, 20);
+  assert.deepEqual(best.legs.map(leg => leg.route), ['B','D','E']);
+});
 test('tiny partial credit stays positive and its ride points sum to the score',()=>{
   const long={...data,patterns:[{route:'Q',stations:['a','e'],seconds:[10]},{route:'L',stations:['a','b'],seconds:[1]},{route:'X',stations:['b','e'],seconds:[10000]}]};
   const result=createRouter(long).assess('a','e',[{route:'L',to:'e'}]);

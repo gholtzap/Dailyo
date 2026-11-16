@@ -46,31 +46,63 @@ export function createRouter(data) {
     }
     const result=[...options.values()];rideCache.set(cacheKey,result);return result;
   }
-  // There are fewer than 450 complexes. A direct Dijkstra scan keeps this small
-  // static game independent of a server or a graph package.
+  // Ties follow the discovery order of the station, even after its cost improves.
+  const compare = (a, b) => a.cost - b.cost || a.order - b.order;
+  function enqueue(heap, item) {
+    let i = heap.length;
+    heap.push(item);
+    while (i > 0) {
+      const parent = (i - 1) >> 1;
+      if (compare(heap[parent], item) <= 0) break;
+      heap[i] = heap[parent];
+      i = parent;
+    }
+    heap[i] = item;
+  }
+  function dequeue(heap) {
+    const first = heap[0], last = heap.pop();
+    if (heap.length) {
+      let i = 0;
+      while (2 * i + 1 < heap.length) {
+        let child = 2 * i + 1;
+        if (child + 1 < heap.length && compare(heap[child + 1], heap[child]) < 0) child++;
+        if (compare(heap[child], last) >= 0) break;
+        heap[i] = heap[child];
+        i = child;
+      }
+      heap[i] = last;
+    }
+    return first;
+  }
   function best(from, to) {
     const key = `${from}:${to}`;
     if (bestCache.has(key)) return bestCache.get(key);
     if (!data.stations[from] || !data.stations[to] || from === to) return null;
-    const costs = new Map([[from, 0]]), previous = new Map(), visited = new Set();
+    const start = {station: from, cost: 0, order: 0};
+    const costs = new Map([[from, start]]), previous = new Map();
+    const queue = [start];
+
     while (true) {
-      let current = null, cost = Infinity;
-      for (const [id, value] of costs) if (!visited.has(id) && value < cost) { current = id; cost = value; }
-      if (!current) { bestCache.set(key,null); return null; }
+      if (!queue.length) { bestCache.set(key,null); return null; }
+      const entry = dequeue(queue);
+      const {station: current, cost} = entry;
+      if (entry !== costs.get(current)) continue;
       if (current === to) break;
-      visited.add(current);
       for (const ride of rides(current)) {
         const next = cost + ride.seconds + (current === from ? 0 : data.metadata.transferSeconds);
-        if (next < (costs.get(ride.to) ?? Infinity)) {
-          costs.set(ride.to, next);
+        const known = costs.get(ride.to);
+        if (next < (known?.cost ?? Infinity)) {
+          const update = {station: ride.to, cost: next, order: known?.order ?? costs.size};
+          costs.set(ride.to, update);
           previous.set(ride.to, ride);
+          enqueue(queue, update);
         }
       }
     }
     const legs = [];
     let current = to;
     while (current !== from) { const leg = previous.get(current); legs.unshift(leg); current = leg.from; }
-    const result = { seconds:costs.get(to), legs };
+    const result = { seconds:costs.get(to).cost, legs };
     bestCache.set(key,result);
     return result;
   }
