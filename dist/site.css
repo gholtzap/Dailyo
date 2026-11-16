@@ -201,3 +201,37 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 }
 .copy-icon::before { top: 12px; left: 13px; }
 .copy-icon::after { top: 16px; left: 17px; background: var(--paper, #1c1d1f); }
+
+a[data-game-mark] { gap: 8px; }
+a[data-game-mark]::before {
+  content: "";
+  display: block;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background-image: var(--game-mark, url("/assets/game-brand-atlas.webp"));
+  background-size: var(--game-mark-size, 400% 400%);
+  background-position: var(--game-mark-x, 0%) var(--game-mark-y, 8%);
+  background-repeat: no-repeat;
+}
+[data-game-mark="trainrot"] { --game-mark: url("/assets/nav-train-logo.png"); --game-mark-size: cover; }
+[data-game-mark="flagrot"] { --game-mark: url("/assets/nav-flagrot-logo.jpg"); --game-mark-size: cover; }
+[data-game-mark="langrot"] { --game-mark: url("/assets/nav-langrot-logo.jpg"); --game-mark-size: cover; }
+[data-game-mark="maprot"], [data-game-mark="cluerot"], [data-game-mark="daily"] { --game-mark-x: 33.333%; }
+[data-game-mark="yearrot"], [data-game-mark="scalerot"] { --game-mark-x: 66.667%; }
+[data-game-mark="borderrot"], [data-game-mark="swaprot"] { --game-mark-x: 100%; }
+[data-game-mark="ladderrot"], [data-game-mark="cluerot"],
+[data-game-mark="scalerot"], [data-game-mark="swaprot"] { --game-mark-y: 50%; }
+[data-game-mark="rush"], [data-game-mark="daily"] { --game-mark-y: 94%; }
+
+@media (max-width: 440px) {
+  .site-games a[aria-current="page"][data-game-mark],
+  .feed-link[data-game-mark="daily"] {
+    min-width: 40px;
+    justify-content: center;
+  }
+  .current-game-name, .daily-link-name {
+    display: none;
+  }
+}

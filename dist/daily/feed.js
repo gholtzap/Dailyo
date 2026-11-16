@@ -95,7 +95,7 @@ function showGame(position){
     focusOnReady=false;
     return;
   }
-  progress.textContent=`Game ${index+1} of ${games.length}`;
+  progress.textContent=`${index+1} of ${games.length}`;
   message(`Loading ${game.label}…`);
   if(preload?.position===position){
     frame=preload.frame;

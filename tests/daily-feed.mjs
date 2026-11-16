@@ -68,7 +68,9 @@ try{
     const directory=page.getByText('Games',{exact:true});
     await directory.press('Enter');
     const nav=page.getByRole('navigation',{name:'Games'});
-    assert.equal(await nav.getByRole('link').count(),11);
+    assert.equal(await nav.getByRole('link').count(),12);
+    assert.equal(await nav.locator('a[data-game-mark]').count(),12);
+    assert.equal(await nav.getByRole('link',{name:'Rush',exact:true}).getAttribute('href'),'/');
     const bounds=await nav.boundingBox();
     assert.ok(bounds.x>=0&&bounds.x+bounds.width<=width);
     await inspect('directory');
@@ -92,13 +94,21 @@ try{
     assert.ok((await map.getAttribute('viewBox')).split(' ').slice(-2).every(size=>Number(size)>0));
     await train.locator('.map-marker:visible').nth(1).waitFor();
     assert.equal(await train.locator('.map-marker:visible').count(),2);
-    assert.equal(await progress.innerText(),'Game 1 of 11');
+    assert.equal(await progress.innerText(),'1 of 11');
+    assert.equal(await page.locator('.feed-header').evaluate(header => {
+      const children = [...header.children];
+      const centers = children.map(child => {
+        const rect = child.getBoundingClientRect();
+        return rect.top + rect.height / 2;
+      });
+      return Math.max(...centers) - Math.min(...centers) < 2 && header.scrollWidth <= header.clientWidth;
+    }),true);
     assert.equal(await train.getByRole('button',{name:'Practice',exact:true}).count(),0);
     const touch=mobile&&engine===chromium?await context.newCDPSession(page):null;
     if(touch){
       const bounds=await map.boundingBox(),mapX=bounds.x+bounds.width/2,mapY=bounds.y+bounds.height/2;
       await swipe(touch,mapX,mapY+65,mapY);
-      assert.equal(await progress.innerText(),'Game 1 of 11');
+      assert.equal(await progress.innerText(),'1 of 11');
       assert.equal(await next.isVisible(),false);
     }
     const warmed=page.locator('iframe[data-feed-preload]');
@@ -106,7 +116,7 @@ try{
     await firstFlagLoad;
     assert.equal(await warmed.count(),1);
     assert.equal(await warmed.isVisible(),false);
-    assert.equal(await progress.innerText(),'Game 1 of 11');
+    assert.equal(await progress.innerText(),'1 of 11');
     await inspect('train-questions','trainrot');
     await verifyHelp('trainrot');
     const standalone=await context.newPage();
@@ -138,7 +148,7 @@ try{
     }
     const flags=frame('flagrot');
     await flags.locator('.choice').first().waitFor();
-    assert.equal(await progress.innerText(),'Game 2 of 11');
+    assert.equal(await progress.innerText(),'2 of 11');
     if(mobile)assert.equal(flagLoads,1);
     await page.unroute('**/games/data/flags.json');
     assert.equal(await page.evaluate(()=>localStorage.getItem('trainrot-game-mode-v2')),'practice');
@@ -172,7 +182,7 @@ try{
 
     const languages=frame('langrot');
     await languages.locator('.choice').first().waitFor();
-    assert.equal(await progress.innerText(),'Game 3 of 11');
+    assert.equal(await progress.innerText(),'3 of 11');
     await inspect('language-question','langrot');
     await verifyHelp('langrot');
     await backgroundFailure;
@@ -196,7 +206,7 @@ try{
     await page.reload();
     await words.locator('.example').waitFor();
     assert.equal(await words.locator('.vocabulary-word').innerText(),word);
-    assert.equal(await progress.innerText(),'Game 4 of 11');
+    assert.equal(await progress.innerText(),'4 of 11');
     await inspect('vocabulary-answer','Vocabulary');
     await verifyHelp('Vocabulary');
     await words.locator('#next').click();
@@ -371,7 +381,7 @@ https://trainrot.vercel.app/daily/`;
     await page.clock.setFixedTime(new Date('2026-11-17T16:00:00Z'));
     await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
     await frame('trainrot').locator('[data-route]').first().waitFor();
-    assert.equal(await progress.innerText(),'Game 1 of 11');
+    assert.equal(await progress.innerText(),'1 of 11');
     assert.equal(await undo.isVisible(),false);
     await train.locator('[data-route]').first().click();
     const drafted=await train.locator('.train-sequence').innerText();
@@ -382,7 +392,7 @@ https://trainrot.vercel.app/daily/`;
     await undo.press('Enter');
     await train.locator('.train-sequence').waitFor();
     assert.equal(await train.locator('.train-sequence').innerText(),drafted);
-    assert.equal(await progress.innerText(),'Game 1 of 11');
+    assert.equal(await progress.innerText(),'1 of 11');
     assert.equal(await undo.isVisible(),false);
     assert.deepEqual(errors,[]);
     await context.close();
