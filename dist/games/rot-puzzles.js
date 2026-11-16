@@ -23,9 +23,12 @@ export function distanceKm([lonA, latA], [lonB, latB]) {
   return Math.round(12_742 * Math.asin(Math.sqrt(Math.min(1, arc))));
 }
 
+const maxBorderCountries = 7;
+
 function shortestRoutes(graph, start) {
   const routes = new Map([[start, [start]]]);
   for (const [country, path] of routes) {
+    if (path.length === maxBorderCountries) continue;
     for (const neighbour of graph.get(country).neighbours) {
       if (!routes.has(neighbour)) routes.set(neighbour, [...path, neighbour]);
     }
@@ -62,7 +65,7 @@ export function preparePuzzles(kind, raw) {
   const items = [];
   for (const country of graph.keys()) {
     for (const [target, route] of shortestRoutes(graph, country)) {
-      if (country < target && route.length >= 4 && route.length <= 7) items.push(route);
+      if (country < target && route.length >= 4) items.push(route);
     }
   }
   if (items.length < roundCount) throw new Error('No land routes');
