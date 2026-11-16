@@ -106,7 +106,7 @@ export function createMap(svg, boroughs, network) {
   }
   function setChallenge(challenge){
     pointers.clear();gesture=null;currentChallenge=challenge;
-    markers.forEach(({node})=>node.remove());markers.length=0;userLayer.replaceChildren();bestLayer.replaceChildren();networkLayer.replaceChildren();shownNetwork=false;
+    markers.forEach(({node})=>node.remove());markers.length=0;userLayer.replaceChildren();bestLayer.replaceChildren();networkLayer.style.display='none';shownNetwork=false;
     marker(network.stations[challenge.from],'A',challenge.fromTitle,'var(--map-origin)');
     marker(network.stations[challenge.to],'B',challenge.toTitle,'#aeb3bb');fit(challenge);
     svg.setAttribute('aria-label',`${mapName} map. Start at ${challenge.fromTitle}; finish at ${challenge.toTitle}. Subway lines are hidden.`);
@@ -126,6 +126,8 @@ export function createMap(svg, boroughs, network) {
   function showNetwork(){
     if(shownNetwork)return;shownNetwork=true;
     if(currentChallenge)svg.setAttribute('aria-label',`${mapName} map. Start at ${currentChallenge.fromTitle}; finish at ${currentChallenge.toTitle}. Subway lines are shown.`);
+    networkLayer.style.display='';
+    if(networkLayer.childElementCount)return;
     const seen=new Set();
     for(const p of network.patterns){
       const key=p.route+':'+p.stations.join(',');if(seen.has(key))continue;seen.add(key);
