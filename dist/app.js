@@ -1,3 +1,4 @@
+import './games/help.js';
 import {createRouter,transition,formatTime,MAX_GUESSES} from './router.js';
 import {createMap} from './map.js';
 import {createRewards} from './rewards.js';
@@ -8,9 +9,6 @@ import {showRank} from './daily/rank.js';
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const planner=$('.planner');
-const help=$('#help-dialog');
-$('#help').onclick=()=>help.showModal();
-$('#close-help').onclick=$('#start-playing').onclick=()=>help.close();
 
 async function start(){
   const [network,boroughs,challenges]=await Promise.all(['network','boroughs','challenges'].map(async name=>{

@@ -1,3 +1,4 @@
+import './help.js';
 import { dailyDate, inFeed, reportDaily, waitForFeedActivation } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import {

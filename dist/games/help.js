@@ -1,0 +1,67 @@
+const instructions = {
+  train: [
+    'Find the fastest subway route from A to B.',
+    'Tap the trains you would take in order. You don’t need to choose transfer stations.',
+    'Select Check route to compare your time with the fastest route. You have six checks.',
+  ],
+  flags: [
+    'Choose the place represented by the flag.',
+    'Get one point for each correct answer across five daily questions.',
+  ],
+  languages: [
+    'Read the excerpt and choose the language it’s written in.',
+    'Get one point for each correct answer across five daily questions.',
+  ],
+  vocabulary: [
+    'Read the word and choose its meaning.',
+    'Get one point for each correct answer across five daily questions. An example sentence appears after each answer.',
+  ],
+  maprot: [
+    'Pin the named city on the map. Tap the map or move the pin with the arrow keys, then select Check pin.',
+    'Your score is the total distance you were off across five cities. Lower is better.',
+  ],
+  yearrot: [
+    'Place the event before, between, or after the dated events on the timeline.',
+    'Get one point for each correct placement across five daily events.',
+  ],
+  borderrot: [
+    'Search for and add countries that share a land border with the previous country.',
+    'Find a shortest route to earn a point. There are five routes in the daily game.',
+  ],
+  ladderrot: [
+    'Change one letter at a time to get from the starting word to the target word. Each step must make a valid four-letter word.',
+    'Aim for the fewest moves.',
+  ],
+  cluerot: [
+    'Guess the answer from the clues. Reveal another clue if you’re stuck.',
+    'Aim to solve it with the fewest clues.',
+  ],
+  scalerot: [
+    'Enter your best estimate in the unit shown, then select Check estimate.',
+    'Your score is the percentage your estimate was off. Lower is better.',
+  ],
+  swaprot: [
+    'Select a tile, then select a tile beside it to swap the two.',
+    'Put the numbers 1 to 7 in order in the fewest swaps.',
+  ],
+};
+
+const game = document.body.dataset.game ?? 'train';
+const anchor = document.querySelector('.map-panel, .heading');
+anchor.insertAdjacentHTML('beforeend', `
+  <span class="game-help">
+    <button id="help" class="game-icon" type="button" aria-label="How to play" aria-haspopup="dialog" data-ui-tooltip="help-tooltip"></button>
+    <span id="help-tooltip" class="game-tooltip" role="tooltip">How to play</span>
+  </span>
+`);
+document.body.insertAdjacentHTML('beforeend', `
+  <dialog id="help-dialog" class="game-help-dialog" aria-labelledby="help-title">
+    <div class="game-help-header">
+      <h2 id="help-title">How to play</h2>
+      <form method="dialog"><button type="submit">Close</button></form>
+    </div>
+    ${instructions[game].map(step => `<p>${step}</p>`).join('')}
+    <p class="standalone-only">The daily game resets at midnight in New York. Use Practice to play more.</p>
+  </dialog>
+`);
+document.querySelector('#help').onclick = () => document.querySelector('#help-dialog').showModal();

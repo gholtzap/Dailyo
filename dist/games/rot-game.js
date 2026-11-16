@@ -1,3 +1,4 @@
+import './help.js';
 import {
   makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition,
 } from './rot-puzzles.js';

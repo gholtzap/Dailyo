@@ -1,3 +1,4 @@
+import './help.js';
 import {dailyDate as dateToday,inFeed,reportDaily,waitForFeedActivation} from '../daily/bridge.js';
 import {hash,shuffle,quizDeck,quizOptions,quizPuzzle} from '../daily/puzzles.js';
 import {showRank} from '../daily/rank.js';

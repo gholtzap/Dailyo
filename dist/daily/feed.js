@@ -15,10 +15,10 @@ const games=[
 ];
 const $=selector=>document.querySelector(selector);
 const gamePanel=$('#feed-game'),recap=$('#feed-recap'),progress=$('#feed-progress');
-const actions=$('.feed-actions'),skip=$('#feed-skip'),retry=$('#feed-retry');
+const actions=$('.feed-actions'),skip=$('#feed-skip'),retry=$('#feed-retry'),undo=$('#feed-undo');
 const continueArea=$('#feed-continue'),next=$('#feed-next'),replay=$('#feed-replay');
 let day=dailyDate(),skipped=readSkips(),results=new Map();
-let index=-1,phase='loading',frame,preload,timeout,focusOnReady=false;
+let index=-1,phase='loading',frame,preload,timeout,focusOnReady=false,lastSkip;
 
 function skipKey(){return `dailyo:daily-feed:skipped:${day}`;}
 function readSkips(){
@@ -29,8 +29,9 @@ function readSkips(){
 }
 function saveSkips(){try{localStorage.setItem(skipKey(),JSON.stringify([...skipped]));}catch{}}
 function renderActions(){
-  actions.hidden=!['playing','complete','error'].includes(phase);
-  skip.hidden=phase==='complete';
+  undo.parentElement.hidden=lastSkip===undefined;
+  actions.hidden=lastSkip===undefined&&!['playing','complete','error'].includes(phase);
+  skip.hidden=!['playing','error'].includes(phase);
   retry.hidden=phase!=='error';
   continueArea.hidden=phase!=='complete';
   next.textContent=index===games.length-1?'See recap':'Next game';
@@ -120,6 +121,7 @@ function changeDay(){
   const today=dailyDate();
   if(today===day)return false;
   day=today;
+  lastSkip=undefined;
   skipped=readSkips();
   results=new Map();
   clearPreload();
@@ -155,10 +157,21 @@ window.addEventListener('message',event=>{
 });
 skip.onclick=()=>{
   if(changeDay()||!['playing','error'].includes(phase))return;
+  lastSkip=index;
   skipped.add(games[index].id);
   saveSkips();
-  focusOnReady=true;
+  focusOnReady=false;
   showGame(index+1);
+  undo.focus();
+};
+undo.onclick=()=>{
+  if(changeDay()||lastSkip===undefined)return;
+  const position=lastSkip;
+  lastSkip=undefined;
+  skipped.delete(games[position].id);
+  saveSkips();
+  focusOnReady=true;
+  showGame(position);
 };
 retry.onclick=()=>{
   if(changeDay()||phase!=='error')return;
@@ -172,6 +185,7 @@ next.onclick=()=>{
 };
 replay.onclick=()=>{
   if(changeDay()||phase!=='recap')return;
+  lastSkip=undefined;
   skipped.clear();
   saveSkips();
   focusOnReady=true;
