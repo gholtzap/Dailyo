@@ -172,7 +172,7 @@ function drawMap(question, state, reviewing) {
 
 function drawTimeline(question, state, reviewing) {
   const { event, timeline } = question;
-  const heading = element('h2', event[1]);
+  const heading = element('h2', reviewing ? event[1] : 'When did this happen?');
   const list = element('ol', undefined, 'rot-timeline');
   list.setAttribute('aria-label', 'Timeline');
   const addEvent = ([year, description], highlight = false) => {
@@ -189,16 +189,17 @@ function drawTimeline(question, state, reviewing) {
     for (const item of [...timeline, event].sort((a, b) => a[0] - b[0])) addEvent(item, item === event);
     return [heading, feedback, list];
   }
+  for (const item of timeline) addEvent(item);
+  const choices = element('div', undefined, 'rot-year-choices');
+  choices.setAttribute('role', 'group');
+  choices.setAttribute('aria-label', 'Choose when it happened');
   for (let slot = 0; slot <= timeline.length; slot++) {
     const earlier = timeline[slot - 1], later = timeline[slot];
     const label = !earlier ? `Before ${later[0]}` : !later ? `After ${earlier[0]}` :
       `Between ${earlier[0]} and ${later[0]}`;
-    const row = element('li');
-    row.append(button(label, () => update({ type: 'place', slot }), 'secondary rot-slot'));
-    list.append(row);
-    if (later) addEvent(later);
+    choices.append(button(label, () => update({ type: 'place', slot }), 'secondary rot-slot'));
   }
-  return [heading, list];
+  return [heading, element('p', event[1], 'rot-year-event'), list, choices];
 }
 
 function drawBorderMap(start, target, guesses) {

@@ -36,8 +36,14 @@
   <main class="feed-body">
     <div id="feed-game"></div>
     <section class="main result" id="feed-recap" hidden>
-      <h2 tabindex="-1">Rush recap</h2>
+      <div class="feed-recap-heading">
+        <h2 tabindex="-1">Rush recap</h2>
+        <button class="secondary" type="button" id="rush-copy">Copy results</button>
+      </div>
+      <p id="rush-copy-status" role="status"></p>
+      <textarea id="rush-copy-text" aria-label="Rush results to copy" rows="6" readonly hidden></textarea>
       <p id="rush-score"></p>
+      <p id="rush-personal-best"></p>
       <ul id="feed-results"></ul>
       <button class="primary" type="button" id="rush-replay">Play again</button>
     </section>

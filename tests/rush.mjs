@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
 import {checkPage} from 'lintapple';
-import {seededDeck,shuffle} from '../dist/daily/puzzles.js';
+import {rushDate,seededDeck,shuffle} from '../dist/daily/puzzles.js';
 import {makeSet,preparePuzzles,roundCount} from '../dist/games/rot-puzzles.js';
 import {extraPuzzle,prepareExtra} from '../dist/games/extra-puzzles.js';
 import {createRouter} from '../dist/router.js';
@@ -10,12 +10,14 @@ import {createRouter} from '../dist/router.js';
 const base=process.env.TRAINROT_TEST_URL??'http://127.0.0.1:4173';
 const policy=JSON.parse(await fs.readFile(new URL('../ui-policy.json',import.meta.url)));
 const day='2026-11-16',start=new Date(`${day}T16:00:00Z`);
+assert.equal(rushDate('2024-02-29',day),'2024-02-29');
+for (const invalid of [null,'2026-02-29','2026-11-17','2026-11-1']) assert.equal(rushDate(invalid,day),day);
 const lint=process.argv.includes('--ui'),reports=[];
 const browser=await chromium.launch();
 try{
   for(const viewport of policy.viewports){
     const {width}=viewport;
-    const page=await browser.newPage({viewport,colorScheme:'dark',hasTouch:width===390,isMobile:width===390});
+    const page=await browser.newPage({viewport,colorScheme:'dark',hasTouch:width===390,isMobile:width===390,permissions:['clipboard-read','clipboard-write']});
     const errors=[],writes=[];
     page.on('pageerror',error=>errors.push(error.message));
     page.on('request',request=>{if(request.method()==='POST')writes.push(request.url());});
@@ -29,7 +31,7 @@ try{
     });
     let releaseTrain;
     const trainNetwork=new Promise(resolve=>{releaseTrain=resolve;});
-    await page.route('**/trainrot/?rush=0',async route=>{
+    await page.route(`**/trainrot/?rush=0&date=${day}`,async route=>{
       await trainNetwork;
       await route.continue();
     },{times:1});
@@ -67,7 +69,7 @@ try{
     assert.equal(await track.isVisible(),false);
     assert.equal(await flag.locator('#question-title').evaluate(node=>node===document.activeElement),true);
     await inspect('flagrot',true);
-    const preloadedFlag=page.locator('iframe[src="/flags/?rush=1"]');
+    const preloadedFlag=page.locator(`iframe[src="/flags/?rush=1&date=${day}"]`);
     assert.equal(await preloadedFlag.evaluate(node=>node.inert),true);
     await preloadedFlag.evaluate(node=>{node.dataset.preloadCheck='';});
     await flag.getByRole('button',{name:flagDeck[0].name,exact:true}).press('Enter');
@@ -227,13 +229,21 @@ try{
     await next.click();
     await page.getByRole('heading',{name:'Rush recap'}).waitFor();
     assert.equal(await page.locator('#rush-score').textContent(),'20 correct · Best run: 6 in yearrot');
-    assert.deepEqual(await page.evaluate(()=>Object.keys(localStorage)),[]);
+    assert.equal(await page.locator('#rush-personal-best').textContent(),'New best · 20 correct');
+    assert.deepEqual(await page.evaluate(()=>Object.entries(localStorage)),[['dailyo:rush:best:all','20']]);
     assert.deepEqual(writes,[]);
+    await page.getByRole('button',{name:'Copy results'}).press('Enter');
+    await page.locator('#rush-copy-status').filter({hasText:'Copied'}).waitFor();
+    const share=await page.evaluate(()=>navigator.clipboard.readText());
+    const recapRows=await page.locator('#feed-results li span').allTextContents();
+    assert.equal(share,[`dailyo Rush · ${day}`,'20 correct · 6 in yearrot','',...recapRows,'',`https://trainrot.vercel.app/rush/?date=${day}`].join('\n'));
     await inspect('recap');
     await page.getByRole('button',{name:'Play again'}).click();
     await timer.filter({hasText:'Untimed'}).waitFor();
     for(let i=0;i<11;i++)await page.getByRole('button',{name:'Next game'}).click();
     assert.equal(await page.locator('#rush-score').textContent(),'0 correct');
+    assert.equal(await page.locator('#rush-copy-status').textContent(),'');
+    assert.equal(await page.locator('#rush-personal-best').textContent(),'Personal best · 20 correct');
     await page.getByRole('link',{name:'Play more langrot'}).click();
     await page.getByRole('button',{name:'Practice',exact:true,pressed:true}).waitFor();
     await page.goto(base);
@@ -246,9 +256,15 @@ try{
         await route.fulfill({response:await page.request.get(base)});
       });
     }
-    await page.goto(new URL('/rush/',base).href);
-    await game('flagrot').locator('.choice').first().waitFor();
-    await page.goto(new URL('/rush/scalerot/',base).href);
+    const sharedChallenge=new URL(share.split('\n').at(-1));
+    await page.clock.setFixedTime(new Date('2026-11-17T16:00:00Z'));
+    await page.goto(new URL(sharedChallenge.pathname+sharedChallenge.search,base).href);
+    await game('flagrot').getByRole('button',{name:flagDeck[0].name,exact:true}).click();
+    await status.filter({hasText:'Correct'}).waitFor();
+    await page.clock.fastForward(200);
+    await game('flagrot').getByRole('button',{name:flagDeck[1].name,exact:true}).click();
+    await status.filter({hasText:'Correct'}).waitFor();
+    await page.goto(new URL(`/rush/scalerot/?date=${day}`,base).href);
     await page.getByRole('timer').filter({hasText:'Untimed'}).waitFor();
     const scale=game('scalerot');
     const data=prepareExtra('scalerot',await loadJson('/games/data/scalerot.json'));
@@ -262,6 +278,15 @@ try{
     await scale.locator('.rot-feedback').filter({hasText:'Answer:'}).waitFor();
     await page.clock.fastForward(1400);
     assert.equal(await page.locator('#feed-results li').count(),1);
+    assert.equal(await page.locator('#rush-personal-best').textContent(),'New best · 1 correct');
+    assert.equal(await page.evaluate(()=>localStorage.getItem('dailyo:rush:best:all')),'20');
+    assert.equal(await page.evaluate(()=>localStorage.getItem('dailyo:rush:best:scalerot')),'1');
+    await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{value:undefined}));
+    await page.getByRole('button',{name:'Copy results'}).click();
+    const manual=page.getByRole('textbox',{name:'Rush results to copy'});
+    assert.equal(await manual.inputValue(),`dailyo Rush · scalerot · ${day}\n1 correct\n\nhttps://trainrot.vercel.app/rush/scalerot/?date=${day}`);
+    assert.ok(await manual.evaluate(node=>node===document.activeElement&&node.selectionEnd===node.value.length&&node.selectionStart===0));
+    await inspect('copy fallback');
     assert.deepEqual(errors,[]);
     await page.close();
     console.log(`${width}px Rush: all eleven games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`);

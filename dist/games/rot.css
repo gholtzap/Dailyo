@@ -45,6 +45,8 @@
 }
 .rot-event time { color: var(--muted); font-variant-numeric: tabular-nums; }
 .rot-event.highlight { border: 1px solid #83c896; background: #264332; }
+.rot-year-event { margin: 0 0 16px; font-size: 18px; line-height: 1.4; }
+.rot-year-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 16px; }
 .rot-slot { width: 100%; min-height: 40px; padding: 8px 16px; font-size: 13px; }
 .rot-chain {
   display: flex;
