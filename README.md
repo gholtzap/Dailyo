@@ -2,6 +2,8 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
+[Daily Feed](https://trainrot.vercel.app/daily/) plays all four daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
+
 **trainrot** is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 
 The site also has [flagrot](https://trainrot.vercel.app/flags/), [langrot](https://trainrot.vercel.app/languages/), and [Vocabulary](https://trainrot.vercel.app/vocabulary/). Each has a shared five-question daily set and unlimited practice. Daily sets reset at midnight in New York; progress is stored in the browser. flagrot includes all 249 ISO country and territory codes, plus England, Scotland, Wales, and Kosovo. langrot uses 512 written excerpts across 64 languages. Vocabulary asks you to match English words to definitions and shows an example sentence after each answer.
@@ -39,7 +41,7 @@ npm run build
 npx playwright install chromium
 ```
 
-With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Reports go in `test-results/`.
+With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Use `npm run lint:ui:feed` for the Daily Feed. Reports go in `test-results/`.
 
 `npm run data:demo` creates the fictional stations, line geometry, and puzzles in `dist/data/`. Local builds, local dev, and GitHub CI generate this dataset. The build independently checks all shortest routes before adding the license and notices to the static site output.
 
