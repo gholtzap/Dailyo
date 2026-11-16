@@ -103,12 +103,16 @@ async function start(){
   }
   function selectMode(next){
     if(next===mode)return;
-    save();if(mode==='practice')practice={seed,deck,position,state,difficulty,recent};
+    if(mode==='practice')practice={seed,deck,position,state,difficulty,recent};
     mode=next;try{localStorage.setItem('trainrot-game-mode-v2',mode);}catch{}
-    if(mode==='daily')openDaily();else ({seed,deck,position,state,difficulty,recent}=practice);
+    if(mode==='daily')openDaily();
+    else{
+      ({seed,deck,position,state,difficulty,recent}=practice);
+      try{if(!localStorage.getItem(storageKey))save();}catch{}
+    }
     difficultyControl.value=difficulty;difficultyControl.closest('label').hidden=mode==='daily';
     $('#daily-mode').setAttribute('aria-pressed',String(mode==='daily'));$('#practice-mode').setAttribute('aria-pressed',String(mode==='practice'));
-    save();draw();
+    draw();
   }
   $('#daily-mode').onclick=()=>selectMode('daily');$('#practice-mode').onclick=()=>selectMode('practice');
   difficultyControl.onchange=()=>{
@@ -117,7 +121,7 @@ async function start(){
     if(first>0)[deck[0],deck[first]]=[deck[first],deck[0]];
     state={phase:'planning',challenge:deck[0],legs:[]};recent=[...recent,pair(state.challenge)].slice(-4);save();draw();
   };
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&mode==='daily'&&dailyDate!==dateToday()){openDaily();save();draw();}});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&mode==='daily'&&dailyDate!==dateToday()){openDaily();draw();}});
   function ticket(c,body=''){return `<div class="journey-ticket"><div class="journey-endpoints"><div class="endpoint"><span class="endpoint-badge">A</span><div><strong>${escape(c.fromTitle)}</strong></div></div><div class="endpoint"><span class="endpoint-badge">B</span><div><strong>${escape(c.toTitle)}</strong></div></div></div>${body}</div>`;}
   const usedRoutes=routeOrder.filter(id=>network.patterns.some(p=>p.route===id));
   function trainButton(id){
@@ -269,7 +273,7 @@ async function start(){
   if(inFeed){mode='daily';openDaily();draw();}
   else if(initialMode==='practice'){difficultyControl.closest('label').hidden=false;$('#daily-mode').setAttribute('aria-pressed','false');$('#practice-mode').setAttribute('aria-pressed','true');save();draw();}
   else selectMode('daily');
-  setInterval(()=>{if(mode==='daily'&&dailyDate!==dateToday()){openDaily();save();draw();}},30000);
+  setInterval(()=>{if(mode==='daily'&&dailyDate!==dateToday()){openDaily();draw();}},30000);
 }
 start().catch(error=>{
   reportDaily('error');
