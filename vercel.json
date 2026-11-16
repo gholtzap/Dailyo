@@ -5,6 +5,8 @@
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "rewrites": [
+    {"source": "/rush/", "destination": "/index.html"},
+    {"source": "/rush/:game/", "destination": "/index.html"},
     {"source": "/rush/:game*", "destination": "/index.html"}
   ],
   "headers": [
