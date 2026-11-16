@@ -1,6 +1,11 @@
-export const dailyDate=()=>new Intl.DateTimeFormat('en-CA',{
-  timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',
-}).format(new Date());
+let dailyFormatter;
+export function dailyDate() {
+  dailyFormatter ??= new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
+  });
+  return dailyFormatter.format(new Date());
+}
+
 
 export function hash(value) {
   let h = 2166136261;
