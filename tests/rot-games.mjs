@@ -80,6 +80,18 @@ async function answerBorder(page, route, index, graph) {
     route.map(id => graph.get(id).name));
 }
 
+async function checkMainTerritories() {
+  const page = await browser.newPage();
+  await page.clock.setFixedTime(new Date('2027-01-16T16:00:00Z'));
+  await page.goto(`${base}/borderrot/`);
+  assert.match(await page.locator('#round-title').innerText(), /^Morocco to /);
+  await page.getByRole('searchbox', {name: 'Add a country'}).fill('Spain');
+  await page.getByRole('button', {name: 'Spain', exact: true}).click();
+  assert.match(await page.locator('.rot-feedback').innerText(), /don’t share a land border/);
+  assert.deepEqual(await page.getByRole('list', {name: 'Your route'}).locator('li').allTextContents(), ['Morocco']);
+  await page.close();
+}
+
 const answer = { maprot: answerMap, yearrot: answerYear, borderrot: answerBorder };
 
 try {
@@ -93,12 +105,14 @@ try {
   }
   assert.equal(await astana.locator('#round-title').innerText(),'Find Astana');
   await astana.close();
+  await checkMainTerritories();
   for (const [kind, play] of Object.entries(answer)) {
     const data = preparePuzzles(kind, await read(`../dist/games/data/${kind}.json`));
     const questions = makeSet(kind, data, day);
     if (kind === 'borderrot') {
       assert.deepEqual(data.items.find(route => route[0] === 'IT' && route.at(-1) === 'PT'), ['IT', 'FR', 'ES', 'PT']);
       assert.ok(!data.graph.get('US').neighbours.includes('CU'));
+      assert.ok(!data.graph.get('MA').neighbours.includes('ES'));
       assert.ok(!data.graph.get('RS').neighbours.includes('AL'));
     }
     for (const viewport of policy.viewports) {
