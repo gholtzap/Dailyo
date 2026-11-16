@@ -74,9 +74,12 @@ export function createMap(svg, boroughs, network) {
       }
     }
     // Geography yields to station names and to other place labels.
-    for(const {node,point} of labels){
+    for (const {node,point} of labels) {
       const [x,y]=pixel(point);node.style.left=x+'px';node.style.top=y+'px';node.hidden=false;
-      const box=node.getBoundingClientRect();
+    }
+    const boxes=labels.map(({node})=>node.getBoundingClientRect());
+    for (const [index,{node}] of labels.entries()) {
+      const box=boxes[index];
       node.hidden=!fits(box)||occupied.some(o=>overlaps(box,o));
       if(!node.hidden)occupied.push(box);
     }
