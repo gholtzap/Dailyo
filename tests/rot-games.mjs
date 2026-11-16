@@ -69,6 +69,7 @@ async function answerBorder(page, route, index, graph) {
     assert.equal(await page.getByRole('list', { name: 'Your route' }).locator('li').count(), 1);
     await add(route[1]);
     await page.reload();
+    await search.waitFor();
     assert.equal(await page.getByRole('list', { name: 'Your route' }).locator('li').count(), 2);
     await page.getByRole('button', { name: 'Undo last country' }).click();
     assert.equal(await page.getByRole('list', { name: 'Your route' }).locator('li').count(), 1);
