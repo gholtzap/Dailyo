@@ -1,4 +1,4 @@
-import { dailyDate, inFeed, reportDaily } from '../daily/bridge.js';
+import { dailyDate, inFeed, reportDaily, waitForFeedActivation } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import {
   extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra,
@@ -236,6 +236,7 @@ async function load(name) {
 async function start() {
   data = game === 'swaprot' ? prepareExtra(game) :
     prepareExtra(game, ...await Promise.all(ladder ? [load(game), load('ladder-words')] : [load(game)]));
+  await waitForFeedActivation();
   const saved = read('practice');
   const token = typeof saved?.token === 'string' && saved.token.startsWith('practice:') && saved.token.length < 100 ?
     saved.token : seed();

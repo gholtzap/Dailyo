@@ -62,6 +62,11 @@ try{
     const home=page.getByRole('link',{name:'Daily Feed',exact:true});
     assert.equal(await home.getAttribute('href'),'/');
     assert.equal(await home.evaluate(node=>getComputedStyle(node,'::before').backgroundColor),'rgb(255, 212, 92)');
+    const flagData = await page.request.get(new URL('/games/data/flags.json',base).href);
+    assert.ok(flagData.ok());
+    let flagLoads=0;
+    const firstFlagLoad=page.waitForResponse(response=>new URL(response.url()).pathname==='/games/data/flags.json');
+    await page.route('**/games/data/flags.json',route=>{flagLoads++;return route.fulfill({response:flagData});});
     await enterFeed();
     await page.waitForURL(url=>url.pathname==='/');
     const train=frame('trainrot');
@@ -79,7 +84,21 @@ try{
       assert.equal(await progress.innerText(),'Game 1 of 11');
       assert.equal(await next.isVisible(),false);
     }
+    const warmed=page.locator('iframe[data-feed-preload]');
+    await warmed.waitFor({state:'attached',timeout:3000});
+    await firstFlagLoad;
+    assert.equal(await warmed.count(),1);
+    assert.equal(await warmed.isVisible(),false);
+    assert.equal(await progress.innerText(),'Game 1 of 11');
     await inspect('train-questions','trainrot');
+    const standalone=await context.newPage();
+    await standalone.clock.setFixedTime(date);
+    await standalone.goto(`${base}/flags/`);
+    await standalone.locator('.choice').first().waitFor();
+    const flagSrc=await standalone.locator('.flag').getAttribute('src');
+    await standalone.locator('.choice').first().click();
+    await standalone.getByRole('button',{name:'Practice',exact:true}).click();
+    await standalone.close();
     await train.getByRole('button',{name:'Show answer',exact:true}).click();
     await next.waitFor();
     await inspect('train-result','trainrot');
@@ -89,6 +108,9 @@ try{
     }else if(mobile){
       await next.tap();
     }else{
+      await next.click();
+      await frame('flagrot').locator('.choice').first().waitFor();
+      assert.equal(flagLoads,1);
       await page.goto(new URL('/trainrot/',base).href);
       await page.locator('#skip').waitFor();
       await page.getByRole('button',{name:'Daily',exact:true}).click();
@@ -99,17 +121,13 @@ try{
     const flags=frame('flagrot');
     await flags.locator('.choice').first().waitFor();
     assert.equal(await progress.innerText(),'Game 2 of 11');
+    if(mobile)assert.equal(flagLoads,1);
+    await page.unroute('**/games/data/flags.json');
     assert.equal(await page.evaluate(()=>localStorage.getItem('trainrot-game-mode-v2')),'practice');
-    const standalone=await context.newPage();
-    await standalone.clock.setFixedTime(date);
-    await standalone.goto(`${base}/flags/`);
-    await standalone.locator('.choice').first().waitFor();
-    assert.equal(await flags.locator('.flag').getAttribute('src'),await standalone.locator('.flag').getAttribute('src'));
-    await standalone.locator('.choice').first().click();
-    await standalone.getByRole('button',{name:'Practice',exact:true}).click();
-    await standalone.close();
-    await page.reload();
+    assert.equal(await flags.locator('.flag').getAttribute('src'),flagSrc);
     const nextQuestion=flags.getByRole('button',{name:'Next question',exact:true});
+    await nextQuestion.waitFor();
+    await page.reload();
     await nextQuestion.waitFor();
     assert.equal(await flags.getByRole('button',{name:'Practice',exact:true}).count(),0);
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('trainrot:flags:v1:mode'))),'practice');
@@ -121,6 +139,15 @@ try{
     }
     await next.waitFor();
     await inspect('flag-result','flagrot');
+    const data='**/games/data/vocabulary.json';
+    let release;
+    const waiting=new Promise(resolve=>{release=resolve;});
+    let vocabularyLoads=0;
+    await page.route(data,async route=>{
+      if(++vocabularyLoads>1)await waiting;
+      await route.fulfill({status:503});
+    });
+    const backgroundFailure=page.waitForResponse(response=>new URL(response.url()).pathname==='/games/data/vocabulary.json'&&response.status()===503);
     await next.focus();
     await page.keyboard.press('Enter');
 
@@ -128,16 +155,16 @@ try{
     await languages.locator('.choice').first().waitFor();
     assert.equal(await progress.innerText(),'Game 3 of 11');
     await inspect('language-question','langrot');
-    const data='**/games/data/vocabulary.json';
-    let release;
-    const waiting=new Promise(resolve=>{release=resolve;});
-    await page.route(data,async route=>{await waiting;await route.fulfill({status:503});});
+    await backgroundFailure;
+    await warmed.waitFor({state:'detached'});
+    assert.equal(await page.getByRole('button',{name:'Retry game',exact:true}).isVisible(),false);
     await skip.click();
     await page.getByText('Loading Vocabulary…',{exact:true}).waitFor();
     await inspect('loading');
     release();
     const retry=page.getByRole('button',{name:'Retry game',exact:true});
     await retry.waitFor();
+    assert.equal(vocabularyLoads,2);
     await inspect('error');
     await page.unroute(data);
     await retry.click();

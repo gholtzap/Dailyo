@@ -18,7 +18,7 @@ const gamePanel=$('#feed-game'),recap=$('#feed-recap'),progress=$('#feed-progres
 const actions=$('.feed-actions'),skip=$('#feed-skip'),retry=$('#feed-retry');
 const continueArea=$('#feed-continue'),next=$('#feed-next'),replay=$('#feed-replay');
 let day=dailyDate(),skipped=readSkips(),results=new Map();
-let index=-1,phase='loading',frame,timeout,focusOnReady=false;
+let index=-1,phase='loading',frame,preload,timeout,focusOnReady=false;
 
 function skipKey(){return `dailyo:daily-feed:skipped:${day}`;}
 function readSkips(){
@@ -39,10 +39,30 @@ function message(text,role='status'){
   const p=document.createElement('p');
   p.setAttribute('role',role);
   p.textContent=text;
-  gamePanel.replaceChildren(p);
+  gamePanel.querySelector('p')?.remove();
+  gamePanel.prepend(p);
+}
+function createFrame(game){
+  const child=document.createElement('iframe');
+  child.src=`${game.path}?feed=1`;
+  child.classList.add('feed-loading');
+  return child;
+}
+function clearPreload(){
+  preload?.frame.remove();
+  preload=null;
+}
+function preloadNext(){
+  const game=games[index+1];
+  if(!game||preload||document.hidden||navigator.connection?.saveData)return;
+  const child=createFrame(game);
+  child.dataset.feedPreload='';
+  preload={position:index+1,frame:child};
+  gamePanel.append(child);
 }
 function showGame(position){
   clearTimeout(timeout);
+  frame?.remove();
   index=position;
   phase='loading';
   renderActions();
@@ -52,6 +72,7 @@ function showGame(position){
   if(!game){
     phase='recap';
     frame=null;
+    clearPreload();
     gamePanel.replaceChildren();
     progress.textContent='';
     const rows=games.map(({id,label})=>{
@@ -70,17 +91,25 @@ function showGame(position){
   }
   progress.textContent=`Game ${index+1} of ${games.length}`;
   message(`Loading ${game.label}…`);
-  frame=document.createElement('iframe');
-  frame.title=game.label;
-  frame.src=`${game.path}?feed=1`;
-  frame.classList.add('feed-loading');
-  gamePanel.append(frame);
+  if(preload?.position===position){
+    frame=preload.frame;
+    preload=null;
+    frame.title=game.label;
+    delete frame.dataset.feedPreload;
+    frame.contentWindow.postMessage('daily-game-activate',location.origin);
+  }else{
+    clearPreload();
+    frame=createFrame(game);
+    frame.title=game.label;
+    gamePanel.append(frame);
+  }
   timeout=setTimeout(showError,12000);
 }
 function showError(){
   clearTimeout(timeout);
   if(phase==='loading'&&skipped.has(games[index].id)){showGame(index+1);return;}
   phase='error';
+  frame?.remove();
   frame=null;
   message(`${games[index].label} didn’t load.`,'alert');
   renderActions();
@@ -93,13 +122,20 @@ function changeDay(){
   day=today;
   skipped=readSkips();
   results=new Map();
+  clearPreload();
   showGame(0);
   return true;
 }
 window.addEventListener('message',event=>{
-  if(!frame||event.origin!==location.origin||event.source!==frame.contentWindow)return;
+  if(event.origin!==location.origin)return;
   const {type,date,phase:reported,result}=event.data??{};
-  if(type!=='daily-game'||changeDay()||date!==day)return;
+  if(type!=='daily-game')return;
+  if(preload&&event.source===preload.frame.contentWindow){
+    // A failed or outdated child can report before it is activated. Try again on advance.
+    clearPreload();
+    return;
+  }
+  if(!frame||event.source!==frame.contentWindow||changeDay()||date!==day)return;
   if(reported==='error'){showError();return;}
   if(!['playing','complete'].includes(reported))return;
   const game=games[index];
@@ -112,6 +148,7 @@ window.addEventListener('message',event=>{
     gamePanel.querySelector('p').remove();
     if(focusOnReady)progress.focus();
     focusOnReady=false;
+    preloadNext();
   }
   phase=reported;
   renderActions();
