@@ -29,11 +29,13 @@ function statusText(selected,item){
   return `Correct answer: ${item.name}${vocabulary?'.':''}`;
 }
 function choose(id,item){
+  if(mode==='daily'&&resetDay()){document.querySelector('#question-title')?.focus();return;}
   const s=modeState[mode];if(mode==='daily'){if(s.index>=5||s.answers.length>s.index)return;s.answers.push(id);}
   else{if(s.selected!==null)return;s.selected=id;s.total++;if(id===item.id)s.correct++;}
   save();draw();document.querySelector('#next')?.focus();
 }
 function advance(){
+  if(mode==='daily'&&resetDay()){document.querySelector('#question-title')?.focus();return;}
   const s=modeState[mode];
   if(mode==='daily'){if(s.index>=5||s.answers.length!==s.index+1)return;s.index++;}
   else{if(s.selected===null)return;const previous=question().item.id;s.index++;s.selected=null;if(s.index>=items.length){s.index=0;do{s.seed=randomSeed();}while(shuffle(items,s.seed)[0].id===previous&&items.length>1);}}
