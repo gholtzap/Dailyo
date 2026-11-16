@@ -14,6 +14,7 @@ const rotGames = ['maprot', 'yearrot', 'borderrot'];
 const games = ['train', 'flags', 'languages', 'vocabulary', ...rotGames, ...extraGames];
 const data = new Map();
 const rotData = new Map();
+const dailyPuzzles = new Map();
 let pool;
 let train;
 let lastAdmissionCleanup;
@@ -23,6 +24,14 @@ function readData(path) {
   return data.get(path);
 }
 
+function puzzleFor(game, day, prepare) {
+  const cached = dailyPuzzles.get(game);
+  if (cached?.day === day) return cached.puzzle;
+  const puzzle = prepare();
+  dailyPuzzles.set(game, {day, puzzle});
+  return puzzle;
+}
+
 function grade(puzzle, game, day, answers) {
   if (game === 'train') {
     if (!train) {
@@ -30,8 +39,11 @@ function grade(puzzle, game, day, answers) {
       train = {network, challenges: readData('data/challenges.json'), router: createRouter(network)};
     }
     const {network, challenges, router} = train;
-    const challenge = dailyChallenge(challenges, day);
-    if (puzzle !== trainPuzzle(network, challenge) || answers.length < 1 || answers.length > MAX_GUESSES) return;
+    const {id, challenge} = puzzleFor(game, day, () => {
+      const challenge = dailyChallenge(challenges, day);
+      return {id: trainPuzzle(network, challenge), challenge};
+    });
+    if (puzzle !== id || answers.length < 1 || answers.length > MAX_GUESSES) return;
     let state = {phase: 'planning', challenge, legs: []};
     for (const guess of answers) {
       if (!Array.isArray(guess) || !guess.length || guess.length > 6 || state.phase !== 'planning') return;
@@ -55,7 +67,7 @@ function grade(puzzle, game, day, answers) {
     if (!rotData.has(game)) rotData.set(game, prepareExtra(game,
       game === 'swaprot' ? undefined : readData('games/data/' + game + '.json'),
       game === 'ladderrot' ? readData('games/data/ladder-words.json') : undefined));
-    const expected = extraPuzzle(game, rotData.get(game), day);
+    const expected = puzzleFor(game, day, () => extraPuzzle(game, rotData.get(game), day));
     if (puzzle !== expected.id) return;
     const completed = replayExtra(game, expected, answers);
     if (completed?.phase === 'complete' && completed.score !== null) return completed.score;
@@ -66,14 +78,20 @@ function grade(puzzle, game, day, answers) {
   if (rotGames.includes(game)) {
     if (!rotData.has(game)) rotData.set(game, preparePuzzles(game, items));
     const prepared = rotData.get(game);
-    const questions = makeSet(game, prepared, day);
-    if (puzzle !== rankingPuzzle(game, questions)) return;
+    const {id, questions} = puzzleFor(game, day, () => {
+      const questions = makeSet(game, prepared, day);
+      return {id: rankingPuzzle(game, questions), questions};
+    });
+    if (puzzle !== id) return;
     const candidate = {seed: day, index: roundCount, answers, draft: []};
     if (restoreSession(game, prepared, questions, candidate, day).index !== roundCount) return;
     return scoreSet(game, questions, answers).total;
   }
-  const deck = quizDeck(items, game, day);
-  if (puzzle !== quizPuzzle(deck) || answers.length !== deck.length) return;
+  const {id, deck} = puzzleFor(game, day, () => {
+    const deck = quizDeck(items, game, day);
+    return {id: quizPuzzle(deck), deck};
+  });
+  if (puzzle !== id || answers.length !== deck.length) return;
   let score = 0;
   for (const [index, item] of deck.entries()) {
     const options = quizOptions(items, game, item, `daily:${game}:${day}:${index}`);
