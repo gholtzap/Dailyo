@@ -4,21 +4,35 @@ import {chromium} from 'playwright';
 const base=process.env.TRAINROT_TEST_URL??'http://127.0.0.1:4173';
 const flags=JSON.parse(fs.readFileSync(new URL('../dist/games/data/flags.json',import.meta.url)));
 const languages=JSON.parse(fs.readFileSync(new URL('../dist/games/data/languages.json',import.meta.url)));
+const vocabulary=JSON.parse(fs.readFileSync(new URL('../dist/games/data/vocabulary.json',import.meta.url)));
 const browser=await chromium.launch();
 try{
- for(const kind of ['flags','languages'])for(const width of [390,1440]){
+ for(const kind of ['flags','languages','vocabulary'])for(const width of [390,1440]){
   const ctx=await browser.newContext({viewport:{width,height:844}}),otherCtx=await browser.newContext({viewport:{width,height:844}});
   const page=await ctx.newPage(),other=await otherCtx.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await Promise.all([page.clock.install({time:new Date('2026-11-14T16:00:00Z')}),other.clock.install({time:new Date('2026-11-14T16:00:00Z')})]);
   await Promise.all([page.goto(`${base}/${kind}/`),other.goto(`${base}/${kind}/`)]);await Promise.all([page.locator('.choice').first().waitFor(),other.locator('.choice').first().waitFor()]);
-  const content=async p=>kind==='flags'?await p.locator('.flag').getAttribute('src'):await p.locator('.sample').innerText();
-  const answer=async p=>{if(kind==='flags'){const src=await content(p),id=decodeURIComponent(src.split('/').at(-1).replace('.svg',''));return flags.find(x=>x.id===id).name;}const text=await content(p);return languages.find(x=>x.samples.includes(text)).name;};
+  if(kind==='vocabulary'){
+   for(const route of ['/','/flags/','/languages/']){
+    await other.goto(base+route);
+    await other.getByRole('link',{name:'Vocabulary',exact:true}).click();
+    await other.locator('.vocabulary-word').waitFor();
+    assert.equal(await other.getByRole('link',{name:'Vocabulary',exact:true}).getAttribute('aria-current'),'page');
+   }
+  }
+  const content=async p=>kind==='flags'?await p.locator('.flag').getAttribute('src'):await p.locator(kind==='vocabulary'?'.vocabulary-word':'.sample').innerText();
+  const answer=async p=>{if(kind==='flags'){const src=await content(p),id=decodeURIComponent(src.split('/').at(-1).replace('.svg',''));return flags.find(x=>x.id===id).name;}const text=await content(p);return kind==='vocabulary'?vocabulary.find(x=>x.id===text).name:languages.find(x=>x.samples.includes(text)).name;};
   const dots=page.locator('.daily-progress .progress-dot');
   const prompts=[];
   for(let i=0;i<5;i++){
    assert.equal(await dots.count(),5);assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: current`);
    assert.equal(await page.locator('.choice').count(),4);const prompt=await content(page);assert.equal(await content(other),prompt);prompts.push(prompt);
    const name=await answer(page),options=await page.locator('.choice').allTextContents();assert.equal(new Set(options).size,4);assert.ok(options.includes(name));
+   if(kind==='vocabulary'){
+    const item=vocabulary.find(x=>x.id===prompt);
+    assert.deepEqual(new Set(options),new Set([item.name,...item.distractors]));
+    assert.equal(await page.locator('.example').count(),0);
+   }
    const pick=i%2===0?name:options.find(x=>x!==name);if(i===0){await page.getByRole('button',{name:pick,exact:true}).focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#next').evaluate(n=>n===document.activeElement),true);}else await page.getByRole('button',{name:pick,exact:true}).click();
    assert.match(await page.locator('.feedback').innerText(),i%2===0?/Correct!/:new RegExp('Correct answer:'));
    assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: ${i%2===0?'correct':'incorrect'}`);
@@ -26,13 +40,14 @@ try{
    assert.equal(await page.locator('.choice:disabled').count(),4);await page.reload();await page.locator('#next').waitFor({state:'visible'});
    assert.match(await page.locator('.feedback').innerText(),i%2===0?/Correct!/:/Correct answer:/);
    assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: ${i%2===0?'correct':'incorrect'}`);
+   if(kind==='vocabulary')assert.equal(await page.locator('.example').innerText(),vocabulary.find(x=>x.id===prompt).example);
    await other.getByRole('button',{name:await answer(other),exact:true}).click();await Promise.all([page.locator('#next').click(),other.locator('#next').click()]);
   }
   assert.equal(new Set(prompts).size,5);assert.equal(await page.locator('.result h2').innerText(),'3 out of 5');assert.deepEqual(await dots.allTextContents(),['✓','×','✓','×','✓']);
   await page.reload();assert.equal(await page.locator('.result h2').innerText(),'3 out of 5');
   await page.getByRole('button',{name:'Play practice'}).click();assert.equal(await dots.count(),0);const practicePrompts=[];
   for(let i=0;i<10;i++){
-   const prompt=await content(page);practicePrompts.push(prompt);const name=await answer(page);await page.getByRole('button',{name,exact:true}).click();assert.equal(await page.locator('.feedback').innerText(),'Correct!');await page.locator('#next').click();assert.equal(await page.locator('#question-title').evaluate(n=>n===document.activeElement),true);
+   const prompt=await content(page);practicePrompts.push(prompt);const name=await answer(page);await page.getByRole('button',{name,exact:true}).click();assert.match(await page.locator('.feedback').innerText(),/^Correct!/);await page.locator('#next').click();assert.equal(await page.locator('#question-title').evaluate(n=>n===document.activeElement),true);
   }
   assert.equal(new Set(practicePrompts).size,10);assert.match(await page.locator('.round-head').innerText(),/10 correct/);
   await page.reload();await page.locator('.choice').first().waitFor();assert.equal(await page.locator('#practice').getAttribute('aria-pressed'),'true');assert.match(await page.locator('.round-head').innerText(),/10 correct/);

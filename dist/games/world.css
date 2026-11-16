@@ -3,3 +3,8 @@
 .daily-progress{display:flex;align-items:center;gap:8px;list-style:none;padding:0;margin:0 0 24px}.progress-dot{width:24px;height:24px;display:grid;place-items:center;flex:none;border:2px solid #666a70;border-radius:50%;background:#383b40;color:#1c1d1f;font-size:14px;font-weight:500;line-height:1}.progress-dot.current{border-color:#eeeef0;background:transparent}.progress-dot.correct{border-color:#83c896;background:#83c896}.progress-dot.incorrect{border-color:#e19990;background:#e19990}.result .daily-progress{margin:16px 0 24px}
 .branded-heading{display:flex;align-items:center;gap:8px}
 .branded-heading img{display:block;border-radius:8px}
+
+[data-game=vocabulary] .prompt{min-height:96px}
+.vocabulary-word{font-size:24px;font-weight:500;margin:0;overflow-wrap:anywhere}
+[data-game=vocabulary] .choices{grid-template-columns:1fr}
+[data-game=vocabulary] .example{display:block;margin-top:8px;color:var(--muted);font-style:italic}

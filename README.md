@@ -4,7 +4,7 @@
 
 **trainrot** is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 
-The site also has [flagrot](https://trainrot.vercel.app/flags/) and [langrot](https://trainrot.vercel.app/languages/). Each has a shared five-question daily set and unlimited practice. Daily sets reset at midnight in New York; progress is stored in the browser. flagrot includes all 249 ISO country and territory codes, plus England, Scotland, Wales, and Kosovo. langrot uses 512 written excerpts across 64 languages.
+The site also has [flagrot](https://trainrot.vercel.app/flags/), [langrot](https://trainrot.vercel.app/languages/), and [Vocabulary](https://trainrot.vercel.app/vocabulary/). Each has a shared five-question daily set and unlimited practice. Daily sets reset at midnight in New York; progress is stored in the browser. flagrot includes all 249 ISO country and territory codes, plus England, Scotland, Wales, and Kosovo. langrot uses 512 written excerpts across 64 languages. Vocabulary asks you to match English words to definitions and shows an example sentence after each answer.
 
 Flag artwork is from [flag-icons](https://github.com/lipis/flag-icons) (MIT; the license is in `dist/games/flags/LICENSE`). Language excerpts come from the [Universal Declaration of Human Rights translations](https://www.ohchr.org/en/human-rights/universal-declaration/translations), distributed in the NLTK `udhr2` corpus. To rebuild them, download `https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/udhr2.zip` and run `python3 scripts/build-languages.py <path-to-zip>`. The game data is bundled and does not require a network request to either source.
 
@@ -23,7 +23,7 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:4173](http://localhost:4173). The local build includes all three games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
+Open [localhost:4173](http://localhost:4173). The local build includes all four games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
 
 ## trainrot
 
@@ -39,7 +39,7 @@ npm run build
 npx playwright install chromium
 ```
 
-With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other two games. Reports go in `test-results/`.
+With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Reports go in `test-results/`.
 
 `npm run data:demo` creates the fictional stations, line geometry, and puzzles in `dist/data/`. Local builds, local dev, and GitHub CI generate this dataset. The build independently checks all shortest routes before adding the license and notices to the static site output.
 
