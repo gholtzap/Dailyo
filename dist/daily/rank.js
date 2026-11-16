@@ -48,7 +48,5 @@ export async function showRank(container, result, score) {
     }
   } catch {
     requests.delete(key);
-    container.hidden = false;
-    status.textContent = 'Daily ranking unavailable';
   }
 }

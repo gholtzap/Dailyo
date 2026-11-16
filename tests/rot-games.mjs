@@ -126,6 +126,7 @@ try {
       page.on('pageerror', error => errors.push(error.message));
       await page.clock.install({ time: dayTime });
       await page.goto(new URL('/trainrot/',base).href);
+      await page.locator('.feed-directory summary, .site-more summary').press('Enter');
       await page.getByRole('navigation', { name: 'Games' }).getByRole('link', { name: kind, exact: true }).press('Enter');
       await page.waitForURL(url => url.pathname === `/${kind}/`);
       assert.equal(await page.title(), `${kind} | dailyo`);

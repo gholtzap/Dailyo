@@ -15,7 +15,17 @@ try{
   if(kind==='vocabulary'){
    for(const route of ['/','/flags/','/languages/']){
     await other.goto(base+route);
-    if(route==='/')await other.getByText('Games',{exact:true}).click();
+    const menu=other.locator('.feed-directory summary, .site-more summary');
+    const games=other.getByRole('navigation',{name:'Games'});
+    if(route!=='/'){
+     assert.equal(await games.getByRole('link').count(),2);
+     await menu.press('Enter');
+     await games.getByRole('link',{name:'Vocabulary',exact:true}).waitFor();
+     await other.keyboard.press('Escape');
+     assert.equal(await games.getByRole('link').count(),2);
+     assert.equal(await menu.evaluate(element=>element===document.activeElement),true);
+    }
+    await menu.click();
     await other.getByRole('link',{name:'Vocabulary',exact:true}).click();
     await other.locator('.vocabulary-word').waitFor();
     assert.equal(await other.getByRole('link',{name:'Vocabulary',exact:true}).getAttribute('aria-current'),'page');
@@ -64,17 +74,23 @@ try{
   await ctx.close();await otherCtx.close();console.log(`${kind} ${width}px: five daily questions, results, reload, next day, and ten practice rounds passed`);
  }
  const shared=await browser.newContext();
- await shared.route('**/api/daily-score',route=>route.fulfill({status:404}));
+ await shared.route('**/api/daily-score',route=>route.fulfill({status:503,json:{error:'Unavailable'}}));
  const old=await shared.newPage(),fresh=await shared.newPage();
  for(const tab of [old,fresh]){
   await tab.goto(`${base}/vocabulary/`);
   await tab.locator('.choice').first().waitFor();
  }
+ const failedRank=fresh.waitForResponse('**/api/daily-score');
  for(let i=0;i<5;i++){
   await fresh.locator('.choice').first().click();
   await fresh.locator('#next').click();
  }
  const completed=await fresh.locator('.result h2').innerText();
+ const response=await failedRank;
+ assert.equal(response.status(),503);
+ await response.finished();
+ await fresh.evaluate(()=>new Promise(resolve=>setTimeout(resolve,0)));
+ assert.equal(await fresh.locator('.daily-rank').isVisible(),false);
  await old.locator('.choice').last().click();
  await old.locator('.result h2').waitFor({timeout:3000});
  await fresh.reload();

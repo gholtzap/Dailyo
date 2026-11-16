@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/rewards.css">
   <link rel="stylesheet" href="/site.css">
+  <script src="/site.js" defer></script>
 </head>
 <body>
   <header class="site-masthead">
@@ -19,16 +20,21 @@
     <nav class="site-games" aria-label="Games">
       <a class="home-star" href="/">Daily Feed</a>
       <a href="/trainrot/" aria-current="page">trainrot</a>
-      <a href="/flags/">flagrot</a>
-      <a href="/languages/">langrot</a>
-      <a href="/vocabulary/">Vocabulary</a>
-      <a href="/maprot/">maprot</a>
-      <a href="/yearrot/">yearrot</a>
-      <a href="/borderrot/">borderrot</a>
-      <a href="/ladderrot/">ladderrot</a>
-      <a href="/cluerot/">cluerot</a>
-      <a href="/scalerot/">scalerot</a>
-      <a href="/swaprot/">swaprot</a>
+      <details class="site-more">
+        <summary aria-label="More games" data-ui-tooltip="more-games-tip"><span id="more-games-tip" role="tooltip">More games</span></summary>
+        <div class="site-more-links">
+          <a href="/flags/">flagrot</a>
+          <a href="/languages/">langrot</a>
+          <a href="/vocabulary/">Vocabulary</a>
+          <a href="/maprot/">maprot</a>
+          <a href="/yearrot/">yearrot</a>
+          <a href="/borderrot/">borderrot</a>
+          <a href="/ladderrot/">ladderrot</a>
+          <a href="/cluerot/">cluerot</a>
+          <a href="/scalerot/">scalerot</a>
+          <a href="/swaprot/">swaprot</a>
+        </div>
+      </details>
     </nav>
   </header>
   <div class="site-header">

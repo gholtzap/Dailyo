@@ -47,6 +47,7 @@ try {
       page.on('pageerror', error => errors.push(error.message));
       await page.clock.install({ time: date });
       await page.goto(new URL('/trainrot/',base).href);
+      await page.locator('.feed-directory summary, .site-more summary').press('Enter');
       await page.getByRole('navigation', {name:'Games'}).getByRole('link', {name:game,exact:true}).press('Enter');
       const heading = page.locator('#extra-title');
       await heading.waitFor();

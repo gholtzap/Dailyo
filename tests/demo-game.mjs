@@ -23,6 +23,7 @@ try {
     await page.goto(new URL('/trainrot/',base).href);
     const games = page.getByRole('navigation', { name: 'Games' });
     for (const [game, path] of [['flagrot', '/flags/'], ['langrot', '/languages/'], ['trainrot', '/trainrot/']]) {
+      await page.locator('.feed-directory summary, .site-more summary').press('Enter');
       await games.getByRole('link', { name: game, exact: true }).press('Enter');
       await page.waitForURL(url => url.pathname === path);
       assert.equal(await page.title(), `${game} | dailyo`);

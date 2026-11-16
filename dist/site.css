@@ -3,7 +3,6 @@
   padding: 8px 32px;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px 24px;
   background: #1c1d1f;
   border-bottom: 1px solid var(--line);
@@ -20,8 +19,9 @@
 }
 .site-games {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 .site-games a {
   display: flex;
@@ -36,14 +36,75 @@
   color: var(--ink);
   background: #383b40;
 }
-.site-masthead a:focus-visible {
+.site-masthead :is(a, summary):focus-visible {
   outline: 2px solid #e4e5e7;
   outline-offset: 2px;
 }
+.site-more {
+  position: relative;
+  z-index: 10;
+}
+.site-more summary {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: var(--muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  list-style: none;
+}
+.site-more summary::before {
+  content: "";
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: -5px 0, 5px 0;
+}
+.site-more [role="tooltip"] {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #1c1d1f;
+  color: var(--ink);
+  font-size: 12px;
+}
+.site-more:not([open]) summary:is(:hover, :focus-visible) [role="tooltip"] {
+  display: block;
+}
+.site-more summary::-webkit-details-marker { display: none; }
+.site-more summary:hover,
+.site-more[open] summary {
+  color: var(--ink);
+  background: #383b40;
+}
+.site-more-links {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  gap: 8px;
+  min-width: 144px;
+  max-height: 65vh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 8px;
+  background: #1c1d1f;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.site-games .site-more-links a { padding-inline: 12px; }
+
 @media (max-width: 700px) {
-  .site-masthead { min-height: 60px; padding: 8px 16px; column-gap: 12px; align-items: flex-start; }
+  .site-masthead { min-height: 60px; padding: 8px 16px; column-gap: 12px; }
   .site-brand { font-size: 16px; }
-  .site-games { flex: 1; min-width: 0; }
   .site-games a { padding-inline: 4px; }
 }
 
