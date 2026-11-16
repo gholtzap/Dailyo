@@ -80,19 +80,33 @@ for(const ride of [...edgeMap.values()]){
     }
   }
 }
-const independent=new Map(),edges=[...edgeMap.values()];
-function shortestFrom(from){
-  if(independent.has(from))return independent.get(from);
-  const costs=new Map([[from,-data.metadata.transferSeconds]]);
-  for(let pass=0;pass<stationIds.length-1;pass++){
-    let changed=false;
-    for(const {from:a,to:b,cost} of edges){
-      const next=(costs.get(a)??Infinity)+cost;
-      if(next<(costs.get(b)??Infinity)){costs.set(b,next);changed=true;}
+const independent = new Map();
+const outgoing = new Map();
+for (const edge of edgeMap.values()) {
+  if (!outgoing.has(edge.from)) outgoing.set(edge.from, []);
+  outgoing.get(edge.from).push(edge);
+}
+
+function shortestFrom(from) {
+  if (independent.has(from)) return independent.get(from);
+  const costs = new Map([[from, -data.metadata.transferSeconds]]);
+  let active = new Set([from]);
+  // Only a changed distance can improve its outgoing edges on the next pass.
+  for (let pass = 0; pass < stationIds.length - 1 && active.size; pass++) {
+    const changed = new Set();
+    for (const station of active) {
+      for (const {to, cost} of outgoing.get(station) ?? []) {
+        const next = costs.get(station) + cost;
+        if (next < (costs.get(to) ?? Infinity)) {
+          costs.set(to, next);
+          changed.add(to);
+        }
+      }
     }
-    if(!changed)break;
+    active = changed;
   }
-  independent.set(from,costs);return costs;
+  independent.set(from, costs);
+  return costs;
 }
 const router=createRouter(data),pairs=new Set(),titles=new Map();
 const distance=(a,b)=>Math.hypot((a[0]-b[0])*Math.cos((a[1]+b[1])*Math.PI/360),a[1]-b[1])*111.2;
