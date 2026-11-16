@@ -6,16 +6,17 @@
     "build": "node scripts/stage-data.mjs && node scripts/validate-release.mjs",
     "dev": "python3 -m http.server 4173 --bind 127.0.0.1 --directory dist",
     "test": "node --test tests/router.test.mjs",
-    "test:e2e": "node tests/rot-games.mjs && node tests/daily-feed.mjs && node tests/world-games.mjs && node tests/daily.mjs && node tests/map-hint.mjs && node tests/demo-game.mjs && node tests/map-labels.mjs && node tests/map-framing.mjs && node tests/map-gestures.mjs && node tests/dark-theme.mjs",
+    "test:e2e": "node tests/extra-games.mjs && node tests/rot-games.mjs && node tests/daily-feed.mjs && node tests/world-games.mjs && node tests/daily.mjs && node tests/map-hint.mjs && node tests/demo-game.mjs && node tests/map-labels.mjs && node tests/map-framing.mjs && node tests/map-gestures.mjs && node tests/dark-theme.mjs",
     "lint:ui": "node tests/demo-game.mjs --ui",
     "lint:ui:feed": "node tests/daily-feed.mjs --ui",
     "lint:ui:games": "node tests/world-ui.mjs",
     "postbuild": "node -e \"const { copyFileSync } = require('node:fs'); copyFileSync('LICENSE', 'dist/LICENSE.txt'); copyFileSync('THIRD_PARTY_NOTICES.md', 'dist/THIRD_PARTY_NOTICES.md')\"",
     "data:demo": "node scripts/build-demo-data.mjs",
-    "test:e2e:nyc": "node tests/rot-games.mjs && node tests/daily-feed.mjs && node tests/walking.mjs && node tests/world-games.mjs && node tests/daily.mjs && node tests/map-hint.mjs && node tests/expanded-journeys.mjs && node tests/journey-improvements.mjs && node tests/browser.mjs && node tests/map-labels.mjs && node tests/map-framing.mjs && node tests/map-gestures.mjs && node tests/dark-theme.mjs && node tests/rewards.mjs",
+    "test:e2e:nyc": "node tests/extra-games.mjs && node tests/rot-games.mjs && node tests/daily-feed.mjs && node tests/walking.mjs && node tests/world-games.mjs && node tests/daily.mjs && node tests/map-hint.mjs && node tests/expanded-journeys.mjs && node tests/journey-improvements.mjs && node tests/browser.mjs && node tests/map-labels.mjs && node tests/map-framing.mjs && node tests/map-gestures.mjs && node tests/dark-theme.mjs && node tests/rewards.mjs",
     "predev": "npm run data:demo",
     "test:nyc": "node --test tests/nyc-router.test.mjs",
-    "lint:ui:rot": "node tests/rot-games.mjs --ui"
+    "lint:ui:rot": "node tests/rot-games.mjs --ui",
+    "lint:ui:extra": "node tests/extra-games.mjs --ui"
   },
   "devDependencies": {
     "lintapple": "^0.1.24"

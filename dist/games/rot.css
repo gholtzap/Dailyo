@@ -71,3 +71,14 @@
 .rot-choices { margin-top: 8px; }
 .rot-choices p { color: var(--muted); grid-column: 1 / -1; }
 .rot-copy { display: block; width: 100%; min-height: 100px; margin-top: 8px; }
+
+.extra-metric { margin: 0 0 16px; color: var(--muted); background: #141516; }
+.extra-form { display: grid; gap: 8px; margin-top: 16px; }
+.extra-form label { color: var(--ink); background: #141516; }
+.extra-form .primary { text-align: center; }
+.ladder-chain li { letter-spacing: .08em; }
+.clue-list { display: grid; gap: 8px; margin: 0; padding-left: 24px; }
+.clue-list li { padding: 8px 12px; background: var(--panel); border-radius: 6px; line-height: 1.5; }
+.swap-board { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.swap-board .swap-tile { min-height: 44px; padding: 4px; font-size: 14px; }
+.swap-board .swap-tile[aria-pressed=true] { background: #264332; border-color: #83c896; }

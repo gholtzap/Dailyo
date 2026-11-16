@@ -1,3 +1,5 @@
+import { extraGames, extraScoreLabel, lowerIsBetter } from '../games/extra-puzzles.js';
+
 const requests = new Map();
 
 export async function showRank(container, result, score) {
@@ -33,14 +35,15 @@ export async function showRank(container, result, score) {
     if (!others) status.textContent = 'First finisher today';
     else if (lower) {
       const percent = Math.floor(100 * lower / others);
-      const comparison = result.game === 'maprot' ? 'You placed ahead of' : 'You scored higher than';
+      const comparison = lowerIsBetter(result.game) ? 'You placed ahead of' : 'You scored higher than';
       status.textContent = percent
         ? `${comparison} ${percent}% of today’s other finishers`
         : `${comparison} ${lower} of ${others} other finishers today`;
     } else if (tied) status.textContent = `${tied} other ${tied === 1 ? 'finisher' : 'finishers'} tied your score`;
     else status.textContent = `Your rank today is ${others + 1} of ${others + 1}`;
     if (rank.score !== score) {
-      const first = result.game === 'maprot' ? `${rank.score.toLocaleString('en')} km off` : rank.score;
+      const first = result.game === 'maprot' ? `${rank.score.toLocaleString('en')} km off` :
+        extraGames.includes(result.game) ? extraScoreLabel(result.game, rank.score) : rank.score;
       status.prepend(`Your first score today was ${first}. `);
     }
   } catch {

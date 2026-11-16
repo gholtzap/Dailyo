@@ -25,6 +25,7 @@ try{
     const errors=[];
     page.on('pageerror',error=>errors.push(error.message));
     await page.clock.setFixedTime(date);
+    await context.route('**/api/daily-score',route=>route.fulfill({status:404}));
     const inspect=async(name,frameTitle)=>{
       if(!lint)return;
       const report=await checkPage(page,policy);
@@ -51,13 +52,13 @@ try{
     await map.waitFor({state:'visible'});
     assert.ok((await map.getAttribute('viewBox')).split(' ').slice(-2).every(size=>Number(size)>0));
     assert.equal(await train.locator('.map-marker:visible').count(),2);
-    assert.equal(await progress.innerText(),'Game 1 of 7');
+    assert.equal(await progress.innerText(),'Game 1 of 11');
     assert.equal(await train.getByRole('button',{name:'Practice',exact:true}).count(),0);
     const touch=mobile&&engine===chromium?await context.newCDPSession(page):null;
     if(touch){
       const bounds=await map.boundingBox(),mapX=bounds.x+bounds.width/2,mapY=bounds.y+bounds.height/2;
       await swipe(touch,mapX,mapY+65,mapY);
-      assert.equal(await progress.innerText(),'Game 1 of 7');
+      assert.equal(await progress.innerText(),'Game 1 of 11');
       assert.equal(await next.isVisible(),false);
     }
     await inspect('train-questions','trainrot');
@@ -79,7 +80,7 @@ try{
     }
     const flags=frame('flagrot');
     await flags.locator('.choice').first().waitFor();
-    assert.equal(await progress.innerText(),'Game 2 of 7');
+    assert.equal(await progress.innerText(),'Game 2 of 11');
     assert.equal(await page.evaluate(()=>localStorage.getItem('trainrot-game-mode-v2')),'practice');
     const standalone=await context.newPage();
     await standalone.clock.setFixedTime(date);
@@ -107,7 +108,7 @@ try{
 
     const languages=frame('langrot');
     await languages.locator('.choice').first().waitFor();
-    assert.equal(await progress.innerText(),'Game 3 of 7');
+    assert.equal(await progress.innerText(),'Game 3 of 11');
     await inspect('language-question','langrot');
     const data='**/games/data/vocabulary.json';
     let release;
@@ -129,7 +130,7 @@ try{
     await page.reload();
     await words.locator('.example').waitFor();
     assert.equal(await words.locator('.vocabulary-word').innerText(),word);
-    assert.equal(await progress.innerText(),'Game 4 of 7');
+    assert.equal(await progress.innerText(),'Game 4 of 11');
     await inspect('vocabulary-answer','Vocabulary');
     await words.locator('#next').click();
     for(let question=2;question<=5;question++){
@@ -140,8 +141,9 @@ try{
     await inspect('vocabulary-result','Vocabulary');
     await next.click();
     const geo=frame('maprot'),history=frame('yearrot'),borders=frame('borderrot');
-    for(const game of [geo,history,borders]){
-      await game.locator('#round-title').waitFor();
+    const more=['ladderrot','cluerot','scalerot','swaprot'].map(frame);
+    for(const game of [geo,history,borders,...more]){
+      await game.locator('#round-title,#extra-title').waitFor();
       await skip.click();
     }
     await page.getByRole('heading',{name:'Daily recap'}).waitFor();
@@ -149,6 +151,7 @@ try{
     assert.deepEqual(await rows.allTextContents(),[
       'trainrotAnswer shown', 'flagrot'+await score('flags'), 'langrotSkipped', 'Vocabulary'+await score('vocabulary'),
       'maprotSkipped', 'yearrotSkipped', 'borderrotSkipped',
+      'ladderrotSkipped', 'cluerotSkipped', 'scalerotSkipped', 'swaprotSkipped',
     ]);
     async function score(kind){
       const check=await context.newPage();
@@ -202,12 +205,32 @@ try{
       await borders.getByRole('button',{name:'Show shortest route'}).click();
       await borders.locator('.rot-next').click();
     }
-    await page.getByRole('button',{name:'See recap',exact:true}).waitFor();
+    await next.waitFor();
     await inspect('border-result','borderrot');
+    await next.click();
+    await more[0].getByRole('button',{name:'Show solution'}).click();
+    await next.click();
+    await more[1].getByRole('button',{name:'Show answer'}).click();
+    await next.click();
+    await more[2].getByRole('spinbutton').fill('50');
+    await more[2].getByRole('button',{name:'Check estimate'}).click();
+    await next.click();
+    const tiles=more[3].locator('.swap-tile');
+    await tiles.first().waitFor();
+    const board=(await tiles.allTextContents()).map(Number);
+    for(let pass=0;pass<board.length;pass++)for(let i=0;i<board.length-1;i++){
+      if(board[i]<=board[i+1])continue;
+      await tiles.nth(i).click();
+      await tiles.nth(i+1).click();
+      [board[i],board[i+1]]=[board[i+1],board[i]];
+    }
+    await page.getByRole('button',{name:'See recap',exact:true}).waitFor();
     await page.getByRole('button',{name:'See recap',exact:true}).click();
     await page.getByRole('heading',{name:'Daily recap'}).waitFor();
     assert.equal(await replay.isVisible(),false);
     assert.equal(await rows.filter({hasText:'Skipped'}).count(),0);
+    assert.match(await rows.nth(9).innerText(),/scalerot.*% off/s);
+    assert.match(await rows.nth(10).innerText(),/swaprot.*moves/s);
     assert.match(await rows.nth(4).innerText(),/maprot\s+[\d,]+ km off/);
     assert.match(await rows.nth(5).innerText(),/yearrot\s+[0-5] out of 5/);
     assert.match(await rows.nth(6).innerText(),/borderrot\s+0 out of 5/);
@@ -215,10 +238,10 @@ try{
     await page.clock.setFixedTime(new Date('2026-11-17T16:00:00Z'));
     await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
     await frame('trainrot').locator('[data-route]').first().waitFor();
-    assert.equal(await progress.innerText(),'Game 1 of 7');
+    assert.equal(await progress.innerText(),'Game 1 of 11');
     assert.deepEqual(errors,[]);
     await context.close();
-    console.log(`${width}px Daily Feed: shared progress, all seven games, skip, retry, recap, reload, and daily rollover passed`);
+    console.log(`${width}px Daily Feed: shared progress, all eleven games, skip, retry, recap, reload, and daily rollover passed`);
   }
 }finally{
   if(lint){

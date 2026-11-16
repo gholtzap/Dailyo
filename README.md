@@ -2,7 +2,7 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
-[Daily Feed](https://trainrot.vercel.app/daily/) plays all seven daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
+[Daily Feed](https://trainrot.vercel.app/daily/) plays all eleven daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
 
 **trainrot** is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 
@@ -12,7 +12,12 @@ The site also has [flagrot](https://trainrot.vercel.app/flags/), [langrot](https
 - [yearrot](https://trainrot.vercel.app/yearrot/) asks you to place five events on a timeline that grows with each turn.
 - [borderrot](https://trainrot.vercel.app/borderrot/) asks you to connect countries by crossing as few land borders as possible.
 
-All three have daily and practice sets. The daily results can be copied without revealing the answers.
+- [ladderrot](https://trainrot.vercel.app/ladderrot/) challenges you to connect two words one letter at a time.
+- [cluerot](https://trainrot.vercel.app/cluerot/) gives you up to five clues to identify the answer.
+- [scalerot](https://trainrot.vercel.app/scalerot/) scores your estimate by its percentage error.
+- [swaprot](https://trainrot.vercel.app/swaprot/) asks you to sort seven tiles using only adjacent swaps.
+
+These games have daily puzzles and practice. The daily results can be copied without revealing the answers.
 
 Flag artwork is from [flag-icons](https://github.com/lipis/flag-icons) (MIT; the license is in `dist/games/flags/LICENSE`). Language excerpts come from the [Universal Declaration of Human Rights translations](https://www.ohchr.org/en/human-rights/universal-declaration/translations), distributed in the NLTK `udhr2` corpus. To rebuild them, download `https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/udhr2.zip` and run `python3 scripts/build-languages.py <path-to-zip>`. The game data is bundled and does not require a network request to either source.
 
@@ -31,7 +36,7 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:4173](http://localhost:4173). The local build includes all seven games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
+Open [localhost:4173](http://localhost:4173). The local build includes all eleven games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
 
 ## trainrot
 

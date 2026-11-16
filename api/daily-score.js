@@ -8,9 +8,10 @@ import {makeSet, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scor
 import {
   admissionKey, browserOriginAllowed, burstRetryAfter, clientNetwork, cookieIdentity, playerCookie, readScoreBody,
 } from '../lib/score-protection.js';
+import {extraGames, extraPuzzle, lowerIsBetter, prepareExtra, replayExtra} from '../dist/games/extra-puzzles.js';
 
 const rotGames = ['maprot', 'yearrot', 'borderrot'];
-const games = ['train', 'flags', 'languages', 'vocabulary', ...rotGames];
+const games = ['train', 'flags', 'languages', 'vocabulary', ...rotGames, ...extraGames];
 const data = new Map();
 const rotData = new Map();
 let pool;
@@ -48,6 +49,17 @@ function grade(puzzle, game, day, answers) {
       state = next;
     }
     return state.phase === 'revealed' ? state.result.score : undefined;
+  }
+
+  if (extraGames.includes(game)) {
+    if (!rotData.has(game)) rotData.set(game, prepareExtra(game,
+      game === 'swaprot' ? undefined : readData('games/data/' + game + '.json'),
+      game === 'ladderrot' ? readData('games/data/ladder-words.json') : undefined));
+    const expected = extraPuzzle(game, rotData.get(game), day);
+    if (puzzle !== expected.id) return;
+    const completed = replayExtra(game, expected, answers);
+    if (completed?.phase === 'complete' && completed.score !== null) return completed.score;
+    return;
   }
 
   const items = readData('games/data/' + game + '.json');
@@ -150,7 +162,7 @@ export default async function handler(req, res) {
       ON CONFLICT DO NOTHING`, [...key, score]);
     const {rows: [rank]} = await pool.query(`
       SELECT mine.score,
-        count(*) FILTER (WHERE CASE WHEN mine.game = 'maprot'
+        count(*) FILTER (WHERE CASE WHEN $5::boolean
           THEN other.score > mine.score ELSE other.score < mine.score END)::int AS "lower",
         count(*) FILTER (WHERE other.score = mine.score)::int AS tied,
         count(other.player)::int AS others
@@ -158,7 +170,7 @@ export default async function handler(req, res) {
       LEFT JOIN daily_scores other
         ON (other.game, other.day, other.puzzle) = (mine.game, mine.day, mine.puzzle) AND other.player <> mine.player
       WHERE (mine.game, mine.day, mine.puzzle, mine.player) = ($1, $2, $3, $4)
-      GROUP BY mine.score`, key);
+      GROUP BY mine.score`, [...key, lowerIsBetter(game)]);
     return reply(200, rank);
   } catch (error) {
     console.error('Daily score failed', error.code ?? error.name);

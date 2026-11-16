@@ -1,9 +1,22 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {createRouter} from '../dist/router.js';
+import {extraGames, extraPuzzle, prepareExtra} from '../dist/games/extra-puzzles.js';
 import {preparePuzzles} from '../dist/games/rot-puzzles.js';
 
 const root=new URL('../dist/',import.meta.url);
+for (const game of extraGames) {
+  assert.ok(fs.statSync(new URL(`${game}/index.html`,root)).size>0);
+  const read = name => JSON.parse(fs.readFileSync(new URL(`games/data/${name}.json`,root)));
+  const data = prepareExtra(game, game === 'swaprot' ? undefined : read(game),
+    game === 'ladderrot' ? read('ladder-words') : undefined);
+  if (game === 'ladderrot') {
+    for (let index=0;index<data.rows.length;index++) {
+      const day = new Date(index*86400000).toISOString().slice(0,10);
+      assert.ok(extraPuzzle(game,data,day).solution.length>=3);
+    }
+  }
+}
 for (const game of ['maprot','yearrot','borderrot']) {
   assert.ok(fs.statSync(new URL(`${game}/index.html`,root)).size>0);
   preparePuzzles(game,JSON.parse(fs.readFileSync(new URL(`games/data/${game}.json`,root))));

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#1c1d1f">
+  <meta name="description" content="Change one letter at a time. Every step must be a four-letter English word.">
+  <title>ladderrot | dailyo</title>
+  <link rel="stylesheet" href="/games/world.css">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/games/rot.css">
+</head>
+<body data-game="ladderrot">
+  <header class="site-masthead">
+    <a class="site-brand" href="/">dailyo</a>
+    <nav class="site-games" aria-label="Games">
+      <a href="/daily/">Daily Feed</a>
+      <a href="/">trainrot</a>
+      <a href="/flags/">flagrot</a>
+      <a href="/languages/">langrot</a>
+      <a href="/vocabulary/">Vocabulary</a>
+      <a href="/maprot/">maprot</a>
+      <a href="/yearrot/">yearrot</a>
+      <a href="/borderrot/">borderrot</a>
+      <a href="/ladderrot/" aria-current="page">ladderrot</a>
+      <a href="/cluerot/">cluerot</a>
+      <a href="/scalerot/">scalerot</a>
+      <a href="/swaprot/">swaprot</a>
+    </nav>
+  </header>
+  <main class="main rot-main">
+    <div class="heading">
+      <h1>ladderrot</h1>
+      <p>Change one letter at a time. Every step must be a four-letter English word.</p>
+    </div>
+    <nav class="modes" aria-label="Game mode">
+      <button id="daily" type="button" aria-pressed="true">Daily</button>
+      <button id="practice" type="button" aria-pressed="false">Practice</button>
+    </nav>
+    <section id="quiz" aria-label="ladderrot game"><p role="status">Loading game…</p></section>
+  </main>
+  <script type="module" src="/games/extra-game.js"></script>
+</body>
+</html>

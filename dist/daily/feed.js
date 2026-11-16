@@ -8,6 +8,10 @@ const games=[
   {id:'maprot',label:'maprot',path:'/maprot/'},
   {id:'yearrot',label:'yearrot',path:'/yearrot/'},
   {id:'borderrot',label:'borderrot',path:'/borderrot/'},
+  {id:'ladderrot',label:'ladderrot',path:'/ladderrot/'},
+  {id:'cluerot',label:'cluerot',path:'/cluerot/'},
+  {id:'scalerot',label:'scalerot',path:'/scalerot/'},
+  {id:'swaprot',label:'swaprot',path:'/swaprot/'},
 ];
 const $=selector=>document.querySelector(selector);
 const gamePanel=$('#feed-game'),recap=$('#feed-recap'),progress=$('#feed-progress');
