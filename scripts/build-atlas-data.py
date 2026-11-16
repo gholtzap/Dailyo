@@ -39,8 +39,9 @@ with countries.open() as file:
 
 # Use reciprocal borders in the main territories of countries. GeoNames includes
 # Guantánamo as US–Cuba and represents several overseas dependencies separately.
+# Ceuta and Melilla do not connect Morocco to mainland Spain by land.
 # Kosovo has its own node in this graph, so it separates Serbia from Albania.
-omit_edges = {frozenset({'CU', 'US'}), frozenset({'AL', 'RS'})}
+omit_edges = {frozenset({'CU', 'US'}), frozenset({'AL', 'RS'}), frozenset({'ES', 'MA'})}
 excluded = {'AN', 'CS', 'GF', 'GI', 'GL', 'GP', 'HK', 'MF', 'MO', 'SX'}
 names = {'BO': 'Bolivia', 'CD': 'DR Congo', 'CG': 'Republic of the Congo',
          'CI': 'Côte d’Ivoire', 'CZ': 'Czechia', 'MK': 'North Macedonia',

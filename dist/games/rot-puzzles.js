@@ -150,6 +150,7 @@ export function rankingPuzzle(kind, questions) {
     return JSON.stringify(questions.map(([name, country, ...point]) =>
       [name === 'Astana' && country === 'Kazakhstan' ? 'Nur-Sultan' : name, country, ...point]));
   }
+  if (kind === 'borderrot') return JSON.stringify([2, questions]);
   return JSON.stringify(kind === 'yearrot' ? questions.map(({event, timeline}) =>
     [event[0], ...timeline.map(([year]) => year)]) : questions);
 }

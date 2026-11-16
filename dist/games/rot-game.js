@@ -7,7 +7,7 @@ import { showRank } from '../daily/rank.js';
 const kind = document.body.dataset.game;
 const quiz = document.querySelector('#quiz');
 const modes = [...document.querySelectorAll('.modes button')];
-const key = part => `dailyo:${kind}:v1:${part}`;
+const key = part => `dailyo:${kind}:${kind === 'borderrot' && part !== 'mode' ? 'v2' : 'v1'}:${part}`;
 const read = part => { try { return JSON.parse(localStorage.getItem(key(part))); } catch { return null; } };
 const write = (part, value) => { try { localStorage.setItem(key(part), JSON.stringify(value)); } catch {} };
 const randomSeed = () => String(crypto.randomUUID?.() ?? Math.random());
