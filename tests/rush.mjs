@@ -105,7 +105,7 @@ try{
       hasNotText:flagDeck[5].name,
     }).first().click();
     await status.filter({hasText:'Missed'}).waitFor();
-    await flag.locator('.feedback').filter({hasText:flagDeck[5].name}).waitFor();
+    await flag.locator('.choice.correct').filter({hasText:flagDeck[5].name}).waitFor();
     await inspect('miss',true);
     await page.clock.fastForward(1400);
 
@@ -120,7 +120,7 @@ try{
     await inspect('langrot',true);
     await page.clock.fastForward(6100);
     await status.filter({hasText:'Time’s up'}).waitFor();
-    await language.locator('.feedback').filter({hasText:'Correct answer'}).waitFor();
+    await language.locator('.choice.correct').waitFor();
     await page.clock.fastForward(1400);
 
     await status.filter({hasText:'Loading trainrot…'}).waitFor();
@@ -241,7 +241,7 @@ try{
     await page.getByRole('link',{name:'Daily Feed',exact:true}).click();
     await page.waitForURL('**/daily/');
     await page.getByRole('heading',{name:'Daily Feed'}).waitFor();
-    if(!process.env.TRAINROT_TEST_URL){
+    if(new URL(base).hostname==='127.0.0.1'){
       await page.route('**/rush/**',async route=>{
         await route.fulfill({response:await page.request.get(base)});
       });

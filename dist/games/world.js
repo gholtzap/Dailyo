@@ -57,10 +57,6 @@ function dailyDeck() {
   return deck;
 }
 function question(){const s=modeState[mode],seed=mode==='daily'?(rushRound===null?`daily:${kind}:${day}`:`rush:${kind}:${day}`):s.seed;return {item:(mode==='daily'&&rushRound===null?dailyDeck():shuffle(items,seed))[s.index],seed:`${seed}:${s.index}`};}
-function statusText(selected,item){
-  if(selected===item.id)return vocabulary?`Correct! ${item.name}.`:'Correct!';
-  return `Correct answer: ${item.name}${vocabulary?'.':''}`;
-}
 function choose(id,item){
   const s=modeState[mode];
   if(rushRound!==null){
@@ -114,21 +110,37 @@ function draw(){
   }else{const index=hash(`${seed}:sample`)%item.samples.length;const text=make('p',item.samples[index],'sample');text.dir='auto';prompt.append(text);}
   const choices=make('div',undefined,'choices');choices.setAttribute('role','group');choices.setAttribute('aria-label',kind==='flags'?'Choose a place':vocabulary?'Choose a definition':'Choose a language');
   const options=quizOptions(items,kind,item,seed);
-  for(const option of options){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>rushRound===null?withCurrentProgress(()=>choose(option.id,item)):choose(option.id,item);choices.append(button);}
-  const feedback=make('p',selected===null?'':statusText(selected,item),'feedback');feedback.setAttribute('role','status');
-  if(selected!==null)feedback.id='answer-feedback';
-  const wrong=options.find(option=>option.id===selected&&selected!==item.id);
-  if(wrong){
-    feedback.append(make('span',`Your answer: ${wrong.name}`,'selected-answer'));
+  for(const option of options){
+    const button=make('button',option.name,'choice');
+    button.type='button';
+    button.disabled=selected!==null;
+    const correct=selected!==null&&option.id===item.id;
+    const wrong=selected===option.id&&!correct;
+    if(correct||wrong){
+      button.classList.add(correct?'correct':'wrong');
+      const mark=make('span',correct?'✓':'×','choice-mark');
+      mark.setAttribute('aria-hidden','true');
+      button.append(mark);
+    }
+    button.onclick=()=>rushRound===null?withCurrentProgress(()=>choose(option.id,item)):choose(option.id,item);
+    choices.append(button);
   }
-  if(vocabulary&&selected!==null){
-    feedback.append(make('span',item.example,'example'));
+  const next=make('button',mode==='daily'&&s.index===4?'See results':'Next question','primary');
+  next.id='next';next.type='button';next.hidden=selected===null;next.onclick=()=>withCurrentProgress(advance);
+  const content=[prompt,choices];
+  if(selected!==null){
+    const wrong=options.find(option=>option.id===selected&&selected!==item.id);
+    const outcome=selected===item.id?'Correct.':wrong?`Selected ${wrong.name}. Correct answer: ${item.name}.`:`Correct answer: ${item.name}.`;
+    const status=make('span',outcome,'quiz-answer-status');
+    status.id='answer-feedback';
+    status.setAttribute('role','status');
+    choices.append(status);
+    next.setAttribute('aria-describedby',status.id);
+    if(vocabulary)content.push(make('p',item.example,'feedback example'));
   }
-  const next=make('button',mode==='daily'&&s.index===4?'See results':'Next question','primary');next.id='next';next.type='button';next.hidden=selected===null;next.onclick=()=>withCurrentProgress(advance);
-  if(feedback.id)next.setAttribute('aria-describedby',feedback.id);
-  if(rushRound!==null)quiz.replaceChildren(prompt,choices,feedback);
-  else if(mode==='daily')quiz.replaceChildren(head,dailyProgress(),prompt,choices,feedback,next);
-  else quiz.replaceChildren(head,prompt,choices,feedback,next);
+  if(rushRound!==null)quiz.replaceChildren(...content);
+  else if(mode==='daily')quiz.replaceChildren(head,dailyProgress(),...content,next);
+  else quiz.replaceChildren(head,...content,next);
   reportDaily('playing',undefined,day);
 }
 async function start(){

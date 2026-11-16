@@ -9,4 +9,7 @@
 [data-game=vocabulary] .choices{grid-template-columns:1fr}
 [data-game=vocabulary] .example{display:block;margin-top:8px;color:var(--muted);font-style:italic}
 
-.selected-answer{display:block;margin-top:8px}
+.choice:is(.correct,.wrong){display:flex;align-items:center;justify-content:space-between;gap:8px}
+.choice-mark{flex:none}
+.quiz-answer-status{position:absolute;inset-inline:0;clip-path:inset(50%);pointer-events:none}
+.choices + #next{margin-top:16px}
