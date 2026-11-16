@@ -44,7 +44,11 @@
   </main>
   <footer class="feed-actions" hidden>
     <p id="rush-status" role="status" tabindex="-1"></p>
-    <span id="rush-clock" role="timer" aria-label="Time left"></span>
+    <div class="rush-time">
+      <span class="rush-track" aria-hidden="true"><span></span></span>
+      <span class="rush-clock-icon" aria-hidden="true"></span>
+      <span id="rush-clock" role="timer" aria-label="Time left"></span>
+    </div>
     <button class="secondary" id="rush-retry" type="button" hidden>Retry</button>
     <button class="secondary" id="rush-next" type="button">Next game</button>
   </footer>

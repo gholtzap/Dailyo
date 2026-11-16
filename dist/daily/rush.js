@@ -17,15 +17,17 @@ const games=selected?[selected]:rotation;
 if(selected)document.title=`${selected.label} Rush | dailyo`;
 const $=selector=>document.querySelector(selector);
 const panel=$('#feed-game'),status=$('#rush-status'),clock=$('#rush-clock');
+const timeDisplay=$('.rush-time');
 const actions=$('.feed-actions'),retry=$('#rush-retry'),next=$('#rush-next');
 const scores=games.map(()=>0);
-let phase='loading',index=0,round=0,current,visible,deadline,timer,ticker;
+let phase='loading',index=0,round=0,current,visible,deadline,duration,timer,ticker;
 const upcoming=new Map();
 
 function stopClock(){
   clearTimeout(timer);
   clearInterval(ticker);
   clock.textContent='';
+  timeDisplay.removeAttribute('data-timed');
 }
 
 function makeRound(gameIndex,roundIndex){
@@ -91,7 +93,9 @@ function showRound(){
   status.textContent=`${game.label} · Round ${round+1}`;
   const timedRound=round+Number(index>0);
   if(timedRound){
-    deadline=performance.now()+game.seconds[Math.min(timedRound,game.seconds.length)-1]*1000;
+    duration=game.seconds[Math.min(timedRound,game.seconds.length)-1]*1000;
+    deadline=performance.now()+duration;
+    timeDisplay.dataset.timed='';
     updateClock();
     ticker=setInterval(updateClock,100);
   }else{
@@ -109,6 +113,7 @@ function updateClock(){
   const remaining=deadline-performance.now();
   if(remaining<=0){finishRound(false,true);return;}
   clock.textContent=`${Math.ceil(remaining/1000)}s`;
+  timeDisplay.style.setProperty('--rush-remaining',Math.min(1,remaining/duration));
 }
 
 function finishRound(correct,expired=false){

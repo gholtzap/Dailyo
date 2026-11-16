@@ -148,7 +148,40 @@
 .feed-link { display: inline-flex; align-items: center; min-height: 44px; }
 .feed-header .feed-link:nth-child(3) { margin-left: auto; }
 #rush-status { margin: 0; font-size: 13px; }
-#rush-clock { min-width: 36px; font-variant-numeric: tabular-nums; }
+#rush-clock { min-width: 3ch; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rush-time { display: flex; align-items: center; gap: 8px; }
+.rush-time:not([data-timed]) :is(.rush-track, .rush-clock-icon) { display: none; }
+.rush-time[data-timed] { flex: 1; min-width: 0; max-width: 288px; }
+.rush-track { flex: 1; height: 6px; border-radius: 4px; overflow: hidden; background: var(--line); }
+.rush-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: hsl(calc(140 * var(--rush-remaining)) 72% 58%);
+  transform: scaleX(var(--rush-remaining));
+  transform-origin: left;
+}
+.rush-clock-icon {
+  position: relative;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.rush-clock-icon::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 3px;
+  height: 4px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rush-track span { transition: transform 100ms linear, background-color 100ms linear; }
+}
 .feed-actions:has(#rush-status) { align-items: center; justify-content: space-between; }
 #rush-replay { margin-top: 16px; }
 #feed-results a { display: inline-flex; align-items: center; min-height: 32px; }
