@@ -206,3 +206,15 @@
     to { opacity: 1; transform: translateY(0); }
   }
 }
+
+@media (max-width: 360px) {
+  .feed-actions:has(.rush-time[data-timed]) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .rush-time[data-timed] {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: none;
+  }
+}
