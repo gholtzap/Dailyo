@@ -79,8 +79,30 @@ function svg(tag, attrs) {
   return node;
 }
 
-function marker(point, type) {
-  return svg('circle', { cx: point[0] + 180, cy: 90 - point[1], r: 3.1, class: `rot-pin ${type}` });
+function marker(point, type, radius = 3.1) {
+  return svg('circle', { cx: point[0] + 180, cy: 90 - point[1], r: radius, class: `rot-pin ${type}` });
+}
+
+function zoomToPins(map, guess, [lon, lat]) {
+  // Place the guess on the nearest copy of the world when the points straddle the date line.
+  const guessLon = lon + ((guess[0] - lon + 540) % 360) - 180;
+  const x1 = guessLon + 180, y1 = 90 - guess[1];
+  const x2 = lon + 180, y2 = 90 - lat;
+  const width = Math.max(12, Math.abs(x2 - x1) * 1.24, Math.abs(y2 - y1) * 2.48);
+  const height = width / 2;
+  const left = (x1 + x2 - width) / 2;
+  const top = (y1 + y2 - height) / 2;
+  map.setAttribute('viewBox', `${left} ${top} ${width} ${height}`);
+  map.classList.add('rot-zoomed');
+  for (const shift of [-360, 360]) {
+    if (shift < 0 ? left >= 0 : left + width <= 360) continue;
+    const wrappedLand = map.firstElementChild.cloneNode();
+    wrappedLand.setAttribute('transform', `translate(${shift} 0)`);
+    map.append(wrappedLand);
+  }
+  map.append(svg('line', { x1, y1, x2, y2, class: 'rot-connector' }),
+    marker([lon, lat], 'answer', width / 115),
+    marker([guessLon, guess[1]], 'guess', width / 80));
 }
 
 function coordinates([lon, lat]) {
@@ -96,7 +118,7 @@ function drawMap(question, state, reviewing) {
     'aria-label': reviewing ? `World map showing your pin and ${city}` : 'World map. Use arrow keys to move the pin.',
     ...(reviewing ? {} : { tabindex: 0 }),
   });
-  map.append(svg('path', { d: data.land, class: 'rot-land', 'fill-rule': 'evenodd' }));
+  map.append(svg('path', { d: data.land, class: 'rot-land', 'fill-rule': 'evenodd', 'aria-hidden': 'true' }));
   const feedback = element('div', undefined, 'rot-feedback');
   feedback.setAttribute('role', 'status');
   if (reviewing) {
@@ -106,7 +128,7 @@ function drawMap(question, state, reviewing) {
       feedback.append(element('p',`${city}, ${country} · ${coordinates([lon,lat])}`));
       return [heading,map,feedback];
     }
-    map.append(marker(guess, 'guess'), marker([lon, lat], 'answer'));
+    zoomToPins(map, guess, [lon, lat]);
     feedback.append(element('p', `${number.format(scoreAnswer(kind, question, guess))} km away`),
       element('p', `Yellow pin: your guess at ${coordinates(guess)}. Green pin: ${city}, ${country}.`));
     return [heading, map, feedback];

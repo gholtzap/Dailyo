@@ -33,10 +33,28 @@ async function answerMap(page, [city, , lon, lat], index) {
   if (page.viewportSize().width < 700) await page.touchscreen.tap(x, y);
   else await page.mouse.click(x, y);
   await page.getByRole('button', { name: 'Check pin', exact: true }).click();
-  assert.equal(await map.locator('.rot-pin').count(), 2);
+  await checkMapResult(map, 20);
   const feedback = await page.locator('.rot-feedback').innerText();
   assert.ok(parseInt(feedback, 10) < 250, feedback);
   assert.ok(feedback.includes(city));
+}
+
+async function checkMapResult(map, maxWidth) {
+  const { width, height, lineLength, visible, dotted } = await map.evaluate(node => {
+    const { x, y, width, height } = node.viewBox.baseVal;
+    const line = node.querySelector('.rot-connector');
+    const pins = [...node.querySelectorAll('.rot-pin')].map(pin =>
+      ['cx', 'cy', 'r'].map(attr => Number(pin.getAttribute(attr))));
+    return {
+      width, height,
+      lineLength: line?.getTotalLength(),
+      dotted: line && getComputedStyle(line).strokeDasharray !== 'none',
+      visible: pins.length === 2 && pins.every(([cx, cy, r]) =>
+        cx - r >= x && cx + r <= x + width && cy - r >= y && cy + r <= y + height),
+    };
+  });
+  assert.ok(width > 0 && width <= maxWidth && height === width / 2);
+  assert.ok(visible && dotted && lineLength <= width, 'Draw a dotted line with both pins inside the zoomed map');
 }
 
 async function answerYear(page, { event, timeline }, index) {
@@ -105,6 +123,20 @@ try {
   }
   assert.equal(await astana.locator('#round-title').innerText(),'Find Astana');
   await astana.close();
+
+  const suva = await browser.newPage();
+  await suva.clock.setFixedTime(new Date('2027-07-12T16:00:00Z'));
+  await suva.goto(`${base}/maprot/`);
+  assert.equal(await suva.locator('#round-title').innerText(), 'Find Suva');
+  const map = suva.locator('.rot-map');
+  await map.scrollIntoViewIfNeeded();
+  const box = await map.boundingBox();
+  await suva.mouse.click(box.x + box.width / 360, box.y + box.height * 108 / 180);
+  await suva.getByRole('button', { name: 'Check pin' }).click();
+  await checkMapResult(map, 20);
+  assert.equal(await map.locator('.rot-land').count(), 2);
+  await suva.close();
+
   await checkMainTerritories();
   for (const [kind, play] of Object.entries(answer)) {
     const data = preparePuzzles(kind, await read(`../dist/games/data/${kind}.json`));
@@ -144,9 +176,14 @@ try {
           assert.ok(await next.evaluate(node => node === document.activeElement));
           await page.reload();
           await next.waitFor();
+          if (kind === 'maprot') await checkMapResult(page.locator('.rot-map'), 20);
           await inspect('review');
         }
         await next.click();
+        if (kind === 'maprot' && index < 4) {
+          assert.equal(await page.locator('.rot-map').getAttribute('viewBox'), '0 0 360 180');
+          assert.equal(await page.locator('.rot-connector').count(), 0);
+        }
       }
       const summary = await page.locator('#round-title').innerText();
       assert.match(summary, kind === 'maprot' ? /^\d[\d,]* km off$/ : /^4 out of 5$/);
