@@ -13,12 +13,12 @@ const inversions = board => board.reduce((count, tile, i) => count + board.slice
 export const moveLimit = 100;
 const maxScore = 2_147_483_647;
 
-function shortest(words, start, goal) {
+function shortest(buckets, start, goal) {
   const queue = new Map([[start, null]]);
   for (const word of queue.keys()) {
-    for (let i = 0; i < 4; i++) for (const letter of 'abcdefghijklmnopqrstuvwxyz') {
-      const next = word.slice(0, i) + letter + word.slice(i+1);
-      if (!queue.has(next) && words.has(next)) queue.set(next, word);
+    for (let i = 0; i < 4; i++) {
+      const key = word.slice(0, i) + '*' + word.slice(i + 1);
+      for (const next of buckets.get(key)) if (!queue.has(next)) queue.set(next, word);
     }
     if (queue.has(goal)) {
       const path = [];
@@ -39,7 +39,16 @@ export function prepareExtra(game, raw, dictionary) {
     if (!raw.every(row => Array.isArray(row) && row.length === 2 && row.every(word => words.has(word)) && row[0] !== row[1])) {
       throw new Error('Invalid word ladders');
     }
-    return { rows: raw, words };
+    const buckets = new Map();
+    // Alphabetical neighbors preserve the existing tie-break between shortest paths.
+    for (const word of [...words].sort()) {
+      for (let i = 0; i < 4; i++) {
+        const key = word.slice(0, i) + '*' + word.slice(i + 1);
+        if (!buckets.has(key)) buckets.set(key, []);
+        buckets.get(key).push(word);
+      }
+    }
+    return { rows: raw, words, buckets };
   }
   const valid = game === 'cluerot' ? raw.every(row => Array.isArray(row) && row.length === 3 &&
     nonempty(row[0]) && Array.isArray(row[1]) && row[1].length && row[1].every(nonempty) &&
@@ -61,7 +70,7 @@ export function extraPuzzle(game, data, seed) {
     shuffle(data.rows, seed)[0];
   if (game === 'ladderrot') {
     const [start, goal] = row;
-    const solution = shortest(data.words, start, goal);
+    const solution = shortest(data.buckets, start, goal);
     if (!solution) throw new Error('Unsolvable ladder');
     return { id: `${start}-${goal}`, start, goal, words: data.words, solution };
   }
