@@ -15,6 +15,7 @@ try{
   if(kind==='vocabulary'){
    for(const route of ['/','/flags/','/languages/']){
     await other.goto(base+route);
+    if(route==='/')await other.getByText('Games',{exact:true}).click();
     await other.getByRole('link',{name:'Vocabulary',exact:true}).click();
     await other.locator('.vocabulary-word').waitFor();
     assert.equal(await other.getByRole('link',{name:'Vocabulary',exact:true}).getAttribute('aria-current'),'page');
