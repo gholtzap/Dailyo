@@ -17,6 +17,9 @@ const $=selector=>document.querySelector(selector);
 const gamePanel=$('#feed-game'),recap=$('#feed-recap'),progress=$('#feed-progress');
 const actions=$('.feed-actions'),skip=$('#feed-skip'),retry=$('#feed-retry'),undo=$('#feed-undo');
 const continueArea=$('#feed-continue'),next=$('#feed-next'),replay=$('#feed-replay');
+const copyStatus=$('#feed-copy-status'),copyText=$('#feed-copy-text');
+const recapDate=new Intl.DateTimeFormat('en-US',{timeZone:'UTC',year:'numeric',month:'short',day:'numeric'});
+const recapColumn=Math.max(...games.map(({label})=>label.length))+3;
 let day=dailyDate(),skipped=readSkips(),results=new Map();
 let index=-1,phase='loading',frame,preload,timeout,focusOnReady=false,lastSkip;
 
@@ -85,6 +88,8 @@ function showGame(position){
       return li;
     });
     $('#feed-results').replaceChildren(...rows);
+    copyStatus.textContent='';
+    copyText.hidden=true;
     replay.hidden=games.every(({id})=>results.has(id));
     if(focusOnReady)recap.querySelector('h2').focus();
     focusOnReady=false;
@@ -190,6 +195,38 @@ replay.onclick=()=>{
   saveSkips();
   focusOnReady=true;
   showGame(0);
+};
+
+function recapText(){
+  const rows=games.map(({id,label})=>{
+    const result=results.get(id)??'Skipped';
+    const solved=(id==='ladderrot'||id==='cluerot')&&results.has(id)&&result!=='Answer shown';
+    const outcome=solved?'Completed':result.replace(/^(\d+) out of (\d+)$/,'$1/$2');
+    return label.padEnd(recapColumn)+outcome;
+  });
+  return [
+    `dailyo | ${recapDate.format(new Date(`${day}T00:00:00Z`))}`,
+    `${results.size} of ${games.length} games completed`,
+    '',...rows,'','Play today’s Daily Games','https://trainrot.vercel.app/',
+  ].join('\n');
+}
+
+$('#feed-copy').onclick=async()=>{
+  if(changeDay()||phase!=='recap')return;
+  const text=recapText();
+  let copied=false;
+  try{
+    await navigator.clipboard.writeText(text);
+    copied=true;
+  }catch{}
+  if(changeDay()||phase!=='recap'||recapText()!==text)return;
+  copyStatus.textContent=copied?'Copied':'Select and copy the recap.';
+  copyText.hidden=copied;
+  if(!copied){
+    copyText.value=text;
+    copyText.focus();
+    copyText.select();
+  }
 };
 
 let touchStart;

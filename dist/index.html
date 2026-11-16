@@ -36,7 +36,15 @@
   <main class="feed-body" aria-label="Daily games">
     <div id="feed-game"></div>
     <section id="feed-recap" class="main result" hidden>
-      <h2 tabindex="-1">Daily recap</h2>
+      <div class="feed-recap-heading">
+        <h2 tabindex="-1">Daily recap</h2>
+        <span class="feed-recap-copy">
+          <button id="feed-copy" class="game-icon copy-icon" type="button" aria-label="Copy daily recap" data-ui-tooltip="feed-copy-tip"></button>
+          <span id="feed-copy-tip" class="game-tooltip" role="tooltip">Copy daily recap</span>
+        </span>
+      </div>
+      <p id="feed-copy-status" role="status"></p>
+      <textarea id="feed-copy-text" aria-label="Daily recap to copy" rows="17" readonly hidden></textarea>
       <ul id="feed-results"></ul>
       <button id="feed-replay" class="secondary" type="button" hidden>Play skipped games</button>
     </section>

@@ -98,3 +98,23 @@
   border-left: 2px solid currentColor;
   transform: rotate(24deg);
 }
+
+.feed-recap-heading { display: flex; align-items: center; gap: 12px; }
+.feed-recap-heading h2 { margin: 0; }
+.feed-recap-copy { position: relative; }
+.feed-recap-copy .game-tooltip { top: 100%; left: 0; }
+#feed-copy-status { margin: 8px 0 0; }
+#feed-copy-status:empty { margin: 0; }
+#feed-copy-text {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium,webkit} from 'playwright';
 import {checkPage} from 'lintapple';
+import {extraPuzzle,prepareExtra} from '../dist/games/extra-puzzles.js';
 
 const base=process.env.TRAINROT_TEST_URL??'http://127.0.0.1:4173';
 const policy=JSON.parse(await fs.readFile(new URL('../ui-policy.json',import.meta.url)));
@@ -21,6 +22,7 @@ try{
   for(const {width,height} of policy.viewports){
     const mobile=width===390;
     const context=await browser.newContext({viewport:{width,height},colorScheme:'dark',hasTouch:mobile,isMobile:mobile});
+    if(engine===chromium)await context.grantPermissions(['clipboard-read','clipboard-write']);
     const page=await context.newPage();
     const errors=[];
     page.on('pageerror',error=>errors.push(error.message));
@@ -213,8 +215,9 @@ try{
     }
     await page.getByRole('heading',{name:'Daily recap'}).waitFor();
     const rows=page.locator('#feed-results li');
+    const flagScore=await score('flags'), vocabularyScore=await score('vocabulary');
     assert.deepEqual(await rows.allTextContents(),[
-      'trainrotAnswer shown', 'flagrot'+await score('flags'), 'langrotSkipped', 'Vocabulary'+await score('vocabulary'),
+      'trainrotAnswer shown', 'flagrot'+flagScore, 'langrotSkipped', 'Vocabulary'+vocabularyScore,
       'maprotSkipped', 'yearrotSkipped', 'borderrotSkipped',
       'ladderrotSkipped', 'cluerotSkipped', 'scalerotSkipped', 'swaprotSkipped',
     ]);
@@ -228,7 +231,41 @@ try{
       await check.close();
       return result;
     }
+    const copyRecap=page.getByRole('button',{name:'Copy daily recap',exact:true});
+    const copyStatus=page.locator('#feed-copy-status');
+    const fallback=page.getByRole('textbox',{name:'Daily recap to copy',exact:true});
+    const expectedRecap=`dailyo | Nov 16, 2026
+3 of 11 games completed
+
+trainrot     Answer shown
+flagrot      ${flagScore.replace(' out of ','/')}
+langrot      Skipped
+Vocabulary   ${vocabularyScore.replace(' out of ','/')}
+maprot       Skipped
+yearrot      Skipped
+borderrot    Skipped
+ladderrot    Skipped
+cluerot      Skipped
+scalerot     Skipped
+swaprot      Skipped
+
+Play today’s Daily Games
+https://trainrot.vercel.app/`;
+    assert.equal(await copyRecap.textContent(),'');
     await inspect('recap');
+    if(engine===chromium){
+      await copyRecap.press('Enter');
+      await copyStatus.filter({hasText:'Copied'}).waitFor();
+      assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),expectedRecap);
+    }
+    await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{
+      configurable:true,value:{writeText:()=>Promise.reject(new Error('denied'))},
+    }));
+    await copyRecap.click();
+    assert.equal(await fallback.inputValue(),expectedRecap);
+    assert.equal(await fallback.evaluate(field=>field.readOnly&&field===document.activeElement&&
+      field.selectionStart===0&&field.selectionEnd===field.value.length),true);
+    await inspect('recap-copy-fallback');
     await undo.click();
     await more[3].locator('.swap-tile').first().waitFor();
     assert.equal(await undo.isVisible(),false);
@@ -279,9 +316,23 @@ try{
     await next.waitFor();
     await inspect('border-result','borderrot');
     await next.click();
-    await more[0].getByRole('button',{name:'Show solution'}).click();
+    const [ladderRows,wordsData,clues]=await Promise.all(['ladderrot','ladder-words','cluerot'].map(async name=>{
+      const response=await page.request.get(new URL(`/games/data/${name}.json`,base).href);
+      assert.ok(response.ok());
+      return response.json();
+    }));
+    const day=date.toISOString().slice(0,10);
+    const ladder=extraPuzzle('ladderrot',prepareExtra('ladderrot',ladderRows,wordsData),day);
+    const clue=extraPuzzle('cluerot',prepareExtra('cluerot',clues),day);
+    const wordInput=more[0].getByLabel('Next word');
+    for(const word of ladder.solution.slice(1)){
+      await wordInput.fill(word);
+      await wordInput.press('Enter');
+    }
     await next.click();
-    await more[1].getByRole('button',{name:'Show answer'}).click();
+    const guess=more[1].getByLabel('Your guess');
+    await guess.fill(clue.answer);
+    await guess.press('Enter');
     await next.click();
     await more[2].getByRole('spinbutton').fill('50');
     await more[2].getByRole('button',{name:'Check estimate'}).click();
@@ -302,6 +353,16 @@ try{
     assert.equal(await rows.filter({hasText:'Skipped'}).count(),0);
     assert.match(await rows.nth(9).innerText(),/scalerot.*% off/s);
     assert.match(await rows.nth(10).innerText(),/swaprot.*moves/s);
+    assert.equal(await fallback.isVisible(),false);
+    if(engine===chromium){
+      await copyRecap.click();
+      await copyStatus.filter({hasText:'Copied'}).waitFor();
+      const full=await page.evaluate(()=>navigator.clipboard.readText());
+      assert.match(full,/11 of 11 games completed/);
+      assert.match(full,/ladderrot    Completed\ncluerot      Completed/);
+      assert.match(full,/swaprot      \d+ moves/);
+      assert.doesNotMatch(full,/Skipped| out of /);
+    }
     assert.match(await rows.nth(4).innerText(),/maprot\s+[\d,]+ km off/);
     assert.match(await rows.nth(5).innerText(),/yearrot\s+[0-5] out of 5/);
     assert.match(await rows.nth(6).innerText(),/borderrot\s+0 out of 5/);

@@ -189,3 +189,15 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 }
 .game-help-header button:hover { background: #383b40; }
 .game-help-dialog p { margin: 16px 0 0; line-height: 1.5; }
+
+.copy-icon::before,
+.copy-icon::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 12px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+.copy-icon::before { top: 12px; left: 13px; }
+.copy-icon::after { top: 16px; left: 17px; background: var(--paper, #1c1d1f); }

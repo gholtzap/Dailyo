@@ -88,17 +88,6 @@
   border-color: var(--line);
   background: var(--paper);
 }
-#copy-results::before,
-#copy-results::after {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 12px;
-  border: 1px solid currentColor;
-  border-radius: 2px;
-}
-#copy-results::before { top: 12px; left: 13px; }
-#copy-results::after { top: 16px; left: 17px; background: var(--paper); }
 #copy-tooltip { top: 100%; left: 0; }
 #copy-status { text-align: left; }
 #copy-status:empty { margin: 0; }
