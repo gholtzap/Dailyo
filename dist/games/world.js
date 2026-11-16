@@ -48,7 +48,15 @@ function withCurrentProgress(action){
   if(navigator.locks)return navigator.locks.request(key(`daily:${date}`),update);
   update();
 }
-function question(){const s=modeState[mode],seed=mode==='daily'?(rushRound===null?`daily:${kind}:${day}`:`rush:${kind}:${day}`):s.seed;return {item:shuffle(items,seed)[s.index],seed:`${seed}:${s.index}`};}
+let deckDay, deck;
+function dailyDeck() {
+  if (deckDay !== day) {
+    deck = quizDeck(items, kind, day);
+    deckDay = day;
+  }
+  return deck;
+}
+function question(){const s=modeState[mode],seed=mode==='daily'?(rushRound===null?`daily:${kind}:${day}`:`rush:${kind}:${day}`):s.seed;return {item:(mode==='daily'&&rushRound===null?dailyDeck():shuffle(items,seed))[s.index],seed:`${seed}:${s.index}`};}
 function statusText(selected,item){
   if(selected===item.id)return vocabulary?`Correct! ${item.name}.`:'Correct!';
   return `Correct answer: ${item.name}${vocabulary?'.':''}`;
@@ -73,7 +81,7 @@ function advance(){
   save();draw();(document.querySelector('#question-title')??document.querySelector('.result h2'))?.focus();
 }
 function dailyProgress(){
-  const state=modeState.daily,deck=quizDeck(items,kind,day),list=make('ol',undefined,'daily-progress');
+  const state=modeState.daily,deck=dailyDeck(),list=make('ol',undefined,'daily-progress');
   list.setAttribute('aria-label','Daily question progress');
   for(let i=0;i<5;i++){
     const status=i<state.answers.length?(state.answers[i]===deck[i].id?'correct':'incorrect'):i===state.index?'current':'upcoming';
@@ -84,7 +92,7 @@ function dailyProgress(){
   return list;
 }
 function result(){
-  const s=modeState.daily,deck=quizDeck(items,kind,day),score=s.answers.filter((answer,i)=>answer===deck[i].id).length;
+  const s=modeState.daily,deck=dailyDeck(),score=s.answers.filter((answer,i)=>answer===deck[i].id).length;
   const box=make('div',undefined,'result'),title=make('h2',`${score} out of 5`),description=make('p','Next daily set at midnight in New York.'),button=make('button','Play practice','secondary');
   title.tabIndex=-1;button.type='button';button.onclick=()=>selectMode('practice');box.append(title,dailyProgress(),description);if(!inFeed)box.append(button);quiz.replaceChildren(box);
   const rank=make('div',undefined,'daily-rank');
@@ -96,7 +104,7 @@ function draw(){
   for(const [id,button] of Object.entries(controls))button.setAttribute('aria-pressed',String(id===mode));
   const s=modeState[mode];if(rushRound===null&&mode==='daily'&&s.index===5){result();return;}
   const {item,seed}=question(),selected=mode==='daily'?(s.answers[s.index]??null):s.selected;
-  const head=make('div',undefined,'round-head'),counter=make('p',mode==='daily'?`Question ${s.index+1} of 5`:`Practice · ${s.total+(selected===null?1:0)}`),score=make('p',mode==='daily'?`${s.answers.slice(0,s.index+(selected!==null?1:0)).filter((v,i)=>v===shuffle(items,`daily:${kind}:${day}`)[i].id).length} correct`:`${s.correct} correct`);
+  const head=make('div',undefined,'round-head'),counter=make('p',mode==='daily'?`Question ${s.index+1} of 5`:`Practice · ${s.total+(selected===null?1:0)}`),score=make('p',rushRound!==null?'':mode==='daily'?`${s.answers.slice(0,s.index+(selected!==null?1:0)).filter((v,i)=>v===dailyDeck()[i].id).length} correct`:`${s.correct} correct`);
   head.append(counter,score);
   const prompt=make('div',undefined,'prompt');prompt.id='question-title';prompt.tabIndex=-1;
   if(kind==='flags'){
