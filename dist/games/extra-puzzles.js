@@ -18,7 +18,9 @@ function shortest(buckets, start, goal) {
   for (const word of queue.keys()) {
     for (let i = 0; i < 4; i++) {
       const key = word.slice(0, i) + '*' + word.slice(i + 1);
-      for (const next of buckets.get(key)) if (!queue.has(next)) queue.set(next, word);
+      const neighbors = buckets.get(key);
+      if (!neighbors) continue;
+      for (const next of neighbors) if (!queue.has(next)) queue.set(next, word);
     }
     if (queue.has(goal)) {
       const path = [];
@@ -48,6 +50,7 @@ export function prepareExtra(game, raw, dictionary) {
         buckets.get(key).push(word);
       }
     }
+    for (const [key, neighbors] of buckets) if (neighbors.length === 1) buckets.delete(key);
     return { rows: raw, words, buckets };
   }
   const valid = game === 'cluerot' ? raw.every(row => Array.isArray(row) && row.length === 3 &&
