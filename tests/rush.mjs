@@ -27,12 +27,18 @@ try{
       failFlag=false;
       return route.fulfill({status:503});
     });
+    let releaseTrain;
+    const trainNetwork=new Promise(resolve=>{releaseTrain=resolve;});
+    await page.route('**/trainrot/?rush=0',async route=>{
+      await trainNetwork;
+      await route.continue();
+    },{times:1});
     const inspect=async(name,child=false)=>{
       if(!lint)return;
       await page.clock.resume();
       reports.push({name:`${width}-${name}`,...await checkPage(page,policy)});
       if(child){
-        const frame=page.frames().find(frame=>frame!==page.mainFrame());
+        const frame=await (await page.locator('iframe:not(.feed-loading)').elementHandle()).contentFrame();
         reports.push({name:`${width}-${name}-game`,...await checkPage(frame,policy)});
       }
       await page.clock.pauseAt(await page.evaluate(()=>Date.now()+100));
@@ -59,14 +65,18 @@ try{
     assert.equal(await timer.textContent(),'Untimed');
     assert.equal(await flag.locator('#question-title').evaluate(node=>node===document.activeElement),true);
     await inspect('flagrot',true);
+    const preloadedFlag=page.locator('iframe[src="/flags/?rush=1"]');
+    assert.equal(await preloadedFlag.evaluate(node=>node.inert),true);
+    await preloadedFlag.evaluate(node=>{node.dataset.preloadCheck='';});
     await flag.getByRole('button',{name:flagDeck[0].name,exact:true}).press('Enter');
     await status.filter({hasText:'Correct'}).waitFor();
-    await page.clock.fastForward(900);
+    await page.clock.fastForward(200);
     await timer.filter({hasText:'8s'}).waitFor();
+    assert.equal(await page.locator('iframe[title=flagrot][data-preload-check]').count(),1);
     for(const [round,seconds] of [[1,6],[2,4],[3,4],[4,4]]){
       await flag.getByRole('button',{name:flagDeck[round].name,exact:true}).click();
       await status.filter({hasText:'Correct'}).waitFor();
-      await page.clock.fastForward(900);
+      await page.clock.fastForward(200);
       await timer.filter({hasText:`${seconds}s`}).waitFor();
       assert.equal(await status.textContent(),`flagrot · Round ${round+2}`);
     }
@@ -76,24 +86,29 @@ try{
     await status.filter({hasText:'Missed'}).waitFor();
     await flag.locator('.feedback').filter({hasText:flagDeck[5].name}).waitFor();
     await inspect('miss',true);
-    await page.clock.fastForward(2700);
+    await page.clock.fastForward(1400);
 
     const language=game('langrot');
-    await timer.filter({hasText:'Untimed'}).waitFor();
+    await timer.filter({hasText:'8s'}).waitFor();
     const languages=await loadJson('/games/data/languages.json');
     const firstLanguage=shuffle(languages,`rush:languages:${day}`)[0];
     await language.getByRole('button',{name:firstLanguage.name,exact:true}).click();
     await status.filter({hasText:'Correct'}).waitFor();
-    await page.clock.fastForward(900);
-    await timer.filter({hasText:'8s'}).waitFor();
+    await page.clock.fastForward(200);
+    await timer.filter({hasText:'6s'}).waitFor();
     await inspect('langrot',true);
-    await page.clock.fastForward(8100);
+    await page.clock.fastForward(6100);
     await status.filter({hasText:'Time’s up'}).waitFor();
     await language.locator('.feedback').filter({hasText:'Correct answer'}).waitFor();
-    await page.clock.fastForward(2700);
+    await page.clock.fastForward(1400);
 
+    await status.filter({hasText:'Loading trainrot…'}).waitFor();
+    assert.equal(await timer.textContent(),'');
+    assert.equal(await page.locator('iframe[title=langrot]').evaluate(node=>node.inert),true);
+    await page.locator('iframe[title=langrot]').waitFor({state:'visible'});
+    releaseTrain();
     const train=game('trainrot');
-    await timer.filter({hasText:'Untimed'}).waitFor();
+    await timer.filter({hasText:'35s'}).waitFor();
     await train.getByRole('heading',{name:'Find the fastest route'}).waitFor();
     await inspect('trainrot',true);
     const network=await loadJson('/data/network.json');
@@ -104,8 +119,8 @@ try{
     for(const {route} of best.legs)await train.locator(`button[data-route="${route}"]`).click();
     await train.getByRole('button',{name:'Check route'}).click();
     await status.filter({hasText:'Correct'}).waitFor();
-    await page.clock.fastForward(900);
-    await timer.filter({hasText:'35s'}).waitFor();
+    await page.clock.fastForward(200);
+    await timer.filter({hasText:'28s'}).waitFor();
     const next=page.getByRole('button',{name:'Next game'});
     const rot=async (kind,round=0)=>{
       const data=preparePuzzles(kind,await loadJson(`/games/data/${kind}.json`));
@@ -121,11 +136,11 @@ try{
       await child.locator('.rot-slot').nth(timeline.filter(([year])=>year<event[0]).length).click();
     };
     const slots=[
-      ['Vocabulary',12,async child=>{
+      ['Vocabulary',12,9,async child=>{
         const words=await loadJson('/games/data/vocabulary.json');
         await child.getByRole('button',{name:shuffle(words,`rush:vocabulary:${day}`)[0].name,exact:true}).click();
       }],
-      ['maprot',20,async child=>{
+      ['maprot',20,15,async child=>{
         const {question:[,,lon,lat]}=await rot('maprot');
         const map=child.locator('.rot-map');
         const position=await map.evaluate((svg,[lon,lat])=>{
@@ -136,8 +151,8 @@ try{
         await map.click({position});
         await child.getByRole('button',{name:'Check pin'}).click();
       }],
-      ['yearrot',14,placeYear],
-      ['borderrot',45,async child=>{
+      ['yearrot',14,10,placeYear],
+      ['borderrot',45,35,async child=>{
         const {data,question}=await rot('borderrot');
         for(const country of question.slice(1)){
           const name=data.graph.get(country).name;
@@ -145,24 +160,24 @@ try{
           await child.getByRole('searchbox').press('Enter');
         }
       }],
-      ['ladderrot',55,async child=>{
+      ['ladderrot',55,45,async child=>{
         const puzzle=await extra('ladderrot','ladderrot','ladder-words');
         for(const word of puzzle.solution.slice(1)){
           await child.getByRole('textbox').fill(word);
           await child.getByRole('button',{name:'Add word'}).click();
         }
       }],
-      ['cluerot',20,async child=>{
+      ['cluerot',20,15,async child=>{
         const puzzle=await extra('cluerot','cluerot');
         await child.getByRole('textbox').fill(puzzle.answer);
         await child.getByRole('button',{name:'Guess',exact:true}).click();
       }],
-      ['scalerot',20,async child=>{
+      ['scalerot',20,15,async child=>{
         const puzzle=await extra('scalerot','scalerot');
         await child.getByRole('spinbutton').fill(String(puzzle.actual));
         await child.getByRole('button',{name:'Check estimate'}).click();
       }],
-      ['swaprot',50,async child=>{
+      ['swaprot',50,40,async child=>{
         const {board}=await extra('swaprot');
         for(let i=board.findIndex((tile,i)=>tile>board[i+1]);i!==-1;i=board.findIndex((tile,i)=>tile>board[i+1])){
           await child.locator('.swap-tile').nth(i).click();
@@ -171,19 +186,19 @@ try{
         }
       }],
     ];
-    for(const [name,seconds,solve] of slots){
+    for(const [name,openingSeconds,seconds,solve] of slots){
       await next.click();
-      await timer.filter({hasText:'Untimed'}).waitFor();
+      await timer.filter({hasText:`${openingSeconds}s`}).waitFor();
       await inspect(name,true);
       await solve(game(name));
       await status.filter({hasText:'Correct'}).waitFor();
-      await page.clock.fastForward(900);
+      await page.clock.fastForward(200);
       await timer.filter({hasText:`${seconds}s`}).waitFor();
       if(name==='yearrot'){
         for(let round=1;round<=roundCount;round++){
           await placeYear(game(name),round);
           await status.filter({hasText:'Correct'}).waitFor();
-          await page.clock.fastForward(900);
+          await page.clock.fastForward(200);
           await status.filter({hasText:`yearrot · Round ${round+2}`}).waitFor();
         }
       }
@@ -220,15 +235,15 @@ try{
     await scale.getByRole('spinbutton').fill(String(puzzle.actual));
     await scale.getByRole('button',{name:'Check estimate'}).click();
     await status.filter({hasText:'Correct'}).waitFor();
-    await page.clock.fastForward(900);
+    await page.clock.fastForward(200);
     await timer.filter({hasText:'20s'}).waitFor();
     await page.clock.fastForward(20100);
     await scale.locator('.rot-feedback').filter({hasText:'Answer:'}).waitFor();
-    await page.clock.fastForward(2700);
+    await page.clock.fastForward(1400);
     assert.equal(await page.locator('#feed-results li').count(),1);
     assert.deepEqual(errors,[]);
     await page.close();
-    console.log(`${width}px Rush: all eleven games, untimed openers, timed rounds, misses, timeouts and single-game links passed`);
+    console.log(`${width}px Rush: all eleven games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`);
   }
   if(lint){
     await fs.mkdir('test-results',{recursive:true});
