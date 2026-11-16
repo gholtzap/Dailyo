@@ -331,7 +331,9 @@ async function start() {
   data = preparePuzzles(kind, await response.json());
   if(rushRound!==null){
     const seed=rushSeed(kind);
-    const question=makeSet(kind,data,seed)[rushRound];
+    const position=rushRound%data.items.length;
+    const index=position%roundCount;
+    const question=makeSet(kind,data,seed,position-index)[index];
     sessions.daily={questions:[question],state:newSession(seed)};
     if(mapGame)quiz.closest('main').querySelector('.heading p').textContent='Place your pin within 500 km.';
     onRushTimeout(()=>{

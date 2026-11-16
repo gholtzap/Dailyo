@@ -2,7 +2,7 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
-[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all eleven games. The first round of each game is untimed. Correct answers unlock timed rounds with shorter clocks. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
+[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all eleven games. The first round of each game is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout advances to the next game. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
 
 [Daily Feed](https://trainrot.vercel.app/daily/) plays all eleven daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
 

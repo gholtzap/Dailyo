@@ -72,11 +72,11 @@ export function preparePuzzles(kind, raw) {
   return { graph, items };
 }
 
-export function makeSet(kind, data, seed) {
+export function makeSet(kind, data, seed, offset = 0) {
   const deck = shuffle(data.items, seed);
-  const questions = deck.slice(0, roundCount);
+  const questions = deck.slice(offset, offset + roundCount);
   if (kind === 'yearrot') {
-    const anchors = deck.slice(roundCount, roundCount + 2);
+    const anchors = [0,1].map(index => deck[(offset + questions.length + index) % deck.length]);
     return questions.map((event, index) => ({
       event, timeline: [...anchors, ...questions.slice(0, index)].sort((a, b) => a[0] - b[0]),
     }));
