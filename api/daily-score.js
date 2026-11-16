@@ -4,8 +4,12 @@ import pg from 'pg';
 import {createRouter, MAX_GUESSES, transition} from '../dist/router.js';
 import {dailyDate, dailyChallenge, quizDeck, quizOptions, quizPuzzle, trainPuzzle} from '../dist/daily/puzzles.js';
 
-const games = ['train', 'flags', 'languages', 'vocabulary'];
+import {makeSet, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreSet} from '../dist/games/rot-puzzles.js';
+
+const rotGames = ['maprot', 'yearrot', 'borderrot'];
+const games = ['train', 'flags', 'languages', 'vocabulary', ...rotGames];
 const data = new Map();
+const rotData = new Map();
 let pool;
 let train;
 
@@ -43,6 +47,15 @@ function grade(puzzle, game, day, answers) {
   }
 
   const items = readData('games/data/' + game + '.json');
+  if (rotGames.includes(game)) {
+    if (!rotData.has(game)) rotData.set(game, preparePuzzles(game, items));
+    const prepared = rotData.get(game);
+    const questions = makeSet(game, prepared, day);
+    if (puzzle !== rankingPuzzle(game, questions)) return;
+    const candidate = {seed: day, index: roundCount, answers, draft: []};
+    if (restoreSession(game, prepared, questions, candidate, day).index !== roundCount) return;
+    return scoreSet(game, questions, answers).total;
+  }
   const deck = quizDeck(items, game, day);
   if (puzzle !== quizPuzzle(deck) || answers.length !== deck.length) return;
   let score = 0;
@@ -96,7 +109,8 @@ export default async function handler(req, res) {
       ON CONFLICT DO NOTHING`, [...key, score]);
     const {rows: [rank]} = await pool.query(`
       SELECT mine.score,
-        count(*) FILTER (WHERE other.score < mine.score)::int AS "lower",
+        count(*) FILTER (WHERE CASE WHEN mine.game = 'maprot'
+          THEN other.score > mine.score ELSE other.score < mine.score END)::int AS "lower",
         count(*) FILTER (WHERE other.score = mine.score)::int AS tied,
         count(other.player)::int AS others
       FROM daily_scores mine

@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS daily_scores (
   day date NOT NULL,
   puzzle text NOT NULL,
   player uuid NOT NULL,
-  score smallint NOT NULL CHECK (score BETWEEN 0 AND 100),
+  score integer NOT NULL CHECK (score >= 0),
   PRIMARY KEY (game, day, puzzle, player)
 );

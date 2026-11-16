@@ -71,7 +71,35 @@ try {
       await page.close();
     }
   }
-  console.log('Daily rankings passed for all four games, including reloads, skips, and replayed submissions');
+  for (const game of ['maprot', 'yearrot', 'borderrot']) {
+    for (const [context, perfect] of [[mobile, false], [desktop, true]]) {
+      const page = await context.newPage();
+      await page.goto(base + '/' + game + '/');
+      await page.locator('#round-title').waitFor();
+      await page.evaluate(async ({game, perfect}) => {
+        const {dailyDate} = await import('/daily/puzzles.js');
+        const {makeSet, preparePuzzles, roundCount} = await import('/games/rot-puzzles.js');
+        const day = dailyDate();
+        const raw = await (await fetch('/games/data/' + game + '.json')).json();
+        const questions = makeSet(game, preparePuzzles(game, raw), day);
+        const answers = questions.map(question => {
+          if (game === 'maprot') return perfect ? question.slice(2) : [0, 0];
+          if (game === 'borderrot') return perfect ? question.slice(1) : null;
+          const slot = question.timeline.filter(([year]) => year < question.event[0]).length;
+          return perfect ? slot : (slot + 1) % (question.timeline.length + 1);
+        });
+        localStorage.setItem('dailyo:' + game + ':v1:daily:' + day,
+          JSON.stringify({seed: day, index: roundCount, answers, draft: []}));
+      }, {game, perfect});
+      await page.reload();
+      await page.locator('.daily-rank').getByText(perfect
+        ? /You (scored higher than|placed ahead of) 100%/
+        : /First finisher today/).waitFor();
+      if (perfect) assert.equal(await page.locator('#round-title').innerText(), game === 'maprot' ? '0 km off' : '5 out of 5');
+      await page.close();
+    }
+  }
+  console.log('Daily rankings passed for all seven games, including reloads, skips, and replayed submissions');
 } finally {
   await browser.close();
 }

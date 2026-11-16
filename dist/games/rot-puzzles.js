@@ -143,3 +143,13 @@ export function scoreAnswer(kind, question, answer) {
   if (kind === 'yearrot') return Number(answer === question.timeline.filter(([year]) => year < question.event[0]).length);
   return Number(answer !== null && answer.length === question.length - 1);
 }
+
+export function rankingPuzzle(kind, questions) {
+  return JSON.stringify(kind === 'yearrot' ? questions.map(({event, timeline}) =>
+    [event[0], ...timeline.map(([year]) => year)]) : questions);
+}
+
+export function scoreSet(kind, questions, answers) {
+  const scores = answers.map((answer, index) => scoreAnswer(kind, questions[index], answer));
+  return { scores, total: scores.reduce((sum, score) => sum + score, 0) };
+}

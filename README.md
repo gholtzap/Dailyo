@@ -76,5 +76,5 @@ rounds stay outside the rankings.
 
 Set a server-side `DATABASE_URL` to a pooled Postgres connection and apply
 `scripts/daily-scores.sql` to enable the API. Use a separate database for testing.
-To exercise all four games against an empty test database, set
+To exercise all seven games against an empty test database, set
 `TRAINROT_TEST_URL` to the running site and run `node tests/rankings.mjs`.

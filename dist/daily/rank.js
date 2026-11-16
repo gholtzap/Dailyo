@@ -33,12 +33,16 @@ export async function showRank(container, result, score) {
     if (!others) status.textContent = 'First finisher today';
     else if (lower) {
       const percent = Math.floor(100 * lower / others);
+      const comparison = result.game === 'maprot' ? 'You placed ahead of' : 'You scored higher than';
       status.textContent = percent
-        ? `You scored higher than ${percent}% of today’s other finishers`
-        : `You scored higher than ${lower} of ${others} other finishers today`;
+        ? `${comparison} ${percent}% of today’s other finishers`
+        : `${comparison} ${lower} of ${others} other finishers today`;
     } else if (tied) status.textContent = `${tied} other ${tied === 1 ? 'finisher' : 'finishers'} tied your score`;
     else status.textContent = `Your rank today is ${others + 1} of ${others + 1}`;
-    if (rank.score !== score) status.prepend(`Your first score today was ${rank.score}. `);
+    if (rank.score !== score) {
+      const first = result.game === 'maprot' ? `${rank.score.toLocaleString('en')} km off` : rank.score;
+      status.prepend(`Your first score today was ${first}. `);
+    }
   } catch {
     requests.delete(key);
     container.hidden = false;
