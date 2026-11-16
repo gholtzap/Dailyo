@@ -127,3 +127,13 @@
 #rush-intro p { max-width: 42ch; }
 #rush-intro button, #rush-replay { margin-top: 16px; }
 #feed-results a { display: inline-flex; align-items: center; min-height: 32px; }
+
+@media (max-width: 440px) {
+  .feed-header:has(.feed-directory[open]) {
+    padding-bottom: calc(16px + min(278px, 42dvh));
+  }
+  .feed-directory[open] nav {
+    top: 60px;
+    max-height: min(278px, 42dvh);
+  }
+}
