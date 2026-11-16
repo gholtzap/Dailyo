@@ -75,6 +75,19 @@ scores with other finishers. Assisted and skipped Trainrot rounds and Practice
 rounds stay outside the rankings.
 
 Set a server-side `DATABASE_URL` to a pooled Postgres connection and apply
-`scripts/daily-scores.sql` to enable the API. Use a separate database for testing.
+`scripts/daily-scores.sql` to enable the API. Set `DAILY_SCORE_SECRET` to a
+stable, randomly generated secret of at least 32 characters. Rotating it
+invalidates signed browser identities. Use a separate database for testing.
+
+The score API limits request size and rejects cross-origin browser submissions.
+It limits short bursts per network on each running function instance and uses
+Postgres to cap how many new
+ranking identities a network can create per hour. The database stores a keyed,
+hourly network identifier for this limit. Existing browsers can still submit
+after the new-identity limit is reached. Local game saves work independently.
+
+To check the request limits and cookie migration, run
+`node tests/score-protection.mjs` with `TRAINROT_TEST_URL` set to a loopback
+server running the score API and `DATABASE_URL` set to its empty test database.
 To exercise all seven games against an empty test database, set
 `TRAINROT_TEST_URL` to the running site and run `node tests/rankings.mjs`.

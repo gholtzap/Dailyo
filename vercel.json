@@ -4,6 +4,15 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {"key": "Content-Security-Policy", "value": "script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self'; form-action 'self'"},
+        {"key": "X-Content-Type-Options", "value": "nosniff"}
+      ]
+    }
+  ],
   "functions": {
     "api/daily-score.js": {
       "includeFiles": "dist/{data/{network,challenges}.json,games/data/*.json}",

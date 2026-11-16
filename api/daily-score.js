@@ -3,8 +3,11 @@ import {readFileSync} from 'node:fs';
 import pg from 'pg';
 import {createRouter, MAX_GUESSES, transition} from '../dist/router.js';
 import {dailyDate, dailyChallenge, quizDeck, quizOptions, quizPuzzle, trainPuzzle} from '../dist/daily/puzzles.js';
-
 import {makeSet, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreSet} from '../dist/games/rot-puzzles.js';
+
+import {
+  admissionKey, browserOriginAllowed, burstRetryAfter, clientNetwork, cookieIdentity, playerCookie, readScoreBody,
+} from '../lib/score-protection.js';
 
 const rotGames = ['maprot', 'yearrot', 'borderrot'];
 const games = ['train', 'flags', 'languages', 'vocabulary', ...rotGames];
@@ -12,6 +15,7 @@ const data = new Map();
 const rotData = new Map();
 let pool;
 let train;
+let lastAdmissionCleanup;
 
 function readData(path) {
   if (!data.has(path)) data.set(path, JSON.parse(readFileSync(new URL('../dist/' + path, import.meta.url))));
@@ -67,11 +71,28 @@ function grade(puzzle, game, day, answers) {
   return score;
 }
 
+async function admitPlayer(secret, network, hour) {
+  if (lastAdmissionCleanup !== hour) {
+    await pool.query('DELETE FROM daily_score_admissions WHERE hour < $1', [hour - 1]);
+    lastAdmissionCleanup = hour;
+  }
+  const {rowCount} = await pool.query(`
+    INSERT INTO daily_score_admissions (hour, network, admitted) VALUES ($1, $2, 1)
+    ON CONFLICT (hour, network) DO UPDATE SET admitted = daily_score_admissions.admitted + 1
+      WHERE daily_score_admissions.admitted < 60
+    RETURNING admitted`, [hour, admissionKey(secret, hour, network)]);
+  return rowCount > 0;
+}
+
 export default async function handler(req, res) {
   const reply = (status, body) => {
     res.statusCode = status;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(body));
+  };
+  const throttle = seconds => {
+    res.setHeader('Retry-After', String(seconds));
+    return reply(429, {error: 'Too many score submissions'});
   };
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') {
@@ -79,11 +100,23 @@ export default async function handler(req, res) {
     return reply(405, {error: 'Use POST'});
   }
   if (!process.env.DATABASE_URL) return reply(404, {error: 'Rankings disabled'});
-  if (req.headers['sec-fetch-site'] === 'cross-site') return reply(403, {error: 'Cross-site request'});
-  if (req.headers['content-type']?.split(';')[0] !== 'application/json') return reply(415, {error: 'Expected JSON'});
-  if (Number(req.headers['content-length']) > 4096) return reply(413, {error: 'Result too large'});
+  const secret = process.env.DAILY_SCORE_SECRET;
+  if (!secret || secret.length < 32) return reply(503, {error: 'Daily ranking unavailable'});
+  if (!browserOriginAllowed(req)) return reply(403, {error: 'Cross-origin request'});
+  if (req.headers['content-type']?.split(';')[0].trim().toLowerCase() !== 'application/json' ||
+      ![undefined, 'identity'].includes(req.headers['content-encoding'])) {
+    return reply(415, {error: 'Expected uncompressed JSON'});
+  }
+  const network = clientNetwork(req);
+  if (!network) return reply(503, {error: 'Daily ranking unavailable'});
+  const now = Date.now();
+  const retry = burstRetryAfter(network, now);
+  if (retry) return throttle(retry);
+  const parsed = await readScoreBody(req);
+  if (parsed.status === 413) return reply(413, {error: 'Result too large'});
+  if (parsed.status === 400) return reply(400, {error: 'Invalid JSON'});
 
-  const {game, day, puzzle, answers} = req.body ?? {};
+  const {game, day, puzzle, answers} = parsed.body ?? {};
   if (!games.includes(game) || day !== dailyDate() || typeof puzzle !== 'string' || !Array.isArray(answers)) {
     return reply(400, {error: 'Expected a result for today’s puzzle'});
   }
@@ -92,16 +125,24 @@ export default async function handler(req, res) {
     const score = grade(puzzle, game, day, answers);
     if (!Number.isInteger(score)) return reply(400, {error: 'Invalid daily result'});
 
-    const cookie = req.headers.cookie?.match(/(?:^|;\s*)dailyo_player=([a-f0-9-]{36})(?:;|$)/)?.[1];
-    const player = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(cookie ?? '') ? cookie : randomUUID();
-    if (player !== cookie) {
-      const secure = process.env.VERCEL === '1' ? '; Secure' : '';
-      res.setHeader('Set-Cookie', `dailyo_player=${player}; Path=/api; Max-Age=31536000; HttpOnly; SameSite=Lax${secure}`);
-    }
-
     if (!pool) {
       pool = new pg.Pool({connectionString: process.env.DATABASE_URL, max: 4, connectionTimeoutMillis: 5000, statement_timeout: 5000});
       pool.on('error', logPoolError);
+    }
+
+    const identity = cookieIdentity(req.headers.cookie, secret);
+    let player = identity.player;
+    if (!player) {
+      if (identity.legacy) {
+        const existing = await pool.query('SELECT 1 FROM daily_scores WHERE player = $1 LIMIT 1', [identity.legacy]);
+        if (existing.rowCount) player = identity.legacy;
+      }
+      if (!player) {
+        const hour = Math.floor(now / 3_600_000);
+        if (!await admitPlayer(secret, network, hour)) return throttle(3600 - Math.floor(now / 1000) % 3600);
+        player = randomUUID();
+      }
+      res.setHeader('Set-Cookie', playerCookie(player, secret));
     }
     const key = [game, day, puzzle, player];
     await pool.query(`
