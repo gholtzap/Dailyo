@@ -63,5 +63,20 @@ try{
   previous=id;const correct=flags.find(f=>f.id===id).name;await exhaustive.getByRole('button',{name:correct,exact:true}).click();await exhaustive.locator('#next').click();
  }
  assert.equal(seen.size,flags.length);assert.equal(await exhaustive.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);console.log('Practice covers every flag before repeating');await exhaustive.close();
+ for(const action of ['answer','advance']){
+  const midnight=await browser.newPage();
+  await midnight.clock.install({time:new Date('2026-11-16T04:59:40Z')});
+  await midnight.goto(`${base}/vocabulary/`);
+  const prompt=midnight.locator('.vocabulary-word');
+  const previous=await prompt.innerText();
+  const choice=midnight.locator('.choice').first();
+  if(action==='advance')await choice.click();
+  await midnight.clock.setFixedTime(new Date('2026-11-16T05:00:01Z'));
+  if(action==='advance')await midnight.locator('#next').click();else await choice.click();
+  await midnight.waitForFunction(word=>document.querySelector('.vocabulary-word')?.textContent!==word,previous,{timeout:3000});
+  assert.match(await midnight.locator('.round-head').innerText(),/Question 1 of 5/);
+  assert.equal(await midnight.locator('.feedback').innerText(),'');
+  await midnight.close();
+ }
  const imagePage=await browser.newPage();await imagePage.goto(`${base}/flags/`);const missing=await imagePage.evaluate(async ids=>{const failed=[];for(const id of ids){const img=new Image();img.src=`/games/flags/${id}.svg`;try{await img.decode();if(!img.naturalWidth||!img.naturalHeight)failed.push(id);}catch{failed.push(id);}}return failed;},flags.map(f=>f.id));assert.deepEqual(missing,[]);console.log(`All ${flags.length} flag images load`);await imagePage.close();
 }finally{await browser.close();}
