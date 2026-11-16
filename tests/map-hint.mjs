@@ -18,4 +18,24 @@ try{
   assert.equal(await page.locator('.result-score').textContent(),reveal?'—':'100 points');await page.reload();await page.locator('#copy-results').waitFor();assert.equal(await page.locator('.result-score').textContent(),reveal?'—':'100 points');
   await page.close();console.log(`${width}px: ${reveal?'revealed map is unscored':'dismissed hint keeps score'} after reload`);
  }
+ for (const width of [390, 1440]) {
+  const page = await browser.newPage({viewport:{width,height:844}});
+  await page.goto(new URL('/trainrot/?practice=1',base).href);
+  const map = page.locator('#city-map');
+  const layer = map.locator(':scope > g[aria-hidden="true"]').first();
+  const revealHint = async () => {
+    await page.locator('.map-hint summary').click();
+    await page.locator('#hint').click();
+    await layer.waitFor({state:'visible'});
+  };
+  await revealHint();
+  const path = await layer.locator('path').first().elementHandle();
+  await page.locator('#skip').click();
+  assert.equal(await layer.isVisible(), false);
+  assert.match(await map.getAttribute('aria-label'), /Subway lines are hidden/);
+  await revealHint();
+  assert.equal(await layer.locator('path').first().evaluate((current, first) => current === first, path), true);
+  await page.close();
+  console.log(`${width}px: hint paths stay hidden between practice journeys and are reused`);
+ }
 }finally{await browser.close();}
