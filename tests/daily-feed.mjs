@@ -60,10 +60,11 @@ try{
     const enterFeed=()=>page.getByRole('link',{name:'Daily Feed',exact:true}).click();
 
     await page.goto(base);
-    await page.getByRole('heading',{name:'Daily Feed',exact:true}).waitFor();
+    await page.getByRole('heading',{name:'Rush',exact:true}).waitFor();
     assert.equal(new URL(page.url()).pathname,'/');
-    await page.goto(new URL('/daily/',base).href);
-    await page.waitForURL(url=>url.pathname==='/');
+    await enterFeed();
+    await page.getByRole('heading',{name:'Daily Feed',exact:true}).waitFor();
+    await page.waitForURL(url=>url.pathname==='/daily/');
     const directory=page.getByText('Games',{exact:true});
     await directory.press('Enter');
     const nav=page.getByRole('navigation',{name:'Games'});
@@ -76,7 +77,7 @@ try{
     await page.locator('[data-route]').first().waitFor();
     await page.getByRole('button',{name:'Practice',exact:true}).click();
     const home=page.getByRole('link',{name:'Daily Feed',exact:true});
-    assert.equal(await home.getAttribute('href'),'/');
+    assert.equal(await home.getAttribute('href'),'/daily/');
     assert.equal(await home.evaluate(node=>getComputedStyle(node,'::before').backgroundColor),'rgb(255, 212, 92)');
     const flagData = await page.request.get(new URL('/games/data/flags.json',base).href);
     assert.ok(flagData.ok());
@@ -84,7 +85,7 @@ try{
     const firstFlagLoad=page.waitForResponse(response=>new URL(response.url()).pathname==='/games/data/flags.json');
     await page.route('**/games/data/flags.json',route=>{flagLoads++;return route.fulfill({response:flagData});});
     await enterFeed();
-    await page.waitForURL(url=>url.pathname==='/');
+    await page.waitForURL(url=>url.pathname==='/daily/');
     const train=frame('trainrot');
     const map=train.locator('#city-map');
     await map.waitFor({state:'visible'});
@@ -250,7 +251,7 @@ scalerot     Skipped
 swaprot      Skipped
 
 Play today’s Daily Games
-https://trainrot.vercel.app/`;
+https://trainrot.vercel.app/daily/`;
     assert.equal(await copyRecap.textContent(),'');
     await inspect('recap');
     if(engine===chromium){

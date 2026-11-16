@@ -207,7 +207,7 @@ function recapText(){
   return [
     `dailyo | ${recapDate.format(new Date(`${day}T00:00:00Z`))}`,
     `${results.size} of ${games.length} games completed`,
-    '',...rows,'','Play today’s Daily Games','https://trainrot.vercel.app/',
+    '',...rows,'','Play today’s Daily Games','https://trainrot.vercel.app/daily/',
   ].join('\n');
 }
 

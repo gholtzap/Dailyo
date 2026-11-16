@@ -118,3 +118,12 @@
   line-height: 1.5;
   resize: vertical;
 }
+
+.feed-link { display: inline-flex; align-items: center; min-height: 44px; }
+.feed-header .feed-link:nth-child(3) { margin-left: auto; }
+#rush-status { margin: 0; font-size: 13px; }
+#rush-clock { min-width: 36px; font-variant-numeric: tabular-nums; }
+.feed-actions:has(#rush-status) { align-items: center; justify-content: space-between; }
+#rush-intro p { max-width: 42ch; }
+#rush-intro button, #rush-replay { margin-top: 16px; }
+#feed-results a { display: inline-flex; align-items: center; min-height: 32px; }

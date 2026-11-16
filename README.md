@@ -2,7 +2,9 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
-[Daily Feed](https://trainrot.vercel.app/) plays all eleven daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
+[Rush](https://trainrot.vercel.app/) is the homepage. Correct answers unlock faster rounds in flagrot, langrot, and trainrot. A miss or timeout advances to the next game.
+
+[Daily Feed](https://trainrot.vercel.app/daily/) plays all eleven daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
 
 [trainrot](https://trainrot.vercel.app/trainrot/) is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 

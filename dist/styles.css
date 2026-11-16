@@ -91,3 +91,13 @@
 #copy-tooltip { top: 100%; left: 0; }
 #copy-status { text-align: left; }
 #copy-status:empty { margin: 0; }
+
+[data-rush] :is(#rush-journey, .planner > h2) {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 700px) {
+  [data-rush] .map-panel { height: 220px; min-height: 220px; }
+  [data-rush] .planner { padding: 16px; min-height: 0; }
+}

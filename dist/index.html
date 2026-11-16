@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#1c1d1f">
-  <meta name="description" content="Play all eleven dailyo games in one sitting.">
-  <title>Daily Feed | dailyo</title>
+  <meta name="description" content="Race the clock in flagrot, langrot, and trainrot.">
+  <title>Rush | dailyo</title>
   <link rel="stylesheet" href="/games/world.css">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/daily/feed.css">
@@ -14,8 +14,8 @@
 <body class="daily-feed">
   <header class="site-masthead feed-header">
     <a class="site-brand" href="/">dailyo</a>
-    <h1 class="home-star">Daily Feed</h1>
-    <p id="feed-progress" role="status" tabindex="-1"></p>
+    <h1>Rush</h1>
+    <a class="feed-link" href="/daily/">Daily Feed</a>
     <details class="feed-directory">
       <summary>Games</summary>
       <nav aria-label="Games">
@@ -33,34 +33,26 @@
       </nav>
     </details>
   </header>
-  <main class="feed-body" aria-label="Daily games">
-    <div id="feed-game"></div>
-    <section id="feed-recap" class="main result" hidden>
-      <div class="feed-recap-heading">
-        <h2 tabindex="-1">Daily recap</h2>
-        <span class="feed-recap-copy">
-          <button id="feed-copy" class="game-icon copy-icon" type="button" aria-label="Copy daily recap" data-ui-tooltip="feed-copy-tip"></button>
-          <span id="feed-copy-tip" class="game-tooltip" role="tooltip">Copy daily recap</span>
-        </span>
-      </div>
-      <p id="feed-copy-status" role="status"></p>
-      <textarea id="feed-copy-text" aria-label="Daily recap to copy" rows="17" readonly hidden></textarea>
+  <main class="feed-body">
+    <section class="main result" id="rush-intro">
+      <h2>Three games against the clock</h2>
+      <p>Play flagrot, langrot, and trainrot. Correct answers unlock a faster round. Miss or run out of time and you move to the next game.</p>
+      <button class="primary" type="button" id="rush-start">Start Rush</button>
+    </section>
+    <div id="feed-game" hidden></div>
+    <section class="main result" id="feed-recap" hidden>
+      <h2 tabindex="-1">Rush recap</h2>
+      <p id="rush-score"></p>
       <ul id="feed-results"></ul>
-      <button id="feed-replay" class="secondary" type="button" hidden>Play skipped games</button>
+      <button class="primary" type="button" id="rush-replay">Play again</button>
     </section>
   </main>
   <footer class="feed-actions" hidden>
-    <span class="feed-undo" hidden>
-      <button id="feed-undo" class="game-icon" type="button" aria-label="Undo skip" data-ui-tooltip="undo-tooltip"></button>
-      <span id="undo-tooltip" class="game-tooltip" role="tooltip">Undo skip</span>
-    </span>
-    <button id="feed-skip" class="secondary" type="button">Skip game</button>
-    <button id="feed-retry" class="secondary" type="button" hidden>Retry game</button>
-    <div id="feed-continue" hidden>
-      <button id="feed-next" class="primary" type="button">Next game</button>
-      <span class="feed-swipe" aria-hidden="true">Swipe up here</span>
-    </div>
+    <p id="rush-status" role="status" tabindex="-1"></p>
+    <span id="rush-clock" role="timer" aria-label="Time left"></span>
+    <button class="secondary" id="rush-retry" type="button" hidden>Retry</button>
+    <button class="secondary" id="rush-next" type="button">Next game</button>
   </footer>
-  <script type="module" src="/daily/feed.js"></script>
+  <script type="module" src="/daily/rush.js"></script>
 </body>
 </html>
