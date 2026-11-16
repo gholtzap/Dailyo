@@ -1,5 +1,5 @@
 import './help.js';
-import {dailyDate as dateToday,inFeed,reportDaily,waitForFeedActivation} from '../daily/bridge.js';
+import {dailyDate as dateToday,inFeed,reportDaily,waitForFeedActivation,rushRound,reportRush,onRushTimeout,startPractice} from '../daily/bridge.js';
 import {hash,shuffle,quizDeck,quizOptions,quizPuzzle} from '../daily/puzzles.js';
 import {showRank} from '../daily/rank.js';
 
@@ -48,13 +48,21 @@ function withCurrentProgress(action){
   if(navigator.locks)return navigator.locks.request(key(`daily:${date}`),update);
   update();
 }
-function question(){const s=modeState[mode],seed=mode==='daily'?`daily:${kind}:${day}`:s.seed;return {item:shuffle(items,seed)[s.index],seed:`${seed}:${s.index}`};}
+function question(){const s=modeState[mode],seed=mode==='daily'?`${rushRound===null?'daily':'rush'}:${kind}:${day}`:s.seed;return {item:shuffle(items,seed)[s.index],seed:`${seed}:${s.index}`};}
 function statusText(selected,item){
   if(selected===item.id)return vocabulary?`Correct! ${item.name}.`:'Correct!';
   return `Correct answer: ${item.name}${vocabulary?'.':''}`;
 }
 function choose(id,item){
-  const s=modeState[mode];if(mode==='daily'){if(s.index>=5||s.answers.length>s.index)return;s.answers.push(id);}
+  const s=modeState[mode];
+  if(rushRound!==null){
+    if(s.answers[s.index]!==undefined)return;
+    s.answers[s.index]=id;
+    draw();
+    reportRush('answered',id===item.id);
+    return;
+  }
+  if(mode==='daily'){if(s.index>=5||s.answers.length>s.index)return;s.answers.push(id);}
   else{if(s.selected!==null)return;s.selected=id;s.total++;if(id===item.id)s.correct++;}
   save();draw();document.querySelector('#next')?.focus();
 }
@@ -98,7 +106,7 @@ function draw(){
   }else{const index=hash(`${seed}:sample`)%item.samples.length;const text=make('p',item.samples[index],'sample');text.dir='auto';prompt.append(text);}
   const choices=make('div',undefined,'choices');choices.setAttribute('role','group');choices.setAttribute('aria-label',kind==='flags'?'Choose a place':vocabulary?'Choose a definition':'Choose a language');
   const options=quizOptions(items,kind,item,seed);
-  for(const option of options){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>withCurrentProgress(()=>choose(option.id,item));choices.append(button);}
+  for(const option of options){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>rushRound===null?withCurrentProgress(()=>choose(option.id,item)):choose(option.id,item);choices.append(button);}
   const feedback=make('p',selected===null?'':statusText(selected,item),'feedback');feedback.setAttribute('role','status');
   if(selected!==null)feedback.id='answer-feedback';
   const wrong=options.find(option=>option.id===selected&&selected!==item.id);
@@ -110,7 +118,8 @@ function draw(){
   }
   const next=make('button',mode==='daily'&&s.index===4?'See results':'Next question','primary');next.id='next';next.type='button';next.hidden=selected===null;next.onclick=()=>withCurrentProgress(advance);
   if(feedback.id)next.setAttribute('aria-describedby',feedback.id);
-  if(mode==='daily')quiz.replaceChildren(head,dailyProgress(),prompt,choices,feedback,next);
+  if(rushRound!==null)quiz.replaceChildren(prompt,choices,feedback);
+  else if(mode==='daily')quiz.replaceChildren(head,dailyProgress(),prompt,choices,feedback,next);
   else quiz.replaceChildren(head,prompt,choices,feedback,next);
   reportDaily('playing',undefined,day);
 }
@@ -125,8 +134,16 @@ async function start(){
   )))throw new Error('Invalid vocabulary data');
   await waitForFeedActivation();
   day=dateToday();
-  modeState.daily=dailyState();modeState.practice=practiceState();const saved=read(key('mode'));mode=!inFeed&&saved==='practice'?'practice':'daily';
+  if(rushRound!==null){
+    modeState.daily={index:rushRound,answers:[]};
+    onRushTimeout(()=>choose('',question().item));
+    draw();
+    await quiz.querySelector('img')?.decode();
+    reportRush('ready');
+    return;
+  }
+  modeState.daily=dailyState();modeState.practice=practiceState();const saved=read(key('mode'));mode=startPractice||(!inFeed&&saved==='practice')?'practice':'daily';
   controls.daily.onclick=()=>selectMode('daily');controls.practice.onclick=()=>selectMode('practice');
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)resetDay();});setInterval(resetDay,30000);draw();
 }
-start().catch(()=>{reportDaily('error');const message=make('p','The game could not load.');const button=make('button','Reload game','primary');button.type='button';button.onclick=()=>location.reload();quiz.replaceChildren(message,button);});
+start().catch(()=>{reportRush('error');reportDaily('error');const message=make('p','The game could not load.');const button=make('button','Reload game','primary');button.type='button';button.onclick=()=>location.reload();quiz.replaceChildren(message,button);});

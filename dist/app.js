@@ -2,7 +2,7 @@ import './games/help.js';
 import {createRouter,transition,formatTime,MAX_GUESSES} from './router.js';
 import {createMap} from './map.js';
 import {createRewards} from './rewards.js';
-import {dailyDate as dateToday,inFeed,reportDaily} from './daily/bridge.js';
+import {dailyDate as dateToday,inFeed,reportDaily,rushRound,reportRush,onRushTimeout,startPractice} from './daily/bridge.js';
 import {dailyChallenge,seededDeck,trainPuzzle} from './daily/puzzles.js';
 import {showRank} from './daily/rank.js';
 
@@ -42,6 +42,7 @@ async function start(){
   const dailyKey=date=>`trainrot-daily-v2:${network.metadata.feedVersion}:${date}`;
   const storedState=()=>({phase:state.phase,legs:state.legs,guesses:state.guesses??[],assisted:!!state.assisted,skipped:!!state.skipped});
   function save(){
+    if(rushRound!==null)return;
     try{if(mode==='daily')localStorage.setItem(dailyKey(dailyDate),JSON.stringify(storedState()));
     else localStorage.setItem(storageKey,JSON.stringify({seed,position,difficulty,challenge:pair(state.challenge),deck:deck.map(pair),recent,state:storedState()}));}catch{}
   }
@@ -88,7 +89,7 @@ async function start(){
       }else state.result=router.grade(state.challenge.from,state.challenge.to,state.guesses??[],state.skipped?[]:state.legs);
     }catch{}
   }
-  load();
+  if(rushRound===null)load();
   const difficultyControl=$('#difficulty');difficultyControl.value=difficulty;
   let practice={seed,deck,position,state,difficulty,recent};
   function openDaily(){
@@ -148,6 +149,7 @@ async function start(){
     const c=state.challenge,full=state.legs.length>=6;
     mapTools(true);
     planner.innerHTML=`
+      ${rushRound!==null?'<h2 id="rush-journey" tabindex="-1">Find the fastest route</h2>':''}
       ${ticket(c,`<div class="journey-route"><div class="sequence-row">${state.legs.length?`<ol class="train-sequence" aria-label="Your train sequence">${state.legs.map(l=>`<li>${badge(l.route)}</li>`).join('')}</ol>`:'<p class="route-empty">Tap your trains in order.</p>'}${state.legs.length?'<button id="undo-train" class="quiet-button" aria-label="Undo last train">Undo</button>':''}</div>${guessFeedback()}${state.guesses?.length?`<p class="check-count">${state.guesses.length} of ${MAX_GUESSES} checks</p>`:''}</div>`)}
       <div class="train-picker" role="group" aria-label="Add a train"><div class="train-grid">${usedRoutes.map(trainButton).join('')}</div></div>
       ${full?'<p class="ready-note">Six trains maximum. Check your route or undo a train.</p>':''}
@@ -174,17 +176,31 @@ async function start(){
       ($('#undo-train')??planner.querySelector('[data-route]')).focus({preventScroll:true});
     };
     $('#reveal').onclick=()=>{
+      if(rushRound!==null){finishRush(true);return;}
       const previous=router.grade(c.from,c.to,state.guesses??[]).score??0;
       const next=transition(state,{type:'submit'},router);if(next===state)return;state=next;
       if(state.phase==='planning'){save();drawPlanning();$('#guess-feedback-title').focus({preventScroll:true});rewards.show({previous,result:router.grade(c.from,c.to,state.guesses),assisted:state.assisted});return;}
       recordResult();rewards.show({previous,result:state.result,assisted:state.assisted});
     };
     if($('#skip'))$('#skip').onclick=nextJourney;
-    $('#show-answer').onclick=()=>{state=transition(state,{type:'show-answer'},router);recordResult();};
+    $('#show-answer').onclick=()=>{if(rushRound!==null){finishRush(false);return;}state=transition(state,{type:'show-answer'},router);recordResult();};
     if($('#hint'))$('#hint').onclick=()=>{state=transition(state,{type:'hint'},router);save();map.showNetwork();drawPlanning();if(matchMedia('(max-width:700px)').matches)$('.map-panel').scrollIntoView({behavior:'instant',block:'start'});$('#city-map').focus({preventScroll:true});};
     reportDaily('playing',undefined,dailyDate);
   }
   function resultLegs(legs){const walk=w=>`Walk to ${escape(network.stations[w.to].label)} · ${formatTime(w.seconds)}${w.fareControl?' · Exit and re-enter subway (another fare may apply)':''}`;return `<ol class="result-legs">${legs.map(l=>{const p=network.patterns[l.patternIndex],arrival=l.walkAfter?.from??l.to;return `${l.walkBefore?`<li><p>${walk(l.walkBefore)}</p></li>`:''}<li>${badge(l.route)}<p>To ${escape(network.stations[arrival].label)}<small>${escape(routeSymbol(l.route))} toward ${escape(p.headsign)} · ${l.stops} ${l.stops===1?'stop':'stops'}</small></p></li>${l.walkAfter?`<li><p>${walk(l.walkAfter)}</p></li>`:''}`;}).join('')}</ol>`;}
+  function finishRush(submitted){
+    if(state.phase!=='planning')return;
+    const c=state.challenge;
+    const answer=transition(state,{type:'show-answer'},router);
+    const result=submitted?router.evaluate(c.from,c.to,state.legs):null;
+    const correct=result?.valid===true&&result.seconds===answer.result.optimal?.seconds;
+    state=answer;
+    map.reveal(answer.result);
+    map.filter('best');
+    planner.innerHTML=`<h2>${correct?'Correct':'Fastest route'}</h2>${ticket(c)}${resultLegs(answer.result.optimal?.legs??[])}`;
+    planner.scrollIntoView({block:'nearest'});
+    reportRush('answered',correct);
+  }
   function drawResult(displayed=state){
     rewards.reset();
     const r=displayed.result,c=displayed.challenge;
@@ -272,12 +288,22 @@ async function start(){
     }else{map.reveal(state.result);drawResult();}
   }
   let initialMode;try{initialMode=localStorage.getItem('trainrot-game-mode-v2');}catch{}
-  if(inFeed){mode='daily';openDaily();draw();}
-  else if(initialMode==='practice'){difficultyControl.closest('label').hidden=false;$('#daily-mode').setAttribute('aria-pressed','false');$('#practice-mode').setAttribute('aria-pressed','true');save();draw();}
+  if(rushRound!==null){
+    mode='rush';
+    difficultyControl.closest('label').hidden=true;
+    const easy=challenges.filter(c=>c.difficulty==='easy');
+    const challenge=seededDeck(`rush:train:${dateToday()}`,easy.length>=3?easy:challenges)[rushRound];
+    state={phase:'planning',challenge,legs:[],assisted:true};
+    onRushTimeout(()=>finishRush(false));
+    draw();
+    reportRush('ready');
+  }
+  else if(inFeed){mode='daily';openDaily();draw();}
+  else if(startPractice||initialMode==='practice'){difficultyControl.closest('label').hidden=false;$('#daily-mode').setAttribute('aria-pressed','false');$('#practice-mode').setAttribute('aria-pressed','true');save();draw();}
   else selectMode('daily');
   setInterval(()=>{if(mode==='daily'&&dailyDate!==dateToday()){openDaily();draw();}},30000);
 }
 start().catch(error=>{
-  reportDaily('error');
+  reportRush('error');reportDaily('error');
   console.error(error);document.querySelector('.map-panel').hidden=true;document.querySelector('.game-layout').classList.add('error-layout');planner.innerHTML='<h1>The network didn’t load.</h1><button id="reload" class="primary-button">Reload game</button>';$('#reload').onclick=()=>location.reload();
 });
