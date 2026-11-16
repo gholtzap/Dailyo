@@ -58,7 +58,11 @@ async function checkMapResult(map, maxWidth) {
 }
 
 async function answerYear(page, { event, timeline }, index) {
-  const slots = page.locator('.rot-slot');
+  assert.equal(await page.locator('#round-title').innerText(), 'When did this happen?');
+  assert.equal(await page.locator('.rot-year-event').innerText(), event[1]);
+  const clues = page.getByRole('list', { name: 'Timeline' });
+  assert.deepEqual((await clues.locator('time').allTextContents()).map(Number), timeline.map(([year]) => year));
+  const slots = page.getByRole('group', { name: 'Choose when it happened' }).getByRole('button');
   assert.equal(await slots.count(), timeline.length + 1);
   const slot = timeline.filter(([year]) => year < event[0]).length;
   await slots.nth(index === 0 ? (slot + 1) % (timeline.length + 1) : slot).press('Enter');

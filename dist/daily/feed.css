@@ -129,9 +129,13 @@
 .feed-recap-heading h2 { margin: 0; }
 .feed-recap-copy { position: relative; }
 .feed-recap-copy .game-tooltip { top: 100%; left: 0; }
-#feed-copy-status { margin: 8px 0 0; }
-#feed-copy-status:empty { margin: 0; }
-#feed-copy-text {
+#rush-score:has(+ #rush-personal-best:not(:empty)) { margin-bottom: 8px; }
+#rush-personal-best { margin-bottom: 0; color: var(--muted); }
+#rush-personal-best:empty { display: none; }
+#rush-copy { width: auto; margin: 0; }
+:is(#feed-copy-status, #rush-copy-status) { margin: 8px 0 0; }
+:is(#feed-copy-status, #rush-copy-status):empty { margin: 0; }
+:is(#feed-copy-text, #rush-copy-text) {
   display: block;
   width: 100%;
   margin-top: 8px;

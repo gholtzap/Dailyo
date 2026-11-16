@@ -1,3 +1,5 @@
+import {rushDate} from './puzzles.js';
+
 const rotation=[
   {label:'flagrot',path:'/flags/',seconds:[8,6,4]},
   {label:'langrot',path:'/languages/',seconds:[8,6,4]},
@@ -14,12 +16,15 @@ const rotation=[
 const slug=location.pathname.split('/')[2];
 const selected=rotation.find(game=>game.label.toLowerCase()===slug);
 const games=selected?[selected]:rotation;
+const date=rushDate(new URLSearchParams(location.search).get('date'));
+const bestKey=`dailyo:rush:best:${selected?slug:'all'}`;
 if(selected)document.title=`${selected.label} Rush | dailyo`;
 const $=selector=>document.querySelector(selector);
 const panel=$('#feed-game'),status=$('#rush-status'),clock=$('#rush-clock');
 const timeDisplay=$('.rush-time');
 const actions=$('.feed-actions'),retry=$('#rush-retry'),next=$('#rush-next');
 const scores=games.map(()=>0);
+const copyStatus=$('#rush-copy-status'),copyText=$('#rush-copy-text');
 let phase='loading',index=0,round=0,current,visible,deadline,duration,timer,ticker;
 const upcoming=new Map();
 
@@ -32,7 +37,7 @@ function stopClock(){
 
 function makeRound(gameIndex,roundIndex){
   const frame=document.createElement('iframe');
-  frame.src=`${games[gameIndex].path}?rush=${roundIndex}`;
+  frame.src=`${games[gameIndex].path}?rush=${roundIndex}&date=${date}`;
   frame.className='feed-loading';
   frame.inert=true;
   panel.append(frame);
@@ -140,10 +145,11 @@ function showRecap(){
   panel.hidden=true;
   actions.hidden=true;
   $('#feed-recap').hidden=false;
-  const sum=scores.reduce((total,score)=>total+score,0);
-  const best=Math.max(...scores);
-  const bestGames=games.filter((_,i)=>scores[i]===best).map(game=>game.label);
-  $('#rush-score').textContent=`${sum} correct${best?` · Best run: ${best} in ${bestGames.join(', ')}`:''}`;
+  copyStatus.textContent='';
+  copyText.hidden=true;
+  const {total:sum,bestRun}=scoreSummary();
+  showPersonalBest(sum);
+  $('#rush-score').textContent=`${sum} correct${bestRun?` · Best run: ${bestRun}`:''}`;
   $('#feed-results').replaceChildren(...games.map((game,i)=>{
     const row=document.createElement('li');
     const score=document.createElement('span');
@@ -181,6 +187,51 @@ window.addEventListener('message',event=>{
     finishRound(correct&&!expired,expired);
   }
 });
+
+function scoreSummary(){
+  const total=scores.reduce((sum,score)=>sum+score,0);
+  const best=Math.max(...scores);
+  const labels=games.filter((_,i)=>scores[i]===best).map(game=>game.label);
+  return {total,bestRun:best?`${best} in ${labels.join(', ')}`:''};
+}
+
+function showPersonalBest(total){
+  const label=$('#rush-personal-best');
+  label.textContent='';
+  try{
+    const saved=Number(localStorage.getItem(bestKey));
+    const previous=Number.isSafeInteger(saved)&&saved>0?saved:0;
+    if(total>previous)localStorage.setItem(bestKey,String(total));
+    if(total||previous)label.textContent=`${total>previous?'New best':'Personal best'} · ${Math.max(total,previous)} correct`;
+  }catch{}
+}
+
+function shareText(){
+  const title=selected?`dailyo Rush · ${selected.label}`:'dailyo Rush';
+  const {total,bestRun}=scoreSummary();
+  const score=`${total} correct${!selected&&bestRun?` · ${bestRun}`:''}`;
+  const rows=selected?[]:['',...games.map(({label},i)=>`${label} · ${scores[i]} correct`)];
+  const path=selected?`/rush/${slug}/`:'/rush/';
+  return [`${title} · ${date}`,score,...rows,'',`https://trainrot.vercel.app${path}?date=${date}`].join('\n');
+}
+
+$('#rush-copy').onclick=async()=>{
+  if(phase!=='recap')return;
+  const text=shareText();
+  let copied=false;
+  try{
+    await navigator.clipboard.writeText(text);
+    copied=true;
+  }catch{}
+  if(phase!=='recap'||shareText()!==text)return;
+  copyStatus.textContent=copied?'Copied':'Select and copy your results.';
+  copyText.hidden=copied;
+  if(!copied){
+    copyText.value=text;
+    copyText.focus();
+    copyText.select();
+  }
+};
 
 function start(){
   scores.fill(0);

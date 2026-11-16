@@ -1,5 +1,5 @@
 import './help.js';
-import {dailyDate as dateToday,inFeed,reportDaily,waitForFeedActivation,rushRound,reportRush,onRushTimeout,startPractice} from '../daily/bridge.js';
+import {dailyDate as dateToday,inFeed,reportDaily,waitForFeedActivation,rushRound,reportRush,onRushTimeout,startPractice,rushSeed} from '../daily/bridge.js';
 import {hash,shuffle,quizDeck,quizOptions,quizPuzzle} from '../daily/puzzles.js';
 import {showRank} from '../daily/rank.js';
 
@@ -56,7 +56,7 @@ function dailyDeck() {
   }
   return deck;
 }
-function question(){const s=modeState[mode],seed=mode==='daily'?(rushRound===null?`daily:${kind}:${day}`:`rush:${kind}:${day}`):s.seed;return {item:(mode==='daily'&&rushRound===null?dailyDeck():shuffle(items,seed))[s.index],seed:`${seed}:${s.index}`};}
+function question(){const s=modeState[mode],seed=mode==='daily'?(rushRound===null?`daily:${kind}:${day}`:rushSeed(kind)):s.seed;return {item:(mode==='daily'&&rushRound===null?dailyDeck():shuffle(items,seed))[s.index],seed:`${seed}:${s.index}`};}
 function choose(id,item){
   const s=modeState[mode];
   if(rushRound!==null){

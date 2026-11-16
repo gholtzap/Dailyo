@@ -1,4 +1,4 @@
-import {dailyDate} from './puzzles.js';
+import {dailyDate,rushDate} from './puzzles.js';
 
 export {dailyDate};
 
@@ -7,7 +7,8 @@ const round=params.get('rush');
 const roundIndex=Number(round);
 export const rushRound=window.parent!==window&&/^\d+$/.test(round)&&Number.isSafeInteger(roundIndex)?roundIndex:null;
 export const inFeed=window.parent!==window&&(params.get('feed')==='1'||rushRound!==null);
-export const rushSeed=kind=>`rush:${kind}:${dailyDate()}`;
+const rushDay=rushRound===null?null:rushDate(params.get('date'));
+export const rushSeed=kind=>`rush:${kind}:${rushDay}`;
 export const startPractice=!inFeed&&params.get('practice')==='1';
 if(inFeed)document.documentElement.dataset.dailyFeed='';
 if(rushRound!==null)document.documentElement.dataset.rush='';
