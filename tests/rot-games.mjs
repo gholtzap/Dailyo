@@ -83,6 +83,16 @@ async function answerBorder(page, route, index, graph) {
 const answer = { maprot: answerMap, yearrot: answerYear, borderrot: answerBorder };
 
 try {
+  const astana=await browser.newPage();
+  await astana.clock.setFixedTime(new Date('2027-03-31T16:00:00Z'));
+  await astana.goto(`${base}/maprot/`);
+  for(let i=0;i<2;i++){
+    await astana.locator('.rot-map').press('ArrowRight');
+    await astana.getByRole('button',{name:'Check pin'}).click();
+    await astana.getByRole('button',{name:'Next question'}).click();
+  }
+  assert.equal(await astana.locator('#round-title').innerText(),'Find Astana');
+  await astana.close();
   for (const [kind, play] of Object.entries(answer)) {
     const data = preparePuzzles(kind, await read(`../dist/games/data/${kind}.json`));
     const questions = makeSet(kind, data, day);

@@ -145,6 +145,11 @@ export function scoreAnswer(kind, question, answer) {
 }
 
 export function rankingPuzzle(kind, questions) {
+  if (kind === 'maprot') {
+    // Retain the existing ranking identity for the same city and coordinates.
+    return JSON.stringify(questions.map(([name, country, ...point]) =>
+      [name === 'Astana' && country === 'Kazakhstan' ? 'Nur-Sultan' : name, country, ...point]));
+  }
   return JSON.stringify(kind === 'yearrot' ? questions.map(({event, timeline}) =>
     [event[0], ...timeline.map(([year]) => year)]) : questions);
 }

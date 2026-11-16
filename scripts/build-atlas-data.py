@@ -28,6 +28,10 @@ for feature in json.loads(cities.read_text())['features']:
     lon, lat = feature['geometry']['coordinates']
     places.append([place['name'], place['adm0name'], round(lon, 4), round(lat, 4)])
 places.sort(key=lambda place: (place[0], place[1]))
+# Keep the existing row order so previously issued daily sets stay the same.
+for place in places:
+    if place[:2] == ['Nur-Sultan', 'Kazakhstan']:
+        place[0] = 'Astana'
 write('maprot', {'land': outline, 'places': places})
 
 with countries.open() as file:
