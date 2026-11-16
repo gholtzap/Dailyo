@@ -2,7 +2,7 @@ import './games/help.js';
 import {createRouter,transition,formatTime,MAX_GUESSES} from './router.js';
 import {createMap} from './map.js';
 import {createRewards} from './rewards.js';
-import {dailyDate as dateToday,inFeed,reportDaily,rushRound,reportRush,onRushTimeout,startPractice} from './daily/bridge.js';
+import {dailyDate as dateToday,inFeed,reportDaily,rushRound,reportRush,onRushTimeout,startPractice,rushSeed} from './daily/bridge.js';
 import {dailyChallenge,seededDeck,trainPuzzle} from './daily/puzzles.js';
 import {showRank} from './daily/rank.js';
 
@@ -292,7 +292,7 @@ async function start(){
     mode='rush';
     difficultyControl.closest('label').hidden=true;
     const easy=challenges.filter(c=>c.difficulty==='easy');
-    const challenge=seededDeck(`rush:train:${dateToday()}`,easy.length>=3?easy:challenges)[rushRound];
+    const challenge=seededDeck(rushSeed('train'),easy.length>=3?easy:challenges)[rushRound];
     state={phase:'planning',challenge,legs:[],assisted:true};
     onRushTimeout(()=>finishRush(false));
     draw();

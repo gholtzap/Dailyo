@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#1c1d1f">
-  <meta name="description" content="Race the clock in flagrot, langrot, and trainrot.">
+  <meta name="description" content="Race the clock in all eleven dailyo games.">
   <title>Rush | dailyo</title>
   <link rel="stylesheet" href="/games/world.css">
   <link rel="stylesheet" href="/site.css">
@@ -14,32 +14,27 @@
 <body class="daily-feed">
   <header class="site-masthead feed-header">
     <a class="site-brand" href="/">dailyo</a>
-    <h1>Rush</h1>
+    <h1><a href="/rush/">Rush</a></h1>
     <a class="feed-link" href="/daily/">Daily Feed</a>
     <details class="feed-directory">
       <summary>Games</summary>
       <nav aria-label="Games">
-        <a href="/trainrot/">trainrot</a>
-        <a href="/flags/">flagrot</a>
-        <a href="/languages/">langrot</a>
-        <a href="/vocabulary/">Vocabulary</a>
-        <a href="/maprot/">maprot</a>
-        <a href="/yearrot/">yearrot</a>
-        <a href="/borderrot/">borderrot</a>
-        <a href="/ladderrot/">ladderrot</a>
-        <a href="/cluerot/">cluerot</a>
-        <a href="/scalerot/">scalerot</a>
-        <a href="/swaprot/">swaprot</a>
+        <a href="/rush/trainrot/">trainrot</a>
+        <a href="/rush/flagrot/">flagrot</a>
+        <a href="/rush/langrot/">langrot</a>
+        <a href="/rush/vocabulary/">Vocabulary</a>
+        <a href="/rush/maprot/">maprot</a>
+        <a href="/rush/yearrot/">yearrot</a>
+        <a href="/rush/borderrot/">borderrot</a>
+        <a href="/rush/ladderrot/">ladderrot</a>
+        <a href="/rush/cluerot/">cluerot</a>
+        <a href="/rush/scalerot/">scalerot</a>
+        <a href="/rush/swaprot/">swaprot</a>
       </nav>
     </details>
   </header>
   <main class="feed-body">
-    <section class="main result" id="rush-intro">
-      <h2>Three games against the clock</h2>
-      <p>Play flagrot, langrot, and trainrot. Correct answers unlock a faster round. Miss or run out of time and you move to the next game.</p>
-      <button class="primary" type="button" id="rush-start">Start Rush</button>
-    </section>
-    <div id="feed-game" hidden></div>
+    <div id="feed-game"></div>
     <section class="main result" id="feed-recap" hidden>
       <h2 tabindex="-1">Rush recap</h2>
       <p id="rush-score"></p>

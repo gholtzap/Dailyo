@@ -13,11 +13,11 @@ try{
   await Promise.all([page.clock.install({time:new Date('2026-11-14T16:00:00Z')}),other.clock.install({time:new Date('2026-11-14T16:00:00Z')})]);
   await Promise.all([page.goto(`${base}/${kind}/`),other.goto(`${base}/${kind}/`)]);await Promise.all([page.locator('.choice').first().waitFor(),other.locator('.choice').first().waitFor()]);
   if(kind==='vocabulary'){
-   for(const route of ['/','/flags/','/languages/']){
+   for(const route of ['/daily/','/flags/','/languages/']){
     await other.goto(base+route);
     const menu=other.locator('.feed-directory summary, .site-more summary');
     const games=other.getByRole('navigation',{name:'Games'});
-    if(route!=='/'){
+    if(route!=='/daily/'){
      assert.equal(await games.getByRole('link').count(),2);
      await menu.press('Enter');
      await games.getByRole('link',{name:'Vocabulary',exact:true}).waitFor();

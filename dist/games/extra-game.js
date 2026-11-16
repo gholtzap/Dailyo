@@ -1,5 +1,5 @@
 import './help.js';
-import { dailyDate, inFeed, reportDaily, waitForFeedActivation } from '../daily/bridge.js';
+import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import {
   extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra,
@@ -16,7 +16,7 @@ const ladder = game === 'ladderrot';
 const clue = game === 'cluerot';
 const scale = game === 'scalerot';
 const sessions = {};
-let mode = !inFeed && read('mode') === 'practice' ? 'practice' : 'daily';
+let mode = startPractice || (!inFeed && read('mode') === 'practice') ? 'practice' : 'daily';
 let day, data, selected;
 
 function el(tag, text, className) {
@@ -69,12 +69,18 @@ function selectMode(next) {
 }
 
 function move(value) {
-  if (resetDay() && mode === 'daily') { draw(); return true; }
+  if (rushRound===null && resetDay() && mode === 'daily') { draw(); return true; }
   const session = sessions[mode];
-  const next = stepExtra(game, session.puzzle, session.state, value);
+  let next = stepExtra(game, session.puzzle, session.state, value);
   if (next === session.state) return false;
+  if(rushRound!==null && clue && value!=='' && next.phase!=='complete'){
+    next=stepExtra(game,session.puzzle,session.state,null);
+  }
   session.state = next;
-  save(session);
+  if(rushRound===null)save(session);
+  else if(next.phase==='complete'){
+    reportRush('answered',next.score!==null&&(!scale||next.score<=1000));
+  }
   selected = undefined;
   draw();
   if (next.phase === 'complete') quiz.querySelector('h2').focus();
@@ -130,7 +136,7 @@ function drawPlaying({ puzzle, state }) {
       'Enter a guess.'), feedback, actions];
   }
   if (scale) {
-    return [el('h2', puzzle.prompt), form(`Estimate in ${puzzle.unit}`, 'number', 'Check estimate',
+    return [el('h2', puzzle.prompt), ...(rushRound===null?[]:[el('p','Estimate within 10%.','rot-feedback')]), form(`Estimate in ${puzzle.unit}`, 'number', 'Check estimate',
       input => input.valueAsNumber, feedback, 'Enter a number between −1 billion and 1 billion.'), feedback];
   }
 
@@ -159,16 +165,20 @@ function result({ puzzle, state }) {
   const content = [heading];
   if (scale) {
     const number = value => value.toLocaleString('en', { maximumFractionDigits: 3 });
-    content.push(el('p', `Your estimate: ${number(state.moves[0])} ${puzzle.unit}. Answer: ${number(puzzle.actual)} ${puzzle.unit}.`, 'rot-feedback'),
+    const answer=`Answer: ${number(puzzle.actual)} ${puzzle.unit}.`;
+    content.push(el('p', state.score===null?answer:`Your estimate: ${number(state.moves[0])} ${puzzle.unit}. ${answer}`, 'rot-feedback'),
       el('p', puzzle.explanation, 'rot-feedback'));
   } else if (ladder) {
     content.push(el('p', `Fewest possible moves: ${puzzle.solution.length-1}`, 'rot-feedback'),
       list((state.score === null ? puzzle.solution : state.path).map(word => word.toUpperCase()),
         state.score === null ? 'Shortest solution' : 'Your word ladder', 'rot-chain ladder-chain'));
   } else if (clue) content.push(el('p', puzzle.answer, 'rot-feedback'));
-  else content.push(el('p', `Fewest possible moves: ${puzzle.minimum}`, 'rot-feedback'));
+  else {
+    content.push(el('p', `Fewest possible moves: ${puzzle.minimum}`, 'rot-feedback'));
+    if(state.score===null)content.push(list([...puzzle.board].sort((a,b)=>a-b),'Sorted tiles','rot-chain'));
+  }
 
-  if (mode === 'daily' && state.score !== null && day === dailyDate()) {
+  if (rushRound===null && mode === 'daily' && state.score !== null && day === dailyDate()) {
     const rank = el('div', undefined, 'daily-rank');
     showRank(rank, { game, day, puzzle: puzzle.id, answers: state.moves }, state.score);
     content.push(rank);
@@ -217,7 +227,7 @@ function draw() {
     actions.append(button('Restart puzzle', () => {
       session.state = initialExtra(game, session.puzzle);
       selected = undefined;
-      save(session);
+      if(rushRound===null)save(session);
       draw();
       quiz.querySelector('h2').focus();
     }));
@@ -237,6 +247,19 @@ async function load(name) {
 async function start() {
   data = game === 'swaprot' ? prepareExtra(game) :
     prepareExtra(game, ...await Promise.all(ladder ? [load(game), load('ladder-words')] : [load(game)]));
+  if(rushRound!==null){
+    const puzzle=extraPuzzle(game,data,`${rushSeed(game)}:${rushRound}`);
+    const session={puzzle,state:initialExtra(game,puzzle)};
+    sessions.daily=session;
+    onRushTimeout(()=>{
+      if(session.state.phase!=='playing')return;
+      session.state={...session.state,phase:'complete',score:null};
+      draw();
+    });
+    draw();
+    reportRush('ready');
+    return;
+  }
   await waitForFeedActivation();
   const saved = read('practice');
   const token = typeof saved?.token === 'string' && saved.token.startsWith('practice:') && saved.token.length < 100 ?
@@ -251,6 +274,7 @@ async function start() {
 }
 
 start().catch(() => {
+  reportRush('error');
   reportDaily('error');
   quiz.replaceChildren(el('p', 'The game could not load.', 'rot-feedback'),
     button('Reload game', () => location.reload(), 'primary'));

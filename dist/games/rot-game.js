@@ -2,7 +2,7 @@ import './help.js';
 import {
   makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition,
 } from './rot-puzzles.js';
-import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation } from '../daily/bridge.js';
+import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 
 const kind = document.body.dataset.game;
@@ -16,7 +16,7 @@ const number = new Intl.NumberFormat('en');
 const mapGame = kind === 'maprot';
 const yearGame = kind === 'yearrot';
 const sessions = {};
-let mode = !inFeed && read('mode') === 'practice' ? 'practice' : 'daily';
+let mode = startPractice || (!inFeed && read('mode') === 'practice') ? 'practice' : 'daily';
 let data, day;
 
 function element(tag, text, className) {
@@ -58,6 +58,14 @@ function update(action, paint = true) {
   const next = transition(kind, data, session.questions, session.state, action);
   if (next === session.state) return false;
   session.state = next;
+  if(rushRound!==null){
+    if(paint)draw();
+    if(phase(next)==='review'){
+      const score=scoreAnswer(kind,session.questions[0],next.answers[0]);
+      reportRush('answered',mapGame?score<=500:score===1);
+    }
+    return true;
+  }
   write(session.slot, next);
   if (paint) draw();
   if (paint && phase(next) === 'review') document.querySelector('.rot-next')?.focus();
@@ -93,6 +101,11 @@ function drawMap(question, state, reviewing) {
   feedback.setAttribute('role', 'status');
   if (reviewing) {
     const guess = state.answers[state.index];
+    if(!guess){
+      map.append(marker([lon,lat],'answer'));
+      feedback.append(element('p',`${city}, ${country} · ${coordinates([lon,lat])}`));
+      return [heading,map,feedback];
+    }
     map.append(marker(guess, 'guess'), marker([lon, lat], 'answer'));
     feedback.append(element('p', `${number.format(scoreAnswer(kind, question, guess))} km away`),
       element('p', `Yellow pin: your guess at ${coordinates(guess)}. Green pin: ${city}, ${country}.`));
@@ -302,13 +315,13 @@ function draw() {
   const heading = content[0];
   heading.id = 'round-title';
   heading.tabIndex = -1;
-  if (current === 'review') {
+  if (current === 'review' && rushRound===null) {
     const next = element('div', undefined, 'rot-actions');
     next.append(button(state.index === roundCount - 1 ? 'See results' : 'Next question',
       () => update({ type: 'next' }), 'primary rot-next'));
     content.push(next);
   }
-  quiz.replaceChildren(counter, ...content);
+  quiz.replaceChildren(...(rushRound===null?[counter,...content]:content));
   reportDaily(current === 'complete' ? 'complete' : 'playing', current === 'complete' ? heading.textContent : undefined, day);
 }
 
@@ -316,6 +329,21 @@ async function start() {
   const response = await fetch(`/games/data/${kind}.json`);
   if (!response.ok) throw new Error('Game data unavailable');
   data = preparePuzzles(kind, await response.json());
+  if(rushRound!==null){
+    const seed=rushSeed(kind);
+    const question=makeSet(kind,data,seed)[rushRound];
+    sessions.daily={questions:[question],state:newSession(seed)};
+    if(mapGame)quiz.closest('main').querySelector('.heading p').textContent='Place your pin within 500 km.';
+    onRushTimeout(()=>{
+      const session=sessions.daily;
+      if(phase(session.state)!=='guess')return;
+      session.state={...session.state,answers:[null]};
+      draw();
+    });
+    draw();
+    reportRush('ready');
+    return;
+  }
   await waitForFeedActivation();
   const saved = read('practice');
   const seed = typeof saved?.seed === 'string' && saved.seed.length < 100 ? saved.seed : randomSeed();
@@ -329,6 +357,7 @@ async function start() {
 }
 
 start().catch(() => {
+  reportRush('error');
   reportDaily('error');
   const error = element('p', 'The game could not load.', 'rot-feedback');
   error.setAttribute('role', 'alert');

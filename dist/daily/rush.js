@@ -1,13 +1,25 @@
-const games=[
-  {label:'flagrot',path:'/flags/',seconds:[8,6,4]},
-  {label:'langrot',path:'/languages/',seconds:[8,6,4]},
-  {label:'trainrot',path:'/trainrot/',seconds:[35,28,21]},
+const rotation=[
+  {label:'flagrot',path:'/flags/',seconds:[8,6]},
+  {label:'langrot',path:'/languages/',seconds:[8,6]},
+  {label:'trainrot',path:'/trainrot/',seconds:[35,28]},
+  {label:'Vocabulary',path:'/vocabulary/',seconds:[12,9]},
+  {label:'maprot',path:'/maprot/',seconds:[20,15]},
+  {label:'yearrot',path:'/yearrot/',seconds:[14,10]},
+  {label:'borderrot',path:'/borderrot/',seconds:[45,35]},
+  {label:'ladderrot',path:'/ladderrot/',seconds:[55,45]},
+  {label:'cluerot',path:'/cluerot/',seconds:[20,15]},
+  {label:'scalerot',path:'/scalerot/',seconds:[20,15]},
+  {label:'swaprot',path:'/swaprot/',seconds:[50,40]},
 ];
+const slug=location.pathname.split('/')[2];
+const selected=rotation.find(game=>game.label.toLowerCase()===slug);
+const games=selected?[selected]:rotation;
+if(selected)document.title=`${selected.label} Rush | dailyo`;
 const $=selector=>document.querySelector(selector);
 const panel=$('#feed-game'),status=$('#rush-status'),clock=$('#rush-clock');
 const actions=$('.feed-actions'),retry=$('#rush-retry'),next=$('#rush-next');
 const scores=games.map(()=>0);
-let phase='intro',index=0,round=0,frame,deadline,timer,ticker;
+let phase='loading',index=0,round=0,frame,deadline,timer,ticker;
 
 function stopClock(){
   clearTimeout(timer);
@@ -48,11 +60,13 @@ function startClock(){
   phase='playing';
   frame.classList.remove('feed-loading');
   const game=games[index];
-  status.textContent=`${game.label} · Round ${round+1} of ${game.seconds.length}`;
-  deadline=performance.now()+game.seconds[round]*1000;
-  frame.contentDocument.querySelector('#question-title, #rush-journey')?.focus({preventScroll:true});
-  updateClock();
-  ticker=setInterval(updateClock,100);
+  status.textContent=`${game.label} · Round ${round+1} of ${game.seconds.length+1}`;
+  deadline=round===0?Infinity:performance.now()+game.seconds[round-1]*1000;
+  frame.contentDocument.querySelector('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
+  if(round>0){
+    updateClock();
+    ticker=setInterval(updateClock,100);
+  }else clock.textContent='Untimed';
 }
 
 function updateClock(){
@@ -72,7 +86,7 @@ function finishRound(correct,expired=false){
   // Disable further input while leaving the answer visible.
   frame.inert=true;
   status.focus({preventScroll:true});
-  const continues=correct&&round+1<game.seconds.length;
+  const continues=correct&&round<game.seconds.length;
   timer=setTimeout(()=>continues?openRound(index,round+1):openRound(index+1),
     correct?800:game.path==='/trainrot/'?4200:2600);
 }
@@ -115,14 +129,14 @@ window.addEventListener('message',event=>{
 });
 
 function start(){
-  if(phase!=='intro'&&phase!=='recap')return;
   scores.fill(0);
-  $('#rush-intro').hidden=true;
   $('#feed-recap').hidden=true;
   actions.hidden=false;
   openRound(0);
   status.focus({preventScroll:true});
 }
-$('#rush-start').onclick=$('#rush-replay').onclick=start;
+$('#rush-replay').onclick=()=>{if(phase==='recap')start();};
 retry.onclick=()=>{if(phase==='error')openRound(index,round);};
 next.onclick=()=>{if(['loading','playing','feedback','error'].includes(phase))openRound(index+1);};
+
+start();
