@@ -1,0 +1,73 @@
+.rot-main { max-width: 760px; }
+.rot-main h2 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.rot-counter { background: #141516; color: var(--muted); }
+.rot-feedback { margin: 16px 0; color: var(--ink); line-height: 1.5; background: #141516; }
+.rot-feedback p { margin: 0 0 8px; }
+.rot-actions { display: flex; align-items: stretch; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.rot-actions button { width: auto; flex: 1 1 144px; }
+.rot-actions .secondary { margin: 0; }
+.rot-actions .primary:disabled { opacity: .5; cursor: default; }
+.rot-map {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #151d26;
+  display: block;
+  touch-action: pan-y;
+}
+.rot-map.rot-picking { cursor: crosshair; }
+.rot-map:focus-visible, .country-search:focus-visible { outline: 2px solid #e4e5e7; outline-offset: 3px; }
+.rot-land { fill: #3d4d55; stroke: #819295; stroke-width: .33; }
+.rot-pin { stroke: #151d26; stroke-width: 1; }
+.rot-pin.guess { fill: #f3ce78; }
+.rot-pin.answer { fill: #92d6aa; }
+.rot-coordinate { margin: 8px 0 0; min-height: 24px; line-height: 1.5; color: var(--muted); }
+.rot-timeline { display: grid; gap: 8px; padding: 0; list-style: none; margin: 0; }
+.rot-event {
+  display: grid;
+  grid-template-columns: 56px minmax(0,1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-radius: 6px;
+  line-height: 1.5;
+}
+.rot-event time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.rot-event.highlight { border: 1px solid #83c896; background: #264332; }
+.rot-slot { width: 100%; min-height: 40px; padding: 8px 16px; font-size: 13px; }
+.rot-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.rot-chain li {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  line-height: 1.4;
+}
+.rot-search-label { display: block; margin: 16px 0 8px; }
+.country-search {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #62666d;
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+}
+.rot-choices { margin-top: 8px; }
+.rot-choices p { color: var(--muted); grid-column: 1 / -1; }
+.rot-copy { display: block; width: 100%; min-height: 100px; margin-top: 8px; }

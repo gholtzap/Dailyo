@@ -5,6 +5,9 @@ const games=[
   {id:'flags',label:'flagrot',path:'/flags/'},
   {id:'languages',label:'langrot',path:'/languages/'},
   {id:'vocabulary',label:'Vocabulary',path:'/vocabulary/'},
+  {id:'maprot',label:'maprot',path:'/maprot/'},
+  {id:'yearrot',label:'yearrot',path:'/yearrot/'},
+  {id:'borderrot',label:'borderrot',path:'/borderrot/'},
 ];
 const $=selector=>document.querySelector(selector);
 const gamePanel=$('#feed-game'),recap=$('#feed-recap'),progress=$('#feed-progress');

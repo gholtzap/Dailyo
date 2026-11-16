@@ -1,8 +1,13 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {createRouter} from '../dist/router.js';
+import {preparePuzzles} from '../dist/games/rot-puzzles.js';
 
 const root=new URL('../dist/',import.meta.url);
+for (const game of ['maprot','yearrot','borderrot']) {
+  assert.ok(fs.statSync(new URL(`${game}/index.html`,root)).size>0);
+  preparePuzzles(game,JSON.parse(fs.readFileSync(new URL(`games/data/${game}.json`,root))));
+}
 for(const game of ['flags','languages']){
   assert.ok(fs.statSync(new URL(`${game}/index.html`,root)).size>0);
   const items=JSON.parse(fs.readFileSync(new URL(`games/data/${game}.json`,root)));

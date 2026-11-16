@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#1c1d1f">
+  <meta name="description" content="Find each city on a blank world map. Play five daily questions or practice anytime.">
+  <title>maprot | dailyo</title>
+  <link rel="stylesheet" href="/games/world.css">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/games/rot.css">
+</head>
+<body data-game="maprot">
+  <header class="site-masthead">
+    <a class="site-brand" href="/">dailyo</a>
+    <nav class="site-games" aria-label="Games">
+      <a href="/daily/">Daily Feed</a>
+      <a href="/">trainrot</a>
+      <a href="/flags/">flagrot</a>
+      <a href="/languages/">langrot</a>
+      <a href="/vocabulary/">Vocabulary</a>
+      <a href="/maprot/" aria-current="page">maprot</a>
+      <a href="/yearrot/">yearrot</a>
+      <a href="/borderrot/">borderrot</a>
+    </nav>
+  </header>
+  <main class="main rot-main">
+    <div class="heading">
+      <h1>maprot</h1>
+      <p>Find each city on a blank world map.</p>
+    </div>
+    <nav class="modes" aria-label="Game mode">
+      <button id="daily" type="button" aria-pressed="true">Daily</button>
+      <button id="practice" type="button" aria-pressed="false">Practice</button>
+    </nav>
+    <section id="quiz" aria-label="maprot game"><p role="status">Loading game…</p></section>
+  </main>
+  <script type="module" src="/games/rot-game.js"></script>
+</body>
+</html>
