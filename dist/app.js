@@ -2,6 +2,8 @@ import {createRouter,transition,formatTime,MAX_GUESSES} from './router.js';
 import {createMap} from './map.js';
 import {createRewards} from './rewards.js';
 import {dailyDate as dateToday,inFeed,reportDaily} from './daily/bridge.js';
+import {dailyChallenge,seededDeck,trainPuzzle} from './daily/puzzles.js';
+import {showRank} from './daily/rank.js';
 
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -31,11 +33,6 @@ async function start(){
   const badgeColor=id=>{const hex=network.routes[id].color;const rgb=[0,2,4].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722>.179?'#000000':'#ffffff';};
   const shuttleSuffix={GS:'42',FS:'F',H:'R'};
   const badge=id=>`<span class="train-badge${id.endsWith('X')?' express':''}${shuttleSuffix[id]?' shuttle-badge':''}" style="--route-color:#${network.routes[id].color};color:${badgeColor(id)}" role="img" aria-label="${escape(routeTitle(id))} train">${shuttleSuffix[id]?`<span class="shuttle-symbol">S</span><span class="shuttle-suffix">${shuttleSuffix[id]}</span>`:escape(routeSymbol(id))}</span>`;
-  function seededDeck(seed, pool=challenges){
-    let hash=2166136261;for(const char of seed)hash=Math.imul(hash^char.charCodeAt(0),16777619)>>>0;
-    const shuffled=[...pool];for(let i=shuffled.length-1;i>0;i--){hash=(Math.imul(hash,1664525)+1013904223)>>>0;const j=hash%(i+1);[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
-    return shuffled;
-  }
   const newSeed=()=>`endless:${Date.now()}:${Math.random()}`;
   const difficulties=['easy','medium','hard'];
   let difficulty='easy';
@@ -59,7 +56,7 @@ async function start(){
       if(saved){
         if(typeof saved.seed!=='string'||!saved.seed.startsWith('endless:')||saved.seed.length>100||!Number.isInteger(saved.position)||saved.position<0||!validState(saved.state))return;
         seed=saved.seed;difficulty=difficulties.includes(saved.difficulty)?saved.difficulty:'easy';
-        const oldChallenge=saved.challenge?[...challenges,...(network.retiredChallenges??[])].find(c=>c.from===saved.challenge.from&&c.to===saved.challenge.to):seededDeck(seed)[saved.position];
+        const oldChallenge=saved.challenge?[...challenges,...(network.retiredChallenges??[])].find(c=>c.from===saved.challenge.from&&c.to===saved.challenge.to):seededDeck(seed,challenges)[saved.position];
         if(!oldChallenge)return;
         deck=seededDeck(seed,pool());
         if(Array.isArray(saved.deck)&&saved.deck.length<=deck.length){
@@ -81,7 +78,7 @@ async function start(){
         const old=JSON.parse(localStorage.getItem(mode==='practice'?`last-stop-practice-v1:${feed}`:`last-stop-v1:${feed}:${date}`));
         if(!old||!Number.isInteger(old.round)||old.round<0||old.round>4||!validState(old.state))return;
         if(mode==='practice'&&(typeof old.seed!=='string'||!old.seed.startsWith('practice:')||old.seed.length>100))return;
-        const shuffled=seededDeck(mode==='practice'?old.seed:date),legacy=[],used=new Set();
+        const shuffled=seededDeck(mode==='practice'?old.seed:date,challenges),legacy=[],used=new Set();
         for(const c of shuffled){if(used.has(c.from)||used.has(c.to))continue;legacy.push(c);used.add(c.from);used.add(c.to);if(legacy.length===5)break;}
         const c=(legacy.length===5?legacy:shuffled.slice(0,5))[old.round];
         position=deck.findIndex(item=>item.from===c.from&&item.to===c.to);if(position<0){deck=[c,...deck];position=0;}
@@ -96,10 +93,8 @@ async function start(){
   load();
   const difficultyControl=$('#difficulty');difficultyControl.value=difficulty;
   let practice={seed,deck,position,state,difficulty,recent};
-  // Preserve already-issued daily journeys before expanding the rotation.
-  function dailyChallenge(date){const pinned=challenges.filter(c=>c.daily===true);const easy=challenges.filter(c=>c.difficulty==='easy');const previous=date<='2026-11-14'&&pinned.length;const dailyDeck=seededDeck(previous?'trainrot-daily-v2':'trainrot-daily-v3',previous?pinned:easy.length?easy:challenges);const day=Math.floor(Date.parse(`${date}T00:00:00Z`)/86400000);return dailyDeck[((day%dailyDeck.length)+dailyDeck.length)%dailyDeck.length];}
   function openDaily(){
-    dailyDate=dateToday();const challenge=dailyChallenge(dailyDate);let saved;
+    dailyDate=dateToday();const challenge=dailyChallenge(challenges,dailyDate);let saved;
     try{saved=JSON.parse(localStorage.getItem(dailyKey(dailyDate)));}catch{}
     const validLegs=legs=>Array.isArray(legs)&&legs.length<=6&&legs.every(l=>l&&network.routes[l.route]);
     if(!saved||!['planning','revealed'].includes(saved.phase)||!validLegs(saved.legs)||!Array.isArray(saved.guesses)||saved.guesses.length>MAX_GUESSES||!saved.guesses.every(validLegs))saved={phase:'planning',legs:[],guesses:[]};
@@ -234,6 +229,12 @@ async function start(){
         catch{planner.querySelector('.share-fallback')?.remove();const status=$('#copy-status');status.textContent='Select and copy your results:';const field=document.createElement('textarea');field.className='share-fallback';field.setAttribute('aria-label','Results to copy');field.value=text;status.after(field);field.focus();field.select();}
       };
     }else $('#next').onclick=nextJourney;
+    if(mode==='daily'&&!displayed.skipped&&!displayed.assisted&&displayed.guesses?.length){
+      const rank=document.createElement('div');
+      rank.className='daily-rank';
+      $('.result-heading').after(rank);
+      showRank(rank,{game:'train',day:dailyDate,puzzle:trainPuzzle(network,c),answers:displayed.guesses},r.score);
+    }
     reportDaily('complete',displayed.skipped?'Answer shown':displayed.assisted?'Map used':`${r.score??0} points`,dailyDate);
   }
   function nextJourney(){

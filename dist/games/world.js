@@ -1,4 +1,6 @@
 import {dailyDate as dateToday,inFeed,reportDaily} from '../daily/bridge.js';
+import {hash,shuffle,quizDeck,quizOptions,quizPuzzle} from '../daily/puzzles.js';
+import {showRank} from '../daily/rank.js';
 
 const kind=document.body.dataset.game;
 const vocabulary=kind==='vocabulary';
@@ -7,8 +9,6 @@ const controls={daily:document.querySelector('#daily'),practice:document.querySe
 const key=part=>`trainrot:${kind}:v1:${part}`;
 const read=key=>{try{return JSON.parse(localStorage.getItem(key));}catch{return null;}};
 const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));}catch{}};
-function hash(value){let h=2166136261;for(const c of value)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;return h||1;}
-function shuffle(list,seed){let h=hash(seed);const result=[...list];for(let i=result.length-1;i>0;i--){h^=h<<13;h^=h>>>17;h^=h<<5;const j=(h>>>0)%(i+1);[result[i],result[j]]=[result[j],result[i]];}return result;}
 const randomSeed=()=>`${Date.now()}:${Math.random()}`;
 const make=(tag,text,className)=>{const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(className)el.className=className;return el;};
 const modeState={daily:null,practice:null};
@@ -24,16 +24,6 @@ function save(){write(key(mode==='daily'?`daily:${day}`:'practice'),modeState[mo
 function resetDay(){const today=dateToday();if(day===today)return false;day=today;modeState.daily=dailyState();if(mode==='daily')draw();return true;}
 function selectMode(next){resetDay();if(next===mode)return;save();mode=next;write(key('mode'),mode);draw();}
 function question(){const s=modeState[mode],seed=mode==='daily'?`daily:${kind}:${day}`:s.seed;return {item:shuffle(items,seed)[s.index],seed:`${seed}:${s.index}`};}
-function optionsFor(item,seed){
-  if(vocabulary){
-    const distractors=item.distractors.map((name,index)=>({id:`${item.id}:${index+1}`,name}));
-    return shuffle([item,...distractors],`${seed}:order`);
-  }
-  const sameFlags=[['id','mc'],['ro','td'],['au','hm'],['bq','nl'],['bv','no','sj'],['fr','gf','gp','yt','re','bl','mf','pm','wf'],['sh','gb'],['um','us'],['fi','ax']];
-  const incompatible=sameFlags.find(g=>g.includes(item.id))??[];
-  const others=shuffle(items.filter(x=>x.id!==item.id&&!incompatible.includes(x.id)),`${seed}:options`).slice(0,3);
-  return shuffle([item,...others],`${seed}:order`);
-}
 function statusText(selected,item){
   if(selected===item.id)return vocabulary?`Correct! ${item.name}.`:'Correct!';
   return `Correct answer: ${item.name}${vocabulary?'.':''}`;
@@ -50,7 +40,7 @@ function advance(){
   save();draw();(document.querySelector('#question-title')??document.querySelector('.result h2'))?.focus();
 }
 function dailyProgress(){
-  const state=modeState.daily,deck=shuffle(items,`daily:${kind}:${day}`),list=make('ol',undefined,'daily-progress');
+  const state=modeState.daily,deck=quizDeck(items,kind,day),list=make('ol',undefined,'daily-progress');
   list.setAttribute('aria-label','Daily question progress');
   for(let i=0;i<5;i++){
     const status=i<state.answers.length?(state.answers[i]===deck[i].id?'correct':'incorrect'):i===state.index?'current':'upcoming';
@@ -61,9 +51,12 @@ function dailyProgress(){
   return list;
 }
 function result(){
-  const s=modeState.daily,deck=shuffle(items,`daily:${kind}:${day}`),score=s.answers.filter((answer,i)=>answer===deck[i].id).length;
+  const s=modeState.daily,deck=quizDeck(items,kind,day),score=s.answers.filter((answer,i)=>answer===deck[i].id).length;
   const box=make('div',undefined,'result'),title=make('h2',`${score} out of 5`),description=make('p','Next daily set at midnight in New York.'),button=make('button','Play practice','secondary');
   title.tabIndex=-1;button.type='button';button.onclick=()=>selectMode('practice');box.append(title,dailyProgress(),description);if(!inFeed)box.append(button);quiz.replaceChildren(box);
+  const rank=make('div',undefined,'daily-rank');
+  description.before(rank);
+  showRank(rank,{game:kind,day,puzzle:quizPuzzle(deck),answers:s.answers},score);
   reportDaily('complete',title.textContent,day);
 }
 function draw(){
@@ -79,7 +72,7 @@ function draw(){
     prompt.append(make('h2',item.id,'vocabulary-word'));
   }else{const index=hash(`${seed}:sample`)%item.samples.length;const text=make('p',item.samples[index],'sample');text.dir='auto';prompt.append(text);}
   const choices=make('div',undefined,'choices');choices.setAttribute('role','group');choices.setAttribute('aria-label',kind==='flags'?'Choose a place':vocabulary?'Choose a definition':'Choose a language');
-  for(const option of optionsFor(item,seed)){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>choose(option.id,item);choices.append(button);}
+  for(const option of quizOptions(items,kind,item,seed)){const button=make('button',option.name,'choice');button.type='button';button.disabled=selected!==null;if(selected!==null&&option.id===item.id)button.classList.add('correct');if(selected===option.id&&selected!==item.id)button.classList.add('wrong');button.onclick=()=>choose(option.id,item);choices.append(button);}
   const feedback=make('p',selected===null?'':statusText(selected,item),'feedback');feedback.setAttribute('role','status');
   if(vocabulary&&selected!==null){
     feedback.id='answer-feedback';

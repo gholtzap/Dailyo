@@ -1,6 +1,6 @@
-export const dailyDate=()=>new Intl.DateTimeFormat('en-CA',{
-  timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',
-}).format(new Date());
+import {dailyDate} from './puzzles.js';
+
+export {dailyDate};
 
 export const inFeed=window.parent!==window&&new URLSearchParams(location.search).get('feed')==='1';
 if(inFeed)document.documentElement.dataset.dailyFeed='';

@@ -1,7 +1,8 @@
 import {
-  makeSet, newSession, phase, preparePuzzles, restoreSession, roundCount, scoreAnswer, transition,
+  makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition,
 } from './rot-puzzles.js';
 import { dailyDate as today, inFeed, reportDaily } from '../daily/bridge.js';
+import { showRank } from '../daily/rank.js';
 
 const kind = document.body.dataset.game;
 const quiz = document.querySelector('#quiz');
@@ -61,11 +62,6 @@ function update(action, paint = true) {
   if (paint && phase(next) === 'review') document.querySelector('.rot-next')?.focus();
   if (action.type === 'next') document.querySelector('#round-title')?.focus();
   return true;
-}
-
-function scoreLine(session) {
-  const scores = session.state.answers.map((answer, index) => scoreAnswer(kind, session.questions[index], answer));
-  return { scores, total: scores.reduce((sum, score) => sum + score, 0) };
 }
 
 function svg(tag, attrs) {
@@ -241,9 +237,15 @@ function drawBorders(question, state, reviewing) {
 }
 
 function summary(session) {
-  const { scores, total } = scoreLine(session);
+  const { scores, total } = scoreSet(kind, session.questions, session.state.answers);
   const title = element('h2', mapGame ? `${number.format(total)} km off` : `${total} out of ${roundCount}`);
-  if (inFeed) return [title];
+  const content = [title];
+  if (mode === 'daily') {
+    const rank = element('div', undefined, 'daily-rank');
+    showRank(rank, {game: kind, day, puzzle: rankingPuzzle(kind, session.questions), answers: session.state.answers}, total);
+    content.push(rank);
+  }
+  if (inFeed) return content;
   const actions = element('div', undefined, 'rot-actions');
   const footer = element('div');
   if (mode === 'daily') {
@@ -282,7 +284,7 @@ function summary(session) {
     }, 'primary'));
     footer.append(actions);
   }
-  return [title, footer];
+  return [...content, footer];
 }
 
 function draw() {

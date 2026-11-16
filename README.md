@@ -66,3 +66,15 @@ A compatible NYC data bundle can be checked locally with `node scripts/validate-
 The live site uses NYC data. Its Vercel production build downloads a versioned bundle from private Blob storage and verifies its SHA-256 checksum before writing the site files. Configure `TRAINROT_DATA_URL`, `TRAINROT_DATA_SHA256`, and the store credential `BLOB_READ_WRITE_TOKEN` for Production only. A missing or invalid production bundle fails the build. The fictional network is available through local repo builds.
 
 The published game sends the NYC data to the browser for routing and map display. The private store controls access to the build input.
+
+### Daily rankings
+
+Daily results are saved in the browser. The hosted scores API also records the first
+ranked finish per browser, game, and daily puzzle. The result screen compares
+scores with other finishers. Assisted and skipped Trainrot rounds and Practice
+rounds stay outside the rankings.
+
+Set a server-side `DATABASE_URL` to a pooled Postgres connection and apply
+`scripts/daily-scores.sql` to enable the API. Use a separate database for testing.
+To exercise all seven games against an empty test database, set
+`TRAINROT_TEST_URL` to the running site and run `node tests/rankings.mjs`.
