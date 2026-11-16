@@ -4,6 +4,12 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
+  "functions": {
+    "api/daily-score.js": {
+      "includeFiles": "dist/{data/{network,challenges}.json,games/data/*.json}",
+      "regions": ["iad1"]
+    }
+  },
   "git": {
     "deploymentEnabled": {
       "*": false,
