@@ -22,7 +22,11 @@ try {
   for(const leg of best.legs)await other.locator(`[data-route="${leg.route}"]`).click();
   await other.locator('#reveal').click();await other.locator('#copy-results').waitFor();
   await other.waitForFunction(()=>document.querySelector('.result-score')?.textContent.includes('100'));
-  await other.locator('#copy-results').click();const shared=await other.evaluate(()=>navigator.clipboard.readText());
+  const copy=other.locator('.result-heading').getByRole('button',{name:'Copy results',exact:true});
+  assert.equal(await copy.textContent(),'');
+  await copy.press('Enter');
+  await other.waitForFunction(()=>document.querySelector('#copy-status')?.textContent==='Copied');
+  const shared=await other.evaluate(()=>navigator.clipboard.readText());
   assert.match(shared,/100 points/);assert.match(shared,/[⬛🟨]🟩/);assert.equal((shared.match(/[⬛🟨🟩]/gu)??[]).length,2);
   for(const name of daily)assert.ok(!shared.includes(name));
   await other.reload();await other.locator('#copy-results').click();assert.equal(await other.evaluate(()=>navigator.clipboard.readText()),shared);

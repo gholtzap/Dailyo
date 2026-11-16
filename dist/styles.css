@@ -88,11 +88,9 @@
 
 #help::before { content: "?" / ""; }
 
-#help-tooltip {
+.game-tooltip {
   display: none;
   position: absolute;
-  top: 56px;
-  right: 12px;
   z-index: 3;
   padding: 4px 8px;
   border: 1px solid var(--line);
@@ -100,8 +98,42 @@
   background: var(--paper);
   color: var(--ink);
   font-size: 12px;
+  white-space: nowrap;
 }
-#help:is(:hover, :focus-visible) + #help-tooltip,
-#help-tooltip:hover {
+
+#help-tooltip { top: 56px; right: 12px; }
+button:is(:hover, :focus-visible) + .game-tooltip,
+.game-tooltip:hover { display: block; }
+
+.result-heading:has(.copy-control) {
+  justify-content: flex-start;
+  align-items: center;
+}
+.result-heading:has(.result-score):has(.copy-control) > h1:not(.result-score) {
+  flex-basis: 100%;
+  margin-bottom: 0;
+}
+.copy-control { position: relative; }
+#copy-results {
+  position: relative;
   display: block;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-color: var(--line);
+  background: var(--paper);
 }
+#copy-results::before,
+#copy-results::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 12px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+#copy-results::before { top: 12px; left: 13px; }
+#copy-results::after { top: 16px; left: 17px; background: var(--paper); }
+#copy-tooltip { top: 100%; left: 0; }
+#copy-status { text-align: left; }
+#copy-status:empty { margin: 0; }

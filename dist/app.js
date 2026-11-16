@@ -199,11 +199,15 @@ async function start(){
     const tied=r.valid&&r.optimal&&r.seconds===r.optimal.seconds&&!same(rideKey(r.legs),rideKey(r.optimal.legs));
     const subtitle=tied?'Your route is also a fastest route.':displayed.assisted?'':r.valid?r.score===100?'':formatTime(r.seconds-r.optimal.seconds)+' slower':displayed.skipped?'':r.error??'Add another train to reach the destination.';
     const canResume=!r.valid&&!displayed.skipped&&!displayed.guesses?.length&&displayed.legs.length;
-    const nextAction=mode==='daily'?'<button id="copy-results" class="primary-button next-action">Copy results</button><p id="copy-status" class="share-status" role="status"></p><button id="start-practice" class="secondary-button">Play practice</button>':'<button id="next" class="primary-button next-action">Next journey</button>';
+    const nextAction=mode==='daily'?'<button id="start-practice" class="secondary-button">Play practice</button>':'<button id="next" class="primary-button next-action">Next journey</button>';
     const sequence=displayed.legs.length?`<ol class="train-sequence result-sequence" aria-label="Your train sequence">${displayed.legs.map(l=>`<li>${badge(l.route)}</li>`).join('')}</ol>`:'';
     const score=`${displayed.assisted?'—':r.score??0}${displayed.assisted?'':'<small> points</small>'}`;
     const status=displayed.guesses?.length===MAX_GUESSES?'Out of guesses.':'Partial route.';
-    planner.innerHTML=`${displayed.skipped?'':`<div class="result-heading">${r.valid?`<h1 class="result-score">${score}</h1>`:`<h1>${status}</h1><div class="result-score">${score}</div>`}</div>${subtitle?`<p class="result-subtitle">${escape(subtitle)}</p>`:''}`}
+    const resultTitle=displayed.skipped?'<h1>Answer shown</h1>':r.valid?`<h1 class="result-score">${score}</h1>`:`<h1>${status}</h1><div class="result-score">${score}</div>`;
+    const copyControl=mode==='daily'?'<span class="copy-control"><button id="copy-results" type="button" aria-label="Copy results" data-ui-tooltip="copy-tooltip"></button><span id="copy-tooltip" class="game-tooltip" role="tooltip">Copy results</span></span>':'';
+    planner.innerHTML=`${!displayed.skipped||copyControl?`<div class="result-heading">${resultTitle}${copyControl}</div>`:''}
+      ${subtitle?`<p class="result-subtitle">${escape(subtitle)}</p>`:''}
+      ${copyControl?'<p id="copy-status" class="share-status" role="status"></p>':''}
       ${ticket(c,displayed.skipped?'':sequence)}
       <div class="result-route"><h3>Fastest route${r.optimal?` · ${formatTime(r.optimal.seconds)}`:''}</h3>${resultLegs(r.optimal?.legs??[])}</div>
       ${displayed.skipped?'':`<div class="compare-controls" role="group" aria-label="Show routes on map"><button data-view="yours" class="active" aria-pressed="true">Your route</button><button data-view="best" aria-pressed="false">Fastest route</button><button data-view="compare" aria-pressed="false">Compare</button></div>`}
