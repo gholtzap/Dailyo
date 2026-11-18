@@ -79,7 +79,7 @@ function commit(answer: VisualAnswer) {
 const money = (cents: number) => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(cents/100);
 function source(item: VisualItem) {
   const details=el('details',undefined,'visual-source');
-  details.append(el('summary','Photo & answer source'));
+  details.append(el('summary',photoGame?'Photo & answer source':'Answer source'));
   const link=el('a',item.credit ? `${item.credit} · ${item.license ?? 'Source'}` : 'View source');
   link.href=item.source; link.target='_blank'; link.rel='noopener noreferrer';
   details.append(link);
@@ -177,7 +177,7 @@ function drawQuestion() {
     form.append(label,input,submit); form.onsubmit=event=>{event.preventDefault();const price=Math.round(input.valueAsNumber*100);if(Number.isSafeInteger(price) && price>=0 && price<=1000000)commit({...a,price});}; quiz.append(form);
   } else {
     if(!draft.length)draft=q.tiles.map(x=>x.id);
-    quiz.append(el('p',`Arrange ${q.tiles.length} items from lowest to highest. Use the arrows, then check your order.`,'visual-note'));
+    quiz.append(el('p',`Arrange ${q.tiles.length} items from lowest to highest.`,'visual-note'));
     const list=el('ol',undefined,'visual-order');
     for(const [index,id] of draft.entries()) {
       const tile=q.tiles.find(x=>x.id===id)!;
