@@ -94,8 +94,10 @@ function commit(answer) {
         if (isRush)
             reportRush('answered', rushCorrect(game, q, answer));
     }
-    else
-        quiz.querySelector('#visual-feedback')?.focus();
+    else {
+        quiz.querySelector('#visual-feedback')?.focus({ preventScroll: true });
+        quiz.querySelector('.visual-figure')?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
 }
 const money = (cents) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
 function source(item) {
@@ -152,6 +154,10 @@ function media(q, a, complete) {
     figure.append(caption);
     return figure;
 }
+function formatOrderValue(value, unit) {
+    const precision = value !== 0 && Math.abs(value) < .001 ? { maximumSignificantDigits: 3 } : { maximumFractionDigits: 3 };
+    return value.toLocaleString('en-US', { ...precision, useGrouping: unit !== 'CE' });
+}
 function reveal(q, a) {
     const content = el('div', undefined, 'visual-reveal');
     const points = answerPoints(game, q, a);
@@ -168,7 +174,7 @@ function reveal(q, a) {
     else if (game === 'orderrot') {
         const list = el('ol', undefined, 'visual-solution');
         for (const item of [...q.tiles].sort((x, y) => x.value - y.value))
-            list.append(el('li', `${item.name} — ${item.value.toLocaleString('en-US')} ${q.item.unit ?? ''}`));
+            list.append(el('li', `${item.name} — ${formatOrderValue(item.value, q.item.unit)} ${q.item.unit ?? ''}`));
         content.append(el('p', 'Correct order, from lowest to highest:'), list);
     }
     else
@@ -205,12 +211,12 @@ function drawQuestion() {
             node.disabled = tried || imageFailed;
             choices.append(node);
         }
-        quiz.append(choices);
-        const feedback = el('p', a.guesses.length ? game === 'skylinerot' && !(mode === 'practice' && difficulty === 'hard') ? `That was not it. Try another city. ${photoPoints(a.guesses.length)} points available.` : `That was not it. The view is wider now. ${photoPoints(Math.max(a.hint, a.guesses.length))} points available.` : '', 'rot-feedback');
+        const remaining = 3 - a.guesses.length;
+        const feedback = el('p', a.guesses.length ? `Try again. ${remaining} ${remaining === 1 ? 'guess' : 'guesses'} left.` : a.hint ? '3 guesses left.' : '', 'rot-feedback visual-attempt-feedback');
         feedback.id = 'visual-feedback';
         feedback.tabIndex = -1;
         feedback.setAttribute('role', 'status');
-        quiz.append(feedback);
+        quiz.append(feedback, choices);
         if (!isRush && (game !== 'skylinerot' || (mode === 'practice' && difficulty === 'hard')) && a.hint < 2) {
             const hint = button('Reveal a wider view', () => commit({ ...a, hint: a.hint + 1 }), 'secondary visual-hint');
             const cost = el('span', `${photoPoints(a.hint)} → ${photoPoints(a.hint + 1)} points`, 'visual-hint-cost');
@@ -249,10 +255,12 @@ function drawQuestion() {
             const row = el('li');
             row.append(el('span', tile.name));
             for (const [direction, offset] of [['up', -1], ['down', 1]]) {
-                const move = button(direction === 'up' ? '↑' : '↓', () => {
+                const move = button(direction === 'up' ? 'Up' : 'Down', () => {
                     [draft[index], draft[index + offset]] = [draft[index + offset], draft[index]];
                     draw();
-                    quiz.querySelector(`[data-move="${id}-${direction}"]`)?.focus();
+                    const moved = quiz.querySelector(`[data-move="${id}-${direction}"]`);
+                    const fallback = quiz.querySelector(`[data-move="${id}-${direction === 'up' ? 'down' : 'up'}"]`);
+                    (moved?.disabled ? fallback : moved)?.focus();
                 });
                 move.setAttribute('aria-label', `Move ${tile.name} ${direction}`);
                 move.dataset.move = `${id}-${direction}`;

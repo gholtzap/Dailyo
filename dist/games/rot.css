@@ -134,3 +134,16 @@
 .solution-review summary { min-height: 48px; padding: 16px 0; cursor: pointer; }
 .solution-review summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .solution-review .ladder-chain { margin-top: 8px; }
+
+.rot-review { margin: 24px 0; }
+.rot-review > h3 { font-size: 14px; font-weight: 500; margin: 0 0 8px; }
+.rot-recap { list-style: none; padding: 0; margin: 0; }
+.rot-recap > li { border-bottom: 1px solid var(--line); }
+.rot-recap summary { cursor: pointer; min-height: 48px; padding: 16px 8px; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 16px; align-items: baseline; }
+.rot-recap summary::marker { content: ''; }
+.rot-recap summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.rot-recap summary > span:first-child { overflow-wrap: anywhere; }
+.rot-recap-score { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rot-recap details[open] > summary { color: var(--ink); }
+.rot-recap details:not([open]) > summary > span:first-child { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; }
+.rot-recap-detail { padding: 8px 8px 16px; }

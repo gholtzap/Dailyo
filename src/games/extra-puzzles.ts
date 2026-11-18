@@ -72,7 +72,9 @@ export function extraPuzzle(game: string, data: ExtraData, seed: string): ExtraP
     return { game: 'swaprot', id: board.join(''), board, minimum: inversions(board) };
   }
   const day = /^\d{4}-\d{2}-\d{2}$/.test(seed) ? Date.parse(seed) / 86400000 : null;
-  const row = Number.isInteger(day) ? data.rows[((day! % data.rows.length) + data.rows.length) % data.rows.length] :
+  const indexed = /^practice:deck:(\d+):/.exec(seed);
+  const index = indexed ? Number(indexed[1]) : -1;
+  const row = indexed && Number.isSafeInteger(index) && index < data.rows.length ? data.rows[index] : Number.isInteger(day) ? data.rows[((day! % data.rows.length) + data.rows.length) % data.rows.length] :
     shuffle<LadderRow | ClueRow | ScaleRow>(data.rows, seed)[0];
   if (data.game === 'ladderrot') {
     const [start, goal] = row as LadderRow;
@@ -147,4 +149,29 @@ export function extraScoreLabel(game: string, score: number | null) {
   if (game === 'scalerot') return `${score === maxScore ? '≥' : ''}${(score / 100).toLocaleString('en', {maximumFractionDigits: 2})}% off`;
   const unit = game === 'cluerot' ? 'clue' : 'move';
   return `${score} ${unit}${score === 1 ? '' : 's'}`;
+}
+
+/**
+ * Practice cycle transitions (Daily and Rush never enter this workflow):
+ * Complete, remaining + next -> choose an unseen puzzle; persist its token and visited IDs.
+ * Complete, exhausted + next -> begin a new cycle; do not repeat the last puzzle immediately.
+ * Any + resume -> restore the saved token/moves without consuming another puzzle.
+ * Invalid saved cycle + next -> discard invalid IDs, retain the current puzzle.
+ */
+export function nextPracticePuzzle(data: ExtraData, nonce: string, currentId?: string, stored: JsonValue = null) {
+  if (data.game === 'swaprot') return {token: `practice:${nonce}`, cycle: {version: 1, seen: [] as string[]}};
+  const ids = data.rows.map(row => data.game === 'ladderrot' ? `${row[0]}-${row[1]}` : row[0]);
+  const known = new Set(ids);
+  const history = stored && !Array.isArray(stored) && typeof stored === 'object' && stored.version === 1 && Array.isArray(stored.seen) ? stored.seen : [];
+  const seen = new Set(history.filter((id): id is string => typeof id === 'string' && known.has(id)));
+  if (currentId && known.has(currentId)) seen.add(currentId);
+  let remaining = ids.map((id,index)=>({id,index})).filter(({id})=>!seen.has(id));
+  if (!remaining.length) {
+    seen.clear();
+    remaining = ids.map((id,index)=>({id,index})).filter(({id})=>id!==currentId);
+    if (!remaining.length) remaining = ids.map((id,index)=>({id,index}));
+  }
+  const next = shuffle(remaining,nonce)[0];
+  seen.add(next.id);
+  return {token: `practice:deck:${next.index}:${nonce}`, cycle: {version: 1, seen: [...seen]}};
 }
