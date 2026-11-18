@@ -71,12 +71,15 @@ function commit(answer: VisualAnswer) {
   if (answered(game,q,answer)) {
     quiz.querySelector<HTMLElement>('#visual-feedback')?.focus();
     if (isRush) reportRush('answered',rushCorrect(game,q,answer));
-  } else quiz.querySelector<HTMLElement>('#visual-feedback')?.focus();
+  } else {
+    quiz.querySelector<HTMLElement>('#visual-feedback')?.focus({preventScroll:true});
+    quiz.querySelector<HTMLElement>('.visual-figure')?.scrollIntoView({block:'start',behavior:'instant'});
+  }
 }
 const money = (cents: number) => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(cents/100);
 function source(item: VisualItem) {
   const details=el('details',undefined,'visual-source');
-  details.append(el('summary','Photo & answer source'));
+  details.append(el('summary',photoGame?'Photo & answer source':'Answer source'));
   const link=el('a',item.credit ? `${item.credit} · ${item.license ?? 'Source'}` : 'View source');
   link.href=item.source; link.target='_blank'; link.rel='noopener noreferrer';
   details.append(link);
@@ -114,6 +117,10 @@ function media(q: VisualQuestion,a: VisualAnswer,complete: boolean) {
   const caption=el('figcaption',game==='pricerot' ? 'Original product illustration' : complete ? q.item.name : game==='skylinerot' && levelDifficulty !== 'hard' ? 'Look for the buildings, waterfront, and surrounding landscape.' : `View ${a.hint+1} of 3 · ${isRush ? 'One guess' : `${photoPoints(Math.max(a.hint,a.guesses.length))} points available`}`);
   figure.append(caption); return figure;
 }
+function formatOrderValue(value: number, unit?: string) {
+  const precision = value !== 0 && Math.abs(value) < .001 ? {maximumSignificantDigits:3} : {maximumFractionDigits:3};
+  return value.toLocaleString('en-US',{...precision,useGrouping:unit !== 'CE'});
+}
 function reveal(q: VisualQuestion,a: VisualAnswer) {
   const content=el('div',undefined,'visual-reveal');
   const points=answerPoints(game,q,a);
@@ -124,7 +131,7 @@ function reveal(q: VisualQuestion,a: VisualAnswer) {
     content.append(el('p',`Recorded price: ${money(q.item.cents!)}${a.price===null ? '' : ` · Your guess: ${money(a.price)} · ${Math.round(priceError(a.price,q.item.cents!)*100)}% off`}`));
   } else if (game==='orderrot') {
     const list=el('ol',undefined,'visual-solution');
-    for(const item of [...q.tiles].sort((x,y)=>x.value-y.value)) list.append(el('li',`${item.name} — ${item.value.toLocaleString('en-US')} ${q.item.unit ?? ''}`));
+    for(const item of [...q.tiles].sort((x,y)=>x.value-y.value)) list.append(el('li',`${item.name} — ${formatOrderValue(item.value,q.item.unit)} ${q.item.unit ?? ''}`));
     content.append(el('p','Correct order, from lowest to highest:'),list);
   } else content.append(el('p',`Answer: ${q.item.name}`));
   if(q.item.explanation)content.append(el('p',q.item.explanation));
@@ -153,9 +160,10 @@ function drawQuestion() {
       },`choice visual-choice${tried ? ' wrong' : ''}`);
       node.disabled=tried || imageFailed; choices.append(node);
     }
-    quiz.append(choices);
-    const feedback=el('p',a.guesses.length ? game==='skylinerot' && !(mode==='practice' && difficulty==='hard') ? `That was not it. Try another city. ${photoPoints(a.guesses.length)} points available.` : `That was not it. The view is wider now. ${photoPoints(Math.max(a.hint,a.guesses.length))} points available.` : '', 'rot-feedback');
-    feedback.id='visual-feedback'; feedback.tabIndex=-1; feedback.setAttribute('role','status'); quiz.append(feedback);
+    const remaining=3-a.guesses.length;
+    const feedback=el('p',a.guesses.length ? `Try again. ${remaining} ${remaining===1?'guess':'guesses'} left.` : a.hint ? '3 guesses left.' : '', 'rot-feedback visual-attempt-feedback');
+    feedback.id='visual-feedback'; feedback.tabIndex=-1; feedback.setAttribute('role','status');
+    quiz.append(feedback,choices);
     if(!isRush && (game!=='skylinerot' || (mode==='practice' && difficulty==='hard')) && a.hint<2) {
       const hint=button('Reveal a wider view',()=>commit({...a,hint:a.hint+1}),'secondary visual-hint');
       const cost=el('span', `${photoPoints(a.hint)} → ${photoPoints(a.hint+1)} points`, 'visual-hint-cost');
@@ -169,15 +177,18 @@ function drawQuestion() {
     form.append(label,input,submit); form.onsubmit=event=>{event.preventDefault();const price=Math.round(input.valueAsNumber*100);if(Number.isSafeInteger(price) && price>=0 && price<=1000000)commit({...a,price});}; quiz.append(form);
   } else {
     if(!draft.length)draft=q.tiles.map(x=>x.id);
-    quiz.append(el('p',`Arrange ${q.tiles.length} items from lowest to highest. Use the arrows, then check your order.`,'visual-note'));
+    quiz.append(el('p',`Arrange ${q.tiles.length} items from lowest to highest.`,'visual-note'));
     const list=el('ol',undefined,'visual-order');
     for(const [index,id] of draft.entries()) {
       const tile=q.tiles.find(x=>x.id===id)!;
       const row=el('li'); row.append(el('span',tile.name));
       for(const [direction,offset] of [['up',-1],['down',1]] as const) {
-        const move=button(direction==='up' ? '↑' : '↓',()=>{
+        const move=button(direction==='up' ? 'Up' : 'Down',()=>{
           [draft[index],draft[index+offset]]=[draft[index+offset]!,draft[index]!];
-          draw(); quiz.querySelector<HTMLButtonElement>(`[data-move="${id}-${direction}"]`)?.focus();
+          draw();
+          const moved=quiz.querySelector<HTMLButtonElement>(`[data-move="${id}-${direction}"]`);
+          const fallback=quiz.querySelector<HTMLButtonElement>(`[data-move="${id}-${direction==='up'?'down':'up'}"]`);
+          (moved?.disabled?fallback:moved)?.focus();
         });
         move.setAttribute('aria-label',`Move ${tile.name} ${direction}`);move.dataset.move=`${id}-${direction}`;move.disabled=index+offset<0 || index+offset>=draft.length;row.append(move);
       }

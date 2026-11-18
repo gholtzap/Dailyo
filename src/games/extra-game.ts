@@ -5,7 +5,7 @@ import './help.js';
 import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import {
-  extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra,
+  extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra, nextPracticePuzzle,
 } from './extra-puzzles.js';
 
 const game = document.body.dataset.game as ExtraGame;
@@ -41,11 +41,11 @@ function mount(slot: string, token: string): ExtraSession {
   const puzzle = extraPuzzle(game, data, token);
   const saved = read<ExtraSave>(slot);
   const state = saved?.token === token && saved.puzzle === puzzle.id && replayExtra(game, puzzle, saved.moves);
-  return { slot, token, puzzle, state: state || initialExtra(game, puzzle) };
+  return { slot, token, puzzle, state: state || initialExtra(game, puzzle), cycle: state ? saved?.cycle ?? null : null };
 }
 
 function save(session: ExtraSession) {
-  write(session.slot!, { token: session.token, puzzle: session.puzzle.id, moves: session.state.moves });
+  write(session.slot!, { token: session.token, puzzle: session.puzzle.id, moves: session.state.moves, cycle: session.cycle });
 }
 
 function resetDay() {
@@ -192,7 +192,9 @@ function result({ puzzle, state }: ExtraSession): HTMLElement[] {
   const actions = el('div', undefined, 'rot-actions');
   if (mode === 'practice') {
     actions.append(button('New practice puzzle', () => {
-      sessions.practice = mount('practice', seed());
+      if (mode !== 'practice' || sessions.practice.state.phase !== 'complete') return;
+      const next = nextPracticePuzzle(data,seed().slice('practice:'.length),sessions.practice.puzzle.id,sessions.practice.cycle ?? null);
+      sessions.practice = {...mount('practice', next.token), cycle: next.cycle};
       save(sessions.practice);
       draw();
       quiz.querySelector('h2')!.focus();

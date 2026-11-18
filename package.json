@@ -6,7 +6,7 @@
     "build": "npm run typecheck && tsc -p tsconfig.browser.json && node scripts/stage-data.mjs && node scripts/validate-release.mjs",
     "dev": "node scripts/dev.ts",
     "test": "tsc -p tsconfig.tests.json && node --test tests/router.test.mjs .test-build/tests/*.test.js",
-    "test:e2e": "node tests/play-improvements.mjs && node tests/visual-games.mjs && node tests/extra-games.mjs && node tests/rot-games.mjs && node tests/daily-feed.mjs && node tests/rush.mjs && node tests/world-games.mjs && node tests/daily.mjs && node tests/map-hint.mjs && node tests/demo-game.mjs && node tests/map-labels.mjs && node tests/map-framing.mjs && node tests/map-gestures.mjs && node tests/dark-theme.mjs",
+    "test:e2e": "node tests/second-playtest.mjs && node tests/play-improvements.mjs && node tests/visual-games.mjs && node tests/extra-games.mjs && node tests/rot-games.mjs && node tests/daily-feed.mjs && node tests/rush.mjs && node tests/world-games.mjs && node tests/daily.mjs && node tests/map-hint.mjs && node tests/demo-game.mjs && node tests/map-labels.mjs && node tests/map-framing.mjs && node tests/map-gestures.mjs && node tests/dark-theme.mjs",
     "lint:ui": "node tests/demo-game.mjs --ui",
     "lint:ui:rush": "node tests/rush.mjs --ui",
     "lint:ui:feed": "node tests/daily-feed.mjs --ui",
@@ -20,7 +20,8 @@
     "lint:ui:extra": "node tests/extra-games.mjs --ui",
     "typecheck": "tsc --noEmit",
     "pretest": "npm run build",
-    "test:migration:browser": "node tests/typescript-browser.ts"
+    "test:migration:browser": "node tests/typescript-browser.ts",
+    "lint:ui:playtest": "node tests/second-playtest.mjs --ui"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

@@ -324,6 +324,35 @@ function drawBorders(question: string[], state: RotState, reviewing: boolean): C
   return [heading, drawBorderMap(start, target, state.draft as string[]), chain(selected, 'Your route'), label, input, choices, feedback, actions];
 }
 
+function questionReview(session: RotSession, scores: number[]) {
+  const review = element('ol', undefined, 'rot-recap');
+  review.setAttribute('aria-label', 'Review completed questions');
+  session.questions.forEach((question, index) => {
+    const row = element('li');
+    const details = element('details');
+    const title = mapGame ? (question as Place)[0] : yearGame ? (question as YearQuestion).event[1] :
+      (question as string[]).filter((_,i,array)=>i===0||i===array.length-1).map(id=>(data as Extract<RotData,{kind:'borderrot'}>).graph.get(id)!.name).join(' to ');
+    const score = mapGame ? `${number.format(scores[index])} km away` : session.state.answers[index] === null ? 'Answer shown' : scores[index] ? 'Correct' : 'Missed';
+    const summary = element('summary');
+    summary.append(element('span',title),element('span',score,'rot-recap-score'));
+    details.append(summary);
+    // Render a review only when opened; keep the saved result and score read-only.
+    details.ontoggle = () => {
+      if (!details.open || details.childElementCount > 1) return;
+      const state = {...session.state,index};
+      const content = mapGame ? drawMap(question as Place,state,true) : yearGame ? drawTimeline(question as YearQuestion,state,true) : drawBorders(question as string[],state,true);
+      const panel = element('div',undefined,'rot-recap-detail');
+      panel.append(...content.slice(1).filter((node): node is HTMLElement | SVGElement => node!==null));
+      details.append(panel);
+    };
+    row.append(details);review.append(row);
+  });
+  const section = element('section',undefined,'rot-review');
+  const heading = element('h3','Review answers'); heading.id='review-title';
+  section.setAttribute('aria-labelledby',heading.id); section.append(heading,review);
+  return section;
+}
+
 function summary(session: RotSession): Content {
   const { scores, total } = scoreSet(kind, session.questions, session.state.answers);
   const title = element('h2', mapGame ? `${number.format(total)} km off` : `${total} out of ${roundCount}`);
@@ -333,6 +362,7 @@ function summary(session: RotSession): Content {
     showRank(rank, {game: kind, day, puzzle: rankingPuzzle(kind, session.questions), answers: session.state.answers}, total);
     content.push(rank);
   }
+  content.push(questionReview(session,scores));
   if (inFeed) return content;
   const actions = element('div', undefined, 'rot-actions');
   const footer = element('div');
