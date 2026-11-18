@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": ".",
+    "outDir": ".test-build",
+    "sourceMap": false
+  },
+  "include": ["tests/**/*.test.ts", "src/**/*.ts", "api/**/*.ts", "lib/**/*.ts"],
+  "exclude": ["node_modules", ".test-build"]
+}

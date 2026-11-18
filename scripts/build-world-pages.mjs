@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const root=new URL('../',import.meta.url),read=path=>JSON.parse(fs.readFileSync(new URL(path,root)));
 const cities=read('scripts/world-cities.json');
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const template=fs.readFileSync(new URL('dist/trainrot/index.html',root),'utf8');
+const template=fs.readFileSync(new URL('dist/trainrot/index.html',root),'utf8').replace(/\s*<link rel="stylesheet" href="\/world.css">/g,'');
 const registry=[];
 for(const city of cities){
  const network=read(city.slug==='nyc'?'dist/data/network.json':`dist/world-data/${city.slug}/network.json`);
@@ -12,7 +12,7 @@ for(const city of cities){
  const item={...city,stations:Object.keys(network.stations).length,lines:Object.keys(network.routes).length,timeModel:network.metadata.timeModel??'scheduled',feedVersion:city.slug==='nyc'?'world-nyc:'+network.metadata.feedVersion:network.metadata.feedVersion,source:network.metadata.source,license:network.metadata.license??'MTA developer terms',attribution:network.metadata.attribution??[]};
  registry.push(item);
  let html=template.replace('<body>',`<body data-world-city="${city.slug}">`).replace('<title>trainrot | dailyo</title>',`<title>${escape(city.name)} · trainrot world | dailyo</title>`).replace('Plan subway routes from memory. Six guesses per journey.',`Find rail routes in ${escape(city.name)}. Play the daily journey or practice, then explore 98 cities.`).replace('<link rel="stylesheet" href="/styles.css">','<link rel="stylesheet" href="/styles.css">\n  <link rel="stylesheet" href="/world.css">').replace('</head>',`  <link rel="canonical" href="https://trainrot.vercel.app/trainrot-world/${city.slug}/">\n</head>`).replace('href="/trainrot/" aria-current="page"',`href="/trainrot-world/${city.slug}/" aria-current="page"`).replace('<span class="current-game-name">trainrot</span>','<span class="current-game-name">trainrot world</span>');
- html=html.replace(/<a class="world-discover"[\s\S]*?<\/a>/g,'');
+ html=html.replace(/<a class="world-discover[^"]*"[\s\S]*?<\/a>/g,'');
  const dir=new URL(`dist/trainrot-world/${city.slug}/`,root);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(new URL('index.html',dir),html);
  if(city.slug==='nyc'){const index=new URL('dist/trainrot-world/',root);fs.mkdirSync(index,{recursive:true});fs.writeFileSync(new URL('index.html',index),html);}
 }

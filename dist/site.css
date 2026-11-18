@@ -235,3 +235,10 @@ a[data-game-mark]::before {
     display: none;
   }
 }
+
+/* Native marks for the five visual and everyday-knowledge games. */
+a[data-game-mark="skyrot"]::before { content: "◉"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
+a[data-game-mark="pricerot"]::before { content: "＄"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
+a[data-game-mark="skylinerot"]::before { content: "▥"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
+a[data-game-mark="zoomrot"]::before { content: "⌕"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
+a[data-game-mark="orderrot"]::before { content: "↕"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }

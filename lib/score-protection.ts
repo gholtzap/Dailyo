@@ -1,24 +1,29 @@
+import type {IncomingMessage} from 'node:http';
+import type {TLSSocket} from 'node:tls';
+import type {JsonValue} from '../src/types.js';
+export type ScoreRequest = IncomingMessage;
+type BodyResult = {status: 400 | 413; body?: never} | {status?: never; body: JsonValue};
 import {createHmac, timingSafeEqual} from 'node:crypto';
 import {isIP} from 'node:net';
 
 const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/;
 const signature = /^[A-Za-z0-9_-]{43}$/;
 const maxBody = 4096;
-const bursts = new Map();
-let currentMinute;
+const bursts = new Map<string, number>();
+let currentMinute: number | undefined;
 
-function digest(secret, scope, value) {
+function digest(secret: string, scope: string, value: string) {
   return createHmac('sha256', secret).update(scope + ':' + value).digest('base64url');
 }
 
-export function browserOriginAllowed(req) {
+export function browserOriginAllowed(req: ScoreRequest) {
   const {origin, host, 'sec-fetch-site': site} = req.headers;
   if (site === 'cross-site' || site === 'same-site') return false;
-  const scheme = process.env.VERCEL === '1' || req.socket.encrypted ? 'https' : 'http';
+  const scheme = process.env.VERCEL === '1' || (req.socket as TLSSocket).encrypted ? 'https' : 'http';
   return origin === undefined || origin === scheme + '://' + host;
 }
 
-export function cookieIdentity(header, secret) {
+export function cookieIdentity(header: string | undefined, secret: string): {player?: string; legacy?: string} {
   const token = header?.match(/(?:^|;\s*)dailyo_player=([^;]*)(?:;|$)/)?.[1] ?? '';
   const [id, mac, extra] = token.split('.');
   if (!uuid.test(id) || extra !== undefined) return {};
@@ -28,14 +33,15 @@ export function cookieIdentity(header, secret) {
   return timingSafeEqual(Buffer.from(mac), Buffer.from(expected)) ? {player: id} : {};
 }
 
-export function playerCookie(player, secret) {
+export function playerCookie(player: string, secret: string) {
   const secure = process.env.VERCEL === '1' ? '; Secure' : '';
   return `dailyo_player=${player}.${digest(secret, 'player', player)}; Path=/api; Max-Age=31536000; HttpOnly; SameSite=Strict${secure}`;
 }
 
-export function clientNetwork(req) {
+export function clientNetwork(req: ScoreRequest) {
   const address = process.env.VERCEL === '1' ? req.headers['x-forwarded-for'] : req.socket.remoteAddress;
   const version = typeof address === 'string' ? isIP(address) : 0;
+  if (typeof address !== 'string') return null;
   if (version === 4) return address;
   if (version !== 6) return null;
 
@@ -53,37 +59,38 @@ export function clientNetwork(req) {
   return groups.slice(0, 4).join(':') + '::/64';
 }
 
-export function burstRetryAfter(network, now) {
+export function burstRetryAfter(network: string, now: number) {
   const minute = Math.floor(now / 60_000);
   if (minute !== currentMinute) {
     bursts.clear();
     currentMinute = minute;
   }
   const count = bursts.get(network);
-  if (count >= 120) return 60 - Math.floor(now / 1000) % 60;
+  if (count !== undefined && count >= 120) return 60 - Math.floor(now / 1000) % 60;
   // Keep memory bounded during bursts from many different networks.
   if (count !== undefined || bursts.size < 4096) bursts.set(network, (count ?? 0) + 1);
   return 0;
 }
 
-export function admissionKey(secret, hour, network) {
+export function admissionKey(secret: string, hour: number, network: string) {
   return digest(secret, 'admission', hour + ':' + network);
 }
 
-export async function readScoreBody(req) {
+export async function readScoreBody(req: ScoreRequest): Promise<BodyResult> {
   if (Number(req.headers['content-length']) > maxBody) return {status: 413};
-  const chunks = [];
+  const chunks: Buffer[] = [];
   let bytes = 0;
   try {
     for await (const chunk of req.iterator({destroyOnReturn: false})) {
-      bytes += chunk.length;
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as string);
+      bytes += buffer.length;
       if (bytes > maxBody) {
         req.resume();
         return {status: 413};
       }
-      chunks.push(chunk);
+      chunks.push(buffer);
     }
-    return {body: JSON.parse(Buffer.concat(chunks).toString('utf8'))};
+    return {body: JSON.parse(Buffer.concat(chunks).toString('utf8')) as JsonValue};
   } catch {
     return {status: 400};
   }

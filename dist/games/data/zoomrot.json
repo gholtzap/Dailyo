@@ -1,0 +1,112 @@
+[
+  {
+    "id": "tennis",
+    "name": "Tennis ball",
+    "image": "/games/media/zoomrot-tennis.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Tennis_ball_closeup.jpg",
+    "credit": "Miscellaneous contributor",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Closeup photo of a tennis ball"
+  },
+  {
+    "id": "stapler",
+    "name": "Stapler",
+    "image": "/games/media/zoomrot-stapler.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Swingline-stapler.jpg",
+    "credit": "Evan-amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "A Swingline-brand Stapler"
+  },
+  {
+    "id": "scissors",
+    "name": "Scissors",
+    "image": "/games/media/zoomrot-scissors.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Fiskars-scissors.jpg",
+    "credit": "Evan-amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "A pair of large, Fiskars-brand scissors."
+  },
+  {
+    "id": "staples",
+    "name": "Staples",
+    "image": "/games/media/zoomrot-staples.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Office-staples.jpg",
+    "credit": "Evan-amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "A pile of staples used for a common office stapler."
+  },
+  {
+    "id": "banana",
+    "name": "Banana",
+    "image": "/games/media/zoomrot-banana.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Banana-Single.jpg",
+    "credit": "Evan-Amos",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "description": "A single banana.  A common Cavendish type, bought from a supermarket in North America."
+  },
+  {
+    "id": "key",
+    "name": "Key",
+    "image": "/games/media/zoomrot-key.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Standard-lock-key.jpg",
+    "credit": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "An example of a standard key used for locks."
+  },
+  {
+    "id": "tape",
+    "name": "Tape measure",
+    "image": "/games/media/zoomrot-tape.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Measuring-tape.jpg",
+    "credit": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "A standard measuring tape."
+  },
+  {
+    "id": "pencil",
+    "name": "Pencil",
+    "image": "/games/media/zoomrot-pencil.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Number-2-pencil.jpg",
+    "credit": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "A standard number 2 pencil, unsharpened.  Made by Sanford."
+  },
+  {
+    "id": "filter",
+    "name": "Coffee filter",
+    "image": "/games/media/zoomrot-filter.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Coffee-filter.jpg",
+    "credit": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "A small stack of standard bleached white coffee filters."
+  },
+  {
+    "id": "hammer",
+    "name": "Hammer",
+    "image": "/games/media/zoomrot-hammer.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Claw-hammer.jpg",
+    "credit": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "A standard household claw hammer."
+  },
+  {
+    "id": "motherboard",
+    "name": "Motherboard",
+    "image": "/games/media/zoomrot-motherboard.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Apple-MacBook-2007-Motherboard.jpg",
+    "credit": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "The motherboard to a Apple MacBook (late 2007 model) with the RAM and Wi-Fi adapter removed.  The board has minor damage from being hit with a hammer."
+  }
+]

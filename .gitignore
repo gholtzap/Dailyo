@@ -12,8 +12,11 @@ playwright-report/
 /scripts/original-challenges.json
 /dist/data/
 
-# Cached raw transit inputs
-.cache/
+# Browser source maps and compiled test runner
+/dist/**/*.js.map
+/.test-build/
 
+# World transit build caches and local dependency symlink
+.cache/
 /node_modules
 __pycache__/
