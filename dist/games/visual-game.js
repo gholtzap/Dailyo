@@ -1,7 +1,8 @@
 import './help.js';
 import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
-import { isVisualGame, prepareVisual, visualSet, visualPuzzle, emptyAnswer, validAnswer, answered, answerPoints, gradeVisual, priceError, rushCorrect } from './visual-puzzles.js';
+import { parseDifficulty, practiceSettings, practiceSlot } from './difficulty.js';
+import { isVisualGame, prepareVisual, visualSet, visualPuzzle, emptyAnswer, validAnswer, answered, answerPoints, gradeVisual, priceError, rushCorrect, photoScale, photoPoints } from './visual-puzzles.js';
 const gameName = document.body.dataset.game ?? '';
 if (!isVisualGame(gameName))
     throw new Error('Unknown game');
@@ -29,6 +30,8 @@ let sessions;
 let draft = [];
 let imageFailed = false;
 let focusNext = false;
+let difficulty = parseDifficulty(read('difficulty'));
+let settings;
 const el = (tag, text, className) => {
     const node = document.createElement(tag);
     if (text !== undefined)
@@ -43,8 +46,8 @@ function button(text, callback, className = 'secondary') {
     node.onclick = callback;
     return node;
 }
-function mount(seed, saved) {
-    const questions = visualSet(game, rows, seed, isRush, rushRound ?? 0);
+function mount(seed, saved, level = 'standard') {
+    const questions = visualSet(game, rows, seed, isRush, rushRound ?? 0, level);
     const session = { seed, questions, answers: questions.map(emptyAnswer), index: 0 };
     if (saved && typeof saved === 'object') {
         const candidate = saved;
@@ -63,7 +66,7 @@ function mount(seed, saved) {
     return session;
 }
 function save() { if (!isRush)
-    write(mode === 'daily' ? `daily:${day}` : 'practice', { seed: sessions[mode].seed, answers: sessions[mode].answers }); }
+    write(mode === 'daily' ? `daily:${day}` : practiceSlot(difficulty), { seed: sessions[mode].seed, answers: sessions[mode].answers }); }
 function resetDay() {
     if (isRush || dailyDate() === day)
         return false;
@@ -122,11 +125,15 @@ function media(q, a, complete) {
     // Alt text describes the task without disclosing the answer before submission.
     image.alt = complete ? q.item.name : game === 'skyrot' ? 'Overhead photograph of the mystery city' : game === 'skylinerot' ? 'Skyline photograph of the mystery city' : game === 'pricerot' ? `${q.item.name}, product illustration` : 'Cropped photograph of the mystery object';
     image.draggable = false;
-    if (q.item.focus)
-        image.style.transformOrigin = `${q.item.focus[0]}% ${q.item.focus[1]}%`;
+    const levelDifficulty = mode === 'practice' && !isRush ? difficulty : 'standard';
+    const focus = levelDifficulty === 'hard' ? q.item.detailFocus ?? q.item.focus : q.item.focus;
+    if (focus)
+        image.style.transformOrigin = `${focus[0]}% ${focus[1]}%`;
     const level = complete ? 2 : a.hint;
-    if (game === 'skyrot' || game === 'zoomrot')
+    if (photoGame) {
         viewport.dataset.zoom = String(level);
+        image.style.transform = `scale(${photoScale(game, levelDifficulty, level)})`;
+    }
     viewport.dataset.kind = game;
     image.onerror = () => {
         imageFailed = true;
@@ -141,7 +148,7 @@ function media(q, a, complete) {
     };
     viewport.append(image);
     figure.append(viewport);
-    const caption = el('figcaption', game === 'pricerot' ? 'Original product illustration' : complete ? q.item.name : game === 'skylinerot' ? 'Look for the buildings, waterfront, and surrounding landscape.' : `View ${a.hint + 1} of 3 · ${isRush ? 'One guess' : 'Up to three guesses'}`);
+    const caption = el('figcaption', game === 'pricerot' ? 'Original product illustration' : complete ? q.item.name : game === 'skylinerot' && levelDifficulty !== 'hard' ? 'Look for the buildings, waterfront, and surrounding landscape.' : `View ${a.hint + 1} of 3 · ${isRush ? 'One guess' : `${photoPoints(Math.max(a.hint, a.guesses.length))} points available`}`);
     figure.append(caption);
     return figure;
 }
@@ -199,13 +206,17 @@ function drawQuestion() {
             choices.append(node);
         }
         quiz.append(choices);
-        const feedback = el('p', a.guesses.length ? game === 'skylinerot' ? 'That was not it. Try another city.' : 'That was not it. A wider view is now available.' : '', 'rot-feedback');
+        const feedback = el('p', a.guesses.length ? game === 'skylinerot' && !(mode === 'practice' && difficulty === 'hard') ? `That was not it. Try another city. ${photoPoints(a.guesses.length)} points available.` : `That was not it. The view is wider now. ${photoPoints(Math.max(a.hint, a.guesses.length))} points available.` : '', 'rot-feedback');
         feedback.id = 'visual-feedback';
         feedback.tabIndex = -1;
         feedback.setAttribute('role', 'status');
         quiz.append(feedback);
-        if (!isRush && game !== 'skylinerot' && a.hint < 2)
-            quiz.append(button('Reveal a wider view', () => commit({ ...a, hint: a.hint + 1 }), 'secondary visual-hint'));
+        if (!isRush && (game !== 'skylinerot' || (mode === 'practice' && difficulty === 'hard')) && a.hint < 2) {
+            const hint = button('Reveal a wider view', () => commit({ ...a, hint: a.hint + 1 }), 'secondary visual-hint');
+            const cost = el('span', `${photoPoints(a.hint)} → ${photoPoints(a.hint + 1)} points`, 'visual-hint-cost');
+            hint.append(cost);
+            quiz.append(hint);
+        }
     }
     else if (game === 'pricerot') {
         const form = el('form', undefined, 'extra-form');
@@ -304,7 +315,7 @@ function drawResults() {
             }));
         actions.append(button(mode === 'daily' ? 'Play practice' : 'New practice set', () => {
             if (mode === 'practice') {
-                sessions.practice = mount(freshSeed());
+                sessions.practice = mount(freshSeed(), undefined, difficulty);
                 save();
                 draft = [];
                 focusNext = true;
@@ -318,6 +329,7 @@ function drawResults() {
     reportDaily('complete', `${score} / 500 points`, day);
 }
 function draw() {
+    settings?.sync(difficulty, mode === 'practice');
     controls.forEach(control => control.setAttribute('aria-pressed', String(control.id === mode)));
     quiz.replaceChildren();
     const complete = sessions[mode].index >= sessions[mode].questions.length;
@@ -354,9 +366,27 @@ async function start() {
     }
     await waitForFeedActivation();
     day = dailyDate();
-    const saved = read('practice');
-    const seed = saved && typeof saved === 'object' && 'seed' in saved && typeof saved.seed === 'string' && saved.seed.startsWith('practice:') && saved.seed.length < 100 ? saved.seed : freshSeed();
-    sessions = { daily: mount(day, read(`daily:${day}`)), practice: mount(seed, saved) };
+    const practiceSession = () => {
+        const saved = read(practiceSlot(difficulty));
+        const seed = saved && typeof saved === 'object' && 'seed' in saved && typeof saved.seed === 'string' && saved.seed.startsWith('practice:') && saved.seed.length < 100 ? saved.seed : freshSeed();
+        return mount(seed, saved, difficulty);
+    };
+    sessions = { daily: mount(day, read(`daily:${day}`)), practice: practiceSession() };
+    if (photoGame && !inFeed) {
+        settings = practiceSettings({ easy: 'Wider views. A gentle place to start.', standard: 'Daily difficulty. Three guesses per photograph.', hard: 'Tighter details. More similar answer choices.' }, next => {
+            if (next === difficulty)
+                return;
+            save();
+            difficulty = next;
+            write('difficulty', difficulty);
+            sessions.practice = practiceSession();
+            draft = [];
+            imageFailed = false;
+            save();
+            draw();
+        });
+        quiz.before(settings.element);
+    }
     for (const control of controls)
         control.onclick = () => selectMode(control.id === 'practice' ? 'practice' : 'daily');
     document.addEventListener('visibilitychange', () => { if (!document.hidden && resetDay() && mode === 'daily')

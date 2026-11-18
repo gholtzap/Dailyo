@@ -34,3 +34,7 @@
 
 .visual-viewport[data-kind=zoomrot] { background: #fff; }
 .visual-viewport[data-kind=zoomrot] img { object-fit: contain; }
+
+.visual-hint { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; }
+.visual-hint-cost { flex-shrink: 0; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+@media (max-width: 360px) { .visual-hint { flex-wrap: wrap; } }

@@ -35,7 +35,7 @@ const instructions: Record<string,string[]> = {
   ],
   ladderrot: [
     'Change one letter at a time to get from the starting word to the target word. Each step must make a valid four-letter word.',
-    'Aim for the fewest moves.',
+    'Aim for the fewest moves. Undo the last word to explore another path. After finishing, review a shortest solution.',
   ],
   cluerot: [
     'Guess the answer from the clues. Reveal another clue if you’re stuck.',
@@ -66,6 +66,7 @@ document.body.insertAdjacentHTML('beforeend', `
       <form method="dialog"><button type="submit">Close</button></form>
     </div>
     ${instructions[game].map(step => `<p>${step}</p>`).join('')}
+    ${['skyrot','skylinerot','zoomrot','yearrot'].includes(game) ? '<p class="standalone-only">Practice offers Easy, Standard, and Hard, with separate progress for each level. Daily and Rush use Standard difficulty.</p>' : ''}
     <p class="standalone-only">The daily game resets at midnight in New York. Use Practice to play more.</p>
   </dialog>
 `);
