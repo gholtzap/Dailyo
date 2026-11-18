@@ -434,7 +434,7 @@ async function start() {
   sessions.practice = practiceSession();
   write(practiceSlot(difficulty), sessions.practice.state);
   if(yearGame && !inFeed) {
-    settings=practiceSettings({easy: 'Broad eras. Build your sense of history.', standard: 'The daily challenge. A growing timeline.', hard: 'Nearby events. Find the finer distinctions.'}, next=>{
+    settings=practiceSettings({easy: 'Broad eras. Build your sense of history.', standard: 'Daily difficulty. A growing timeline.', hard: 'Nearby events. Find the finer distinctions.'}, next=>{
       if(next===difficulty)return;
       difficulty=next; write('difficulty',difficulty); sessions.practice=practiceSession();
       write(practiceSlot(difficulty),sessions.practice.state); draw();

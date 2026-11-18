@@ -117,6 +117,10 @@
       "Lemon",
       "Yellow bell pepper",
       "Mango"
+    ],
+    "focus": [
+      50,
+      78
     ]
   },
   {
@@ -165,6 +169,10 @@
       "Luggage strap",
       "Ribbon spool",
       "Belt buckle"
+    ],
+    "focus": [
+      40,
+      66
     ]
   },
   {
@@ -189,6 +197,10 @@
       "Paintbrush",
       "Wooden dowel",
       "Chopstick"
+    ],
+    "focus": [
+      35,
+      56
     ]
   },
   {

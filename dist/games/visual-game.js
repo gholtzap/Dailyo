@@ -373,7 +373,7 @@ async function start() {
     };
     sessions = { daily: mount(day, read(`daily:${day}`)), practice: practiceSession() };
     if (photoGame && !inFeed) {
-        settings = practiceSettings({ easy: 'Wider views. A gentle place to start.', standard: 'The daily challenge. Three guesses per photograph.', hard: 'Tighter details. More similar answer choices.' }, next => {
+        settings = practiceSettings({ easy: 'Wider views. A gentle place to start.', standard: 'Daily difficulty. Three guesses per photograph.', hard: 'Tighter details. More similar answer choices.' }, next => {
             if (next === difficulty)
                 return;
             save();
