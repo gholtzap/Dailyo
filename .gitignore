@@ -11,3 +11,9 @@ playwright-report/
 # Optional local NYC data inputs
 /scripts/original-challenges.json
 /dist/data/
+
+# Cached raw transit inputs
+.cache/
+
+/node_modules
+__pycache__/

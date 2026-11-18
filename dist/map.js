@@ -6,8 +6,9 @@ function el(tag, attributes={}, text) {
   return node;
 }
 export function createMap(svg, boroughs, network) {
-  const mapName=network.metadata.mapName??'New York City';
-  const project=([lon,lat])=>[(lon+74.15)*4500,(40.94-lat)*5940];
+  const city=network.metadata.city;
+  const mapName=city?.name??network.metadata.mapName??'New York City';
+  const project=([lon,lat])=>city&&city.slug!=='nyc'?[(lon-city.lon)*6000*Math.cos(city.lat*Math.PI/180),(city.lat-lat)*6000]:[(lon+74.15)*4500,(40.94-lat)*5940];
   const path=points=>points.map((p,i)=>`${i?'L':'M'}${project(p).map(x=>x.toFixed(2)).join(',')}`).join('');
   const overlay=document.createElement('div');overlay.className='map-labels';overlay.setAttribute('aria-hidden','true');svg.after(overlay);
   const labels=[];
@@ -16,11 +17,12 @@ export function createMap(svg, boroughs, network) {
     labels.push({node,point:project(coordinates)});
   }
   const land=el('g');
+  if(city&&city.slug!=='nyc')land.append(el('rect',{x:-100000,y:-100000,width:200000,height:200000,fill:'var(--map-land)'}));
   for(const feature of boroughs.features) {
-    land.append(el('path',{d:feature.geometry.coordinates.map(poly=>poly.map(ring=>path(ring)+'Z').join('')).join(''),fill:'var(--map-land)',stroke:'var(--map-shore)','stroke-width':1,'vector-effect':'non-scaling-stroke','fill-rule':'evenodd'}));
+    land.append(el('path',{d:feature.geometry.coordinates.map(poly=>poly.map(ring=>path(ring)+'Z').join('')).join(''),fill:feature.properties?.kind==='water'?'var(--map-water)':feature.properties?.kind==='park'?'var(--map-park)':'var(--map-land)',stroke:'var(--map-shore)','stroke-width':1,'vector-effect':'non-scaling-stroke','fill-rule':'evenodd'}));
   }
   svg.append(land);
-  if(!network.metadata.mapName){
+  if(!network.metadata.mapName&&(!city||city.slug==='nyc')){
     const parks=[
       ['Central Park',[[-73.9819,40.7681],[-73.973,40.7644],[-73.9495,40.8005],[-73.9585,40.8043],[-73.9819,40.7681]],[-73.9655,40.7838]],
       ['Prospect Park',[[-73.978,40.6724],[-73.9706,40.671],[-73.9627,40.66],[-73.9677,40.6523],[-73.9817,40.659],[-73.978,40.6724]],[-73.972,40.6615]],

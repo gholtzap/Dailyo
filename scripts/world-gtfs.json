@@ -1,0 +1,723 @@
+{
+  "frankfurt": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "nuremberg": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "stuttgart": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "cologne": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "bonn": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "dusseldorf": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "hanover": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "zurich": {
+    "file": "switzerland",
+    "url": "https://data.opentransportdata.swiss/de/dataset/timetable-2026-gtfs2020/permalink",
+    "license": "opentransportdata.swiss terms of use",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 22000
+  },
+  "basel": {
+    "file": "switzerland",
+    "url": "https://data.opentransportdata.swiss/de/dataset/timetable-2026-gtfs2020/permalink",
+    "license": "opentransportdata.swiss terms of use",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 22000
+  },
+  "bern": {
+    "file": "switzerland",
+    "url": "https://data.opentransportdata.swiss/de/dataset/timetable-2026-gtfs2020/permalink",
+    "license": "opentransportdata.swiss terms of use",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 22000
+  },
+  "geneva": {
+    "file": "switzerland",
+    "url": "https://data.opentransportdata.swiss/de/dataset/timetable-2026-gtfs2020/permalink",
+    "license": "opentransportdata.swiss terms of use",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 22000
+  },
+  "lausanne": {
+    "file": "switzerland",
+    "url": "https://data.opentransportdata.swiss/de/dataset/timetable-2026-gtfs2020/permalink",
+    "license": "opentransportdata.swiss terms of use",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 22000
+  },
+  "calgary": {
+    "file": "calgary",
+    "url": "https://data.calgary.ca/download/npk7-z3bj/application%2Fzip",
+    "license": "Open Government Licence – City of Calgary"
+  },
+  "antwerp": {
+    "file": "antwerp",
+    "url": "https://api-management-opendata-production.azure-api.net/api/gtfs/feed/delijn/static",
+    "license": "De Lijn open data terms",
+    "radius": 27000
+  },
+  "copenhagen": {
+    "file": "copenhagen",
+    "url": "https://www.rejseplanen.info/labs/GTFS.zip",
+    "license": "CC-BY-4.0; Rejsekort & Rejseplan A/S",
+    "radius": 40000
+  },
+  "brisbane": {
+    "file": "brisbane",
+    "url": "https://gtfsrt.api.translink.com.au/gtfs/SEQ_SCH_GTFS.zip",
+    "license": "CC-BY-4.0; Translink",
+    "radius": 60000
+  },
+  "perth": {
+    "file": "perth",
+    "url": "https://www.transperth.wa.gov.au/TimetablePDFs/GoogleTransit/Production/google_transit.zip",
+    "license": "Transperth spatial data terms",
+    "radius": 65000
+  },
+  "auckland": {
+    "file": "auckland",
+    "url": "https://gtfs.at.govt.nz/gtfs.zip",
+    "license": "CC-BY-4.0; Auckland Transport",
+    "radius": 55000
+  },
+  "boston": {
+    "file": "boston",
+    "url": "https://cdn.mbta.com/MBTA_GTFS.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-massachusetts-massachusetts-bay-transportation-authority-mbta-gtfs-437.zip?alt=media",
+    "license": "https://www.mass.gov/files/documents/2017/10/27/develop_license_agree_0.pdf",
+    "provider": "Massachusetts Bay Transportation Authority (MBTA)",
+    "radius": 65000
+  },
+  "chicago": {
+    "file": "chicago",
+    "url": "https://www.transitchicago.com/downloads/sch_data/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-illinois-chicago-transit-authority-cta-gtfs-389.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Chicago Transit Authority (CTA)",
+    "radius": 65000
+  },
+  "washington-dc": {
+    "file": "washington-dc",
+    "url": "https://api.wmata.com/gtfs/rail-gtfs-static.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-district-of-columbia-washington-wmata-gtfs-1847.zip?alt=media",
+    "license": "https://developer.wmata.com/license",
+    "provider": "Washington Metropolitan Area Transit Authority (WMATA)",
+    "radius": 65000
+  },
+  "san-francisco": {
+    "file": "san-francisco",
+    "url": "https://www.bart.gov/dev/schedules/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-california-bay-area-rapid-transit-bart-gtfs-53.zip?alt=media",
+    "license": "http://www.bart.gov/schedules/developers/developer-license-agreement",
+    "provider": "Bay Area Rapid Transit (BART)",
+    "radius": 65000
+  },
+  "los-angeles": {
+    "file": "los-angeles",
+    "url": "https://gitlab.com/LACMTA/gtfs_rail/raw/master/gtfs_rail.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-california-la-metro-rail-gtfs-30.zip?alt=media",
+    "license": "https://developer.metro.net/terms-conditions/",
+    "provider": "Los Angeles County Metropolitan Transportation Authority (LA Metro)",
+    "radius": 65000
+  },
+  "philadelphia": {
+    "file": "philadelphia",
+    "url": "https://www3.septa.org/developer/google_rail.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-pennsylvania-southeastern-pennsylvania-transportation-authority-gtfs-503.zip?alt=media",
+    "license": "https://www3.septa.org/developer/",
+    "provider": "Southeastern Pennsylvania Transportation Authority (SEPTA)",
+    "radius": 65000
+  },
+  "atlanta": {
+    "file": "atlanta",
+    "url": "https://www.itsmarta.com/google_transit_feed/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-georgia-metropolitan-atlanta-rapid-transit-authority-marta-gtfs-368.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Metropolitan Atlanta Rapid Transit Authority (MARTA)",
+    "radius": 65000
+  },
+  "miami": {
+    "file": "miami",
+    "url": "https://www.miamidade.gov/transit/googletransit/current/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-florida-miami-dade-transit-gtfs-331.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Miami-Dade Transit",
+    "radius": 65000
+  },
+  "baltimore": {
+    "file": "baltimore",
+    "url": "https://mdotmta-gtfs.s3.amazonaws.com/mdotmta_gtfs_lightrail.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-maryland-maryland-transit-administration-gtfs-469.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Maryland Transit Administration",
+    "radius": 65000
+  },
+  "cleveland": {
+    "file": "cleveland",
+    "url": "https://www.riderta.com/sites/default/files/gtfs/latest/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-ohio-greater-cleveland-regional-transit-authority-gtfs-406.zip?alt=media",
+    "license": "http://www.riderta.com/developers",
+    "provider": "Greater Cleveland Regional Transit Authority",
+    "radius": 65000
+  },
+  "pittsburgh": {
+    "file": "pittsburgh",
+    "url": "https://www.portauthority.org/developerresources/GTFS.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-pennsylvania-port-authority-of-allegheny-county-gtfs-409.zip?alt=media",
+    "license": "https://www.portauthority.org/business-center/developer-resources/developer-license-agreement/",
+    "provider": "Port Authority of Allegheny County",
+    "radius": 65000
+  },
+  "seattle": {
+    "file": "seattle",
+    "url": "https://gtfs.sound.obaweb.org/prod/40_gtfs.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-washington-sound-transit-gtfs-268.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Sound Transit",
+    "radius": 65000
+  },
+  "portland": {
+    "file": "portland",
+    "url": "https://developer.trimet.org/schedule/gtfs.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-oregon-trimet-portland-streetcar-gtfs-247.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "TriMet, Portland Streetcar",
+    "radius": 65000
+  },
+  "san-diego": {
+    "file": "san-diego",
+    "url": "https://www.sdmts.com/google_transit_files/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-california-san-diego-international-airport-metropolitan-transit-system-mts-gtfs-13.zip?alt=media",
+    "license": "https://www.sdmts.com/business-center-developers/terms-and-conditions",
+    "provider": "San Diego International Airport, Metropolitan Transit System (MTS)",
+    "radius": 65000
+  },
+  "sacramento": {
+    "file": "sacramento",
+    "url": "https://apps.sacrt.com/gtfs/srtd/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-california-sacramento-regional-transit-gtfs-3621.zip?alt=media",
+    "license": "https://www.sacrt.com/transit-data-portal/",
+    "provider": "Sacramento Regional Transit (SacRT)",
+    "radius": 65000
+  },
+  "san-jose": {
+    "file": "san-jose",
+    "url": "https://gtfs.vta.org/gtfs_vta.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-california-santa-clara-valley-transportation-authority-vta-gtfs-57.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Santa Clara Valley Transportation Authority (VTA)",
+    "radius": 65000
+  },
+  "denver": {
+    "file": "denver",
+    "url": "https://www.rtd-denver.com/files/gtfs/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-colorado-regional-transportation-district-rtd-gtfs-178.zip?alt=media",
+    "license": "https://www.rtd-denver.com/business-center/open-spatial-data/gtfs-license-agreement",
+    "provider": "Regional Transportation District (RTD)",
+    "radius": 65000
+  },
+  "dallas": {
+    "file": "dallas",
+    "url": "https://www.dart.org/transitdata/latest/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-texas-dallas-area-rapid-transit-dart-gtfs-152.zip?alt=media",
+    "license": "https://www.dart.org/transitdata/legalnotices.asp",
+    "provider": "Dallas Area Rapid Transit (DART)",
+    "radius": 65000
+  },
+  "minneapolis": {
+    "file": "minneapolis",
+    "url": "https://svc.metrotransit.org/mtgtfs/gtfs.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-minnesota-metro-transit-metro-transit-met-council-maple-grove-plymouth-southwest-transit-airport-mac-university-of-minnesota-catch-the-link-gtfs-205.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Metro Transit",
+    "radius": 65000
+  },
+  "salt-lake-city": {
+    "file": "salt-lake-city",
+    "url": "https://gtfsfeed.rideuta.com/GTFS.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-utah-utah-transit-authority-uta-gtfs-170.zip?alt=media",
+    "license": "http://developer.rideuta.com/TermsOfUse.aspx",
+    "provider": "Utah Transit Authority (UTA)",
+    "radius": 65000
+  },
+  "toronto": {
+    "file": "toronto",
+    "url": "https://opendata.toronto.ca/toronto.transit.commission/ttc-routes-and-schedules/OpenData_TTC_Schedules.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-ontario-toronto-transit-commission-gtfs-732.zip?alt=media",
+    "license": "https://open.toronto.ca/dataset/ttc-routes-and-schedules/",
+    "provider": "Toronto Transit Commission (TTC)",
+    "radius": 65000
+  },
+  "montreal": {
+    "file": "montreal",
+    "url": "https://www.stm.info/sites/default/files/gtfs/gtfs_stm.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-quebec-societe-de-transport-de-montreal-stm-gtfs-2126.zip?alt=media",
+    "license": "https://www.stm.info/en/about/developers/terms-use",
+    "provider": "Société de transport de Montréal (STM)",
+    "radius": 65000
+  },
+  "vancouver": {
+    "file": "vancouver",
+    "url": "https://gtfs-static.translink.ca/gtfs/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-british-columbia-translink-west-coast-express-gtfs-696.zip?alt=media",
+    "license": "https://www.translink.ca/about-us/doing-business-with-translink/app-developer-resources/gtfs/gtfs-data",
+    "provider": "TransLink Vancouver",
+    "radius": 65000
+  },
+  "ottawa": {
+    "file": "ottawa",
+    "url": "https://oct-gtfs-emasagcnfmcgeham.z01.azurefd.net/public-access/GTFSExport.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-ontario-ottawa-carleton-regional-transit-commission-oc-transpo-gtfs-2154.zip?alt=media",
+    "license": "https://www.octranspo.com/en/plan-your-trip/travel-tools/developers/",
+    "provider": "Ottawa-Carleton Regional Transit Commission (OC Transpo)",
+    "radius": 65000
+  },
+  "edmonton": {
+    "file": "edmonton",
+    "url": "https://gtfs.edmonton.ca/TMGTFSRealTimeWebService/GTFS/GTFS.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-alberta-edmonton-transit-system-gtfs-714.zip?alt=media",
+    "license": "https://data.strathcona.ca/Transportation/Transit-Bus-Schedule-GTFS-Data-Feed-Zip-File/2ek5-rxs5/data?no_mobile=true",
+    "provider": "Edmonton Transit System",
+    "radius": 65000
+  },
+  "manchester": {
+    "file": "manchester",
+    "url": "https://odata.tfgm.com/opendata/downloads/TfGMgtfsnew.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/gb-unknown-transport-for-greater-manchester-arriva-in-the-north-west-gtfs-1103.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Transport for Greater Manchester Arriva in the North West, Atlantic Travel, Bestway Travel, Belle Vue Coaches, Blackburn Private Hire, The Burnley Bus Company, Bullocks Coaches, Cumfy Bus, D&G Bus, Don Fraser Coaches Ltd, Finch Coaches, First Halifax, Calder Valley & Huddersfield, First in Greater Manchester, Little Gem, Go North West, Diamond Bus North West, Harris Travel, Hattons Transport, Hiltons Travel, High Peak, Huyton Travel, Holmeswood Coaches, Link Network, The Blackburn Bus Company, Maghull Coaches, Metrolink, Olympia Travel UK Ltd, Preston Bus, Nexus Move, Rosso, Tyrers, Stagecoach Merseyside and South Lancashire, Stagecoach in Greater Manchester, Selwyn's Travel, South Pennine C.T., Stotts, Travel Assist, Team Pennine, Viking Coaches, Vision Bus, Warrington's Own Buses",
+    "radius": 65000
+  },
+  "lyon": {
+    "file": "lyon",
+    "url": "https://download.data.grandlyon.com/files/rdata/tcl_sytral.tcltheorique/GTFS_TCL.ZIP",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/fr-rhone-transports-en-commun-lyonnais-tcl-gtfs-1020.zip?alt=media",
+    "license": "http://opendatacommons.org/licenses/odbl/",
+    "provider": "Transports en Commun Lyonnais (TCL)",
+    "radius": 65000
+  },
+  "lille": {
+    "file": "lille-current",
+    "url": "https://media.ilevia.fr/opendata/gtfs.zip",
+    "fallback": null,
+    "license": "https://opendata.lillemetropole.fr/explore/dataset/transport_arret_transpole-point/?disjunctive.filename&disjunctive.commune",
+    "provider": "Réseau de transport Transpole de la Métropole Européenne de Lille",
+    "radius": 65000
+  },
+  "adelaide": {
+    "file": "adelaide",
+    "url": "https://gtfs.adelaidemetro.com.au/v1/static/latest/google_transit.zip",
+    "fallback": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/au-south-australia-adelaide-metro-gtfs-660.zip?alt=media",
+    "license": "Source operator open-data terms",
+    "provider": "Adelaide Metro",
+    "radius": 65000
+  },
+  "berlin": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "hamburg": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "munich": {
+    "file": "germany",
+    "url": "https://download.gtfs.de/germany/free/latest.zip",
+    "license": "CC-BY-4.0; DELFI e.V. / gtfs.de",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 40000
+  },
+  "newcastle": {
+    "file": "newcastle",
+    "url": "https://data.bus-data.dft.gov.uk/timetable/download/gtfs-file/north_east/",
+    "license": "Open Government Licence; Traveline / Department for Transport",
+    "radius": 45000
+  },
+  "rotterdam": {
+    "file": "netherlands",
+    "url": "https://gtfs.ovapi.nl/nl/gtfs-nl.zip",
+    "license": "OVapi / source operator data terms",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 27000
+  },
+  "the-hague": {
+    "file": "netherlands",
+    "url": "https://gtfs.ovapi.nl/nl/gtfs-nl.zip",
+    "license": "OVapi / source operator data terms",
+    "types": [
+      0,
+      1,
+      5,
+      7,
+      400,
+      401,
+      402,
+      403,
+      404,
+      405,
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "radius": 27000
+  },
+  "turin": {
+    "file": "turin",
+    "url": "https://www.gtt.to.it/open_data/gtt_gtfs.zip",
+    "license": "Italian Open Data Licence 2.0; GTT",
+    "radius": 35000
+  }
+}

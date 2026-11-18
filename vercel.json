@@ -5,23 +5,40 @@
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "rewrites": [
-    {"source": "/rush/", "destination": "/index.html"},
-    {"source": "/rush/:game/", "destination": "/index.html"},
-    {"source": "/rush/:game*", "destination": "/index.html"}
+    {
+      "source": "/rush/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/rush/:game/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/rush/:game*",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        {"key": "Content-Security-Policy", "value": "script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self'; form-action 'self'"},
-        {"key": "X-Content-Type-Options", "value": "nosniff"}
+        {
+          "key": "Content-Security-Policy",
+          "value": "script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self'; form-action 'self'"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
       ]
     }
   ],
   "functions": {
     "api/daily-score.js": {
-      "includeFiles": "dist/{data/{network,challenges}.json,games/data/*.json}",
-      "regions": ["iad1"]
+      "includeFiles": "dist/{data/{network,challenges}.json,games/data/*.json,world-data/cities.json,world-data/*/{network,challenges}.json}",
+      "regions": [
+        "iad1"
+      ]
     }
   },
   "git": {
@@ -29,5 +46,12 @@
       "*": false,
       "main": true
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/trainrot-world",
+      "destination": "/trainrot-world/nyc/",
+      "permanent": false
+    }
+  ]
 }

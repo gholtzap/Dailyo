@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/stage-data.mjs && node scripts/validate-release.mjs",
+    "build": "node scripts/stage-data.mjs && node scripts/build-world-pages.mjs && node scripts/validate-release.mjs && node scripts/validate-world.mjs",
     "dev": "python3 -m http.server 4173 --bind 127.0.0.1 --directory dist",
     "test": "node --test tests/router.test.mjs",
     "test:e2e": "node tests/extra-games.mjs && node tests/rot-games.mjs && node tests/daily-feed.mjs && node tests/rush.mjs && node tests/world-games.mjs && node tests/daily.mjs && node tests/map-hint.mjs && node tests/demo-game.mjs && node tests/map-labels.mjs && node tests/map-framing.mjs && node tests/map-gestures.mjs && node tests/dark-theme.mjs",
@@ -17,7 +17,9 @@
     "predev": "npm run data:demo",
     "test:nyc": "node --test tests/nyc-router.test.mjs",
     "lint:ui:rot": "node tests/rot-games.mjs --ui",
-    "lint:ui:extra": "node tests/extra-games.mjs --ui"
+    "lint:ui:extra": "node tests/extra-games.mjs --ui",
+    "test:world": "node scripts/validate-world.mjs",
+    "test:e2e:world": "node tests/trainrot-world.mjs"
   },
   "devDependencies": {
     "lintapple": "^0.1.24"

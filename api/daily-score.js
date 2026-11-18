@@ -1,3 +1,4 @@
+import {worldDailyChallenge} from '../dist/world.js';
 import {randomUUID} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import pg from 'pg';
@@ -17,6 +18,7 @@ const rotData = new Map();
 const dailyPuzzles = new Map();
 let pool;
 let train;
+const worldTrains = new Map();
 let lastAdmissionCleanup;
 
 function readData(path) {
@@ -32,15 +34,30 @@ function puzzleFor(game, day, prepare) {
   return puzzle;
 }
 
-function grade(puzzle, game, day, answers) {
+export function grade(puzzle, game, day, answers) {
   if (game === 'train') {
     if (!train) {
       const network = readData('data/network.json');
       train = {network, challenges: readData('data/challenges.json'), router: createRouter(network)};
     }
-    const {network, challenges, router} = train;
-    const {id, challenge} = puzzleFor(game, day, () => {
-      const challenge = dailyChallenge(challenges, day);
+    let selected = train, city;
+    let version;
+    try { version = JSON.parse(puzzle)?.[0]; } catch { return; }
+    if (typeof version === 'string' && version.startsWith('world-')) {
+      city = readData('world-data/cities.json').find(item => item.feedVersion === version);
+      if (!city) return;
+      if (!worldTrains.has(city.slug)) {
+        if (worldTrains.size >= 3) worldTrains.delete(worldTrains.keys().next().value);
+        const original = city.slug === 'nyc' ? readData('data/network.json') : readData(`world-data/${city.slug}/network.json`);
+        const network = {...original, metadata: {...original.metadata, feedVersion: city.feedVersion}};
+        const challenges = city.slug === 'nyc' ? train.challenges : readData(`world-data/${city.slug}/challenges.json`);
+        worldTrains.set(city.slug, {network, challenges, router: createRouter(network)});
+      }
+      selected = worldTrains.get(city.slug);
+    }
+    const {network, challenges, router} = selected;
+    const {id, challenge} = puzzleFor(city ? `train-world:${city.slug}` : game, day, () => {
+      const challenge = city ? worldDailyChallenge(challenges, day, city.slug) : dailyChallenge(challenges, day);
       return {id: trainPuzzle(network, challenge), challenge};
     });
     if (puzzle !== id || answers.length < 1 || answers.length > MAX_GUESSES) return;

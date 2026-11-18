@@ -100,3 +100,15 @@ To check the request limits and cookie migration, run
 server running the score API and `DATABASE_URL` set to its empty test database.
 To exercise all seven games against an empty test database, set
 `TRAINROT_TEST_URL` to the running site and run `node tests/rankings.mjs`.
+
+## trainrot world
+
+`/trainrot-world/` defaults to `/trainrot-world/nyc/`. The new edition includes 98 city networks, each with its own URL, daily puzzle, practice difficulty, saved progress and ranking puzzle identity. `/trainrot/` retains the original game. Search **Change city** by city or country; larger networks also have a line search.
+
+The 97 additional frozen networks and their puzzle decks are bundled in `dist/world-data/`; NYC uses the existing production data bundle. Each additional city has 366 independently checked, solvable puzzles. Daily puzzles reset at midnight in New York. Each network is a documented snapshot, rather than a guarantee of complete or live transit coverage.
+
+GTFS imports use daytime service patterns and scheduled running times. Published topology snapshots use an explicit distance-based timing model. The source and timing model are available in How to play, `/trainrot-world/sources/`, and the network JSON. Maps are schematic. No transit source is contacted while someone plays.
+
+Run `npm run build`, `npm run test:world`, `node tests/world-ranking.mjs`, and `npm run test:e2e:world` to validate the expansion. The browser test defaults to `http://localhost:4175`; serve `dist/` on that port or set `TRAINROT_TEST_URL`. Browser QA intercepts ranking submissions; server replay tests do not write to the database.
+
+To rebuild source data, run `node scripts/rebuild-world.mjs` with Python 3, Node and network access. `scripts/world-source-plan.json` records each selected source; `scripts/world-snapshot-version.json` pins the published snapshot revision. Raw downloads stay in ignored `.cache/world/`. Rebuilding from current agency feeds can change data versions. Normal builds validate the frozen bundles and do not download worldwide feeds. The hosted NYC input follows the existing private-Blob production build process.

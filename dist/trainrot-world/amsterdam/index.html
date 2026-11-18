@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#1c1d1f">
+  <meta name="description" content="Find rail routes in Amsterdam. Play the daily journey or practice, then explore 98 cities.">
+  <title>Amsterdam · trainrot world | dailyo</title>
+  <link rel="icon" type="image/png" href="/assets/train-logo.png">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/world.css">
+  <link rel="stylesheet" href="/theme.css">
+  <link rel="stylesheet" href="/rewards.css">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/world.css">
+  <script src="/site.js" defer></script>
+  <link rel="canonical" href="https://trainrot.vercel.app/trainrot-world/amsterdam/">
+</head>
+<body data-world-city="amsterdam">
+  <header class="site-masthead">
+    <a class="site-brand" href="/">dailyo</a>
+    <nav class="site-games" aria-label="Games">
+      <a class="home-star" href="/daily/">Daily Feed</a>
+      <a href="/trainrot-world/amsterdam/" aria-current="page" aria-label="trainrot" title="trainrot" data-game-mark="trainrot"><span class="current-game-name">trainrot world</span></a>
+      <details class="site-more">
+        <summary aria-label="More games" data-ui-tooltip="more-games-tip"><span id="more-games-tip" role="tooltip">More games</span></summary>
+        <div class="site-more-links">
+          <a href="/flags/" data-game-mark="flagrot">flagrot</a>
+          <a href="/languages/" data-game-mark="langrot">langrot</a>
+          <a href="/vocabulary/" data-game-mark="vocabulary">Vocabulary</a>
+          <a href="/maprot/" data-game-mark="maprot">maprot</a>
+          <a href="/yearrot/" data-game-mark="yearrot">yearrot</a>
+          <a href="/borderrot/" data-game-mark="borderrot">borderrot</a>
+          <a href="/ladderrot/" data-game-mark="ladderrot">ladderrot</a>
+          <a href="/cluerot/" data-game-mark="cluerot">cluerot</a>
+          <a href="/scalerot/" data-game-mark="scalerot">scalerot</a>
+          <a href="/swaprot/" data-game-mark="swaprot">swaprot</a>
+        </div>
+      </details>
+    </nav>
+  </header>
+  
+  <div class="site-header">
+    <div class="game-modes" role="group" aria-label="Game mode"><button id="daily-mode" aria-pressed="true">Daily</button><button id="practice-mode" aria-pressed="false">Practice</button></div>
+    <label class="difficulty-control">Difficulty <select id="difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
+  </div>
+  <main class="game-layout" id="app">
+    <section class="planner" aria-label="Plan your journey"><div class="loading" role="status">Loading subway data…</div></section>
+    <section class="map-panel" aria-label="Subway map">
+      <div class="map-caption" hidden><span id="map-caption" hidden></span></div>
+      <svg id="city-map" role="img" aria-label="Subway map. Start and finish markers are shown; subway lines are hidden." viewBox="0 0 1000 900" tabindex="0"><title>Subway puzzle map</title></svg>
+      <span class="demo-map-label" hidden></span>
+    </section>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

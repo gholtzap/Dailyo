@@ -1,3 +1,4 @@
+import {configureWorld,describeWorldNetwork,worldDailyChallenge} from './world.js';
 import './games/help.js';
 import {createRouter,transition,formatTime,MAX_GUESSES} from './router.js';
 import {createMap} from './map.js';
@@ -11,11 +12,20 @@ const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const planner=$('.planner');
 
 async function start(){
+  const world=await configureWorld();
+  const citySlug=world?.city.slug;
+  const modeKey=world?`trainrot-world-mode:${citySlug}`:'trainrot-game-mode-v2';
+  const dataRoot=world&&citySlug!=='nyc'?`/world-data/${citySlug}/`:'/data/';
   const [network,boroughs,challenges]=await Promise.all(['network','boroughs','challenges'].map(async name=>{
-    const response=await fetch(`/data/${name}.json`);
+    const response=await fetch(`${dataRoot}${name}.json`);
     if(!response.ok)throw new Error(`Could not load ${name}`);
     return response.json();
   }));
+  if(world){
+    network.metadata.city=world.city;
+    if(citySlug==='nyc')network.metadata.feedVersion='world-nyc:'+network.metadata.feedVersion;
+    describeWorldNetwork(world,network);
+  }
   const mapName=network.metadata.mapName;
   if(mapName){
     const label=$('.demo-map-label');
@@ -24,10 +34,11 @@ async function start(){
   }
   const router=createRouter(network),map=createMap($('#city-map'),boroughs,network);
   const rewards=createRewards(planner,$('#city-map'));
-  const storageKey=`trainrot-endless-v1:${network.metadata.feedVersion}`;
-  const routeOrder=['1','2','3','4','5','6','6X','7','7X','A','C','E','B','D','F','M','G','J','L','N','Q','R','W','GS','FS','H'];
-  const routeTitle=id=>({'GS':'42 St shuttle','FS':'Franklin shuttle','H':'Rockaway shuttle','6X':'6 express','7X':'7 express'}[id]??id);
-  const routeSymbol=id=>({'GS':'S','FS':'S','H':'S','6X':'6','7X':'7'}[id]??id);
+  const storageKey=`${world?'trainrot-world-practice':'trainrot-endless-v1'}:${network.metadata.feedVersion}`;
+  const nycRouteOrder=['1','2','3','4','5','6','6X','7','7X','A','C','E','B','D','F','M','G','J','L','N','Q','R','W','GS','FS','H'];
+  const routeOrder=world&&citySlug!=='nyc'?Object.keys(network.routes).sort((a,b)=>network.routes[a].name.localeCompare(network.routes[b].name,undefined,{numeric:true})):nycRouteOrder;
+  const routeTitle=id=>world&&citySlug!=='nyc'?(network.routes[id].title??network.routes[id].name):({'GS':'42 St shuttle','FS':'Franklin shuttle','H':'Rockaway shuttle','6X':'6 express','7X':'7 express'}[id]??id);
+  const routeSymbol=id=>world&&citySlug!=='nyc'?network.routes[id].name:({'GS':'S','FS':'S','H':'S','6X':'6','7X':'7'}[id]??id);
   const badgeColor=id=>{const hex=network.routes[id].color;const rgb=[0,2,4].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722>.179?'#000000':'#ffffff';};
   const shuttleSuffix={GS:'42',FS:'F',H:'R'};
   const badge=id=>`<span class="train-badge${id.endsWith('X')?' express':''}${shuttleSuffix[id]?' shuttle-badge':''}" style="--route-color:#${network.routes[id].color};color:${badgeColor(id)}" role="img" aria-label="${escape(routeTitle(id))} train">${shuttleSuffix[id]?`<span class="shuttle-symbol">S</span><span class="shuttle-suffix">${shuttleSuffix[id]}</span>`:escape(routeSymbol(id))}</span>`;
@@ -39,7 +50,7 @@ async function start(){
   let recent=[{from:state.challenge.from,to:state.challenge.to}];
   const pair=c=>({from:c.from,to:c.to});
   let mode='practice',dailyDate='';
-  const dailyKey=date=>`trainrot-daily-v2:${network.metadata.feedVersion}:${date}`;
+  const dailyKey=date=>`${world?'trainrot-world-daily':'trainrot-daily-v2'}:${network.metadata.feedVersion}:${date}`;
   const storedState=()=>({phase:state.phase,legs:state.legs,guesses:state.guesses??[],assisted:!!state.assisted,skipped:!!state.skipped});
   function save(){
     if(rushRound!==null)return;
@@ -93,7 +104,7 @@ async function start(){
   const difficultyControl=$('#difficulty');difficultyControl.value=difficulty;
   let practice={seed,deck,position,state,difficulty,recent};
   function openDaily(){
-    dailyDate=dateToday();const challenge=dailyChallenge(challenges,dailyDate);let saved;
+    dailyDate=dateToday();const challenge=world?worldDailyChallenge(challenges,dailyDate,citySlug):dailyChallenge(challenges,dailyDate);let saved;
     try{saved=JSON.parse(localStorage.getItem(dailyKey(dailyDate)));}catch{}
     const validLegs=legs=>Array.isArray(legs)&&legs.length<=6&&legs.every(l=>l&&network.routes[l.route]);
     if(!saved||!['planning','revealed'].includes(saved.phase)||!validLegs(saved.legs)||!Array.isArray(saved.guesses)||saved.guesses.length>MAX_GUESSES||!saved.guesses.every(validLegs))saved={phase:'planning',legs:[],guesses:[]};
@@ -103,7 +114,7 @@ async function start(){
   function selectMode(next){
     if(next===mode)return;
     if(mode==='practice')practice={seed,deck,position,state,difficulty,recent};
-    mode=next;try{localStorage.setItem('trainrot-game-mode-v2',mode);}catch{}
+    mode=next;try{localStorage.setItem(modeKey,mode);}catch{}
     if(mode==='daily')openDaily();
     else{
       ({seed,deck,position,state,difficulty,recent}=practice);
@@ -125,7 +136,7 @@ async function start(){
   const usedRoutes=routeOrder.filter(id=>network.patterns.some(p=>p.route===id));
   function trainButton(id){
     const symbol=shuttleSuffix[id]?'S'+shuttleSuffix[id]:routeSymbol(id);
-    return `<button type="button" aria-label="Add ${escape(symbol)}${shuttleSuffix[id]?' '+escape(routeTitle(id)):id.endsWith('X')?' express':''} train" title="${escape(shuttleSuffix[id]?routeTitle(id):routeSymbol(id))}" tabindex="${id===usedRoutes[0]?0:-1}" class="train-choice" data-route="${id}" ${state.legs.length>=6?'disabled':''}>${badge(id).replace('role="img"','aria-hidden="true"')}</button>`;
+    return `<button type="button" aria-label="Add ${escape(world&&citySlug!=='nyc'?routeTitle(id):symbol)}${shuttleSuffix[id]?' '+escape(routeTitle(id)):id.endsWith('X')?' express':''} train" title="${escape(world?routeTitle(id):shuttleSuffix[id]?routeTitle(id):routeSymbol(id))}" tabindex="${id===usedRoutes[0]?0:-1}" class="train-choice" data-route="${id}" ${state.legs.length>=6?'disabled':''}>${badge(id).replace('role="img"','aria-hidden="true"')}</button>`;
   }
   const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
   function guessFeedback(){
@@ -144,6 +155,7 @@ async function start(){
   function recordResult(){
     save();draw();focusHeading();
   }
+  let lineFilter='';
   function drawPlanning(){
     rewards.reset();rewards.decorate({valid:false});
     const c=state.challenge,full=state.legs.length>=6;
@@ -151,11 +163,17 @@ async function start(){
     planner.innerHTML=`
       ${rushRound!==null?'<h2 id="rush-journey" tabindex="-1">Find the fastest route</h2>':''}
       ${ticket(c,`<div class="journey-route"><div class="sequence-row">${state.legs.length?`<ol class="train-sequence" aria-label="Your train sequence">${state.legs.map(l=>`<li>${badge(l.route)}</li>`).join('')}</ol>`:'<p class="route-empty">Tap your trains in order.</p>'}${state.legs.length?'<button id="undo-train" class="quiet-button" aria-label="Undo last train">Undo</button>':''}</div>${guessFeedback()}${state.guesses?.length?`<p class="check-count">${state.guesses.length} of ${MAX_GUESSES} checks</p>`:''}</div>`)}
-      <div class="train-picker" role="group" aria-label="Add a train"><div class="train-grid">${usedRoutes.map(trainButton).join('')}</div></div>
+      ${world&&usedRoutes.length>14?`<label class="world-line-search">Find a line<input id="line-search" type="search" value="${escape(lineFilter)}" placeholder="Line name or number" autocomplete="off"></label>`:''}<div class="train-picker" role="group" aria-label="Add a train"><div class="train-grid">${usedRoutes.map(trainButton).join('')}</div></div>
       ${full?'<p class="ready-note">Six trains maximum. Check your route or undo a train.</p>':''}
       <div class="route-actions"><button id="reveal" class="primary-button" ${state.legs.length&&!same(state.guesses?.at(-1),state.legs)?'':'disabled'}>Check route</button></div>
       <div class="help-actions">${mode==='practice'?'<button id="skip" class="hint-button">Skip</button>':''}<button id="show-answer" class="hint-button">Show answer</button></div>
       ${state.assisted?'':`<details class="map-hint"><summary>Map hint</summary><p>Showing the map makes this journey unscored.</p><button id="hint" type="button" class="secondary-button">Show subway map</button></details>`}`;
+    const filterInput=$('#line-search');
+    function filterLines(){
+      const term=lineFilter.toLocaleLowerCase();let first=true;
+      planner.querySelectorAll('[data-route]').forEach(button=>{button.hidden=!routeTitle(button.dataset.route).toLocaleLowerCase().includes(term)&&!routeSymbol(button.dataset.route).toLocaleLowerCase().includes(term);button.tabIndex=!button.hidden&&first?0:-1;if(!button.hidden)first=false;});
+    }
+    if(filterInput){filterInput.oninput=()=>{lineFilter=filterInput.value;filterLines();};filterLines();}
     planner.querySelectorAll('[data-route]').forEach(button=>{
       button.onclick=()=>{
         const route=button.dataset.route;
@@ -246,7 +264,7 @@ async function start(){
           const assessment=router.assess(c.from,c.to,guess);
           return assessment.valid?'🟩':assessment.brokenLeg!==undefined?'⬛':'🟨';
         }).join('');
-        const text=`trainrot ${dailyDate}\n${outcome} · ${displayed.guesses?.length??0}/${MAX_GUESSES} checks${history?`\n${history}`:''}\nhttps://trainrot.vercel.app/trainrot/`;
+        const text=`${world?'trainrot world · '+world.city.name:'trainrot'} ${dailyDate}\n${outcome} · ${displayed.guesses?.length??0}/${MAX_GUESSES} checks${history?`\n${history}`:''}\n${world?`https://trainrot.vercel.app/trainrot-world/${citySlug}/`:'https://trainrot.vercel.app/trainrot/'}`;
         try{await navigator.clipboard.writeText(text);$('#copy-status').textContent='Copied';}
         catch{planner.querySelector('.share-fallback')?.remove();const status=$('#copy-status');status.textContent='Select and copy your results:';const field=document.createElement('textarea');field.className='share-fallback';field.setAttribute('aria-label','Results to copy');field.value=text;status.after(field);field.focus();field.select();}
       };
@@ -287,7 +305,7 @@ async function start(){
       if(state.assisted)map.showNetwork();drawPlanning();
     }else{map.reveal(state.result);drawResult();}
   }
-  let initialMode;try{initialMode=localStorage.getItem('trainrot-game-mode-v2');}catch{}
+  let initialMode;try{initialMode=localStorage.getItem(modeKey);}catch{}
   if(rushRound!==null){
     mode='rush';
     difficultyControl.closest('label').hidden=true;
