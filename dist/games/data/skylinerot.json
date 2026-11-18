@@ -7,7 +7,12 @@
     "credit": "Lesekreis",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Manhattan Skyline"
+    "description": "Manhattan Skyline",
+    "distractors": [
+      "chicago",
+      "toronto",
+      "hong-kong"
+    ]
   },
   {
     "id": "paris",
@@ -17,7 +22,12 @@
     "credit": "Waraba603",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "app đánh lô đề uy tín"
+    "description": "app đánh lô đề uy tín",
+    "distractors": [
+      "london",
+      "sydney",
+      "tokyo"
+    ]
   },
   {
     "id": "london",
@@ -27,7 +37,12 @@
     "credit": "Poliphilo",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "London skyline from Horniman Museum Gardens"
+    "description": "London skyline from Horniman Museum Gardens",
+    "distractors": [
+      "paris",
+      "sydney",
+      "toronto"
+    ]
   },
   {
     "id": "dubai",
@@ -37,7 +52,12 @@
     "credit": "Robert Bock",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "​迪拜夜晚天际线"
+    "description": "​迪拜夜晚天际线",
+    "distractors": [
+      "kuala-lumpur",
+      "hong-kong",
+      "singapore"
+    ]
   },
   {
     "id": "sydney",
@@ -47,7 +67,12 @@
     "credit": "Yourusernamewillbepublic2",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Sydney Skyline from UNSW"
+    "description": "Sydney Skyline from UNSW",
+    "distractors": [
+      "london",
+      "toronto",
+      "singapore"
+    ]
   },
   {
     "id": "hong-kong",
@@ -57,7 +82,12 @@
     "credit": "Mustang Joe",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Hong Kong Skyline"
+    "description": "Hong Kong Skyline",
+    "distractors": [
+      "singapore",
+      "tokyo",
+      "new-york"
+    ]
   },
   {
     "id": "singapore",
@@ -67,7 +97,12 @@
     "credit": "Reema Jalihal",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Skyline of Singapore from Marina Bay Sands"
+    "description": "Skyline of Singapore from Marina Bay Sands",
+    "distractors": [
+      "hong-kong",
+      "kuala-lumpur",
+      "dubai"
+    ]
   },
   {
     "id": "tokyo",
@@ -77,7 +112,12 @@
     "credit": "╬ಠ益ಠ)",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Skyline in Tokyo"
+    "description": "Skyline in Tokyo",
+    "distractors": [
+      "hong-kong",
+      "singapore",
+      "toronto"
+    ]
   },
   {
     "id": "chicago",
@@ -87,7 +127,12 @@
     "credit": "Alanthebox",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Skyline of Chicago as seen by boat."
+    "description": "Skyline of Chicago as seen by boat.",
+    "distractors": [
+      "new-york",
+      "toronto",
+      "san-francisco"
+    ]
   },
   {
     "id": "toronto",
@@ -97,7 +142,12 @@
     "credit": "Bernard Spragg. NZ from Christchurch, New Zealand",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Toronto is the provincial capital of Ontario and the most populous city in Canada, with a population of 2,731,571 in 2016. Current to 2016, the Toronto census metropolitan area (CMA), of which the majority is within the Greater Toronto Area (GTA), held a population of 5,928,040, making it Canada's most populous CMA. The city is the anchor of the Golden Horseshoe, an urban agglomeration of 9,245,438 people (as of 2016) surrounding the western end of Lake Ontario.[Toronto is an international centre of business, finance, arts, and culture, and is recognized as one of the most multicultural and cosmopolitan cities in the world"
+    "description": "Toronto is the provincial capital of Ontario and the most populous city in Canada, with a population of 2,731,571 in 2016. Current to 2016, the Toronto census metropolitan area (CMA), of which the majority is within the Greater Toronto Area (GTA), held a population of 5,928,040, making it Canada's most populous CMA. The city is the anchor of the Golden Horseshoe, an urban agglomeration of 9,245,438 people (as of 2016) surrounding the western end of Lake Ontario.[Toronto is an international centre of business, finance, arts, and culture, and is recognized as one of the most multicultural and cosmopolitan cities in the world",
+    "distractors": [
+      "chicago",
+      "new-york",
+      "sydney"
+    ]
   },
   {
     "id": "san-francisco",
@@ -107,7 +157,12 @@
     "credit": "Benoît Prieur",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Skyline of San Francisco from Embarcadero (July 2022)"
+    "description": "Skyline of San Francisco from Embarcadero (July 2022)",
+    "distractors": [
+      "sydney",
+      "new-york",
+      "chicago"
+    ]
   },
   {
     "id": "kuala-lumpur",
@@ -117,6 +172,11 @@
     "credit": "Unknown authorUnknown author",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Long exposure of the skyline in Kuala Lumpur, Malaysia. Taken around sunset at night with lights of car traffic showing on the road."
+    "description": "Long exposure of the skyline in Kuala Lumpur, Malaysia. Taken around sunset at night with lights of car traffic showing on the road.",
+    "distractors": [
+      "dubai",
+      "singapore",
+      "hong-kong"
+    ]
   }
 ]

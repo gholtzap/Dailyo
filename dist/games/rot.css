@@ -121,3 +121,16 @@
   font-size: 12px;
 }
 .border-label-left .border-map-label { left: auto; right: 11px; }
+
+/* Practice settings stay quiet beside the puzzle, with a clear keyboard focus. */
+.practice-settings { margin: -8px 0 24px; padding: 0 0 20px; border-bottom: 1px solid var(--line); }
+.practice-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.practice-settings label { color: var(--ink); font-weight: 500; }
+.practice-settings select { min-width: 136px; min-height: 44px; padding: 8px 32px 8px 12px; border: 1px solid #62666d; border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; }
+.practice-settings select:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.practice-settings p { margin: 10px 0 0; color: var(--muted); line-height: 1.5; }
+.solution-label { font-size: 13px; font-weight: 500; color: var(--muted); margin: 24px 0 12px; }
+.solution-review { margin: 24px 0; border-block: 1px solid var(--line); }
+.solution-review summary { min-height: 48px; padding: 16px 0; cursor: pointer; }
+.solution-review summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.solution-review .ladder-chain { margin-top: 8px; }

@@ -118,3 +118,18 @@ To exercise all seven games against an empty test database, set
 - **orderrot** arranges four items from lowest to highest across facts, measurements, and chronology. Rush uses three.
 
 Each has five daily questions, unlimited Practice sets, local progress, shareable results, daily rankings when configured, and a dedicated `/rush/<game>/` route. All five join the full Daily Feed and Rush rotation. Photo and answer sources appear after each round.
+
+## Practice difficulty and puzzle review
+
+skyrot, skylinerot, zoomrot, and yearrot offer Easy, Standard, and Hard in Practice.
+Each level keeps its own progress, including after a reload. Daily and Rush use the
+shared Standard puzzle; practice difficulty does not change daily rankings.
+Hard photo rounds use tighter crops and curated lookalikes. Hard timelines use
+nearby dated events without exposing a later question's answer.
+
+Photo hints show the scoring change before you use them (100 → 65 → 35 points).
+Word ladders let you undo the last word while playing and inspect a shortest
+solution after finishing. Subway results show your submitted itinerary first;
+when another route ties it, the result explains the tie and offers the alternative.
+Country search accepts words within a name, country codes, and familiar aliases
+such as DRC, Ivory Coast, and UK.

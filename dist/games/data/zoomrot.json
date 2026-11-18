@@ -7,7 +7,21 @@
     "credit": "Miscellaneous contributor",
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "description": "Closeup photo of a tennis ball"
+    "description": "Closeup photo of a tennis ball",
+    "distractors": [
+      "banana",
+      "filter",
+      "tape"
+    ],
+    "detailFocus": [
+      55,
+      50
+    ],
+    "lookalikes": [
+      "Lime",
+      "Kitchen sponge",
+      "Felt fabric"
+    ]
   },
   {
     "id": "stapler",
@@ -17,7 +31,21 @@
     "credit": "Evan-amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "A Swingline-brand Stapler"
+    "description": "A Swingline-brand Stapler",
+    "distractors": [
+      "scissors",
+      "hammer",
+      "tape"
+    ],
+    "detailFocus": [
+      42,
+      52
+    ],
+    "lookalikes": [
+      "Tape dispenser",
+      "Hole punch",
+      "Utility knife"
+    ]
   },
   {
     "id": "scissors",
@@ -27,7 +55,21 @@
     "credit": "Evan-amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "A pair of large, Fiskars-brand scissors."
+    "description": "A pair of large, Fiskars-brand scissors.",
+    "distractors": [
+      "stapler",
+      "hammer",
+      "key"
+    ],
+    "detailFocus": [
+      60,
+      48
+    ],
+    "lookalikes": [
+      "Pliers",
+      "Pruning shears",
+      "Can opener"
+    ]
   },
   {
     "id": "staples",
@@ -37,7 +79,21 @@
     "credit": "Evan-amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "A pile of staples used for a common office stapler."
+    "description": "A pile of staples used for a common office stapler.",
+    "distractors": [
+      "key",
+      "motherboard",
+      "scissors"
+    ],
+    "detailFocus": [
+      52,
+      55
+    ],
+    "lookalikes": [
+      "Paper clips",
+      "Wire mesh",
+      "Metal zipper"
+    ]
   },
   {
     "id": "banana",
@@ -47,7 +103,21 @@
     "credit": "Evan-Amos",
     "license": "CC BY-SA 3.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "description": "A single banana.  A common Cavendish type, bought from a supermarket in North America."
+    "description": "A single banana.  A common Cavendish type, bought from a supermarket in North America.",
+    "distractors": [
+      "tennis",
+      "pencil",
+      "tape"
+    ],
+    "detailFocus": [
+      50,
+      78
+    ],
+    "lookalikes": [
+      "Lemon",
+      "Yellow bell pepper",
+      "Mango"
+    ]
   },
   {
     "id": "key",
@@ -57,7 +127,21 @@
     "credit": "Evan-Amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "An example of a standard key used for locks."
+    "description": "An example of a standard key used for locks.",
+    "distractors": [
+      "staples",
+      "scissors",
+      "motherboard"
+    ],
+    "detailFocus": [
+      45,
+      52
+    ],
+    "lookalikes": [
+      "Bottle opener",
+      "Metal ruler",
+      "Drill bit"
+    ]
   },
   {
     "id": "tape",
@@ -67,7 +151,21 @@
     "credit": "Evan-Amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "A standard measuring tape."
+    "description": "A standard measuring tape.",
+    "distractors": [
+      "stapler",
+      "pencil",
+      "key"
+    ],
+    "detailFocus": [
+      40,
+      66
+    ],
+    "lookalikes": [
+      "Luggage strap",
+      "Ribbon spool",
+      "Belt buckle"
+    ]
   },
   {
     "id": "pencil",
@@ -77,7 +175,21 @@
     "credit": "Evan-Amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "A standard number 2 pencil, unsharpened.  Made by Sanford."
+    "description": "A standard number 2 pencil, unsharpened.  Made by Sanford.",
+    "distractors": [
+      "hammer",
+      "tape",
+      "banana"
+    ],
+    "detailFocus": [
+      35,
+      56
+    ],
+    "lookalikes": [
+      "Paintbrush",
+      "Wooden dowel",
+      "Chopstick"
+    ]
   },
   {
     "id": "filter",
@@ -87,7 +199,21 @@
     "credit": "Evan-Amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "A small stack of standard bleached white coffee filters."
+    "description": "A small stack of standard bleached white coffee filters.",
+    "distractors": [
+      "staples",
+      "tennis",
+      "scissors"
+    ],
+    "detailFocus": [
+      48,
+      50
+    ],
+    "lookalikes": [
+      "Cupcake liner",
+      "Paper towel",
+      "Folded napkin"
+    ]
   },
   {
     "id": "hammer",
@@ -97,7 +223,21 @@
     "credit": "Evan-Amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "A standard household claw hammer."
+    "description": "A standard household claw hammer.",
+    "distractors": [
+      "scissors",
+      "stapler",
+      "pencil"
+    ],
+    "detailFocus": [
+      55,
+      52
+    ],
+    "lookalikes": [
+      "Screwdriver",
+      "Utility knife",
+      "Pliers"
+    ]
   },
   {
     "id": "motherboard",
@@ -107,6 +247,20 @@
     "credit": "Evan-Amos",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "The motherboard to a Apple MacBook (late 2007 model) with the RAM and Wi-Fi adapter removed.  The board has minor damage from being hit with a hammer."
+    "description": "The motherboard to a Apple MacBook (late 2007 model) with the RAM and Wi-Fi adapter removed.  The board has minor damage from being hit with a hammer.",
+    "distractors": [
+      "staples",
+      "key",
+      "stapler"
+    ],
+    "detailFocus": [
+      52,
+      48
+    ],
+    "lookalikes": [
+      "Graphics card",
+      "Remote control circuit board",
+      "Phone circuit board"
+    ]
   }
 ]

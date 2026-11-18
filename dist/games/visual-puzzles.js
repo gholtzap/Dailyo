@@ -20,15 +20,26 @@ export function prepareVisual(game, value) {
         }
         else if (!row.image?.startsWith('/games/media/'))
             throw new Error('Invalid photo');
+        for (const focus of [row.focus, row.detailFocus])
+            if (focus && (focus.length !== 2 || focus.some(x => !Number.isFinite(x) || x < 0 || x > 100)))
+                throw new Error('Invalid crop focus');
+        if (row.lookalikes && (row.lookalikes.length !== 3 || new Set(row.lookalikes).size !== 3 || row.lookalikes.some(name => typeof name !== 'string' || !name.trim() || name.toLowerCase() === row.name.toLowerCase())))
+            throw new Error('Invalid lookalikes');
+        if (row.distractors && (row.distractors.length < 3 || new Set(row.distractors).size !== row.distractors.length || row.distractors.some(id => id === row.id || !value.some(other => other.id === id))))
+            throw new Error('Invalid distractors');
     }
     return value;
 }
-export function visualSet(game, rows, seed, rush = false, round = 0) {
+export function visualSet(game, rows, seed, rush = false, round = 0, difficulty = 'standard') {
     const deck = shuffle(rows, `${game}:v1:${seed}`);
     const chosen = rush ? [deck[round % deck.length]] : deck.slice(0, 5);
     return chosen.map((item, index) => {
         const token = `${seed}:${rush ? round : index}:${item.id}`;
-        const options = shuffle([item, ...shuffle(rows.filter(x => x.id !== item.id), `${token}:others`).slice(0, 3)], `${token}:options`);
+        const others = shuffle(rows.filter(x => x.id !== item.id), `${token}:others`);
+        // Curated alternatives resemble the answer; their order is still seeded.
+        const alternatives = difficulty === 'hard' && !rush ? [...others.filter(x => item.distractors?.includes(x.id)), ...others.filter(x => !item.distractors?.includes(x.id))] : others;
+        const decoys = difficulty === 'hard' && !rush && item.lookalikes ? item.lookalikes.map((name, index) => ({ id: `decoy:${item.id}:${index}`, name })) : alternatives.slice(0, 3);
+        const options = shuffle([item, ...decoys], `${token}:options`);
         let tiles = shuffle(item.items ?? [], `${token}:tiles`).slice(0, rush ? 3 : 4);
         if (tiles.every((tile, i) => !i || tile.value > tiles[i - 1].value))
             tiles = [...tiles].reverse();
@@ -81,4 +92,12 @@ export function gradeVisual(game, questions, values) {
     }
     return score;
 }
+/** The final view always reveals the whole photograph. */
+export function photoScale(game, difficulty, view) {
+    const scales = game === 'zoomrot' ? { easy: [2.5, 1.6, 1], standard: [4, 2.2, 1], hard: [8, 4, 1] } :
+        game === 'skyrot' ? { easy: [1.6, 1.2, 1], standard: [2.5, 1.6, 1], hard: [5, 2.5, 1] } :
+            { easy: [1, 1, 1], standard: [1, 1, 1], hard: [2.4, 1.6, 1] };
+    return scales[difficulty][Math.max(0, Math.min(2, view))];
+}
+export const photoPoints = (view) => [100, 65, 35][Math.max(0, Math.min(2, view))];
 //# sourceMappingURL=visual-puzzles.js.map

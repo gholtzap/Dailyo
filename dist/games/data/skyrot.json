@@ -7,7 +7,12 @@
     "credit": "NASA",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "One of the Expedition 40 crew members aboard the Earth-orbiting International Space Station photographed this image of a large part of New York City on Aug. 25, 2014.\nManhattan Island and its Central Park are tell-tale points for recognition purposes for the six-person crew of the orbital outpost, flying approximately 225 nautical miles above the city. The 800mm focal length used by the crew member provides great detail in the scene."
+    "description": "One of the Expedition 40 crew members aboard the Earth-orbiting International Space Station photographed this image of a large part of New York City on Aug. 25, 2014.\nManhattan Island and its Central Park are tell-tale points for recognition purposes for the six-person crew of the orbital outpost, flying approximately 225 nautical miles above the city. The 800mm focal length used by the crew member provides great detail in the scene.",
+    "distractors": [
+      "chicago",
+      "tokyo",
+      "san-francisco"
+    ]
   },
   {
     "id": "paris",
@@ -17,7 +22,12 @@
     "credit": "NASA",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "Satellite picture of Paris, April 2002.\n\"The colors of the agricultural fields surrounding Paris are striking in the springtime, even when viewed from a 400 km orbital altitude. Astronauts on board the International Space Station photographed Paris using a digital camera and downlinked the image to the ground.\""
+    "description": "Satellite picture of Paris, April 2002.\n\"The colors of the agricultural fields surrounding Paris are striking in the springtime, even when viewed from a 400 km orbital altitude. Astronauts on board the International Space Station photographed Paris using a digital camera and downlinked the image to the ground.\"",
+    "distractors": [
+      "london",
+      "cairo",
+      "tokyo"
+    ]
   },
   {
     "id": "dubai",
@@ -27,7 +37,12 @@
     "credit": "NASA/Raja Chari",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "The United Arab Emirates city of Dubai, pictured from the International Space Station at an altitude of 258 miles, boasts the man-made islands of Palm Jebel Ali, Palm Jumeirah, and the World Islands."
+    "description": "The United Arab Emirates city of Dubai, pictured from the International Space Station at an altitude of 258 miles, boasts the man-made islands of Palm Jebel Ali, Palm Jumeirah, and the World Islands.",
+    "distractors": [
+      "cairo",
+      "singapore",
+      "rio"
+    ]
   },
   {
     "id": "venice",
@@ -37,7 +52,12 @@
     "credit": "NASA Johnson Space Center",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "iss074e0437657 (April 4, 2026) --- Venice, Italy, a 1,600‑year‑old city with a metropolitan population of about 640,000, is pictured from the International Space Station as it orbited 267 miles above Central Europe. Built on more than 100 small islands and connected by over 400 bridges, Venice sits within a lagoon of the Adriatic Sea. Credit: NASA/Chris Williams"
+    "description": "iss074e0437657 (April 4, 2026) --- Venice, Italy, a 1,600‑year‑old city with a metropolitan population of about 640,000, is pictured from the International Space Station as it orbited 267 miles above Central Europe. Built on more than 100 small islands and connected by over 400 bridges, Venice sits within a lagoon of the Adriatic Sea. Credit: NASA/Chris Williams",
+    "distractors": [
+      "istanbul",
+      "singapore",
+      "san-francisco"
+    ]
   },
   {
     "id": "london",
@@ -47,7 +67,12 @@
     "credit": "NASA/GSFC/METI/ERSDAC/JAROS and U.S./Japan ASTER Science Team",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "Satellite view of London, bird's-eye view."
+    "description": "Satellite view of London, bird's-eye view.",
+    "distractors": [
+      "paris",
+      "tokyo",
+      "cairo"
+    ]
   },
   {
     "id": "cairo",
@@ -57,7 +82,12 @@
     "credit": "NASA Astronauts",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "Astronaut Photo of Cairo, Egypt taken from the International Space Station (ISS) during Expedition 23 on May 5, 2010."
+    "description": "Astronaut Photo of Cairo, Egypt taken from the International Space Station (ISS) during Expedition 23 on May 5, 2010.",
+    "distractors": [
+      "dubai",
+      "paris",
+      "london"
+    ]
   },
   {
     "id": "san-francisco",
@@ -67,7 +97,12 @@
     "credit": "NASA/Scott Kelly",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "San Francisco. I almost felt like I was with you as we flew overhead a few minutes ago."
+    "description": "San Francisco. I almost felt like I was with you as we flew overhead a few minutes ago.",
+    "distractors": [
+      "istanbul",
+      "rio",
+      "new-york"
+    ]
   },
   {
     "id": "istanbul",
@@ -77,7 +112,12 @@
     "credit": "NASA",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "Bosporus in 2003"
+    "description": "Bosporus in 2003",
+    "distractors": [
+      "san-francisco",
+      "venice",
+      "new-york"
+    ]
   },
   {
     "id": "rio",
@@ -91,6 +131,11 @@
     "focus": [
       35,
       30
+    ],
+    "distractors": [
+      "san-francisco",
+      "singapore",
+      "istanbul"
     ]
   },
   {
@@ -101,7 +146,12 @@
     "credit": "NASA",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "Expedition 47 crew members on board the International Space Station captured this brightly lit night image of the largest city along Lake Michigan in the US Midwest state of Illinois: Chicago."
+    "description": "Expedition 47 crew members on board the International Space Station captured this brightly lit night image of the largest city along Lake Michigan in the US Midwest state of Illinois: Chicago.",
+    "distractors": [
+      "new-york",
+      "tokyo",
+      "san-francisco"
+    ]
   },
   {
     "id": "singapore",
@@ -111,7 +161,12 @@
     "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "View of Singapore taken during ISS Expedition 35."
+    "description": "View of Singapore taken during ISS Expedition 35.",
+    "distractors": [
+      "tokyo",
+      "istanbul",
+      "rio"
+    ]
   },
   {
     "id": "tokyo",
@@ -121,6 +176,11 @@
     "credit": "NASA",
     "license": "Public domain",
     "licenseUrl": "",
-    "description": "The bright lights of Tokyo, Japan, and the surrounding cities of Kawasaki and Yokohama on Tokyo Bay were pictured from the International Space Station during an orbital night pass 260 miles above the island nation."
+    "description": "The bright lights of Tokyo, Japan, and the surrounding cities of Kawasaki and Yokohama on Tokyo Bay were pictured from the International Space Station during an orbital night pass 260 miles above the island nation.",
+    "distractors": [
+      "new-york",
+      "singapore",
+      "chicago"
+    ]
   }
 ]

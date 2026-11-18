@@ -32,8 +32,8 @@ try{
   const tie=all.find(c=>c.fromTitle==='Grand Central'&&c.toTitle==='Atlantic Av–Barclays Ctr');
   await page.unroute('**/data/challenges.json');await page.route('**/data/challenges.json',r=>r.fulfill({json:[tie]}));
   await page.evaluate(()=>{localStorage.clear();localStorage.setItem('trainrot-game-mode-v2','practice');});await page.reload();await page.locator('[data-route="4"]').click();await page.locator('#reveal').click();
-  assert.equal(await page.locator('.result-subtitle').innerText(),'Your route is also a fastest route.');
-  await page.reload();await page.locator('#next').waitFor();assert.equal(await page.locator('.result-subtitle').innerText(),'Your route is also a fastest route.');
+  assert.equal(await page.locator('.result-subtitle').innerText(),'Your route ties the fastest time. The alternative below takes the same time.');
+  await page.reload();await page.locator('#next').waitFor();assert.equal(await page.locator('.result-subtitle').innerText(),'Your route ties the fastest time. The alternative below takes the same time.');
   await page.close();console.log(`${width}px reverse spacing, reload and tied routes passed`);
  }
 }finally{await browser.close();}

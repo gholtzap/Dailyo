@@ -8,13 +8,16 @@ import {
 } from './rot-puzzles.js';
 import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
+import {searchCountries, exactCountryMatch} from './country-search.js';
+import {parseDifficulty, practiceSettings, practiceSlot} from './difficulty.js';
+import type {PracticeDifficulty} from './difficulty.js';
 
 const kind = document.body.dataset.game as RotGame;
 const quiz = required('#quiz');
 const modes = [...document.querySelectorAll<HTMLButtonElement>('.modes button')];
 const key = (part: string) => `dailyo:${kind}:${kind === 'borderrot' && part !== 'mode' ? 'v2' : 'v1'}:${part}`;
 const read = (part: string): RotState | null => { try { return JSON.parse(localStorage.getItem(key(part))??'null') as RotState | null; } catch { return null; } };
-const write = (part: string, value: RotState | Mode) => { try { localStorage.setItem(key(part), JSON.stringify(value)); } catch {} };
+const write = (part: string, value: RotState | Mode | PracticeDifficulty) => { try { localStorage.setItem(key(part), JSON.stringify(value)); } catch {} };
 function readMode(): Mode | null { try { return JSON.parse(localStorage.getItem(key('mode'))??'null') as Mode | null; } catch { return null; } }
 const randomSeed = () => String(crypto.randomUUID?.() ?? Math.random());
 const number = new Intl.NumberFormat('en');
@@ -22,6 +25,8 @@ const mapGame = kind === 'maprot';
 const yearGame = kind === 'yearrot';
 const sessions = {} as Record<Mode, RotSession>;
 let mode: Mode = startPractice || (!inFeed && readMode() === 'practice') ? 'practice' : 'daily';
+let difficulty = parseDifficulty(read('difficulty'));
+let settings: ReturnType<typeof practiceSettings> | undefined;
 let data: RotData, day: string, borderGeometry: {paths: [string, Path2D][]; anchors: Record<string, Coordinate>} | null;
 
 
@@ -32,8 +37,8 @@ function button(text: string, callback: () => void, className = 'secondary') {
   return node;
 }
 
-function mountSession(slot: string, seed: string): RotSession {
-  const questions = makeSet(kind, data, seed);
+function mountSession(slot: string, seed: string, level: PracticeDifficulty = 'standard'): RotSession {
+  const questions = makeSet(kind, data, seed, 0, level);
   return { slot, questions, state: restoreSession(kind, data, questions, read(slot), seed) };
 }
 
@@ -282,7 +287,6 @@ function drawBorders(question: string[], state: RotState, reviewing: boolean): C
   choices.setAttribute('aria-label', 'Matching countries');
   const feedback = element('p', undefined, 'rot-feedback');
   feedback.setAttribute('role', 'status');
-  const normalize = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
   const countries = [...(data as Extract<RotData, {kind: 'borderrot'}>).graph.values()].filter(country => !selected.includes(country.id))
     .sort((a, b) => a.name.localeCompare(b.name));
   let matches: Country[] = [];
@@ -295,15 +299,16 @@ function drawBorders(question: string[], state: RotState, reviewing: boolean): C
   }
 
   input.oninput = () => {
-    const query = normalize(input.value.trim());
+    const query = input.value.trim();
     feedback.textContent = '';
-    matches = query ? countries.filter(country => normalize(country.name).startsWith(query)).slice(0, 6) : [];
+    matches = searchCountries(countries, query);
     choices.replaceChildren(...matches.map(country => button(country.name, () => add(country), 'choice')));
     if (query && !matches.length) choices.append(element('p', 'No matches'));
   };
   input.onkeydown = event => {
     if (event.key !== 'Enter') return;
-    const exact = matches.find(country => normalize(country.name) === normalize(input.value.trim()));
+    const exactMatches = matches.filter(country => exactCountryMatch(country, input.value));
+    const exact = exactMatches.length === 1 ? exactMatches[0] : undefined;
     if (exact || matches.length === 1) {
       event.preventDefault();
       add(exact ?? matches[0]);
@@ -360,8 +365,8 @@ function summary(session: RotSession): Content {
     footer.append(element('p', 'Next daily set at midnight in New York.', 'rot-coordinate'), actions, status);
   } else {
     actions.append(button('New practice set', () => {
-      sessions.practice = mountSession('practice', randomSeed());
-      write('practice', sessions.practice.state);
+      sessions.practice = mountSession(practiceSlot(difficulty), randomSeed(), difficulty);
+      write(practiceSlot(difficulty), sessions.practice.state);
       draw();
       document.querySelector<HTMLElement>('#round-title')?.focus();
     }, 'primary'));
@@ -371,6 +376,7 @@ function summary(session: RotSession): Content {
 }
 
 function draw() {
+  settings?.sync(difficulty,mode==='practice');
   for (const control of modes) control.setAttribute('aria-pressed', String(control.id === mode));
   const session = sessions[mode];
   const { state, questions } = session;
@@ -420,10 +426,21 @@ async function start() {
     return;
   }
   await waitForFeedActivation();
-  const saved = read('practice');
-  const seed = typeof saved?.seed === 'string' && saved.seed.length < 100 ? saved.seed : randomSeed();
-  sessions.practice = mountSession('practice', seed);
-  if (!saved || saved.seed !== seed) write('practice', sessions.practice.state);
+  const practiceSession = () => {
+    const saved = read(practiceSlot(difficulty));
+    const seed = typeof saved?.seed === 'string' && saved.seed.length < 100 ? saved.seed : randomSeed();
+    return mountSession(practiceSlot(difficulty), seed, difficulty);
+  };
+  sessions.practice = practiceSession();
+  write(practiceSlot(difficulty), sessions.practice.state);
+  if(yearGame && !inFeed) {
+    settings=practiceSettings({easy: 'Broad eras. Build your sense of history.', standard: 'The daily challenge. A growing timeline.', hard: 'Nearby events. Find the finer distinctions.'}, next=>{
+      if(next===difficulty)return;
+      difficulty=next; write('difficulty',difficulty); sessions.practice=practiceSession();
+      write(practiceSlot(difficulty),sessions.practice.state); draw();
+    });
+    quiz.before(settings.element);
+  }
   resetDay();
   for (const control of modes) control.onclick = () => selectMode(control.id as Mode);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) resetDay(); });
