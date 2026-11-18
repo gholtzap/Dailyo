@@ -1,0 +1,122 @@
+[
+  {
+    "id": "new-york",
+    "name": "New York City",
+    "image": "/games/media/skylinerot-new-york.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:NYC_Manhattan_Skyline_1.JPG",
+    "credit": "Lesekreis",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Manhattan Skyline"
+  },
+  {
+    "id": "paris",
+    "name": "Paris",
+    "image": "/games/media/skylinerot-paris.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Iconic_Paris_Skyline.jpg",
+    "credit": "Waraba603",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "app đánh lô đề uy tín"
+  },
+  {
+    "id": "london",
+    "name": "London",
+    "image": "/games/media/skylinerot-london.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:London_skyline_from_Horniman_Gardens.jpg",
+    "credit": "Poliphilo",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "London skyline from Horniman Museum Gardens"
+  },
+  {
+    "id": "dubai",
+    "name": "Dubai",
+    "image": "/games/media/skylinerot-dubai.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Dubai_skyline_unsplash.jpg",
+    "credit": "Robert Bock",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "​迪拜夜晚天际线"
+  },
+  {
+    "id": "sydney",
+    "name": "Sydney",
+    "image": "/games/media/skylinerot-sydney.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Sydney_Skyline_from_UNSW.jpg",
+    "credit": "Yourusernamewillbepublic2",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Sydney Skyline from UNSW"
+  },
+  {
+    "id": "hong-kong",
+    "name": "Hong Kong",
+    "image": "/games/media/skylinerot-hong-kong.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Hong_Kong_Skyline1.jpg",
+    "credit": "Mustang Joe",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Hong Kong Skyline"
+  },
+  {
+    "id": "singapore",
+    "name": "Singapore",
+    "image": "/games/media/skylinerot-singapore.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Skyline_of_Singapore_from_Marina_Bay_Sands.jpg",
+    "credit": "Reema Jalihal",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Skyline of Singapore from Marina Bay Sands"
+  },
+  {
+    "id": "tokyo",
+    "name": "Tokyo",
+    "image": "/games/media/skylinerot-tokyo.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:2015-01-17_Skyline_in_Tokyo.jpg",
+    "credit": "╬ಠ益ಠ)",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Skyline in Tokyo"
+  },
+  {
+    "id": "chicago",
+    "name": "Chicago",
+    "image": "/games/media/skylinerot-chicago.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicago_Skyline_-_Dusk.JPG",
+    "credit": "Alanthebox",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Skyline of Chicago as seen by boat."
+  },
+  {
+    "id": "toronto",
+    "name": "Toronto",
+    "image": "/games/media/skylinerot-toronto.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Toronto_skyline._(48993906211).jpg",
+    "credit": "Bernard Spragg. NZ from Christchurch, New Zealand",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Toronto is the provincial capital of Ontario and the most populous city in Canada, with a population of 2,731,571 in 2016. Current to 2016, the Toronto census metropolitan area (CMA), of which the majority is within the Greater Toronto Area (GTA), held a population of 5,928,040, making it Canada's most populous CMA. The city is the anchor of the Golden Horseshoe, an urban agglomeration of 9,245,438 people (as of 2016) surrounding the western end of Lake Ontario.[Toronto is an international centre of business, finance, arts, and culture, and is recognized as one of the most multicultural and cosmopolitan cities in the world"
+  },
+  {
+    "id": "san-francisco",
+    "name": "San Francisco",
+    "image": "/games/media/skylinerot-san-francisco.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Skyline_of_San_Francisco_from_Embarcadero_(July_2022).jpg",
+    "credit": "Benoît Prieur",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Skyline of San Francisco from Embarcadero (July 2022)"
+  },
+  {
+    "id": "kuala-lumpur",
+    "name": "Kuala Lumpur",
+    "image": "/games/media/skylinerot-kuala-lumpur.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Kuala_Lumpur_skyline_long_exposure.jpg",
+    "credit": "Unknown authorUnknown author",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "description": "Long exposure of the skyline in Kuala Lumpur, Malaysia. Taken around sunset at night with lights of car traffic showing on the road."
+  }
+]

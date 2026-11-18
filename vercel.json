@@ -19,7 +19,7 @@
     }
   ],
   "functions": {
-    "api/daily-score.js": {
+    "api/daily-score.ts": {
       "includeFiles": "dist/{data/{network,challenges}.json,games/data/*.json}",
       "regions": ["iad1"]
     }

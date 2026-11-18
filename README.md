@@ -2,9 +2,9 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
-[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all eleven games. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout advances to the next game. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
+[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all sixteen games. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout advances to the next game. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
 
-[Daily Feed](https://trainrot.vercel.app/daily/) plays all eleven daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
+[Daily Feed](https://trainrot.vercel.app/daily/) plays all sixteen daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
 
 [trainrot](https://trainrot.vercel.app/trainrot/) is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 
@@ -38,13 +38,21 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:4173](http://localhost:4173). The local build includes all eleven games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
+Open [localhost:4173](http://localhost:4173). The local build includes all sixteen games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
 
 ## trainrot
 
 Find the fastest subway route between the two endpoints in six guesses. Tap trains in order, then choose **Check route**. The router finds the transfers for the exact train sequence. An incomplete sequence earns partial credit and stays editable. **Show answer** reveals the fastest route. Revealing the subway map makes the journey unscored.
 
 The Daily journey resets at midnight in New York. In Practice, choose Easy, Medium, or Hard and play as many journeys as you like. The current draft or result stays in this browser on reload.
+
+## TypeScript source
+
+All browser application source lives in `src/`. The scores API is `api/daily-score.ts`, with request protection in `lib/score-protection.ts`. `dist/` contains the static site and JavaScript emitted by TypeScript; edit the TypeScript sources rather than generated modules. Existing JavaScript test and data tooling runs against the compiled output.
+
+`npm run dev` watches the TypeScript browser source and serves the compiled site on port 4173 (`PORT` can override it). Reload the browser after a change.
+
+`npm run typecheck` checks the browser and API together with strict TypeScript settings. `npm run build` typechecks, compiles the browser modules, stages the transit data, and verifies the release. The Vercel function compiles the API TypeScript independently.
 
 ## Build and test
 
@@ -54,7 +62,7 @@ npm run build
 npx playwright install chromium
 ```
 
-With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Use `npm run lint:ui:feed` for the Daily Feed. Reports go in `test-results/`.
+With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Use `npm run lint:ui:feed` for the Daily Feed. Reports go in `test-results/`. `npm run test:migration:browser` checks that every compiled game loads and that Daily Feed and Rush advance to their recaps on mobile and desktop.
 
 `npm run data:demo` creates the fictional stations, line geometry, and puzzles in `dist/data/`. Local builds, local dev, and GitHub CI generate this dataset. The build independently checks all shortest routes before adding the license and notices to the static site output.
 
@@ -100,3 +108,13 @@ To check the request limits and cookie migration, run
 server running the score API and `DATABASE_URL` set to its empty test database.
 To exercise all seven games against an empty test database, set
 `TRAINROT_TEST_URL` to the running site and run `node tests/rankings.mjs`.
+
+## Visual and everyday games
+
+- **skyrot** identifies cities from overhead NASA photography. Daily and Practice reveal wider views after misses; Rush gives one guess.
+- **pricerot** estimates recorded US supermarket prices before tax, with the exact package size, retailer, currency, and snapshot date displayed. Images are original product illustrations. Rush accepts estimates within 20%.
+- **skylinerot** identifies cities from skyline photos.
+- **zoomrot** identifies everyday objects from cropped photos, revealing more after misses.
+- **orderrot** arranges four items from lowest to highest across facts, measurements, and chronology. Rush uses three.
+
+Each has five daily questions, unlimited Practice sets, local progress, shareable results, daily rankings when configured, and a dedicated `/rush/<game>/` route. All five join the full Daily Feed and Rush rotation. Photo and answer sources appear after each round.

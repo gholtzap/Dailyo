@@ -1,0 +1,126 @@
+[
+  {
+    "id": "new-york",
+    "name": "New York City",
+    "image": "/games/media/skyrot-new-york.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-40_New_York_City.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "One of the Expedition 40 crew members aboard the Earth-orbiting International Space Station photographed this image of a large part of New York City on Aug. 25, 2014.\nManhattan Island and its Central Park are tell-tale points for recognition purposes for the six-person crew of the orbital outpost, flying approximately 225 nautical miles above the city. The 800mm focal length used by the crew member provides great detail in the scene."
+  },
+  {
+    "id": "paris",
+    "name": "Paris",
+    "image": "/games/media/skyrot-paris.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Paris_iss.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "Satellite picture of Paris, April 2002.\n\"The colors of the agricultural fields surrounding Paris are striking in the springtime, even when viewed from a 400 km orbital altitude. Astronauts on board the International Space Station photographed Paris using a digital camera and downlinked the image to the ground.\""
+  },
+  {
+    "id": "dubai",
+    "name": "Dubai",
+    "image": "/games/media/skyrot-dubai.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-66_Dubai,_United_Arab_Emirates.jpg",
+    "credit": "NASA/Raja Chari",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "The United Arab Emirates city of Dubai, pictured from the International Space Station at an altitude of 258 miles, boasts the man-made islands of Palm Jebel Ali, Palm Jumeirah, and the World Islands."
+  },
+  {
+    "id": "venice",
+    "name": "Venice",
+    "image": "/games/media/skyrot-venice.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Venice,_Italy,_is_pictured_from_the_International_Space_Station_(iss074e0437657).jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "iss074e0437657 (April 4, 2026) --- Venice, Italy, a 1,600‑year‑old city with a metropolitan population of about 640,000, is pictured from the International Space Station as it orbited 267 miles above Central Europe. Built on more than 100 small islands and connected by over 400 bridges, Venice sits within a lagoon of the Adriatic Sea. Credit: NASA/Chris Williams"
+  },
+  {
+    "id": "london",
+    "name": "London",
+    "image": "/games/media/skyrot-london.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:PIA04301.jpg",
+    "credit": "NASA/GSFC/METI/ERSDAC/JAROS and U.S./Japan ASTER Science Team",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "Satellite view of London, bird's-eye view."
+  },
+  {
+    "id": "cairo",
+    "name": "Cairo",
+    "image": "/games/media/skyrot-cairo.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Cairo,_Egypt.jpg",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "Astronaut Photo of Cairo, Egypt taken from the International Space Station (ISS) during Expedition 23 on May 5, 2010."
+  },
+  {
+    "id": "san-francisco",
+    "name": "San Francisco",
+    "image": "/games/media/skyrot-san-francisco.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-43_San_Francisco_Bay.jpg",
+    "credit": "NASA/Scott Kelly",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "San Francisco. I almost felt like I was with you as we flew overhead a few minutes ago."
+  },
+  {
+    "id": "istanbul",
+    "name": "Istanbul",
+    "image": "/games/media/skyrot-istanbul.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Istanbul_Bosporus_ISS-1.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "Bosporus in 2003"
+  },
+  {
+    "id": "rio",
+    "name": "Rio de Janeiro",
+    "image": "/games/media/skyrot-rio.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-47_Rio_de_Janeiro_and_Niteroi,_Brazil.jpg",
+    "credit": "NASA/Tim Kopra",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "NASA astronaut Tim Kopra tweeted this Earth observation image out with the comment: \"#RiodeJaneiro on the left above and #Niteroi on the right below - and one long bridge. @Space_Station #Explore\".",
+    "focus": [
+      35,
+      30
+    ]
+  },
+  {
+    "id": "chicago",
+    "name": "Chicago",
+    "image": "/games/media/skyrot-chicago.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-47_Chicago_night_view.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "Expedition 47 crew members on board the International Space Station captured this brightly lit night image of the largest city along Lake Michigan in the US Midwest state of Illinois: Chicago."
+  },
+  {
+    "id": "singapore",
+    "name": "Singapore",
+    "image": "/games/media/skyrot-singapore.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS035-E-11342_-_View_of_Singapore.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "View of Singapore taken during ISS Expedition 35."
+  },
+  {
+    "id": "tokyo",
+    "name": "Tokyo",
+    "image": "/games/media/skyrot-tokyo.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-62_Tokyo,_Japan_at_night.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "description": "The bright lights of Tokyo, Japan, and the surrounding cities of Kawasaki and Yokohama on Tokyo Bay were pictured from the International Space Station during an orbital night pass 260 miles above the island nation."
+  }
+]

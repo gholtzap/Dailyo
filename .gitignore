@@ -11,3 +11,7 @@ playwright-report/
 # Optional local NYC data inputs
 /scripts/original-challenges.json
 /dist/data/
+
+# Browser source maps and compiled test runner
+/dist/**/*.js.map
+/.test-build/
