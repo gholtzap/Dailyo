@@ -129,10 +129,10 @@ try{
     await inspect(page,`${prefix}-partial-L6`);await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:new URL(`${prefix}-simple-partial.png`,output).pathname,fullPage:true});
     await add(page,'F');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),98);
     assert.match(await page.locator('.result-subtitle').textContent(),/30 sec slower/);assert.equal(await page.locator('.route-details').getAttribute('open'),null);
-    assert.equal(await page.getByRole('heading',{name:/Fastest route/}).isVisible(),true);assert.ok(await page.locator('.planner > .result-route .result-legs li').count());
+    assert.equal(await page.locator('.primary-itinerary h3').filter({hasText:'Your route'}).isVisible(),true);assert.ok(await page.locator('.planner > .result-route .result-legs li').count());
     await page.getByRole('button',{name:'Fastest route',exact:true}).click();assert.equal(await page.locator('#map-caption').textContent(),'Fastest route');assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Directions are in the result/);
     await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:new URL(`${prefix}-simple-result.png`,output).pathname,fullPage:true});
-    await page.locator('.route-details summary').click();const directions=await page.locator('.route-details').textContent();assert.match(directions,/Union Sq/);assert.match(directions,/Bleecker/);
+    await page.locator('.route-details summary').click();const directions=await page.locator('.primary-itinerary').textContent();assert.match(directions,/Union Sq/);assert.match(directions,/Bleecker/);
     assert.equal((await page.locator('.ride-points li span:last-child').allTextContents()).reduce((sum,p)=>sum+parseInt(p),0),98);await inspect(page,`${prefix}-L6F-result`);
     await page.reload();await page.locator('#next').waitFor();assert.equal(parseInt(await page.locator('.result-score').textContent()),98);
     await page.getByRole('button',{name:'Next journey',exact:true}).click();await add(page,'L');await add(page,'7');await check(page);
