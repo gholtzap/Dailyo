@@ -1,0 +1,624 @@
+[
+  {
+    "id": "planet-width",
+    "name": "Planets by equatorial diameter",
+    "unit": "km",
+    "source": "https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "planet-width-0",
+        "name": "Mercury",
+        "value": 4879
+      },
+      {
+        "id": "planet-width-1",
+        "name": "Mars",
+        "value": 6792
+      },
+      {
+        "id": "planet-width-2",
+        "name": "Venus",
+        "value": 12104
+      },
+      {
+        "id": "planet-width-3",
+        "name": "Earth",
+        "value": 12756
+      },
+      {
+        "id": "planet-width-4",
+        "name": "Neptune",
+        "value": 49528
+      },
+      {
+        "id": "planet-width-5",
+        "name": "Uranus",
+        "value": 51118
+      },
+      {
+        "id": "planet-width-6",
+        "name": "Saturn",
+        "value": 120536
+      },
+      {
+        "id": "planet-width-7",
+        "name": "Jupiter",
+        "value": 142984
+      }
+    ]
+  },
+  {
+    "id": "sun-order",
+    "name": "Planets by distance from the Sun",
+    "unit": "position from the Sun",
+    "source": "https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "sun-order-0",
+        "name": "Mercury",
+        "value": 1
+      },
+      {
+        "id": "sun-order-1",
+        "name": "Venus",
+        "value": 2
+      },
+      {
+        "id": "sun-order-2",
+        "name": "Earth",
+        "value": 3
+      },
+      {
+        "id": "sun-order-3",
+        "name": "Mars",
+        "value": 4
+      },
+      {
+        "id": "sun-order-4",
+        "name": "Jupiter",
+        "value": 5
+      },
+      {
+        "id": "sun-order-5",
+        "name": "Saturn",
+        "value": 6
+      },
+      {
+        "id": "sun-order-6",
+        "name": "Uranus",
+        "value": 7
+      },
+      {
+        "id": "sun-order-7",
+        "name": "Neptune",
+        "value": 8
+      }
+    ]
+  },
+  {
+    "id": "length",
+    "name": "Mixed lengths, shortest first",
+    "unit": "meters",
+    "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "length-0",
+        "name": "75 centimeters",
+        "value": 0.75
+      },
+      {
+        "id": "length-1",
+        "name": "900 millimeters",
+        "value": 0.9
+      },
+      {
+        "id": "length-2",
+        "name": "1.2 meters",
+        "value": 1.2
+      },
+      {
+        "id": "length-3",
+        "name": "0.002 kilometers",
+        "value": 2
+      },
+      {
+        "id": "length-4",
+        "name": "250 centimeters",
+        "value": 2.5
+      },
+      {
+        "id": "length-5",
+        "name": "0.004 kilometers",
+        "value": 4
+      }
+    ]
+  },
+  {
+    "id": "mass",
+    "name": "Mixed weights, lightest first",
+    "unit": "grams",
+    "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "mass-0",
+        "name": "750 milligrams",
+        "value": 0.75
+      },
+      {
+        "id": "mass-1",
+        "name": "0.002 kilograms",
+        "value": 2
+      },
+      {
+        "id": "mass-2",
+        "name": "35 grams",
+        "value": 35
+      },
+      {
+        "id": "mass-3",
+        "name": "0.08 kilograms",
+        "value": 80
+      },
+      {
+        "id": "mass-4",
+        "name": "125 grams",
+        "value": 125
+      },
+      {
+        "id": "mass-5",
+        "name": "0.4 kilograms",
+        "value": 400
+      }
+    ]
+  },
+  {
+    "id": "duration",
+    "name": "Durations, shortest first",
+    "unit": "seconds",
+    "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "duration-0",
+        "name": "90 seconds",
+        "value": 90
+      },
+      {
+        "id": "duration-1",
+        "name": "2 minutes",
+        "value": 120
+      },
+      {
+        "id": "duration-2",
+        "name": "0.05 hours",
+        "value": 180
+      },
+      {
+        "id": "duration-3",
+        "name": "7 minutes",
+        "value": 420
+      },
+      {
+        "id": "duration-4",
+        "name": "0.25 hours",
+        "value": 900
+      },
+      {
+        "id": "duration-5",
+        "name": "20 minutes",
+        "value": 1200
+      }
+    ]
+  },
+  {
+    "id": "volume",
+    "name": "Mixed volumes, smallest first",
+    "unit": "milliliters",
+    "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "volume-0",
+        "name": "0.09 liters",
+        "value": 90
+      },
+      {
+        "id": "volume-1",
+        "name": "125 milliliters",
+        "value": 125
+      },
+      {
+        "id": "volume-2",
+        "name": "0.2 liters",
+        "value": 200
+      },
+      {
+        "id": "volume-3",
+        "name": "350 milliliters",
+        "value": 350
+      },
+      {
+        "id": "volume-4",
+        "name": "0.75 liters",
+        "value": 750
+      },
+      {
+        "id": "volume-5",
+        "name": "1.25 liters",
+        "value": 1250
+      }
+    ]
+  },
+  {
+    "id": "area",
+    "name": "Areas, smallest first",
+    "unit": "square meters",
+    "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "area-0",
+        "name": "8,000 square centimeters",
+        "value": 0.8
+      },
+      {
+        "id": "area-1",
+        "name": "1.5 square meters",
+        "value": 1.5
+      },
+      {
+        "id": "area-2",
+        "name": "30,000 square centimeters",
+        "value": 3
+      },
+      {
+        "id": "area-3",
+        "name": "0.001 hectares",
+        "value": 10
+      },
+      {
+        "id": "area-4",
+        "name": "0.005 hectares",
+        "value": 50
+      },
+      {
+        "id": "area-5",
+        "name": "120 square meters",
+        "value": 120
+      }
+    ]
+  },
+  {
+    "id": "speed",
+    "name": "Speeds, slowest first",
+    "unit": "meters per second",
+    "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "speed-0",
+        "name": "18 km/h",
+        "value": 5
+      },
+      {
+        "id": "speed-1",
+        "name": "8 meters/second",
+        "value": 8
+      },
+      {
+        "id": "speed-2",
+        "name": "36 km/h",
+        "value": 10
+      },
+      {
+        "id": "speed-3",
+        "name": "15 meters/second",
+        "value": 15
+      },
+      {
+        "id": "speed-4",
+        "name": "72 km/h",
+        "value": 20
+      },
+      {
+        "id": "speed-5",
+        "name": "25 meters/second",
+        "value": 25
+      }
+    ]
+  },
+  {
+    "id": "prefix",
+    "name": "SI prefixes, smallest multiplier first",
+    "unit": "multiplier",
+    "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "prefix-0",
+        "name": "micro",
+        "value": 1e-06
+      },
+      {
+        "id": "prefix-1",
+        "name": "milli",
+        "value": 0.001
+      },
+      {
+        "id": "prefix-2",
+        "name": "centi",
+        "value": 0.01
+      },
+      {
+        "id": "prefix-3",
+        "name": "deci",
+        "value": 0.1
+      },
+      {
+        "id": "prefix-4",
+        "name": "kilo",
+        "value": 1000
+      },
+      {
+        "id": "prefix-5",
+        "name": "mega",
+        "value": 1000000
+      },
+      {
+        "id": "prefix-6",
+        "name": "giga",
+        "value": 1000000000
+      }
+    ]
+  },
+  {
+    "id": "computer",
+    "name": "Binary storage sizes, smallest first",
+    "unit": "bytes",
+    "source": "https://www.nist.gov/pml/owm/metric-si/prefixes-binary-multiples",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "computer-0",
+        "name": "512 bytes",
+        "value": 512
+      },
+      {
+        "id": "computer-1",
+        "name": "1 KiB",
+        "value": 1024
+      },
+      {
+        "id": "computer-2",
+        "name": "8 KiB",
+        "value": 8192
+      },
+      {
+        "id": "computer-3",
+        "name": "1 MiB",
+        "value": 1048576
+      },
+      {
+        "id": "computer-4",
+        "name": "4 MiB",
+        "value": 4194304
+      },
+      {
+        "id": "computer-5",
+        "name": "1 GiB",
+        "value": 1073741824
+      }
+    ]
+  },
+  {
+    "id": "polygons",
+    "name": "Polygons by number of sides",
+    "unit": "sides",
+    "source": "https://mathworld.wolfram.com/Polygon.html",
+    "explanation": "Values are shown in a common unit after you answer.",
+    "items": [
+      {
+        "id": "polygons-0",
+        "name": "Triangle",
+        "value": 3
+      },
+      {
+        "id": "polygons-1",
+        "name": "Pentagon",
+        "value": 5
+      },
+      {
+        "id": "polygons-2",
+        "name": "Hexagon",
+        "value": 6
+      },
+      {
+        "id": "polygons-3",
+        "name": "Heptagon",
+        "value": 7
+      },
+      {
+        "id": "polygons-4",
+        "name": "Octagon",
+        "value": 8
+      },
+      {
+        "id": "polygons-5",
+        "name": "Nonagon",
+        "value": 9
+      },
+      {
+        "id": "polygons-6",
+        "name": "Dodecagon",
+        "value": 12
+      }
+    ]
+  },
+  {
+    "id": "fractions",
+    "name": "Fractions, lowest value first",
+    "unit": "",
+    "source": "https://mathworld.wolfram.com/Fraction.html",
+    "explanation": "Compare the fractions by dividing the numerator by the denominator.",
+    "items": [
+      {
+        "id": "fractions-0",
+        "name": "1/8",
+        "value": 0.125
+      },
+      {
+        "id": "fractions-1",
+        "name": "2/9",
+        "value": 0.2222222222222222
+      },
+      {
+        "id": "fractions-2",
+        "name": "3/10",
+        "value": 0.3
+      },
+      {
+        "id": "fractions-3",
+        "name": "2/5",
+        "value": 0.4
+      },
+      {
+        "id": "fractions-4",
+        "name": "5/9",
+        "value": 0.5555555555555556
+      },
+      {
+        "id": "fractions-5",
+        "name": "7/10",
+        "value": 0.7
+      },
+      {
+        "id": "fractions-6",
+        "name": "4/5",
+        "value": 0.8
+      }
+    ]
+  },
+  {
+    "id": "tall-buildings",
+    "name": "Skyscrapers by architectural height",
+    "unit": "meters",
+    "source": "https://www.skyscrapercenter.com/explore-data",
+    "items": [
+      {
+        "id": "tall-buildings-0",
+        "name": "Shanghai World Financial Center",
+        "value": 492
+      },
+      {
+        "id": "tall-buildings-1",
+        "name": "One World Trade Center",
+        "value": 541.3
+      },
+      {
+        "id": "tall-buildings-2",
+        "name": "Lotte World Tower",
+        "value": 554.5
+      },
+      {
+        "id": "tall-buildings-3",
+        "name": "Ping An Finance Center",
+        "value": 599.1
+      },
+      {
+        "id": "tall-buildings-4",
+        "name": "Makkah Royal Clock Tower",
+        "value": 601
+      },
+      {
+        "id": "tall-buildings-5",
+        "name": "Shanghai Tower",
+        "value": 632
+      },
+      {
+        "id": "tall-buildings-6",
+        "name": "Burj Khalifa",
+        "value": 828
+      }
+    ]
+  },
+  {
+    "id": "space-launches",
+    "name": "Space missions by launch year",
+    "unit": "CE",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/chronology.html",
+    "items": [
+      {
+        "id": "space-launches-0",
+        "name": "Sputnik 1",
+        "value": 1957
+      },
+      {
+        "id": "space-launches-1",
+        "name": "Vostok 1 (Yuri Gagarin)",
+        "value": 1961
+      },
+      {
+        "id": "space-launches-2",
+        "name": "Apollo 11",
+        "value": 1969
+      },
+      {
+        "id": "space-launches-3",
+        "name": "Voyager 1",
+        "value": 1977
+      },
+      {
+        "id": "space-launches-4",
+        "name": "Space Shuttle Columbia (STS-1)",
+        "value": 1981
+      },
+      {
+        "id": "space-launches-5",
+        "name": "Hubble Space Telescope",
+        "value": 1990
+      }
+    ]
+  },
+  {
+    "id": "race-distance",
+    "name": "Running events by race distance",
+    "unit": "meters",
+    "source": "https://worldathletics.org/disciplines/road-running/half-marathon",
+    "items": [
+      {
+        "id": "race-distance-0",
+        "name": "400 meters",
+        "value": 400
+      },
+      {
+        "id": "race-distance-1",
+        "name": "1,500 meters",
+        "value": 1500
+      },
+      {
+        "id": "race-distance-2",
+        "name": "5K",
+        "value": 5000
+      },
+      {
+        "id": "race-distance-3",
+        "name": "10K",
+        "value": 10000
+      },
+      {
+        "id": "race-distance-4",
+        "name": "Half marathon",
+        "value": 21097.5
+      },
+      {
+        "id": "race-distance-5",
+        "name": "Marathon",
+        "value": 42195
+      }
+    ]
+  }
+]

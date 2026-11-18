@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#1c1d1f">
+  <meta name="description" content="Race the clock in all sixteen dailyo games.">
+  <title>Rush | dailyo</title>
+  <link rel="stylesheet" href="/games/world.css">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/daily/feed.css">
+</head>
+<body class="daily-feed rush-feed">
+  <header class="site-masthead feed-header">
+    <a class="site-brand" href="/">dailyo</a>
+    <h1><a href="/rush/" data-game-mark="rush">Rush</a></h1>
+    <a class="feed-link" href="/daily/" data-game-mark="daily" aria-label="Daily Feed" title="Daily Feed"><span class="daily-link-name">Daily Feed</span></a>
+    <details class="feed-directory">
+      <summary>Games</summary>
+      <nav aria-label="Games">
+        <a href="/rush/trainrot/" data-game-mark="trainrot">trainrot</a>
+        <a href="/rush/flagrot/" data-game-mark="flagrot">flagrot</a>
+        <a href="/rush/langrot/" data-game-mark="langrot">langrot</a>
+        <a href="/rush/vocabulary/" data-game-mark="vocabulary">Vocabulary</a>
+        <a href="/rush/maprot/" data-game-mark="maprot">maprot</a>
+        <a href="/rush/yearrot/" data-game-mark="yearrot">yearrot</a>
+        <a href="/rush/borderrot/" data-game-mark="borderrot">borderrot</a>
+        <a href="/rush/ladderrot/" data-game-mark="ladderrot">ladderrot</a>
+        <a href="/rush/cluerot/" data-game-mark="cluerot">cluerot</a>
+        <a href="/rush/scalerot/" data-game-mark="scalerot">scalerot</a>
+        <a href="/rush/swaprot/" data-game-mark="swaprot">swaprot</a>
+              <a href="/rush/skyrot/" data-game-mark="skyrot">skyrot</a>
+        <a href="/rush/pricerot/" data-game-mark="pricerot">pricerot</a>
+        <a href="/rush/skylinerot/" data-game-mark="skylinerot">skylinerot</a>
+        <a href="/rush/zoomrot/" data-game-mark="zoomrot">zoomrot</a>
+        <a href="/rush/orderrot/" data-game-mark="orderrot">orderrot</a>
+</nav>
+    </details>
+  </header>
+  <main class="feed-body">
+    <div id="feed-game"></div>
+    <section class="main result" id="feed-recap" hidden>
+      <div class="feed-recap-heading">
+        <h2 tabindex="-1">Rush recap</h2>
+        <button class="secondary" type="button" id="rush-copy">Copy results</button>
+      </div>
+      <p id="rush-copy-status" role="status"></p>
+      <textarea id="rush-copy-text" aria-label="Rush results to copy" rows="6" readonly hidden></textarea>
+      <p id="rush-score"></p>
+      <p id="rush-personal-best"></p>
+      <ul id="feed-results"></ul>
+      <button class="primary" type="button" id="rush-replay">Play again</button>
+    </section>
+  </main>
+  <footer class="feed-actions" hidden>
+    <p id="rush-status" role="status" tabindex="-1"></p>
+    <div class="rush-time">
+      <span class="rush-track" aria-hidden="true"><span></span></span>
+      <span class="rush-clock-icon" aria-hidden="true"></span>
+      <span id="rush-clock" role="timer" aria-label="Time left"></span>
+    </div>
+    <button class="secondary" id="rush-retry" type="button" hidden>Retry</button>
+    <button class="secondary" id="rush-next" type="button">Next game</button>
+  </footer>
+  <script type="module" src="/daily/rush.js"></script>
+</body>
+</html>
