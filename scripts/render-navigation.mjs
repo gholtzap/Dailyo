@@ -21,7 +21,7 @@ async function visit(directory){
       const route='/'+path.relative('dist',directory).split(path.sep).filter(Boolean).join('/')+'/';
       const rush=route==='//'||route.startsWith('/rush/'),daily=route==='/daily/';
       const current=games.find(([,slug])=>route===`/${slug}/`);
-      const links=games.filter(game=>rush||game!==current).map(([name,slug,description])=>`<a aria-label="${name} ${description}" aria-description="${description}${rush?' in Rush':' · Daily and Practice'}" href="${rush?`/rush/${name.toLowerCase()}/`:`/${slug}/`}"><span>${name}</span><small>${description}</small></a>`).join('\n          ');
+      const links=games.filter(game=>rush||game!==current).map(([name,slug,description])=>`<a aria-description="${description}${rush?' in Rush':' · Daily and Practice'}" href="${rush?`/rush/${name.toLowerCase()}/`:`/${slug}/`}"><span>${name}</span> <small>${description}</small></a>`).join('\n          ');
       const header=`<header class="site-masthead${rush||daily?' feed-header':''}${daily?' daily-header':''}">
     <a class="site-brand" href="/">dailyo</a>
     <nav class="site-modes" aria-label="Play mode">
