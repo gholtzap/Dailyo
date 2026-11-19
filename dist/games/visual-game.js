@@ -179,8 +179,18 @@ function reveal(q, a, review = false) {
             list.append(el('li', `${item.name} — ${formatOrderValue(item.value, q.item.unit)} ${q.item.unit ?? ''}`));
         content.append(el('p', 'Correct order, from lowest to highest:'), list);
     }
-    else
+    else {
         content.append(el('p', `Answer: ${q.item.name}`));
+        if (review) {
+            const image = el('img', undefined, 'review-photo');
+            image.src = q.item.image;
+            image.alt = q.item.name;
+            image.loading = 'lazy';
+            image.onerror = () => image.replaceWith(el('p', 'The photograph could not load.'));
+            const guesses = a.guesses.map(id => q.options.find(option => option.id === id)?.name).filter(Boolean);
+            content.append(image, el('p', guesses.length ? `Your ${guesses.length === 1 ? 'guess' : 'guesses'}: ${guesses.join(', ')}` : 'Your answer: Answer shown'));
+        }
+    }
     if (q.item.explanation)
         content.append(el('p', q.item.explanation));
     content.append(source(q.item));
@@ -308,7 +318,8 @@ function drawResults() {
         li.append(details);
         review.append(li);
     }
-    quiz.append(el('h3', 'Review answers'), review);
+    const reviewTitle = el('h3', 'Review answers');
+    quiz.append(reviewTitle, review);
     if (mode === 'daily') {
         const rank = el('div', undefined, 'daily-rank');
         void showRank(rank, { game, day, puzzle: visualPuzzle(s.questions), answers: s.answers.map(a => ({ ...a })) }, score);
@@ -348,7 +359,8 @@ function drawResults() {
             else
                 selectMode('practice');
         }, 'primary'));
-        quiz.append(actions, status);
+        quiz.insertBefore(actions, reviewTitle);
+        quiz.insertBefore(status, reviewTitle);
     }
     reportDaily('complete', `${score} / 500 points`, day);
 }
