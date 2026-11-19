@@ -125,7 +125,9 @@ function drawPlaying({ puzzle, state }) {
     if (puzzle.game === 'ladderrot') {
         const heading = el('h2', `${puzzle.start.toUpperCase()} to ${puzzle.goal.toUpperCase()}`);
         const chain = list(state.path.map(word => word.toUpperCase()), 'Your word ladder', 'rot-chain ladder-chain');
-        const text = el('p', `${state.moves.length} moves · ${puzzle.solution.length - 1} minimum`, 'extra-metric');
+        const text = el('p', `${state.moves.length} ${state.moves.length === 1 ? 'move' : 'moves'} · ${puzzle.solution.length - 1} minimum`, 'extra-metric');
+        if (state.path.length > 1 && rushRound === null)
+            actions.append(button('Undo last word', () => move('undo')));
         actions.append(button('Show solution', () => move(null)));
         return [heading, text, chain, form('Next word', 'text', 'Add word', input => input.value.trim().toLowerCase(), feedback, 'Enter a new four-letter word that changes exactly one letter.'), feedback, actions];
     }
@@ -173,7 +175,18 @@ function result({ puzzle, state }) {
         content.push(el('p', state.score === null ? answer : `Your estimate: ${number(state.moves[0])} ${puzzle.unit}. ${answer}`, 'rot-feedback'), el('p', puzzle.explanation, 'rot-feedback'));
     }
     else if (puzzle.game === 'ladderrot') {
-        content.push(el('p', `Fewest possible moves: ${puzzle.solution.length - 1}`, 'rot-feedback'), list((state.score === null ? puzzle.solution : state.path).map(word => word.toUpperCase()), state.score === null ? 'Shortest solution' : 'Your word ladder', 'rot-chain ladder-chain'));
+        const minimum = puzzle.solution.length - 1;
+        content.push(el('p', `Fewest possible moves: ${minimum}`, 'rot-feedback'));
+        if (state.score !== null) {
+            content.push(el('h3', 'Your ladder', 'solution-label'), list(state.path.map(word => word.toUpperCase()), 'Your word ladder', 'rot-chain ladder-chain'));
+            if (state.score === minimum)
+                content.push(el('p', 'You found a shortest solution.', 'rot-feedback'));
+            const review = el('details', undefined, 'solution-review');
+            review.append(el('summary', 'See a shortest solution'), list(puzzle.solution.map(word => word.toUpperCase()), 'Shortest solution', 'rot-chain ladder-chain'));
+            content.push(review);
+        }
+        else
+            content.push(list(puzzle.solution.map(word => word.toUpperCase()), 'Shortest solution', 'rot-chain ladder-chain'));
     }
     else if (puzzle.game === 'cluerot')
         content.push(el('p', puzzle.answer, 'rot-feedback'));

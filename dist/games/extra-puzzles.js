@@ -105,6 +105,12 @@ export function initialExtra(game, puzzle) {
     return state;
 }
 export function stepExtra(game, puzzle, state, move) {
+    // Undo removes the last accepted step, so the saved move list remains replayable.
+    if (puzzle.game === 'ladderrot' && state.phase === 'playing' && move === 'undo') {
+        if (state.path.length < 2)
+            return state;
+        return { ...state, moves: state.moves.slice(0, -1), path: state.path.slice(0, -1) };
+    }
     if (state.phase !== 'playing' || state.moves.length >= moveLimit)
         return state;
     if (typeof move !== 'string' && typeof move !== 'number' && move !== null)

@@ -1,5 +1,4 @@
-import {worldDailyChallenge} from '../src/world.js';
-import type {WorldCity} from '../src/world.js';
+import type {WorldCity} from '../src/types.js';
 import {visualGames, isVisualGame, prepareVisual, visualSet, visualPuzzle, gradeVisual} from '../src/games/visual-puzzles.js';
 import type {VisualGame, VisualItem, VisualQuestion} from '../src/games/visual-puzzles.js';
 import type {IncomingMessage, ServerResponse} from 'node:http';
@@ -11,7 +10,7 @@ import {randomUUID} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import pg from 'pg';
 import {createRouter, MAX_GUESSES, transition} from '../src/router.js';
-import {dailyDate, dailyChallenge, quizDeck, quizOptions, quizPuzzle, trainPuzzle} from '../src/daily/puzzles.js';
+import {dailyDate, dailyChallenge, worldDailyChallenge, quizDeck, quizOptions, quizPuzzle, trainPuzzle} from '../src/daily/puzzles.js';
 import {makeSet, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreSet} from '../src/games/rot-puzzles.js';
 
 import {

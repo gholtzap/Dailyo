@@ -127,6 +127,21 @@ The 97 additional frozen networks and their puzzle decks are bundled in `dist/wo
 
 GTFS imports use daytime service patterns and scheduled running times. Published topology snapshots use an explicit distance-based timing model. The source and timing model are available in How to play, `/trainrot-world/sources/`, and the network JSON. Maps are schematic. No transit source is contacted while someone plays.
 
-Run `npm run build`, `npm run test:world`, `node tests/world-ranking.mjs`, and `npm run test:e2e:world` to validate the expansion. The browser test defaults to `http://localhost:4175`; serve `dist/` on that port or set `TRAINROT_TEST_URL`. Browser QA intercepts ranking submissions; server replay tests do not write to the database.
+Run `npm run build`, `npm run test:world`, `node tests/world-ranking.mjs`, `npm run test:e2e:world`, and `npm run lint:ui:world` to validate the expansion. The browser test defaults to `http://127.0.0.1:4175`; serve `dist/` on that port or set `TRAINROT_TEST_URL`. Browser QA intercepts ranking submissions; server replay tests do not write to the database.
 
 To rebuild source data, run `node scripts/rebuild-world.mjs` with Python 3, Node and network access. `scripts/world-source-plan.json` records each selected source; `scripts/world-snapshot-version.json` pins the published snapshot revision. Raw downloads stay in ignored `.cache/world/`. Rebuilding from current agency feeds can change data versions. Normal builds validate the frozen bundles and do not download worldwide feeds. The hosted NYC input follows the existing private-Blob production build process.
+
+## Practice difficulty and puzzle review
+
+skyrot, skylinerot, zoomrot, and yearrot offer Easy, Standard, and Hard in Practice.
+Each level keeps its own progress, including after a reload. Daily and Rush use the
+shared Standard puzzle; practice difficulty does not change daily rankings.
+Hard photo rounds use tighter crops and curated lookalikes. Hard timelines use
+nearby dated events without exposing a later question's answer.
+
+Photo hints show the scoring change before you use them (100 → 65 → 35 points).
+Word ladders let you undo the last word while playing and inspect a shortest
+solution after finishing. Subway results show your submitted itinerary first;
+when another route ties it, the result explains the tie and offers the alternative.
+Country search accepts words within a name, country codes, and familiar aliases
+such as DRC, Ivory Coast, and UK.

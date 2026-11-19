@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {chromium} from 'playwright';
-const base=process.env.TRAINROT_TEST_URL??'http://localhost:4175';
+const base=process.env.TRAINROT_TEST_URL??'http://127.0.0.1:4175';
 const cities=JSON.parse(fs.readFileSync(new URL('../scripts/world-cities.json',import.meta.url)));
 const browser=await chromium.launch({args:['--no-proxy-server']});
 const selected=new Set([...(process.env.WORLD_TEST_CITIES??'').split(',').filter(Boolean),...process.argv.slice(2)]);

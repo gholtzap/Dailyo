@@ -8,6 +8,7 @@ export interface Station { id: string; name: string; label: string; area: string
 export interface Pattern { route: string; stations: string[]; seconds: number[]; geometry: Coordinate[]; offsets: number[]; headsign: string }
 export interface Walk { from: string; to: string; seconds: number; fareControl?: boolean }
 export interface City { slug: string; name: string; country: string; lat: number; lon: number }
+export interface WorldCity extends City {feedVersion: string; stations: number; lines: number; source?: string; license?: string; attribution?: string[]; timeModel?: string}
 export interface Network {
   metadata: { feedVersion: string; transferSeconds: number; mapName?: string; city?: City; source?: string; model?: string; timeModel?: string; attribution?: string[] };
   stations: Record<string, Station>;

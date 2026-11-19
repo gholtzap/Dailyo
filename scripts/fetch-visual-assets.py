@@ -42,6 +42,8 @@ for game,deck in DECKS.items():
   except Exception as error:
    failures.append((game,id,str(error)));print(f'FAILED {game}/{id}: {error}',flush=True)
  for row in rows:
+  for field in ('focus','detailFocus','distractors','lookalikes'):
+   if field in previous.get(row['id'],{}):row[field]=previous[row['id']][field]
   if game=='skyrot' and row['id']=='rio':row['focus']=[35,30]
   if game=='skyrot' and row['id']=='london':row['credit']='NASA/GSFC/METI/ERSDAC/JAROS and U.S./Japan ASTER Science Team'
  path.write_text(json.dumps(rows,indent=2,ensure_ascii=False)+'\n')

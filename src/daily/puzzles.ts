@@ -69,3 +69,9 @@ export function quizOptions(items: QuizItem[],kind: string,item: QuizItem,seed: 
 export const quizDeck=(items: QuizItem[],kind: string,day: string)=>shuffle(items,`daily:${kind}:${day}`).slice(0,5);
 export const quizPuzzle=(deck: QuizItem[])=>JSON.stringify(deck.map(item=>item.id));
 export const trainPuzzle=(network: Network,challenge: Challenge)=>JSON.stringify([network.metadata.feedVersion,challenge.from,challenge.to]);
+
+export function worldDailyChallenge(challenges: Challenge[],date: string,slug: string){
+ const deck=seededDeck(`trainrot-world-daily-v1:${slug}`,challenges);
+ const day=Math.floor(Date.parse(date+'T00:00:00Z')/86400000);
+ return deck[((day%deck.length)+deck.length)%deck.length];
+}

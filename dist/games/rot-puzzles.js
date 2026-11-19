@@ -72,14 +72,27 @@ export function preparePuzzles(kind, raw) {
         throw new Error('No land routes');
     return { kind: 'borderrot', graph, items };
 }
-export function makeSet(kind, data, seed, offset = 0) {
+export function makeSet(kind, data, seed, offset = 0, difficulty = 'standard') {
     const deck = shuffle(data.items, seed);
     const questions = deck.slice(offset, offset + roundCount);
     if (kind === 'yearrot') {
         const anchors = [0, 1].map(index => deck[(offset + questions.length + index) % deck.length]);
-        return questions.map((event, index) => ({
-            event, timeline: [...anchors, ...questions.slice(0, index)].sort((a, b) => a[0] - b[0]),
-        }));
+        return questions.map((event, index) => {
+            const previous = questions.slice(0, index);
+            if (difficulty === 'standard')
+                return { event, timeline: [...anchors, ...previous].sort((a, b) => a[0] - b[0]) };
+            const available = data.items.filter(row => !questions.some(q => q[0] === row[0])).sort((a, b) => a[0] - b[0]);
+            let selected;
+            if (difficulty === 'easy') {
+                selected = [available[Math.floor((available.length - 1) * .25)], available[Math.ceil((available.length - 1) * .75)]];
+            }
+            else {
+                const before = available.filter(row => row[0] < event[0]).at(-1);
+                const after = available.find(row => row[0] > event[0]);
+                selected = before && after ? [before, after] : [...available].sort((a, b) => Math.abs(a[0] - event[0]) - Math.abs(b[0] - event[0])).slice(0, 2);
+            }
+            return { event, timeline: [...selected, ...previous].sort((a, b) => a[0] - b[0]) };
+        });
     }
     if (kind === 'borderrot') {
         return questions.map((route, index) => (index % 2 ? [...route].reverse() : route));

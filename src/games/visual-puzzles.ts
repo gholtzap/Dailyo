@@ -1,15 +1,16 @@
 import type {JsonValue} from '../types.js';
 import {shuffle} from '../daily/puzzles.js';
+import type {PracticeDifficulty} from './difficulty.js';
 
 export const visualGames = ['skyrot', 'pricerot', 'skylinerot', 'zoomrot', 'orderrot'] as const;
 export type VisualGame = typeof visualGames[number];
 export type OrderItem = { id: string; name: string; value: number };
 export type VisualItem = {
   id: string; name: string; image?: string; source: string; credit?: string; license?: string;
-  explanation?: string; focus?: [number,number]; licenseUrl?: string; size?: string; retailer?: string; currency?: string; captured?: string;
+  explanation?: string; focus?: [number,number]; detailFocus?: [number,number]; distractors?: string[]; lookalikes?: string[]; licenseUrl?: string; size?: string; retailer?: string; currency?: string; captured?: string;
   cents?: number; unit?: string; items?: OrderItem[];
 };
-export interface VisualQuestion { item: VisualItem; options: VisualItem[]; tiles: OrderItem[] }
+export interface VisualQuestion { item: VisualItem; options: Pick<VisualItem, 'id' | 'name'>[]; tiles: OrderItem[] }
 export type VisualAnswer = { guesses: string[]; hint: number; price: number | null; order: string[]; skipped: boolean };
 export const isVisualGame = (value: string): value is VisualGame => visualGames.some(game => game === value);
 export const emptyAnswer = (): VisualAnswer => ({guesses: [], hint: 0, price: null, order: [], skipped: false});
@@ -24,15 +25,22 @@ export function prepareVisual(game: VisualGame, value: JsonValue): VisualItem[] 
     } else if (game === 'orderrot') {
       if (!row.items || row.items.length < 4 || new Set(row.items.map(x=>x.id)).size !== row.items.length || new Set(row.items.map(x=>x.value)).size !== row.items.length || row.items.some(x=>!x.id || !x.name || !Number.isFinite(x.value))) throw new Error('Invalid order');
     } else if (!row.image?.startsWith('/games/media/')) throw new Error('Invalid photo');
+    for (const focus of [row.focus, row.detailFocus]) if (focus && (focus.length !== 2 || focus.some(x=>!Number.isFinite(x) || x<0 || x>100))) throw new Error('Invalid crop focus');
+    if (row.lookalikes && (row.lookalikes.length !== 3 || new Set(row.lookalikes).size !== 3 || row.lookalikes.some(name=>typeof name!=='string' || !name.trim() || name.toLowerCase()===row.name.toLowerCase()))) throw new Error('Invalid lookalikes');
+    if (row.distractors && (row.distractors.length < 3 || new Set(row.distractors).size !== row.distractors.length || row.distractors.some(id=>id===row.id || !(value as VisualItem[]).some(other=>other.id===id)))) throw new Error('Invalid distractors');
   }
   return value as VisualItem[];
 }
-export function visualSet(game: VisualGame, rows: VisualItem[], seed: string, rush = false, round = 0): VisualQuestion[] {
+export function visualSet(game: VisualGame, rows: VisualItem[], seed: string, rush = false, round = 0, difficulty: PracticeDifficulty = 'standard'): VisualQuestion[] {
   const deck = shuffle(rows, `${game}:v1:${seed}`);
   const chosen = rush ? [deck[round % deck.length]!] : deck.slice(0, 5);
   return chosen.map((item, index) => {
     const token = `${seed}:${rush ? round : index}:${item.id}`;
-    const options = shuffle([item, ...shuffle(rows.filter(x=>x.id!==item.id), `${token}:others`).slice(0,3)], `${token}:options`);
+    const others = shuffle(rows.filter(x=>x.id!==item.id), `${token}:others`);
+    // Curated alternatives resemble the answer; their order is still seeded.
+    const alternatives = difficulty === 'hard' && !rush ? [...others.filter(x=>item.distractors?.includes(x.id)), ...others.filter(x=>!item.distractors?.includes(x.id))] : others;
+    const decoys = difficulty === 'hard' && !rush && item.lookalikes ? item.lookalikes.map((name,index)=>({id:`decoy:${item.id}:${index}`, name})) : alternatives.slice(0,3);
+    const options = shuffle([item, ...decoys], `${token}:options`);
     let tiles = shuffle(item.items ?? [], `${token}:tiles`).slice(0, rush ? 3 : 4);
     if (tiles.every((tile,i)=>!i || tile.value > tiles[i-1]!.value)) tiles = [...tiles].reverse();
     return {item, options, tiles};
@@ -73,3 +81,12 @@ export function gradeVisual(game: VisualGame, questions: VisualQuestion[], value
   }
   return score;
 }
+
+/** The final view always reveals the whole photograph. */
+export function photoScale(game: VisualGame, difficulty: PracticeDifficulty, view: number) {
+  const scales = game === 'zoomrot' ? {easy: [2.5, 1.6, 1], standard: [4, 2.2, 1], hard: [8, 4, 1]} :
+    game === 'skyrot' ? {easy: [1.6, 1.2, 1], standard: [2.5, 1.6, 1], hard: [5, 2.5, 1]} :
+    {easy: [1, 1, 1], standard: [1, 1, 1], hard: [2.4, 1.6, 1]};
+  return scales[difficulty][Math.max(0, Math.min(2, view))]!;
+}
+export const photoPoints = (view: number) => [100, 65, 35][Math.max(0, Math.min(2, view))]!;

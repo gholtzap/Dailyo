@@ -63,4 +63,9 @@ export function quizOptions(items, kind, item, seed) {
 export const quizDeck = (items, kind, day) => shuffle(items, `daily:${kind}:${day}`).slice(0, 5);
 export const quizPuzzle = (deck) => JSON.stringify(deck.map(item => item.id));
 export const trainPuzzle = (network, challenge) => JSON.stringify([network.metadata.feedVersion, challenge.from, challenge.to]);
+export function worldDailyChallenge(challenges, date, slug) {
+    const deck = seededDeck(`trainrot-world-daily-v1:${slug}`, challenges);
+    const day = Math.floor(Date.parse(date + 'T00:00:00Z') / 86400000);
+    return deck[((day % deck.length) + deck.length) % deck.length];
+}
 //# sourceMappingURL=puzzles.js.map

@@ -94,7 +94,7 @@ export function createMap(svg: SVGSVGElement, boroughs: Boroughs, network: Netwo
     const ax=Math.min(...points.map(p=>p[0])),ay=Math.min(...points.map(p=>p[1])),bx=Math.max(...points.map(p=>p[0])),by=Math.max(...points.map(p=>p[1]));
     const rect=svg.getBoundingClientRect();
     // Keep endpoint badges clear of the top control and bottom attribution.
-    const top=88,bottom=72,side=28;
+    const top=88,bottom=city?112:72,side=28;
     const scale=Math.min(rect.width/420,rect.height/440,
       (rect.width-2*side)/Math.max(bx-ax,1),Math.max(1,rect.height-top-bottom)/Math.max(by-ay,1));
     const width=rect.width/scale,height=rect.height/scale;
@@ -112,7 +112,7 @@ export function createMap(svg: SVGSVGElement, boroughs: Boroughs, network: Netwo
     markers.forEach(({node})=>node.remove());markers.length=0;userLayer.replaceChildren();bestLayer.replaceChildren();networkLayer.style.display='none';shownNetwork=false;
     marker(network.stations[challenge.from],'A',challenge.fromTitle,'var(--map-origin)');
     marker(network.stations[challenge.to],'B',challenge.toTitle,'#aeb3bb');fit(challenge);
-    svg.setAttribute('aria-label',`${mapName} map. Start at ${challenge.fromTitle}; finish at ${challenge.toTitle}. Subway lines are hidden.`);
+    svg.setAttribute('aria-label',`${mapName} map. Start at ${challenge.fromTitle}; finish at ${challenge.toTitle}. ${city?'Rail':'Subway'} lines are hidden.`);
   }
   function drawLegs(layer: SVGGElement,legs: Ride[],dashed=false){
     layer.replaceChildren();
@@ -128,7 +128,7 @@ export function createMap(svg: SVGSVGElement, boroughs: Boroughs, network: Netwo
   }
   function showNetwork(){
     if(shownNetwork)return;shownNetwork=true;
-    if(currentChallenge)svg.setAttribute('aria-label',`${mapName} map. Start at ${currentChallenge.fromTitle}; finish at ${currentChallenge.toTitle}. Subway lines are shown.`);
+    if(currentChallenge)svg.setAttribute('aria-label',`${mapName} map. Start at ${currentChallenge.fromTitle}; finish at ${currentChallenge.toTitle}. ${city?'Rail':'Subway'} lines are shown.`);
     networkLayer.style.display='';
     if(networkLayer.childElementCount)return;
     const seen=new Set();
@@ -143,7 +143,7 @@ export function createMap(svg: SVGSVGElement, boroughs: Boroughs, network: Netwo
     if(currentChallenge)fit(currentChallenge,points);
     svg.setAttribute('aria-label',`Route comparison on the ${mapName} map. Your route is solid; the fastest route is dashed. Train colors identify each line. Text directions appear beside the map.`);
   }
-  function filter(value: string){userLayer.style.display=value==='best'?'none':'';bestLayer.style.display=value==='yours'?'none':'';if(userLayer.childElementCount||bestLayer.childElementCount)svg.setAttribute('aria-label',value==='yours'?`Your subway route on the ${mapName} map. Open Route details for directions.`:value==='best'?`The fastest subway route on the ${mapName} map. Directions are in the result.`:`Route comparison on the ${mapName} map. Your route is solid; the fastest route is dashed. Train colors identify each line. Directions are in the result.`);}
+  function filter(value: string){userLayer.style.display=value==='best'?'none':'';bestLayer.style.display=value==='yours'?'none':'';if(userLayer.childElementCount||bestLayer.childElementCount)svg.setAttribute('aria-label',value==='yours'?`Your ${city?'rail':'subway'} route on the ${mapName} map. Open Route details for directions.`:value==='best'?`The fastest ${city?'rail':'subway'} route on the ${mapName} map. Directions are in the result.`:`Route comparison on the ${mapName} map. Your route is solid; the fastest route is dashed. Train colors identify each line. Directions are in the result.`);}
   // Idle -> pan (one pointer) -> pinch (two pointers). Rebase when fingers
   // enter or leave, so continuing with one finger never jumps to an old origin.
   const pointers=new Map<number, {x: number; y: number}>();let gesture: {view: number[]; anchor: Coordinate; distance: number} | null=null;

@@ -1,11 +1,11 @@
-import { configureWorld, describeWorldNetwork, worldDailyChallenge } from './world.js';
+import { configureWorld, describeWorldNetwork } from './world.js';
 import { required, recordValue } from './dom.js';
 import './games/help.js';
 import { createRouter, transition, formatTime, MAX_GUESSES } from './router.js';
 import { createMap } from './map.js';
 import { createRewards } from './rewards.js';
 import { dailyDate as dateToday, inFeed, reportDaily, rushRound, reportRush, onRushTimeout, startPractice, rushSeed } from './daily/bridge.js';
-import { dailyChallenge, seededDeck, trainPuzzle } from './daily/puzzles.js';
+import { dailyChallenge, seededDeck, trainPuzzle, worldDailyChallenge } from './daily/puzzles.js';
 import { showRank } from './daily/rank.js';
 const $ = required;
 const escape = (value) => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -29,7 +29,7 @@ async function start() {
         describeWorldNetwork(world, network);
     }
     const mapName = network.metadata.mapName;
-    if (mapName) {
+    if (mapName && !world) {
         const label = $('.demo-map-label');
         label.textContent = `${mapName} · Fictional network`;
         label.hidden = false;
@@ -207,7 +207,9 @@ async function start() {
     const usedRoutes = routeOrder.filter(id => network.patterns.some(p => p.route === id));
     function trainButton(id) {
         const symbol = shuttleSuffix[id] ? 'S' + shuttleSuffix[id] : routeSymbol(id);
-        return `<button type="button" aria-label="Add ${escape(world && citySlug !== 'nyc' ? routeTitle(id) : symbol)}${shuttleSuffix[id] ? ' ' + escape(routeTitle(id)) : id.endsWith('X') ? ' express' : ''} train" title="${escape(world ? routeTitle(id) : shuttleSuffix[id] ? routeTitle(id) : routeSymbol(id))}" tabindex="${id === usedRoutes[0] ? 0 : -1}" class="train-choice" data-route="${id}" ${state.legs.length >= 6 ? 'disabled' : ''}>${badge(id).replace('role="img"', 'aria-hidden="true"')}</button>`;
+        const actionName = world ? symbol : `Add ${symbol}${shuttleSuffix[id] ? ' ' + routeTitle(id) : id.endsWith('X') ? ' express' : ''} train`;
+        const content = world ? badge(id).replace('role="img"', '').replace(/ aria-label="[^"]*"/, '') : badge(id).replace('role="img"', 'aria-hidden="true"');
+        return `<button type="button" ${world ? `aria-description="Add ${escape(routeTitle(id))} train"` : `aria-label="${escape(actionName)}"`} title="${escape(world ? routeTitle(id) : shuttleSuffix[id] ? routeTitle(id) : routeSymbol(id))}" tabindex="${id === usedRoutes[0] ? 0 : -1}" class="train-choice" data-route="${id}" ${state.legs.length >= 6 ? 'disabled' : ''}>${content}</button>`;
     }
     const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
     function guessFeedback() {
@@ -242,7 +244,7 @@ async function start() {
       ${full ? '<p class="ready-note">Six trains maximum. Check your route or undo a train.</p>' : ''}
       <div class="route-actions"><button id="reveal" class="primary-button" ${state.legs.length && !same(state.guesses?.at(-1), state.legs) ? '' : 'disabled'}>Check route</button></div>
       <div class="help-actions">${mode === 'practice' ? '<button id="skip" class="hint-button">Skip</button>' : ''}<button id="show-answer" class="hint-button">Show answer</button></div>
-      ${state.assisted ? '' : `<details class="map-hint"><summary>Map hint</summary><p>Showing the map makes this journey unscored.</p><button id="hint" type="button" class="secondary-button">Show subway map</button></details>`}`;
+      ${state.assisted ? '' : `<details class="map-hint"><summary>Map hint</summary><p>Showing the map makes this journey unscored.</p><button id="hint" type="button" class="secondary-button">${world ? 'Show rail map' : 'Show subway map'}</button></details>`}`;
         const filterInput = document.querySelector('#line-search');
         function filterLines() {
             const term = lineFilter.toLocaleLowerCase();
@@ -325,9 +327,10 @@ async function start() {
         const result = submitted ? router.evaluate(c.from, c.to, state.legs) : null;
         const correct = result?.valid === true && result.seconds === answer.result.optimal?.seconds;
         state = answer;
-        map.reveal(answer.result);
-        map.filter('best');
-        planner.innerHTML = `<h2>${correct ? 'Correct' : 'Fastest route'}</h2>${ticket(c)}${resultLegs(answer.result.optimal?.legs ?? [])}`;
+        const shown = correct && result ? { ...answer.result, ...result } : answer.result;
+        map.reveal(shown);
+        map.filter(correct ? 'yours' : 'best');
+        planner.innerHTML = `<h2>${correct ? 'Correct · Your route' : 'Fastest route'}</h2>${ticket(c)}${resultLegs(correct && result ? result.legs : answer.result.optimal?.legs ?? [])}`;
         planner.scrollIntoView({ block: 'nearest' });
         reportRush('answered', correct);
     }
@@ -342,7 +345,7 @@ async function start() {
             $('#map-caption').textContent = 'Fastest route';
         const rideKey = (legs) => legs.map(({ route, from, to }) => ({ route, from, to }));
         const tied = r.valid && r.optimal && r.seconds === r.optimal.seconds && !same(rideKey(r.legs), rideKey(r.optimal.legs));
-        const subtitle = tied ? 'Your route is also a fastest route.' : displayed.assisted ? '' : r.valid ? r.score === 100 ? '' : formatTime((r.seconds ?? 0) - (r.optimal?.seconds ?? 0)) + ' slower' : displayed.skipped ? '' : r.error ?? 'Add another train to reach the destination.';
+        const subtitle = tied ? 'Your route ties the fastest time. The alternative below takes the same time.' : displayed.assisted ? '' : r.valid ? r.score === 100 ? '' : formatTime((r.seconds ?? 0) - (r.optimal?.seconds ?? 0)) + ' slower' : displayed.skipped ? '' : r.error ?? 'Add another train to reach the destination.';
         const canResume = !r.valid && !displayed.skipped && !displayed.guesses?.length && displayed.legs.length;
         const nextAction = mode === 'daily' ? '<button id="start-practice" class="secondary-button">Play practice</button>' : '<button id="next" class="primary-button next-action">Next journey</button>';
         const sequence = displayed.legs.length ? `<ol class="train-sequence result-sequence" aria-label="Your train sequence">${displayed.legs.map(l => `<li>${badge(l.route)}</li>`).join('')}</ol>` : '';
@@ -354,13 +357,13 @@ async function start() {
       ${subtitle ? `<p class="result-subtitle">${escape(subtitle)}</p>` : ''}
       ${copyControl ? '<p id="copy-status" class="share-status" role="status"></p>' : ''}
       ${ticket(c, displayed.skipped ? '' : sequence)}
-      <div class="result-route"><h3>Fastest route${r.optimal ? ` · ${formatTime(r.optimal.seconds)}` : ''}</h3>${resultLegs(r.optimal?.legs ?? [])}</div>
+      <div class="result-route primary-itinerary"><h3>${displayed.skipped ? 'Fastest route' : 'Your route'}${displayed.skipped ? r.optimal ? ` · ${formatTime(r.optimal.seconds)}` : '' : r.valid ? ` · ${formatTime(r.seconds ?? 0)}` : ' · Incomplete'}</h3>${resultLegs(displayed.skipped ? r.optimal?.legs ?? [] : r.legs)}</div>
       ${displayed.skipped ? '' : `<div class="compare-controls" role="group" aria-label="Show routes on map"><button data-view="yours" class="active" aria-pressed="true">Your route</button><button data-view="best" aria-pressed="false">Fastest route</button><button data-view="compare" aria-pressed="false">Compare</button></div>`}
       <button id="view-route-map" class="secondary-button mobile-only">View routes on map</button>
       ${nextAction}${canResume ? '<button id="resume-guessing" class="secondary-button resume-guessing">Keep guessing</button>' : ''}
-      ${displayed.skipped ? '' : `<details class="route-details"><summary>Route details</summary>
+      ${displayed.skipped ? '' : `<details class="route-details"><summary>${tied ? 'Another fastest route' : 'Route details'}</summary>
         <div class="comparison"><div class="comparison-row"><span>Your route</span><span>${displayed.skipped ? 'Not submitted' : r.valid ? formatTime(r.seconds ?? 0) : 'Incomplete'}</span></div><div class="comparison-row"><span>Fastest route</span><span>${r.optimal ? formatTime(r.optimal.seconds) : 'Unavailable'}</span></div></div>
-        ${!displayed.skipped ? `<div class="result-route"><h3>Your route</h3>${resultLegs(r.legs)}</div>` : ''}
+        <div class="result-route alternative-itinerary"><h3>${tied ? 'Another fastest route' : 'Fastest route'}${r.optimal ? ` · ${formatTime(r.optimal.seconds)}` : ''}</h3>${resultLegs(r.optimal?.legs ?? [])}</div>
         ${!displayed.assisted && r.points?.length ? `<div class="ride-points"><h3>Points by train</h3><ol>${r.points.map(p => `<li>${badge(p.route)}<span>${p.points} points</span></li>`).join('')}</ol></div>` : ''}
       </details>`}`;
         $('#view-route-map').onclick = () => { $('.map-panel').scrollIntoView({ block: 'start', behavior: 'instant' }); $('#city-map').focus({ preventScroll: true }); };

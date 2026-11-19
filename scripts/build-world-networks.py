@@ -18,15 +18,45 @@ def color(s,index):
     s=(s or '').strip().lstrip('#')
     return s.lower() if re.fullmatch('[a-fA-F0-9]{6}',s) else PALETTE[index%len(PALETTE)]
 def normalize(s): return re.sub(r'[^\w]+','',s.casefold())
+def label_stations(network):
+    """Describe homonyms with their public line names and geographic stop side."""
+    by_name=collections.defaultdict(list);by_station=collections.defaultdict(set)
+    for pattern in network['patterns']:
+        line=network['routes'][pattern['route']]
+        for sid in pattern['stations']:by_station[sid].add(line.get('title') or line['name'])
+    for station in network['stations'].values():by_name[station['name']].append(station)
+    for name,stations in by_name.items():
+        if len(stations)==1:stations[0]['label']=name;continue
+        contexts=collections.defaultdict(list)
+        for station in stations:
+            context=' / '.join(sorted(by_station[station['id']]))
+            station['label']=name+' · '+context
+            contexts[context].append(station)
+        for context,group in contexts.items():
+            if len(group)<2:continue
+            # Different platforms can have identical names and services. Name
+            # their position rather than inventing an official platform number.
+            if len(group)!=2:raise ValueError('Ambiguous station group: '+name)
+            lon_span=max(s['lon'] for s in group)-min(s['lon'] for s in group)
+            lat_span=max(s['lat'] for s in group)-min(s['lat'] for s in group)
+            axis='lon' if lon_span*math.cos(math.radians(group[0]['lat']))>lat_span else 'lat'
+            ordered=sorted(group,key=lambda station:station[axis])
+            sides=['west stop','east stop'] if axis=='lon' else ['south stop','north stop']
+            for station,side in zip(ordered,sides):station['label']+=' · '+side
+    labels=[station['label'] for station in network['stations'].values()]
+    if len(labels)!=len(set(labels)):raise ValueError('Station labels remain ambiguous')
+
 def save(city,network):
+    unknown={'onbekend','unknown','unnamed','unknown station'}
+    network['patterns']=[p for p in network['patterns'] if sum(network['stations'][sid]['name'].strip().casefold() not in unknown for sid in p['stations'])>=2]
     used={s for p in network['patterns'] for s in p['stations']}
     network['stations']={k:v for k,v in network['stations'].items() if k in used}
     routes={p['route'] for p in network['patterns']}
     network['routes']={k:v for k,v in network['routes'].items() if k in routes}
     if len(used)<3 or not routes: raise ValueError('Insufficient operating rail data')
-    names=collections.Counter(s['name'] for s in network['stations'].values())
-    for k,s in network['stations'].items():
-        s['label']=s['name']+((' · '+k) if names[s['name']]>1 else '')
+    label_stations(network)
+    network['metadata'].pop('feedVersion',None)
+    network['metadata'].pop('city',None)
     version=hashlib.sha256(json.dumps(network,sort_keys=True).encode()).hexdigest()[:12]
     network['metadata'].update(city={k:city[k] for k in ['slug','name','country','lat','lon']},feedVersion=f"world-{city['slug']}-{version}",transferSeconds=240)
     target=OUT/city['slug'];target.mkdir(parents=True,exist_ok=True)
