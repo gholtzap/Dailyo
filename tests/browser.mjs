@@ -40,7 +40,7 @@ try{
       await games.getByRole('link',{name:game,exact:true}).press('Enter');
       await page.waitForURL(url=>url.pathname===path);
       assert.equal(await page.title(),`${game} | dailyo`);
-      assert.equal(await games.locator('[aria-current="page"]').textContent(),game);
+      assert.equal(await page.locator('.site-more').getAttribute('open'),null);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     }
     await ready(page);await page.locator('#practice-mode').click();await ready(page);await inspect(page,`${prefix}-planning`);

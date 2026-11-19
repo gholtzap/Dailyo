@@ -183,7 +183,7 @@ try {
       await page.getByRole('navigation', { name: 'Games' }).getByRole('link', { name: kind, exact: true }).press('Enter');
       await page.waitForURL(url => url.pathname === `/${kind}/`);
       assert.equal(await page.title(), `${kind} | dailyo`);
-      assert.equal(await page.getByRole('link', { name: kind, exact: true }).getAttribute('aria-current'), 'page');
+      assert.equal(await page.locator('.site-more').getAttribute('open'),null);
       await page.locator('#round-title').waitFor();
       async function inspect(state) {
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${kind} ${state} overflow`);

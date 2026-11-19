@@ -10,35 +10,38 @@
   <link rel="stylesheet" href="/games/world.css">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/daily/feed.css">
+  <script type="module" src="/site.js"></script>
 </head>
 <body class="daily-feed">
   <header class="site-masthead feed-header daily-header">
     <a class="site-brand" href="/">dailyo</a>
-    <h1 class="home-star">Daily Feed</h1>
+    <nav class="site-modes" aria-label="Play mode">
+      <a href="/daily/" aria-label="Daily Feed" aria-current="page">Daily</a>
+      <a href="/rush/">Rush</a>
+    </nav>
     <p id="feed-progress" role="status" tabindex="-1"></p>
-    <details class="feed-directory">
+    <details class="site-more feed-directory">
       <summary>Games</summary>
-      <nav aria-label="Games">
-        <a href="/" data-game-mark="rush">Rush</a>
-        <a href="/trainrot/" data-game-mark="trainrot">trainrot</a>
-        <a href="/flags/" data-game-mark="flagrot">flagrot</a>
-        <a href="/languages/" data-game-mark="langrot">langrot</a>
-        <a href="/vocabulary/" data-game-mark="vocabulary">Vocabulary</a>
-        <a href="/maprot/" data-game-mark="maprot">maprot</a>
-        <a href="/yearrot/" data-game-mark="yearrot">yearrot</a>
-        <a href="/borderrot/" data-game-mark="borderrot">borderrot</a>
-        <a href="/ladderrot/" data-game-mark="ladderrot">ladderrot</a>
-        <a href="/cluerot/" data-game-mark="cluerot">cluerot</a>
-        <a href="/scalerot/" data-game-mark="scalerot">scalerot</a>
-        <a href="/swaprot/" data-game-mark="swaprot">swaprot</a>
-              <a href="/skyrot/" data-game-mark="skyrot">skyrot</a>
-        <a href="/pricerot/" data-game-mark="pricerot">pricerot</a>
-        <a href="/skylinerot/" data-game-mark="skylinerot">skylinerot</a>
-        <a href="/zoomrot/" data-game-mark="zoomrot">zoomrot</a>
-        <a href="/orderrot/" data-game-mark="orderrot">orderrot</a>
-</nav>
+      <nav class="site-more-links" aria-label="Games">
+          <a href="/trainrot/">trainrot</a>
+          <a href="/flags/">flagrot</a>
+          <a href="/languages/">langrot</a>
+          <a href="/vocabulary/">Vocabulary</a>
+          <a href="/maprot/">maprot</a>
+          <a href="/yearrot/">yearrot</a>
+          <a href="/borderrot/">borderrot</a>
+          <a href="/ladderrot/">ladderrot</a>
+          <a href="/cluerot/">cluerot</a>
+          <a href="/scalerot/">scalerot</a>
+          <a href="/swaprot/">swaprot</a>
+          <a href="/skyrot/">skyrot</a>
+          <a href="/pricerot/">pricerot</a>
+          <a href="/skylinerot/">skylinerot</a>
+          <a href="/zoomrot/">zoomrot</a>
+          <a href="/orderrot/">orderrot</a>
+          <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+      </nav>
     </details>
-    <a class="site-github" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository (opens in a new tab)" title="GitHub repository"></a>
   </header>
   <main class="feed-body" aria-label="Daily games">
     <div id="feed-game"></div>

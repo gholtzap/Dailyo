@@ -19,33 +19,35 @@
 <body data-world-city="montreal">
   <header class="site-masthead">
     <a class="site-brand" href="/">dailyo</a>
-    <nav class="site-games" aria-label="Games">
-      <a class="home-star" href="/daily/">Daily Feed</a>
-      <a href="/trainrot-world/montreal/" aria-current="page" aria-label="trainrot" title="trainrot" data-game-mark="trainrot"><span class="current-game-name">trainrot world</span></a>
-      <details class="site-more">
-        <summary aria-label="More games" data-ui-tooltip="more-games-tip"><span id="more-games-tip" role="tooltip">More games</span></summary>
-        <div class="site-more-links">
-          <a href="/flags/" data-game-mark="flagrot">flagrot</a>
-          <a href="/languages/" data-game-mark="langrot">langrot</a>
-          <a href="/vocabulary/" data-game-mark="vocabulary">Vocabulary</a>
-          <a href="/maprot/" data-game-mark="maprot">maprot</a>
-          <a href="/yearrot/" data-game-mark="yearrot">yearrot</a>
-          <a href="/borderrot/" data-game-mark="borderrot">borderrot</a>
-          <a href="/ladderrot/" data-game-mark="ladderrot">ladderrot</a>
-          <a href="/cluerot/" data-game-mark="cluerot">cluerot</a>
-          <a href="/scalerot/" data-game-mark="scalerot">scalerot</a>
-          <a href="/swaprot/" data-game-mark="swaprot">swaprot</a>
-                  <a href="/skyrot/" data-game-mark="skyrot">skyrot</a>
-          <a href="/pricerot/" data-game-mark="pricerot">pricerot</a>
-          <a href="/skylinerot/" data-game-mark="skylinerot">skylinerot</a>
-          <a href="/zoomrot/" data-game-mark="zoomrot">zoomrot</a>
-          <a href="/orderrot/" data-game-mark="orderrot">orderrot</a>
-</div>
-      </details>
+    <nav class="site-modes" aria-label="Play mode">
+      <a href="/daily/" aria-label="Daily Feed">Daily</a>
+      <a href="/rush/">Rush</a>
     </nav>
-    <a class="site-github" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository (opens in a new tab)" title="GitHub repository"></a>
+
+    <details class="site-more">
+      <summary>Games</summary>
+      <nav class="site-more-links" aria-label="Games">
+          <a href="/trainrot/">trainrot</a>
+          <a href="/flags/">flagrot</a>
+          <a href="/languages/">langrot</a>
+          <a href="/vocabulary/">Vocabulary</a>
+          <a href="/maprot/">maprot</a>
+          <a href="/yearrot/">yearrot</a>
+          <a href="/borderrot/">borderrot</a>
+          <a href="/ladderrot/">ladderrot</a>
+          <a href="/cluerot/">cluerot</a>
+          <a href="/scalerot/">scalerot</a>
+          <a href="/swaprot/">swaprot</a>
+          <a href="/skyrot/">skyrot</a>
+          <a href="/pricerot/">pricerot</a>
+          <a href="/skylinerot/">skylinerot</a>
+          <a href="/zoomrot/">zoomrot</a>
+          <a href="/orderrot/">orderrot</a>
+          <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+      </nav>
+    </details>
   </header>
-  
+
   <div class="site-header">
     <div class="game-modes" role="group" aria-label="Game mode"><button id="daily-mode" aria-pressed="true">Daily</button><button id="practice-mode" aria-pressed="false">Practice</button></div>
     <label class="difficulty-control">Difficulty <select id="difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>

@@ -18,17 +18,18 @@ try{
     const menu=other.locator('.feed-directory summary, .site-more summary');
     const games=other.getByRole('navigation',{name:'Games'});
     if(route!=='/daily/'){
-     assert.equal(await games.getByRole('link').count(),2);
+     assert.equal(await games.isVisible(),false);
      await menu.press('Enter');
      await games.getByRole('link',{name:'Vocabulary',exact:true}).waitFor();
      await other.keyboard.press('Escape');
-     assert.equal(await games.getByRole('link').count(),2);
+     assert.equal(await games.isVisible(),false);
      assert.equal(await menu.evaluate(element=>element===document.activeElement),true);
     }
     await menu.click();
     await other.getByRole('link',{name:'Vocabulary',exact:true}).click();
     await other.locator('.vocabulary-word').waitFor();
-    assert.equal(await other.getByRole('link',{name:'Vocabulary',exact:true}).getAttribute('aria-current'),'page');
+    assert.equal(await other.title(),'Vocabulary | dailyo');
+    assert.equal(await other.locator('.site-more').getAttribute('open'),null);
    }
   }
   const content=async p=>kind==='flags'?await p.locator('.flag').getAttribute('src'):await p.locator(kind==='vocabulary'?'.vocabulary-word':'.sample').innerText();
@@ -104,6 +105,7 @@ try{
   const src=await exhaustive.locator('.flag').getAttribute('src'),id=decodeURIComponent(src.split('/').at(-1).replace('.svg',''));
   if(i<flags.length){assert.ok(!seen.has(id),`Repeated ${id} before the deck ended`);seen.add(id);}else assert.notEqual(id,previous,'The next deck should not repeat the last flag');
   previous=id;const correct=flags.find(f=>f.id===id).name;await exhaustive.getByRole('button',{name:correct,exact:true}).click();await exhaustive.locator('#next').click();
+  await exhaustive.waitForFunction(previous=>document.querySelector('.flag')?.getAttribute('src')!==previous,src);
  }
  assert.equal(seen.size,flags.length);assert.equal(await exhaustive.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);console.log('Practice covers every flag before repeating');await exhaustive.close();
  for(const action of ['answer','advance']){
