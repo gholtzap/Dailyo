@@ -33,7 +33,11 @@ try {
     if(width===1440){const main=await page.frameLocator('iframe:not(.feed-loading)').locator('.main').boundingBox();assert.ok(Math.abs(main.x-status.x)<=1,'Rush puzzle and status share a left edge');}
    }
    const header=page.locator('.site-masthead');
-   await header.getByRole('link',{name:'Daily Feed',exact:true}).waitFor();
+   const dailyLink=header.getByRole('link',{name:'Daily mix',exact:true});
+   await dailyLink.waitFor();
+   assert.equal(await dailyLink.textContent(),'Daily mix');
+   if(route==='/daily/')assert.equal(await dailyLink.getAttribute('aria-current'),'page');
+   if(route==='/zoomrot/')assert.equal(await page.locator('#daily').getAttribute('aria-pressed'),'true');
    await header.getByRole('link',{name:'Rush',exact:true}).waitFor();
    assert.equal(await header.locator('.site-github').count(),0);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow');

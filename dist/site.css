@@ -129,3 +129,8 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 
 .answer-review .review-flag { display: block; width: 96px; height: 64px; object-fit: contain; margin: 8px; }
 .answer-review .review-sample { overflow-wrap: anywhere; }
+
+@media (max-width: 440px) {
+  .daily-header { flex-wrap: wrap; }
+  .daily-header #feed-progress { order: 4; flex-basis: 100%; text-align: right; }
+}

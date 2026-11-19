@@ -4,7 +4,7 @@
 
 [Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all sixteen games. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout keeps the answer visible until you choose Next game (or See recap). Timed rounds pause when the tab is hidden; choose Resume when you return. You can also pause a timed round yourself. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
 
-[Daily Feed](https://trainrot.vercel.app/daily/) plays all sixteen daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
+[Daily mix](https://trainrot.vercel.app/daily/) plays all sixteen daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
 
 [trainrot](https://trainrot.vercel.app/trainrot/) is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 

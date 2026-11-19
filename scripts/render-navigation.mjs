@@ -16,7 +16,7 @@ async function visit(directory){
       const header=`<header class="site-masthead${rush||daily?' feed-header':''}${daily?' daily-header':''}">
     <a class="site-brand" href="/">dailyo</a>
     <nav class="site-modes" aria-label="Play mode">
-      <a href="/daily/" aria-label="Daily Feed"${daily?' aria-current="page"':''}>Daily</a>
+      <a href="/daily/" aria-label="Daily mix"${daily?' aria-current="page"':''}>Daily mix</a>
       <a href="/rush/"${rush?' aria-current="page"':''}>Rush</a>
     </nav>
     ${daily?'<p id="feed-progress" role="status" tabindex="-1"></p>':''}
