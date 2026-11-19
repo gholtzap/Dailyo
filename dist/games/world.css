@@ -15,3 +15,5 @@
 .choices + #next{margin-top:16px}
 
 .choice-mark { font-size: 12px; }
+
+.progress-dot.current, .progress-dot.upcoming { color: var(--ink); }

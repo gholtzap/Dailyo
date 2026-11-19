@@ -150,3 +150,5 @@
 
 .rot-actions .reveal-answer { flex: 0 1 auto; width: auto; min-height: 44px; padding: 8px 12px; border: 0; background: transparent; color: var(--muted); text-align: left; }
 .rot-actions .reveal-answer:hover { background: #202124; color: var(--ink); }
+
+.solution-label { font-size: 14px; }
