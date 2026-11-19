@@ -457,8 +457,10 @@ async function start() {
         const index = position % roundCount;
         const question = makeSet(kind, data, seed, position - index)[index];
         sessions.daily = { questions: [question], state: newSession(seed) };
-        if (mapGame)
-            quiz.closest('main').querySelector('.heading p').textContent = 'Place your pin within 500 km.';
+        if (mapGame) {
+            const rule = element('p', 'Place your pin within 500 km.', 'rush-rule');
+            quiz.closest('main').querySelector('.heading').append(rule);
+        }
         onRushTimeout(() => {
             const session = sessions.daily;
             if (phase(session.state) !== 'guess')

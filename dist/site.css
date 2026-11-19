@@ -292,3 +292,14 @@ a[data-game-mark="orderrot"]::before { content: "↕"; background: #3b4b46; colo
   .site-modes a, .site-masthead .site-more summary { padding-inline: 8px; }
   .feed-header:has(.feed-directory[open]) { padding-bottom: 8px; }
 }
+
+/* Quiet game identity, followed immediately by the current puzzle. */
+.main { padding-top: 24px; }
+.heading { min-height: 40px; margin-bottom: 16px; display: flex; align-items: center; }
+.heading .game-title { margin: 0; color: var(--muted); font-size: 16px; font-weight: 400; line-height: 24px; }
+.heading .rush-rule { margin: 0 0 0 16px; font-size: 13px; }
+.modes { gap: 8px; padding-bottom: 0; border-bottom: 0; margin-bottom: 24px; }
+.modes button { min-height: 40px; padding: 8px 12px; }
+[data-daily-feed] .main { padding-top: 16px; }
+[data-rush] .rot-counter:empty { display: none; }
+[data-rush] .heading { margin-bottom: 16px; }

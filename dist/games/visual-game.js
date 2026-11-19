@@ -189,7 +189,7 @@ function drawQuestion() {
     const heading = el('h2', game === 'pricerot' ? q.item.name : game === 'orderrot' ? q.item.name : game === 'zoomrot' ? 'What is this object?' : 'Which city is this?');
     heading.id = 'question-title';
     heading.tabIndex = -1;
-    quiz.append(el('p', isRush ? 'Rush · One puzzle' : `${mode === 'daily' ? day : 'Practice'} · ${s.index + 1} of ${s.questions.length}`, 'rot-counter'), heading);
+    quiz.append(el('p', isRush ? '' : `${mode === 'daily' ? 'Daily' : 'Practice'} · ${s.index + 1} of ${s.questions.length}`, 'rot-counter'), heading);
     if (q.item.image)
         quiz.append(media(q, a, complete));
     if (game === 'pricerot')
