@@ -103,7 +103,7 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 [data-rush] .rot-counter:empty { display: none; }
 [data-rush] .heading { margin-bottom: 16px; }
 
-[data-rush] .main { padding-block: 16px; }
+[data-rush] .main { max-width: 760px; padding-block: 16px; }
 [data-rush] .prompt { min-height: 0; padding: 16px; margin-bottom: 16px; }
 [data-rush] .flag { height: clamp(80px, 24dvh, 180px); }
 [data-rush] .heading { min-height: 40px; }
