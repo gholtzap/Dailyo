@@ -13,3 +13,7 @@
 .choice-mark{flex:none}
 .quiz-answer-status{position:absolute;inset-inline:0;clip-path:inset(50%);pointer-events:none}
 .choices + #next{margin-top:16px}
+
+.choice-mark { font-size: 12px; }
+
+.progress-dot.current, .progress-dot.upcoming { color: var(--ink); }

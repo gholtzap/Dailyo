@@ -50,13 +50,13 @@ try{
    await page.locator('#next').waitFor();
    assert.match(await page.locator('#answer-feedback').textContent(),i%2===0?/Correct\./:new RegExp('Correct answer:'));
    assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: ${i%2===0?'correct':'incorrect'}`);
-   assert.equal(await dots.nth(i).innerText(),i%2===0?'✓':'×');
+   assert.equal(await dots.nth(i).innerText(),String(i+1));
    assert.equal(await page.locator('.choice:disabled').count(),4);await page.reload();await page.locator('#next').waitFor({state:'visible'});
    assert.match(await page.locator('#answer-feedback').textContent(),i%2===0?/Correct\./:/Correct answer:/);
    assert.equal(await dots.nth(i).getAttribute('aria-label'),`Question ${i+1}: ${i%2===0?'correct':'incorrect'}`);
    if(i%2!==0){
-    assert.equal(await page.locator('.choice.correct .choice-mark').textContent(),'✓');
-    assert.equal(await page.locator('.choice.wrong .choice-mark').textContent(),'×');
+    assert.equal(await page.locator('.choice.correct .choice-mark').textContent(),'Correct');
+    assert.equal(await page.locator('.choice.wrong .choice-mark').textContent(),'Missed');
     assert.equal(await page.locator('#answer-feedback').textContent(),`Selected ${pick}. Correct answer: ${name}.`);
     assert.equal(await page.locator('.feedback').count(),kind==='vocabulary'?1:0);
     assert.equal(await page.locator('#next').getAttribute('aria-describedby'),'answer-feedback');
@@ -64,7 +64,7 @@ try{
    if(kind==='vocabulary')assert.equal(await page.locator('.example').innerText(),vocabulary.find(x=>x.id===prompt).example);
    await other.getByRole('button',{name:await answer(other),exact:true}).click();await Promise.all([page.locator('#next').click(),other.locator('#next').click()]);
   }
-  assert.equal(new Set(prompts).size,5);assert.equal(await page.locator('.result h2').innerText(),'3 out of 5');assert.deepEqual(await dots.allTextContents(),['✓','×','✓','×','✓']);
+  assert.equal(new Set(prompts).size,5);assert.equal(await page.locator('.result h2').innerText(),'3 out of 5');assert.deepEqual(await dots.allTextContents(),['1','2','3','4','5']);
   await page.reload();assert.equal(await page.locator('.result h2').innerText(),'3 out of 5');
   await page.getByRole('button',{name:'Play practice'}).click();assert.equal(await dots.count(),0);const practicePrompts=[];
   for(let i=0;i<10;i++){

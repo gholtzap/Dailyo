@@ -85,7 +85,7 @@ function dailyProgress(){
   for(let i=0;i<5;i++){
     const status=i<state.answers.length?(state.answers[i]===deck[i].id?'correct':'incorrect'):i===state.index?'current':'upcoming';
     const dot=make('li',undefined,`progress-dot ${status}`);dot.setAttribute('aria-label',`Question ${i+1}: ${status}`);
-    if(status==='correct'||status==='incorrect'){const symbol=make('span',status==='correct'?'✓':'×');symbol.setAttribute('aria-hidden','true');dot.append(symbol);}
+    dot.textContent=String(i+1);
     list.append(dot);
   }
   return list;
@@ -121,7 +121,7 @@ function draw(){
     const wrong=selected===option.id&&!correct;
     if(correct||wrong){
       button.classList.add(correct?'correct':'wrong');
-      const mark=make('span',correct?'✓':'×','choice-mark');
+      const mark=make('span',correct?'Correct':'Missed','choice-mark');
       mark.setAttribute('aria-hidden','true');
       button.append(mark);
     }

@@ -23,7 +23,7 @@ try {
   await other.locator('#reveal').click();await other.locator('#copy-results').waitFor();
   await other.waitForFunction(()=>document.querySelector('.result-score')?.textContent.includes('100'));
   const copy=other.locator('.result-heading').getByRole('button',{name:'Copy results',exact:true});
-  assert.equal(await copy.textContent(),'');
+  assert.equal(await copy.textContent(),'Copy results');
   await copy.press('Enter');
   await other.waitForFunction(()=>document.querySelector('#copy-status')?.textContent==='Copied');
   const shared=await other.evaluate(()=>navigator.clipboard.readText());

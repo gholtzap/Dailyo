@@ -240,7 +240,7 @@ async function start(){
     const score=`${displayed.assisted?'—':r.score??0}${displayed.assisted?'':'<small> points</small>'}`;
     const status=displayed.guesses?.length===MAX_GUESSES?'Out of guesses.':'Partial route.';
     const resultTitle=displayed.skipped?'<h1>Answer shown</h1>':r.valid?`<h1 class="result-score">${score}</h1>`:`<h1>${status}</h1><div class="result-score">${score}</div>`;
-    const copyControl=mode==='daily'?'<span class="copy-control"><button id="copy-results" class="copy-icon" type="button" aria-label="Copy results" data-ui-tooltip="copy-tooltip"></button><span id="copy-tooltip" class="game-tooltip" role="tooltip">Copy results</span></span>':'';
+    const copyControl=mode==='daily'?'<span class="copy-control"><button id="copy-results" class="copy-icon" type="button" aria-label="Copy results" >Copy results</button></span>':'';
     planner.innerHTML=`${!displayed.skipped||copyControl?`<div class="result-heading">${resultTitle}${copyControl}</div>`:''}
       ${subtitle?`<p class="result-subtitle">${escape(subtitle)}</p>`:''}
       ${copyControl?'<p id="copy-status" class="share-status" role="status"></p>':''}
