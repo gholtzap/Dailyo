@@ -1,3 +1,4 @@
+import { releasedPool } from './pool-version.js';
 import { shuffle } from '../daily/puzzles.js';
 export const visualGames = ['skyrot', 'pricerot', 'skylinerot', 'zoomrot', 'orderrot'];
 export const isVisualGame = (value) => visualGames.some(game => game === value);
@@ -31,6 +32,7 @@ export function prepareVisual(game, value) {
     return value;
 }
 export function visualSet(game, rows, seed, rush = false, round = 0, difficulty = 'standard') {
+    rows = releasedPool(game, rows, seed);
     const deck = shuffle(rows, `${game}:v1:${seed}`);
     const chosen = rush ? [deck[round % deck.length]] : deck.slice(0, 5);
     return chosen.map((item, index) => {

@@ -1,0 +1,1787 @@
+{
+  "skyrot": [
+    {
+      "id": "new-york",
+      "name": "New York City",
+      "file": "ISS-40 New York City.jpg",
+      "distractors": [
+        "chicago",
+        "tokyo",
+        "san-francisco"
+      ]
+    },
+    {
+      "id": "paris",
+      "name": "Paris",
+      "file": "Paris iss.jpg",
+      "distractors": [
+        "london",
+        "cairo",
+        "tokyo"
+      ]
+    },
+    {
+      "id": "dubai",
+      "name": "Dubai",
+      "file": "ISS-66 Dubai, United Arab Emirates.jpg",
+      "distractors": [
+        "cairo",
+        "singapore",
+        "rio"
+      ]
+    },
+    {
+      "id": "venice",
+      "name": "Venice",
+      "file": "Venice, Italy, is pictured from the International Space Station (iss074e0437657).jpg",
+      "distractors": [
+        "istanbul",
+        "singapore",
+        "san-francisco"
+      ]
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "file": "PIA04301.jpg",
+      "distractors": [
+        "paris",
+        "tokyo",
+        "cairo"
+      ]
+    },
+    {
+      "id": "cairo",
+      "name": "Cairo",
+      "file": "Cairo, Egypt.jpg",
+      "distractors": [
+        "dubai",
+        "paris",
+        "london"
+      ]
+    },
+    {
+      "id": "san-francisco",
+      "name": "San Francisco",
+      "file": "ISS-43 San Francisco Bay.jpg",
+      "distractors": [
+        "istanbul",
+        "rio",
+        "new-york"
+      ]
+    },
+    {
+      "id": "istanbul",
+      "name": "Istanbul",
+      "file": "Istanbul Bosporus ISS-1.jpg",
+      "distractors": [
+        "san-francisco",
+        "venice",
+        "new-york"
+      ]
+    },
+    {
+      "id": "rio",
+      "name": "Rio de Janeiro",
+      "file": "ISS-47 Rio de Janeiro and Niteroi, Brazil.jpg",
+      "focus": [
+        35,
+        30
+      ],
+      "distractors": [
+        "san-francisco",
+        "singapore",
+        "istanbul"
+      ]
+    },
+    {
+      "id": "chicago",
+      "name": "Chicago",
+      "file": "ISS-47 Chicago night view.jpg",
+      "distractors": [
+        "new-york",
+        "tokyo",
+        "san-francisco"
+      ]
+    },
+    {
+      "id": "singapore",
+      "name": "Singapore",
+      "file": "ISS035-E-11342 - View of Singapore.jpg",
+      "distractors": [
+        "tokyo",
+        "istanbul",
+        "rio"
+      ]
+    },
+    {
+      "id": "tokyo",
+      "name": "Tokyo",
+      "file": "ISS-62 Tokyo, Japan at night.jpg",
+      "distractors": [
+        "new-york",
+        "singapore",
+        "chicago"
+      ]
+    },
+    {
+      "id": "boston",
+      "name": "Boston",
+      "file": "ISS-46 Boston, Massachusetts.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "new-york",
+        "chicago",
+        "washington-d-c"
+      ]
+    },
+    {
+      "id": "los-angeles",
+      "name": "Los Angeles",
+      "file": "ISS-40 Los Angeles basin.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "san-francisco",
+        "seattle",
+        "vancouver"
+      ]
+    },
+    {
+      "id": "las-vegas",
+      "name": "Las Vegas",
+      "file": "ISS-40 Las Vegas Strip and McCarran International Airport.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "dubai",
+        "cairo",
+        "mexico-city"
+      ]
+    },
+    {
+      "id": "seattle",
+      "name": "Seattle",
+      "file": "Seattle WA, USA from space.JPG",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "vancouver",
+        "auckland",
+        "melbourne"
+      ]
+    },
+    {
+      "id": "montreal",
+      "name": "Montreal",
+      "file": "Montreal, Canada - Flickr - NASA Goddard Photo and Video.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "boston",
+        "new-york",
+        "chicago"
+      ]
+    },
+    {
+      "id": "vancouver",
+      "name": "Vancouver",
+      "file": "ISS-35 Night image of Vancouver, British Columbia, Canada.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "auckland",
+        "melbourne",
+        "los-angeles"
+      ]
+    },
+    {
+      "id": "mexico-city",
+      "name": "Mexico City",
+      "file": "ISS-46 Mexico City, Mexico.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "las-vegas",
+        "dubai",
+        "cairo"
+      ]
+    },
+    {
+      "id": "buenos-aires",
+      "name": "Buenos Aires",
+      "file": "Buenos Aires, Argentina.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "barcelona",
+        "lima",
+        "cape-town"
+      ]
+    },
+    {
+      "id": "santiago",
+      "name": "Santiago",
+      "file": "Santiago, Chile.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "rome",
+        "athens",
+        "berlin"
+      ]
+    },
+    {
+      "id": "lima",
+      "name": "Lima",
+      "file": "Lima, Peru Astronaut Imagery.JPG",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "cape-town",
+        "mumbai",
+        "venice"
+      ]
+    },
+    {
+      "id": "barcelona",
+      "name": "Barcelona",
+      "file": "Barcelona ISS009-E-9987.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "lima",
+        "cape-town",
+        "mumbai"
+      ]
+    },
+    {
+      "id": "rome",
+      "name": "Rome",
+      "file": "Rome, Italy.JPG",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "athens",
+        "berlin",
+        "paris"
+      ]
+    },
+    {
+      "id": "athens",
+      "name": "Athens",
+      "file": "ISS-44 Athens, Greece.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "berlin",
+        "paris",
+        "london"
+      ]
+    },
+    {
+      "id": "amsterdam",
+      "name": "Amsterdam",
+      "file": "Amsterdam, Netherlands.JPG",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "bangkok",
+        "shanghai",
+        "beijing"
+      ]
+    },
+    {
+      "id": "berlin",
+      "name": "Berlin",
+      "file": "ISS067-E-147067 - View of Berlin - Berlin-Tempelhof - green field in the city (cropped).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "paris",
+        "london",
+        "santiago"
+      ]
+    },
+    {
+      "id": "washington-d-c",
+      "name": "Washington, D.C.",
+      "file": "ISS002-E-8125 - View of Washington, D.C..jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "montreal",
+        "boston",
+        "new-york"
+      ]
+    },
+    {
+      "id": "cape-town",
+      "name": "Cape Town",
+      "file": "Cape of Good Hope Iss059e078303 lrg, Cape Peninsula.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "mumbai",
+        "venice",
+        "istanbul"
+      ]
+    },
+    {
+      "id": "mumbai",
+      "name": "Mumbai",
+      "file": "Mumbai, India (4446).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "venice",
+        "istanbul",
+        "buenos-aires"
+      ]
+    },
+    {
+      "id": "bangkok",
+      "name": "Bangkok",
+      "file": "Astronaut Photography of Earth - Bangkok-Gulf of Thailand - ISS006-E-49922.JPG",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "shanghai",
+        "beijing",
+        "seoul"
+      ]
+    },
+    {
+      "id": "shanghai",
+      "name": "Shanghai",
+      "file": "ISS-30 Nighttime view of Shanghai.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "beijing",
+        "seoul",
+        "tokyo"
+      ]
+    },
+    {
+      "id": "beijing",
+      "name": "Beijing",
+      "file": "ISS-47 Beijing, China at night.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "seoul",
+        "tokyo",
+        "singapore"
+      ]
+    },
+    {
+      "id": "seoul",
+      "name": "Seoul",
+      "file": "ISS-62 Seoul, South Korea at night.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "tokyo",
+        "singapore",
+        "amsterdam"
+      ]
+    },
+    {
+      "id": "melbourne",
+      "name": "Melbourne",
+      "file": "ISS-60 Melbourne, Australia on Port Philip Bay.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "los-angeles",
+        "san-francisco",
+        "seattle"
+      ]
+    },
+    {
+      "id": "auckland",
+      "name": "Auckland",
+      "file": "East Coast Bays, Auckland, New Zealand (ISS016-E-14040).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "melbourne",
+        "los-angeles",
+        "san-francisco"
+      ]
+    }
+  ],
+  "skylinerot": [
+    {
+      "id": "new-york",
+      "name": "New York City",
+      "file": "NYC Manhattan Skyline 1.JPG",
+      "distractors": [
+        "chicago",
+        "toronto",
+        "hong-kong"
+      ]
+    },
+    {
+      "id": "paris",
+      "name": "Paris",
+      "file": "Iconic Paris Skyline.jpg",
+      "distractors": [
+        "london",
+        "sydney",
+        "tokyo"
+      ]
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "file": "London skyline from Horniman Gardens.jpg",
+      "distractors": [
+        "paris",
+        "sydney",
+        "toronto"
+      ]
+    },
+    {
+      "id": "dubai",
+      "name": "Dubai",
+      "file": "Dubai skyline unsplash.jpg",
+      "distractors": [
+        "kuala-lumpur",
+        "hong-kong",
+        "singapore"
+      ]
+    },
+    {
+      "id": "sydney",
+      "name": "Sydney",
+      "file": "Sydney Skyline from UNSW.jpg",
+      "distractors": [
+        "london",
+        "toronto",
+        "singapore"
+      ]
+    },
+    {
+      "id": "hong-kong",
+      "name": "Hong Kong",
+      "file": "Hong Kong Skyline1.jpg",
+      "distractors": [
+        "singapore",
+        "tokyo",
+        "new-york"
+      ]
+    },
+    {
+      "id": "singapore",
+      "name": "Singapore",
+      "file": "Skyline of Singapore from Marina Bay Sands.jpg",
+      "distractors": [
+        "hong-kong",
+        "kuala-lumpur",
+        "dubai"
+      ]
+    },
+    {
+      "id": "tokyo",
+      "name": "Tokyo",
+      "file": "2015-01-17 Skyline in Tokyo.jpg",
+      "distractors": [
+        "hong-kong",
+        "singapore",
+        "toronto"
+      ]
+    },
+    {
+      "id": "chicago",
+      "name": "Chicago",
+      "file": "Chicago Skyline - Dusk.JPG",
+      "distractors": [
+        "new-york",
+        "toronto",
+        "san-francisco"
+      ]
+    },
+    {
+      "id": "toronto",
+      "name": "Toronto",
+      "file": "Toronto skyline. (48993906211).jpg",
+      "distractors": [
+        "chicago",
+        "new-york",
+        "sydney"
+      ]
+    },
+    {
+      "id": "san-francisco",
+      "name": "San Francisco",
+      "file": "Skyline of San Francisco from Embarcadero (July 2022).jpg",
+      "distractors": [
+        "sydney",
+        "new-york",
+        "chicago"
+      ]
+    },
+    {
+      "id": "kuala-lumpur",
+      "name": "Kuala Lumpur",
+      "file": "Kuala Lumpur skyline long exposure.jpg",
+      "distractors": [
+        "dubai",
+        "singapore",
+        "hong-kong"
+      ]
+    },
+    {
+      "id": "boston",
+      "name": "Boston",
+      "file": "Boston skyline from Longfellow Bridge September 2017 panorama 2.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "new-york",
+        "chicago",
+        "toronto"
+      ]
+    },
+    {
+      "id": "los-angeles",
+      "name": "Los Angeles",
+      "file": "L.A. Skyline 02.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "seattle",
+        "vancouver",
+        "montreal"
+      ]
+    },
+    {
+      "id": "las-vegas",
+      "name": "Las Vegas",
+      "file": "Las Vegas Panorama Bellagio to Paris 2014.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "mumbai",
+        "bangkok",
+        "shanghai"
+      ]
+    },
+    {
+      "id": "miami",
+      "name": "Miami",
+      "file": "Downtown Miami Panorama from the Rusty Pelican photo Don Ramey Logan.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "los-angeles",
+        "seattle",
+        "vancouver"
+      ]
+    },
+    {
+      "id": "seattle",
+      "name": "Seattle",
+      "file": "Vista de Seattle, Washington, Estados Unidos, 2017-09-02, DD 07-08 HDR.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "vancouver",
+        "montreal",
+        "boston"
+      ]
+    },
+    {
+      "id": "montreal",
+      "name": "Montreal",
+      "file": "Montreal Twilight Panorama 2006.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "boston",
+        "new-york",
+        "chicago"
+      ]
+    },
+    {
+      "id": "vancouver",
+      "name": "Vancouver",
+      "file": "Vancouver skyline panorama (6736827889).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "montreal",
+        "boston",
+        "new-york"
+      ]
+    },
+    {
+      "id": "buenos-aires",
+      "name": "Buenos Aires",
+      "file": "Buenos Aires skyline day.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "santiago",
+        "lima",
+        "cape-town"
+      ]
+    },
+    {
+      "id": "santiago",
+      "name": "Santiago",
+      "file": "Skyline of Santiago with San Cristóbal hill at the back (Northeast view Panorama 03 - Flat projection).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "lima",
+        "cape-town",
+        "melbourne"
+      ]
+    },
+    {
+      "id": "lima",
+      "name": "Lima",
+      "file": "Lima, Urban Skyline--Ciudad de Lima, Skyline urbano.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "cape-town",
+        "melbourne",
+        "sydney"
+      ]
+    },
+    {
+      "id": "lisbon",
+      "name": "Lisbon",
+      "file": "LisbonSkyline.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "madrid",
+        "barcelona",
+        "rome"
+      ]
+    },
+    {
+      "id": "madrid",
+      "name": "Madrid",
+      "file": "Madrid cathedral 2020 - view from the dome.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "barcelona",
+        "rome",
+        "athens"
+      ]
+    },
+    {
+      "id": "barcelona",
+      "name": "Barcelona",
+      "file": "Barcelona skyline panorama (6248341915).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "rome",
+        "athens",
+        "berlin"
+      ]
+    },
+    {
+      "id": "rome",
+      "name": "Rome",
+      "file": "Rome skyline panorama.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "athens",
+        "berlin",
+        "copenhagen"
+      ]
+    },
+    {
+      "id": "athens",
+      "name": "Athens",
+      "file": "Athens Skyline.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "berlin",
+        "copenhagen",
+        "paris"
+      ]
+    },
+    {
+      "id": "berlin",
+      "name": "Berlin",
+      "file": "Berlin Panorama von der Siegessäule Richtung Mitte, Berlin, Deutschland.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "copenhagen",
+        "paris",
+        "london"
+      ]
+    },
+    {
+      "id": "copenhagen",
+      "name": "Copenhagen",
+      "file": "Panorama view on Copenhagen from Church of Our Saviour (2).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "paris",
+        "london",
+        "lisbon"
+      ]
+    },
+    {
+      "id": "cape-town",
+      "name": "Cape Town",
+      "file": "Cape Town skyline.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "melbourne",
+        "sydney",
+        "san-francisco"
+      ]
+    },
+    {
+      "id": "mumbai",
+      "name": "Mumbai",
+      "file": "Mumbai Skyline at Night.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "bangkok",
+        "shanghai",
+        "beijing"
+      ]
+    },
+    {
+      "id": "bangkok",
+      "name": "Bangkok",
+      "file": "Bangkok Skyline (MK).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "shanghai",
+        "beijing",
+        "seoul"
+      ]
+    },
+    {
+      "id": "shanghai",
+      "name": "Shanghai",
+      "file": "Pudong Shanghai November 2017 panorama.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "beijing",
+        "seoul",
+        "tokyo"
+      ]
+    },
+    {
+      "id": "beijing",
+      "name": "Beijing",
+      "file": "Skyline of Beijing CBD with B-5906 approaching (20211016171955).jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "seoul",
+        "tokyo",
+        "hong-kong"
+      ]
+    },
+    {
+      "id": "seoul",
+      "name": "Seoul",
+      "file": "Seoul Skyline Night 2018.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "tokyo",
+        "hong-kong",
+        "singapore"
+      ]
+    },
+    {
+      "id": "melbourne",
+      "name": "Melbourne",
+      "file": "Melbourne city skyline panorama, as seen from Royal Park.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "distractors": [
+        "sydney",
+        "san-francisco",
+        "buenos-aires"
+      ]
+    }
+  ],
+  "zoomrot": [
+    {
+      "id": "tennis",
+      "name": "Tennis ball",
+      "file": "Tennis ball closeup.jpg",
+      "distractors": [
+        "banana",
+        "filter",
+        "tape"
+      ],
+      "detailFocus": [
+        55,
+        50
+      ],
+      "lookalikes": [
+        "Lime",
+        "Kitchen sponge",
+        "Felt fabric"
+      ]
+    },
+    {
+      "id": "stapler",
+      "name": "Stapler",
+      "file": "Swingline-stapler.jpg",
+      "distractors": [
+        "scissors",
+        "hammer",
+        "tape"
+      ],
+      "detailFocus": [
+        42,
+        52
+      ],
+      "lookalikes": [
+        "Tape dispenser",
+        "Hole punch",
+        "Utility knife"
+      ]
+    },
+    {
+      "id": "scissors",
+      "name": "Scissors",
+      "file": "Fiskars-scissors.jpg",
+      "distractors": [
+        "stapler",
+        "hammer",
+        "key"
+      ],
+      "detailFocus": [
+        60,
+        48
+      ],
+      "lookalikes": [
+        "Pliers",
+        "Pruning shears",
+        "Can opener"
+      ]
+    },
+    {
+      "id": "staples",
+      "name": "Staples",
+      "file": "Office-staples.jpg",
+      "distractors": [
+        "key",
+        "motherboard",
+        "scissors"
+      ],
+      "detailFocus": [
+        52,
+        55
+      ],
+      "lookalikes": [
+        "Paper clips",
+        "Wire mesh",
+        "Metal zipper"
+      ]
+    },
+    {
+      "id": "banana",
+      "name": "Banana",
+      "file": "Banana-Single.jpg",
+      "distractors": [
+        "tennis",
+        "pencil",
+        "tape"
+      ],
+      "detailFocus": [
+        50,
+        78
+      ],
+      "lookalikes": [
+        "Lemon",
+        "Yellow bell pepper",
+        "Mango"
+      ],
+      "focus": [
+        50,
+        78
+      ]
+    },
+    {
+      "id": "key",
+      "name": "Key",
+      "file": "Standard-lock-key.jpg",
+      "distractors": [
+        "staples",
+        "scissors",
+        "motherboard"
+      ],
+      "detailFocus": [
+        45,
+        52
+      ],
+      "lookalikes": [
+        "Bottle opener",
+        "Metal ruler",
+        "Drill bit"
+      ]
+    },
+    {
+      "id": "tape",
+      "name": "Tape measure",
+      "file": "Measuring-tape.jpg",
+      "distractors": [
+        "stapler",
+        "pencil",
+        "key"
+      ],
+      "detailFocus": [
+        40,
+        66
+      ],
+      "lookalikes": [
+        "Luggage strap",
+        "Ribbon spool",
+        "Belt buckle"
+      ],
+      "focus": [
+        40,
+        66
+      ]
+    },
+    {
+      "id": "pencil",
+      "name": "Pencil",
+      "file": "Number-2-pencil.jpg",
+      "distractors": [
+        "hammer",
+        "tape",
+        "banana"
+      ],
+      "detailFocus": [
+        35,
+        56
+      ],
+      "lookalikes": [
+        "Paintbrush",
+        "Wooden dowel",
+        "Chopstick"
+      ],
+      "focus": [
+        35,
+        56
+      ]
+    },
+    {
+      "id": "filter",
+      "name": "Coffee filter",
+      "file": "Coffee-filter.jpg",
+      "distractors": [
+        "staples",
+        "tennis",
+        "scissors"
+      ],
+      "detailFocus": [
+        48,
+        50
+      ],
+      "lookalikes": [
+        "Cupcake liner",
+        "Paper towel",
+        "Folded napkin"
+      ]
+    },
+    {
+      "id": "hammer",
+      "name": "Hammer",
+      "file": "Claw-hammer.jpg",
+      "distractors": [
+        "scissors",
+        "stapler",
+        "pencil"
+      ],
+      "detailFocus": [
+        55,
+        52
+      ],
+      "lookalikes": [
+        "Screwdriver",
+        "Utility knife",
+        "Pliers"
+      ]
+    },
+    {
+      "id": "motherboard",
+      "name": "Motherboard",
+      "file": "Apple-MacBook-2007-Motherboard.jpg",
+      "distractors": [
+        "staples",
+        "key",
+        "stapler"
+      ],
+      "detailFocus": [
+        52,
+        48
+      ],
+      "lookalikes": [
+        "Graphics card",
+        "Remote control circuit board",
+        "Phone circuit board"
+      ]
+    },
+    {
+      "id": "screwdriver",
+      "name": "Screwdriver",
+      "file": "Black screwdriver.png",
+      "focus": [
+        62,
+        60
+      ],
+      "detailFocus": [
+        62,
+        60
+      ],
+      "lookalikes": [
+        "Chisel",
+        "Drill bit",
+        "Metal file"
+      ]
+    },
+    {
+      "id": "pliers",
+      "name": "Pliers",
+      "file": "Side cutting pliers.jpg",
+      "focus": [
+        32,
+        50
+      ],
+      "detailFocus": [
+        32,
+        50
+      ],
+      "lookalikes": [
+        "Wire stripper",
+        "Pruning shears",
+        "Nutcracker"
+      ]
+    },
+    {
+      "id": "clothespin",
+      "name": "Clothespin",
+      "file": "Wood Clothespin.jpg",
+      "focus": [
+        60,
+        44
+      ],
+      "detailFocus": [
+        60,
+        44
+      ],
+      "lookalikes": [
+        "Binder clip",
+        "Hair clip",
+        "Tweezers"
+      ]
+    },
+    {
+      "id": "paper-clip",
+      "name": "Paper clip",
+      "file": "Small white paper clip.jpg",
+      "focus": [
+        47,
+        35
+      ],
+      "detailFocus": [
+        47,
+        35
+      ],
+      "lookalikes": [
+        "Safety pin",
+        "Staple",
+        "Split ring"
+      ]
+    },
+    {
+      "id": "binder-clip",
+      "name": "Binder clip",
+      "file": "Small binder clip.jpg",
+      "focus": [
+        55,
+        59
+      ],
+      "detailFocus": [
+        55,
+        59
+      ],
+      "lookalikes": [
+        "Padlock",
+        "Stapler",
+        "Hole punch"
+      ]
+    },
+    {
+      "id": "corkscrew",
+      "name": "Corkscrew",
+      "file": "Wing Corkscrew BW 2011-12-30 14-19-41.jpg",
+      "focus": [
+        50,
+        56
+      ],
+      "detailFocus": [
+        50,
+        56
+      ],
+      "lookalikes": [
+        "Can opener",
+        "Whisk",
+        "Egg beater"
+      ]
+    },
+    {
+      "id": "bottle-opener",
+      "name": "Bottle opener",
+      "file": "Western Forge Craftsman bottle opener.jpg",
+      "focus": [
+        17,
+        50
+      ],
+      "detailFocus": [
+        17,
+        50
+      ],
+      "lookalikes": [
+        "Screwdriver",
+        "Metal file",
+        "Can opener"
+      ]
+    },
+    {
+      "id": "padlock",
+      "name": "Padlock",
+      "file": "Combination Padlock 2.jpg",
+      "focus": [
+        55,
+        58
+      ],
+      "detailFocus": [
+        55,
+        58
+      ],
+      "lookalikes": [
+        "Belt buckle",
+        "Door hinge",
+        "Carabiner"
+      ]
+    },
+    {
+      "id": "light-bulb",
+      "name": "Light bulb",
+      "file": "Light bulb.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "lookalikes": [
+        "Glass marble",
+        "Test tube",
+        "Glass bottle"
+      ]
+    },
+    {
+      "id": "usb-flash-drive",
+      "name": "USB flash drive",
+      "file": "USB flash drive (unbranded).jpg",
+      "focus": [
+        35,
+        55
+      ],
+      "detailFocus": [
+        35,
+        55
+      ],
+      "lookalikes": [
+        "USB cable",
+        "Memory card",
+        "Wireless adapter"
+      ]
+    },
+    {
+      "id": "computer-mouse",
+      "name": "Computer mouse",
+      "file": "Computer mouse 2.jpg",
+      "focus": [
+        48,
+        30
+      ],
+      "detailFocus": [
+        48,
+        30
+      ],
+      "lookalikes": [
+        "Remote control",
+        "Game controller",
+        "Trackball"
+      ]
+    },
+    {
+      "id": "keyboard",
+      "name": "Keyboard",
+      "file": "IBM Model M Spanish layout Keyboard.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "lookalikes": [
+        "Calculator",
+        "Control panel",
+        "Typewriter"
+      ]
+    },
+    {
+      "id": "dice",
+      "name": "Dice",
+      "file": "6sided dice.jpg",
+      "focus": [
+        45,
+        50
+      ],
+      "detailFocus": [
+        45,
+        50
+      ],
+      "lookalikes": [
+        "Dominoes",
+        "Board game token",
+        "Building block"
+      ]
+    },
+    {
+      "id": "dominoes",
+      "name": "Dominoes",
+      "file": "Dominoes.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "lookalikes": [
+        "Dice",
+        "Mahjong tile",
+        "Scrabble tile"
+      ]
+    },
+    {
+      "id": "pine-cone",
+      "name": "Pine cone",
+      "file": "A pine cone.jpg",
+      "focus": [
+        55,
+        60
+      ],
+      "detailFocus": [
+        55,
+        60
+      ],
+      "lookalikes": [
+        "Artichoke",
+        "Tree bark",
+        "Dried flower"
+      ]
+    },
+    {
+      "id": "strawberry",
+      "name": "Strawberry",
+      "file": "Garden strawberry (Fragaria × ananassa) single2.jpg",
+      "focus": [
+        56,
+        51
+      ],
+      "detailFocus": [
+        56,
+        51
+      ],
+      "lookalikes": [
+        "Raspberry",
+        "Pomegranate",
+        "Cherry"
+      ]
+    },
+    {
+      "id": "kiwifruit",
+      "name": "Kiwifruit",
+      "file": "Kiwifruit cross section.jpg",
+      "focus": [
+        63,
+        51
+      ],
+      "detailFocus": [
+        63,
+        51
+      ],
+      "lookalikes": [
+        "Cucumber",
+        "Lime",
+        "Green tomato"
+      ]
+    },
+    {
+      "id": "orange",
+      "name": "Orange",
+      "file": "Orange-Fruit-Pieces.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "lookalikes": [
+        "Lemon",
+        "Grapefruit",
+        "Peach"
+      ]
+    },
+    {
+      "id": "corncob",
+      "name": "Corncob",
+      "file": "Corncob kernels 07.JPG",
+      "focus": [
+        50,
+        45
+      ],
+      "detailFocus": [
+        50,
+        45
+      ],
+      "lookalikes": [
+        "Pineapple",
+        "Yellow bell pepper",
+        "Honeycomb"
+      ]
+    },
+    {
+      "id": "paintbrush",
+      "name": "Paintbrush",
+      "file": "Paintbrush closeup.jpg",
+      "focus": [
+        50,
+        50
+      ],
+      "detailFocus": [
+        50,
+        50
+      ],
+      "lookalikes": [
+        "Broom",
+        "Toothbrush",
+        "Makeup brush"
+      ]
+    },
+    {
+      "id": "toothbrush",
+      "name": "Toothbrush",
+      "file": "Toothbrush toothbrush.JPG",
+      "focus": [
+        20,
+        33
+      ],
+      "detailFocus": [
+        20,
+        33
+      ],
+      "lookalikes": [
+        "Hairbrush",
+        "Razor",
+        "Comb"
+      ]
+    },
+    {
+      "id": "velcro",
+      "name": "Velcro",
+      "file": "Velcro photomicrograph.jpg",
+      "focus": [
+        55,
+        50
+      ],
+      "detailFocus": [
+        55,
+        50
+      ],
+      "lookalikes": [
+        "Woven fabric",
+        "Zipper",
+        "Wire mesh"
+      ]
+    },
+    {
+      "id": "eraser",
+      "name": "Eraser",
+      "file": "Pink Pearl eraser.jpg",
+      "focus": [
+        50,
+        60
+      ],
+      "detailFocus": [
+        50,
+        60
+      ],
+      "lookalikes": [
+        "Kitchen sponge",
+        "Soap bar",
+        "Modeling clay"
+      ]
+    },
+    {
+      "id": "comb",
+      "name": "Comb",
+      "file": "Plastic comb, 2015-06-07.jpg",
+      "focus": [
+        49,
+        56
+      ],
+      "detailFocus": [
+        49,
+        56
+      ],
+      "lookalikes": [
+        "Hairbrush",
+        "Zipper",
+        "Saw blade"
+      ]
+    },
+    {
+      "id": "acorn",
+      "name": "Acorn",
+      "file": "Quercus robur acorn - Keila.jpg",
+      "focus": [
+        47,
+        35
+      ],
+      "detailFocus": [
+        47,
+        35
+      ],
+      "lookalikes": [
+        "Hazelnut",
+        "Chestnut",
+        "Olive"
+      ]
+    }
+  ]
+}

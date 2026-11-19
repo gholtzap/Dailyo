@@ -6,6 +6,7 @@ import {preparePuzzles} from '../dist/games/rot-puzzles.js';
 
 const root=new URL('../dist/',import.meta.url);
 await import('../tests/visual-puzzles.mjs');
+await import('../tests/puzzle-pools.mjs');
 for (const game of extraGames) {
   assert.ok(fs.statSync(new URL(`${game}/index.html`,root)).size>0);
   const read = name => JSON.parse(fs.readFileSync(new URL(`games/data/${name}.json`,root)));

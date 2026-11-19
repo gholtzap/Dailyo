@@ -274,5 +274,555 @@
       "Remote control circuit board",
       "Phone circuit board"
     ]
+  },
+  {
+    "id": "screwdriver",
+    "name": "Screwdriver",
+    "image": "/games/media/zoomrot-screwdriver.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Black_screwdriver.png",
+    "credit": "多多123",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "focus": [
+      62,
+      60
+    ],
+    "detailFocus": [
+      62,
+      60
+    ],
+    "lookalikes": [
+      "Chisel",
+      "Drill bit",
+      "Metal file"
+    ]
+  },
+  {
+    "id": "pliers",
+    "name": "Pliers",
+    "image": "/games/media/zoomrot-pliers.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Side_cutting_pliers.jpg",
+    "credit": "M338",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      32,
+      50
+    ],
+    "detailFocus": [
+      32,
+      50
+    ],
+    "lookalikes": [
+      "Wire stripper",
+      "Pruning shears",
+      "Nutcracker"
+    ]
+  },
+  {
+    "id": "clothespin",
+    "name": "Clothespin",
+    "image": "/games/media/zoomrot-clothespin.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Wood_Clothespin.jpg",
+    "credit": "Alfredo Borba",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      60,
+      44
+    ],
+    "detailFocus": [
+      60,
+      44
+    ],
+    "lookalikes": [
+      "Binder clip",
+      "Hair clip",
+      "Tweezers"
+    ]
+  },
+  {
+    "id": "paper-clip",
+    "name": "Paper clip",
+    "image": "/games/media/zoomrot-paper-clip.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Small_white_paper_clip.jpg",
+    "credit": "visualpanic from Barcelona",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "focus": [
+      47,
+      35
+    ],
+    "detailFocus": [
+      47,
+      35
+    ],
+    "lookalikes": [
+      "Safety pin",
+      "Staple",
+      "Split ring"
+    ]
+  },
+  {
+    "id": "binder-clip",
+    "name": "Binder clip",
+    "image": "/games/media/zoomrot-binder-clip.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Small_binder_clip.jpg",
+    "credit": "No machine-readable author provided. HenryLi assumed (based on copyright claims).",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+    "focus": [
+      55,
+      59
+    ],
+    "detailFocus": [
+      55,
+      59
+    ],
+    "lookalikes": [
+      "Padlock",
+      "Stapler",
+      "Hole punch"
+    ]
+  },
+  {
+    "id": "corkscrew",
+    "name": "Corkscrew",
+    "image": "/games/media/zoomrot-corkscrew.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Wing_Corkscrew_BW_2011-12-30_14-19-41.jpg",
+    "credit": "Berthold Werner",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "focus": [
+      50,
+      56
+    ],
+    "detailFocus": [
+      50,
+      56
+    ],
+    "lookalikes": [
+      "Can opener",
+      "Whisk",
+      "Egg beater"
+    ]
+  },
+  {
+    "id": "bottle-opener",
+    "name": "Bottle opener",
+    "image": "/games/media/zoomrot-bottle-opener.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Western_Forge_Craftsman_bottle_opener.jpg",
+    "credit": "J.C. Fields (Talk) (Uploads)",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "focus": [
+      17,
+      50
+    ],
+    "detailFocus": [
+      17,
+      50
+    ],
+    "lookalikes": [
+      "Screwdriver",
+      "Metal file",
+      "Can opener"
+    ]
+  },
+  {
+    "id": "padlock",
+    "name": "Padlock",
+    "image": "/games/media/zoomrot-padlock.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Combination_Padlock_2.jpg",
+    "credit": "Wasiul Bahar",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      55,
+      58
+    ],
+    "detailFocus": [
+      55,
+      58
+    ],
+    "lookalikes": [
+      "Belt buckle",
+      "Door hinge",
+      "Carabiner"
+    ]
+  },
+  {
+    "id": "light-bulb",
+    "name": "Light bulb",
+    "image": "/games/media/zoomrot-light-bulb.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Light_bulb.jpg",
+    "credit": "Leon Brooks",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Glass marble",
+      "Test tube",
+      "Glass bottle"
+    ]
+  },
+  {
+    "id": "usb-flash-drive",
+    "name": "USB flash drive",
+    "image": "/games/media/zoomrot-usb-flash-drive.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:USB_flash_drive_(unbranded).jpg",
+    "credit": "Peter Hosey",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "focus": [
+      35,
+      55
+    ],
+    "detailFocus": [
+      35,
+      55
+    ],
+    "lookalikes": [
+      "USB cable",
+      "Memory card",
+      "Wireless adapter"
+    ]
+  },
+  {
+    "id": "computer-mouse",
+    "name": "Computer mouse",
+    "image": "/games/media/zoomrot-computer-mouse.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Computer_mouse_2.jpg",
+    "credit": "Theino22",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      48,
+      30
+    ],
+    "detailFocus": [
+      48,
+      30
+    ],
+    "lookalikes": [
+      "Remote control",
+      "Game controller",
+      "Trackball"
+    ]
+  },
+  {
+    "id": "keyboard",
+    "name": "Keyboard",
+    "image": "/games/media/zoomrot-keyboard.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:IBM_Model_M_Spanish_layout_Keyboard.jpg",
+    "credit": "Wilfredor",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Calculator",
+      "Control panel",
+      "Typewriter"
+    ]
+  },
+  {
+    "id": "dice",
+    "name": "Dice",
+    "image": "/games/media/zoomrot-dice.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:6sided_dice.jpg",
+    "credit": "Diacritica",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "focus": [
+      45,
+      50
+    ],
+    "detailFocus": [
+      45,
+      50
+    ],
+    "lookalikes": [
+      "Dominoes",
+      "Board game token",
+      "Building block"
+    ]
+  },
+  {
+    "id": "dominoes",
+    "name": "Dominoes",
+    "image": "/games/media/zoomrot-dominoes.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Dominoes.jpg",
+    "credit": "See source",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Dice",
+      "Mahjong tile",
+      "Scrabble tile"
+    ]
+  },
+  {
+    "id": "pine-cone",
+    "name": "Pine cone",
+    "image": "/games/media/zoomrot-pine-cone.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:A_pine_cone.jpg",
+    "credit": "Petar Milošević",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      55,
+      60
+    ],
+    "detailFocus": [
+      55,
+      60
+    ],
+    "lookalikes": [
+      "Artichoke",
+      "Tree bark",
+      "Dried flower"
+    ]
+  },
+  {
+    "id": "strawberry",
+    "name": "Strawberry",
+    "image": "/games/media/zoomrot-strawberry.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Garden_strawberry_(Fragaria_%C3%97_ananassa)_single2.jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      56,
+      51
+    ],
+    "detailFocus": [
+      56,
+      51
+    ],
+    "lookalikes": [
+      "Raspberry",
+      "Pomegranate",
+      "Cherry"
+    ]
+  },
+  {
+    "id": "kiwifruit",
+    "name": "Kiwifruit",
+    "image": "/games/media/zoomrot-kiwifruit.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Kiwifruit_cross_section.jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      63,
+      51
+    ],
+    "detailFocus": [
+      63,
+      51
+    ],
+    "lookalikes": [
+      "Cucumber",
+      "Lime",
+      "Green tomato"
+    ]
+  },
+  {
+    "id": "orange",
+    "name": "Orange",
+    "image": "/games/media/zoomrot-orange.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Orange-Fruit-Pieces.jpg",
+    "credit": "Evan-Amos",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Lemon",
+      "Grapefruit",
+      "Peach"
+    ]
+  },
+  {
+    "id": "corncob",
+    "name": "Corncob",
+    "image": "/games/media/zoomrot-corncob.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Corncob_kernels_07.JPG",
+    "credit": "Salix",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      50,
+      45
+    ],
+    "detailFocus": [
+      50,
+      45
+    ],
+    "lookalikes": [
+      "Pineapple",
+      "Yellow bell pepper",
+      "Honeycomb"
+    ]
+  },
+  {
+    "id": "paintbrush",
+    "name": "Paintbrush",
+    "image": "/games/media/zoomrot-paintbrush.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Paintbrush_closeup.jpg",
+    "credit": "Rhododendrites",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Broom",
+      "Toothbrush",
+      "Makeup brush"
+    ]
+  },
+  {
+    "id": "toothbrush",
+    "name": "Toothbrush",
+    "image": "/games/media/zoomrot-toothbrush.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Toothbrush_toothbrush.JPG",
+    "credit": "PierreSelim",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "focus": [
+      20,
+      33
+    ],
+    "detailFocus": [
+      20,
+      33
+    ],
+    "lookalikes": [
+      "Hairbrush",
+      "Razor",
+      "Comb"
+    ]
+  },
+  {
+    "id": "velcro",
+    "name": "Velcro",
+    "image": "/games/media/zoomrot-velcro.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Velcro_photomicrograph.jpg",
+    "credit": "Trazyanderson",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      55,
+      50
+    ],
+    "detailFocus": [
+      55,
+      50
+    ],
+    "lookalikes": [
+      "Woven fabric",
+      "Zipper",
+      "Wire mesh"
+    ]
+  },
+  {
+    "id": "eraser",
+    "name": "Eraser",
+    "image": "/games/media/zoomrot-eraser.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Pink_Pearl_eraser.jpg",
+    "credit": "ZooFari",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      60
+    ],
+    "detailFocus": [
+      50,
+      60
+    ],
+    "lookalikes": [
+      "Kitchen sponge",
+      "Soap bar",
+      "Modeling clay"
+    ]
+  },
+  {
+    "id": "comb",
+    "name": "Comb",
+    "image": "/games/media/zoomrot-comb.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Plastic_comb,_2015-06-07.jpg",
+    "credit": "Crisco 1492",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      49,
+      56
+    ],
+    "detailFocus": [
+      49,
+      56
+    ],
+    "lookalikes": [
+      "Hairbrush",
+      "Zipper",
+      "Saw blade"
+    ]
+  },
+  {
+    "id": "acorn",
+    "name": "Acorn",
+    "image": "/games/media/zoomrot-acorn.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Quercus_robur_acorn_-_Keila.jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "focus": [
+      47,
+      35
+    ],
+    "detailFocus": [
+      47,
+      35
+    ],
+    "lookalikes": [
+      "Hazelnut",
+      "Chestnut",
+      "Olive"
+    ]
   }
 ]
