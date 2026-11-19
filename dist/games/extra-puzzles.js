@@ -1,3 +1,4 @@
+import { releasedPool } from './pool-version.js';
 import { shuffle } from './rot-puzzles.js';
 export const extraGames = ['ladderrot', 'cluerot', 'scalerot', 'swaprot'];
 export const lowerIsBetter = (game) => game === 'maprot' || extraGames.includes(game);
@@ -77,11 +78,12 @@ export function extraPuzzle(game, data, seed) {
             board = [board[1], board[0], ...board.slice(2)];
         return { game: 'swaprot', id: board.join(''), board, minimum: inversions(board) };
     }
+    const rows = releasedPool(game, data.rows, seed);
     const day = /^\d{4}-\d{2}-\d{2}$/.test(seed) ? Date.parse(seed) / 86400000 : null;
     const indexed = /^practice:deck:(\d+):/.exec(seed);
     const index = indexed ? Number(indexed[1]) : -1;
-    const row = indexed && Number.isSafeInteger(index) && index < data.rows.length ? data.rows[index] : Number.isInteger(day) ? data.rows[((day % data.rows.length) + data.rows.length) % data.rows.length] :
-        shuffle(data.rows, seed)[0];
+    const row = indexed && Number.isSafeInteger(index) && index < rows.length ? rows[index] : Number.isInteger(day) ? rows[((day % rows.length) + rows.length) % rows.length] :
+        shuffle(rows, seed)[0];
     if (data.game === 'ladderrot') {
         const [start, goal] = row;
         const solution = shortest(data.buckets, start, goal);

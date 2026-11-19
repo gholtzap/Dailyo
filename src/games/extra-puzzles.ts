@@ -1,5 +1,6 @@
 import type {JsonValue} from '../types.js';
 import type {ExtraData, ExtraPuzzle, ExtraState, LadderRow, ClueRow, ScaleRow} from './extra-types.js';
+import {releasedPool} from './pool-version.js';
 import { shuffle } from './rot-puzzles.js';
 
 export const extraGames: readonly string[] = ['ladderrot', 'cluerot', 'scalerot', 'swaprot'];
@@ -71,11 +72,12 @@ export function extraPuzzle(game: string, data: ExtraData, seed: string): ExtraP
     if (ordered(board)) board = [board[1], board[0], ...board.slice(2)];
     return { game: 'swaprot', id: board.join(''), board, minimum: inversions(board) };
   }
+  const rows = releasedPool<LadderRow | ClueRow | ScaleRow>(game, data.rows, seed);
   const day = /^\d{4}-\d{2}-\d{2}$/.test(seed) ? Date.parse(seed) / 86400000 : null;
   const indexed = /^practice:deck:(\d+):/.exec(seed);
   const index = indexed ? Number(indexed[1]) : -1;
-  const row = indexed && Number.isSafeInteger(index) && index < data.rows.length ? data.rows[index] : Number.isInteger(day) ? data.rows[((day! % data.rows.length) + data.rows.length) % data.rows.length] :
-    shuffle<LadderRow | ClueRow | ScaleRow>(data.rows, seed)[0];
+  const row = indexed && Number.isSafeInteger(index) && index < rows.length ? rows[index] : Number.isInteger(day) ? rows[((day! % rows.length) + rows.length) % rows.length] :
+    shuffle<LadderRow | ClueRow | ScaleRow>(rows, seed)[0];
   if (data.game === 'ladderrot') {
     const [start, goal] = row as LadderRow;
     const solution = shortest(data.buckets, start, goal);
