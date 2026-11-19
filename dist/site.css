@@ -303,3 +303,9 @@ a[data-game-mark="orderrot"]::before { content: "↕"; background: #3b4b46; colo
 [data-daily-feed] .main { padding-top: 16px; }
 [data-rush] .rot-counter:empty { display: none; }
 [data-rush] .heading { margin-bottom: 16px; }
+
+[data-rush] .main { padding-block: 16px; }
+[data-rush] .prompt { min-height: 0; padding: 16px; margin-bottom: 16px; }
+[data-rush] .flag { height: clamp(80px, 24dvh, 180px); }
+[data-rush] .heading { min-height: 40px; }
+[data-rush] .visual-viewport { max-height: 36dvh; }

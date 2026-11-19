@@ -19,6 +19,11 @@ try {
    if(route==='/trainrot/'||route.startsWith('/trainrot-world/'))await page.locator('#reveal').waitFor();
    else if(route==='/zoomrot/')await page.locator('#question-title').waitFor();
    else await page.locator('iframe:not(.feed-loading)').waitFor();
+   if(stage!=='navigation'&&stage!=='hierarchy'&&route==='/') {
+    const status=await page.locator('.feed-actions').boundingBox();
+    const puzzle=await page.locator('#feed-game').boundingBox();
+    assert.ok(status.y+status.height<=puzzle.y+1,'Rush status belongs directly above the puzzle');
+   }
    const header=page.locator('.site-masthead');
    await header.getByRole('link',{name:'Daily Feed',exact:true}).waitFor();
    await header.getByRole('link',{name:'Rush',exact:true}).waitFor();
