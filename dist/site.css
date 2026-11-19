@@ -138,3 +138,10 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 .site-masthead .site-more-links .game-picker-context { grid-column: 1 / -1; margin: 0; padding: 8px; font-size: 12px; color: var(--muted); }
 .site-masthead .site-more-links a:not(.repository-link) { flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; }
 .site-more-links small { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+.heading { flex-wrap: wrap; gap: 8px 16px; }
+.heading .game-progress { margin: 0; color: var(--muted); font-size: 12px; line-height: 20px; }
+.heading .round-head { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; }
+.heading .round-head p { margin: 0; }
+.main > .modes { margin-bottom: 16px; }
+[data-rush] .heading .game-title { display: none; }

@@ -2,7 +2,7 @@ import type {Mode, RotGame, Coordinate} from '../types.js';
 import type {RotData, RotState, RotSession, RotAction, Place, YearQuestion, YearEvent, Country, BorderGeometry} from './rot-types.js';
 import {element, required} from '../dom.js';
 type Content = (HTMLElement | SVGElement | null)[];
-import './help.js';
+import {showGameProgress} from './help.js';
 import {
   makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition,
 } from './rot-puzzles.js';
@@ -414,6 +414,7 @@ function draw() {
   const counter = element('div', undefined, 'round-head rot-counter');
   counter.append(element('p', current === 'complete' ? (mode === 'daily' ? 'Daily results' : 'Practice results') :
     `Question ${state.index + 1} of ${roundCount}`));
+  showGameProgress(rushRound===null ? counter : undefined);
   const question = questions[state.index];
   const content = current === 'complete' ? summary(session) :
     mapGame ? drawMap(question as Place, state, current === 'review') : yearGame ? drawTimeline(question as YearQuestion, state, current === 'review') : drawBorders(question as string[], state, current === 'review');
@@ -426,7 +427,7 @@ function draw() {
       () => update({ type: 'next' }), 'primary rot-next'));
     content.push(next);
   }
-  quiz.replaceChildren(...(rushRound===null?[counter,...content]:content).filter((node): node is HTMLElement | SVGElement => node !== null));
+  quiz.replaceChildren(...content.filter((node): node is HTMLElement | SVGElement => node !== null));
   reportDaily(current === 'complete' ? 'complete' : 'playing', current === 'complete' ? heading.textContent : undefined, day);
 }
 

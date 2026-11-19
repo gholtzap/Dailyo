@@ -69,5 +69,15 @@ document.body.insertAdjacentHTML('beforeend', `
   </dialog>
 `);
 document.querySelector('#help').onclick = () => document.querySelector('#help-dialog').showModal();
-export {};
+// Progress belongs to the game identity, rather than another row above the puzzle.
+export function showGameProgress(progress) {
+    const heading = document.querySelector('.heading');
+    if (!heading)
+        return;
+    heading.querySelector('.game-progress')?.remove();
+    if (progress) {
+        progress.classList.add('game-progress');
+        heading.append(progress);
+    }
+}
 //# sourceMappingURL=help.js.map

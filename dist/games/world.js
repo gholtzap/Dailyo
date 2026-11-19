@@ -1,4 +1,4 @@
-import './help.js';
+import { showGameProgress } from './help.js';
 import { dailyDate as dateToday, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, startPractice, rushSeed } from '../daily/bridge.js';
 import { hash, shuffle, quizDeck, quizOptions, quizPuzzle } from '../daily/puzzles.js';
 import { showRank } from '../daily/rank.js';
@@ -149,6 +149,7 @@ function dailyProgress() {
     return list;
 }
 function result() {
+    showGameProgress();
     const s = modeState.daily, deck = dailyDeck(), score = s.answers.filter((answer, i) => answer === deck[i].id).length;
     const box = make('div', undefined, 'result'), title = make('h2', `${score} out of 5`);
     title.tabIndex = -1;
@@ -228,6 +229,7 @@ function draw() {
     const { item, seed } = question(), selected = mode === 'daily' ? (s.answers[s.index] ?? null) : s.selected;
     const head = make('div', undefined, 'round-head'), counter = make('p', mode === 'daily' ? `Question ${s.index + 1} of 5` : `Practice · ${s.total + (selected === null ? 1 : 0)}`), score = make('p', rushRound !== null ? '' : mode === 'daily' ? `${s.answers.slice(0, s.index + (selected !== null ? 1 : 0)).filter((v, i) => v === dailyDeck()[i].id).length} correct` : `${s.correct} correct`);
     head.append(counter, score);
+    showGameProgress(rushRound === null ? head : undefined);
     const prompt = make('div', undefined, 'prompt');
     prompt.id = 'question-title';
     prompt.tabIndex = -1;
@@ -286,9 +288,9 @@ function draw() {
     if (rushRound !== null)
         quiz.replaceChildren(...content);
     else if (mode === 'daily')
-        quiz.replaceChildren(head, dailyProgress(), ...content, next);
+        quiz.replaceChildren(dailyProgress(), ...content, next);
     else
-        quiz.replaceChildren(head, ...content, next);
+        quiz.replaceChildren(...content, next);
     reportDaily('playing', undefined, day);
 }
 async function start() {

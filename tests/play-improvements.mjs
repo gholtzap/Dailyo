@@ -63,10 +63,10 @@ try {
    assert.match(await page.locator('#visual-feedback').textContent(),/65 \/ 100 points/);
    await page.reload();await page.locator('#question-title').waitFor();
    assert.equal(await page.getByLabel('Difficulty',{exact:true}).inputValue(),'hard');
-   assert.match(await page.locator('#quiz').innerText(),/2 of 5/);
+   assert.match(await page.locator('.game-progress').innerText(),/2 of 5/);
    const hardHeading=await page.locator('#quiz').innerText();
    await page.getByLabel('Difficulty',{exact:true}).selectOption('easy');
-   assert.match(await page.locator('#quiz').innerText(),/1 of 5/);
+   assert.match(await page.locator('.game-progress').innerText(),/1 of 5/);
    await page.getByLabel('Difficulty',{exact:true}).selectOption('hard');
    assert.equal(await page.locator('#quiz').innerText(),hardHeading);
    await page.getByRole('button',{name:'Daily',exact:true}).click();
