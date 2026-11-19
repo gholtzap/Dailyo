@@ -270,9 +270,9 @@ try{
     await page.getByRole('button',{name:'Practice',exact:true,pressed:true}).waitFor();
     await page.goto(base);
     await timer.filter({hasText:'Untimed'}).waitFor();
-    await page.getByRole('link',{name:'Daily Feed',exact:true}).click();
+    await page.getByRole('link',{name:'Daily mix',exact:true}).click();
     await page.waitForURL('**/daily/');
-    await page.getByRole('link',{name:'Daily Feed',exact:true}).waitFor();
+    await page.getByRole('link',{name:'Daily mix',exact:true}).waitFor();
     if(new URL(base).hostname==='127.0.0.1'){
       await page.route('**/rush/**',async route=>{
         await route.fulfill({response:await page.request.get(base)});

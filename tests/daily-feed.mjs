@@ -57,13 +57,13 @@ try{
     const skip=page.getByRole('button',{name:'Skip game',exact:true});
     const undo=page.getByRole('button',{name:'Undo skip',exact:true});
     const progress=page.locator('#feed-progress');
-    const enterFeed=()=>page.getByRole('link',{name:'Daily Feed',exact:true}).click();
+    const enterFeed=()=>page.getByRole('link',{name:'Daily mix',exact:true}).click();
 
     await page.goto(base);
     await page.getByRole('link',{name:'Rush',exact:true}).waitFor();
     assert.equal(new URL(page.url()).pathname,'/');
     await enterFeed();
-    await page.getByRole('link',{name:'Daily Feed',exact:true}).waitFor();
+    await page.getByRole('link',{name:'Daily mix',exact:true}).waitFor();
     await page.waitForURL(url=>url.pathname==='/daily/');
     const directory=page.getByText('Games',{exact:true});
     await directory.press('Enter');
@@ -78,9 +78,9 @@ try{
     await page.waitForURL(url=>url.pathname==='/trainrot/');
     await page.locator('[data-route]').first().waitFor();
     await page.getByRole('button',{name:'Practice',exact:true}).click();
-    const home=page.getByRole('link',{name:'Daily Feed',exact:true});
+    const home=page.getByRole('link',{name:'Daily mix',exact:true});
     assert.equal(await home.getAttribute('href'),'/daily/');
-    assert.equal(await home.innerText(),'Daily');
+    assert.equal(await home.innerText(),'Daily mix');
     const flagData = await page.request.get(new URL('/games/data/flags.json',base).href);
     assert.ok(flagData.ok());
     let flagLoads=0;
