@@ -147,3 +147,6 @@
 .rot-recap details[open] > summary { color: var(--ink); }
 .rot-recap details:not([open]) > summary > span:first-child { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; }
 .rot-recap-detail { padding: 8px 8px 16px; }
+
+.rot-actions .reveal-answer { flex: 0 1 auto; width: auto; min-height: 44px; padding: 8px 12px; border: 0; background: transparent; color: var(--muted); text-align: left; }
+.rot-actions .reveal-answer:hover { background: #202124; color: var(--ink); }

@@ -271,9 +271,9 @@ function drawQuestion() {
         }
         quiz.append(list, button('Check order', () => commit({ ...a, order: [...draft] }), 'primary'));
     }
-    const actions = el('div', undefined, 'rot-actions');
+    const actions = el('div', undefined, 'rot-actions visual-reveal-actions');
     if (!isRush)
-        actions.append(button('Show answer', () => commit({ ...a, skipped: true })));
+        actions.append(button('Show answer', () => commit({ ...a, skipped: true }), 'secondary reveal-answer'));
     if (imageFailed)
         actions.append(button('Reload puzzle', () => location.reload()));
     quiz.append(actions);

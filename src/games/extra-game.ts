@@ -120,7 +120,7 @@ function drawPlaying({ puzzle, state }: ExtraSession): HTMLElement[] {
     const chain = list(state.path.map(word => word.toUpperCase()), 'Your word ladder', 'rot-chain ladder-chain');
     const text = el('p', `${state.moves.length} ${state.moves.length === 1 ? 'move' : 'moves'} · ${puzzle.solution.length-1} minimum`, 'extra-metric');
     if (state.path.length > 1 && rushRound === null) actions.append(button('Undo last word', () => move('undo')));
-    actions.append(button('Show solution', () => move(null)));
+    actions.append(button('Show solution', () => move(null),'secondary reveal-answer'));
     return [heading, text, chain, form('Next word', 'text', 'Add word', input => input.value.trim().toLowerCase(),
       feedback, 'Enter a new four-letter word that changes exactly one letter.'), feedback, actions];
   }
@@ -129,7 +129,7 @@ function drawPlaying({ puzzle, state }: ExtraSession): HTMLElement[] {
     const clues = list(puzzle.clues.slice(0, state.clue+1), 'Revealed clues', 'clue-list');
     if (state.moves.at(-1)) feedback.textContent = 'Try again with the new clue.';
     if (state.clue < puzzle.clues.length-1) actions.append(button('Next clue', () => move('')));
-    actions.append(button('Show answer', () => move(null)));
+    actions.append(button('Show answer', () => move(null),'secondary reveal-answer'));
     return [heading, clues, form('Your guess', 'text', 'Guess', input => input.value.trim(), feedback,
       'Enter a guess.'), feedback, actions];
   }
