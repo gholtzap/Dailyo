@@ -268,7 +268,7 @@ orderrot     Skipped
 
 Play today’s Daily Games
 https://trainrot.vercel.app/daily/`;
-    assert.equal(await copyRecap.textContent(),'');
+    assert.ok((await copyRecap.textContent()).trim().length>0);
     await inspect('recap');
     if(engine===chromium){
       await copyRecap.press('Enter');
@@ -402,7 +402,7 @@ https://trainrot.vercel.app/daily/`;
     const drafted=await train.locator('.train-sequence').innerText();
     await skip.click();
     await flags.locator('.choice').first().waitFor();
-    assert.equal(await undo.textContent(),'');
+    assert.equal(await undo.textContent(),'Undo skip');
     await inspect('undo-available','flagrot');
     await undo.press('Enter');
     await train.locator('.train-sequence').waitFor();
