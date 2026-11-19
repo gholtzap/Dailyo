@@ -192,11 +192,19 @@ function drawQuestion() {
     heading.id = 'question-title';
     heading.tabIndex = -1;
     showGameProgress(isRush ? undefined : el('p', `${s.index + 1} of ${s.questions.length}`, 'rot-counter'));
-    if (photoGame)
-        heading.classList.add('visually-hidden');
-    quiz.append(heading);
-    if (q.item.image)
-        quiz.append(media(q, a, complete));
+    if (photoGame) {
+        const prompt = media(q, a, complete);
+        prompt.id = 'question-title';
+        prompt.tabIndex = -1;
+        prompt.setAttribute('role', 'group');
+        prompt.setAttribute('aria-label', heading.textContent);
+        quiz.append(prompt);
+    }
+    else {
+        quiz.append(heading);
+        if (q.item.image)
+            quiz.append(media(q, a, complete));
+    }
     if (game === 'pricerot')
         quiz.append(el('p', `${q.item.size} · ${q.item.retailer} · United States · USD`, 'visual-price-label'), el('p', `Recorded ${q.item.captured}. Guess the listed price before tax. ${isRush ? 'Within 20% counts as correct.' : 'Closer guesses earn more points.'}`, 'visual-note'));
     if (complete) {

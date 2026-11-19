@@ -34,7 +34,7 @@ try {
    }
    if(route==='/zoomrot/'){
     assert.equal(await page.locator('.heading .game-progress').textContent(),'1 of 5');
-    assert.equal(await page.locator('#question-title').getAttribute('class'),'visually-hidden');
+    assert.equal(await page.locator('#question-title').getAttribute('aria-label'),'What is this object?');
    }
    const header=page.locator('.site-masthead');
    const dailyLink=header.getByRole('link',{name:'Daily mix',exact:true});
