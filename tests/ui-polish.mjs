@@ -24,7 +24,10 @@ try {
    await page.goto(base+route);
    await page.locator('.site-masthead .site-more summary').waitFor();
    if(route==='/trainrot/'||route.startsWith('/trainrot-world/'))await page.locator('#reveal').waitFor();
-   else if(route==='/zoomrot/')await page.locator('#question-title').waitFor();
+   else if(route==='/zoomrot/'){
+    try{await page.locator('#question-title').waitFor();}
+    catch(error){console.error({route,width,errors,body:await page.locator('body').innerText()});throw error;}
+   }
    else await page.locator('iframe:not(.feed-loading)').waitFor();
    if(stage!=='navigation'&&stage!=='hierarchy'&&route==='/') {
     const status=await page.locator('.feed-actions').boundingBox();
