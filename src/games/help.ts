@@ -70,3 +70,14 @@ document.body.insertAdjacentHTML('beforeend', `
   </dialog>
 `);
 document.querySelector<HTMLElement>('#help')!.onclick = () => document.querySelector<HTMLDialogElement>('#help-dialog')!.showModal();
+
+// Progress belongs to the game identity, rather than another row above the puzzle.
+export function showGameProgress(progress?: HTMLElement) {
+  const heading = document.querySelector<HTMLElement>('.heading');
+  if (!heading) return;
+  heading.querySelector('.game-progress')?.remove();
+  if (progress) {
+    progress.classList.add('game-progress');
+    heading.append(progress);
+  }
+}

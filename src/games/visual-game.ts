@@ -1,5 +1,5 @@
 import type {JsonValue, Mode} from '../types.js';
-import './help.js';
+import {showGameProgress} from './help.js';
 import {dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice} from '../daily/bridge.js';
 import {showRank} from '../daily/rank.js';
 import {parseDifficulty, practiceSettings, practiceSlot} from './difficulty.js';
@@ -142,7 +142,9 @@ function drawQuestion() {
   const {s,q,a}=current(),complete=answered(game,q,a);
   const heading=el('h2',game==='pricerot' ? q.item.name : game==='orderrot' ? q.item.name : game==='zoomrot' ? 'What is this object?' : 'Which city is this?');
   heading.id='question-title'; heading.tabIndex=-1;
-  quiz.append(el('p',isRush ? '' : `${mode==='daily' ? 'Daily' : 'Practice'} · ${s.index+1} of ${s.questions.length}`,'rot-counter'),heading);
+  showGameProgress(isRush ? undefined : el('p',`${s.index+1} of ${s.questions.length}`,'rot-counter'));
+  if(photoGame)heading.classList.add('visually-hidden');
+  quiz.append(heading);
   if(q.item.image)quiz.append(media(q,a,complete));
   if(game==='pricerot') quiz.append(el('p',`${q.item.size} · ${q.item.retailer} · United States · USD`,'visual-price-label'),el('p',`Recorded ${q.item.captured}. Guess the listed price before tax. ${isRush ? 'Within 20% counts as correct.' : 'Closer guesses earn more points.'}`,'visual-note'));
   if(complete) {
@@ -202,6 +204,7 @@ function drawQuestion() {
   quiz.append(actions);
 }
 function drawResults() {
+  showGameProgress();
   const s=sessions[mode];
   const score=gradeVisual(game,s.questions,s.answers) ?? 0;
   const title=el('h2',`${score} / ${s.questions.length*100} points`); title.id='question-title'; title.tabIndex=-1;

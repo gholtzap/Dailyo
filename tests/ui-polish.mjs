@@ -32,6 +32,10 @@ try {
     assert.ok(status.y+status.height<=puzzle.y+1,'Rush status belongs directly above the puzzle');
     if(width===1440){const main=await page.frameLocator('iframe:not(.feed-loading)').locator('.main').boundingBox();assert.ok(Math.abs(main.x-status.x)<=1,'Rush puzzle and status share a left edge');}
    }
+   if(route==='/zoomrot/'){
+    assert.equal(await page.locator('.heading .game-progress').textContent(),'1 of 5');
+    assert.equal(await page.locator('#question-title').getAttribute('class'),'visually-hidden');
+   }
    const header=page.locator('.site-masthead');
    const dailyLink=header.getByRole('link',{name:'Daily mix',exact:true});
    await dailyLink.waitFor();

@@ -1,5 +1,5 @@
 import { element, required } from '../dom.js';
-import './help.js';
+import { showGameProgress } from './help.js';
 import { makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition, } from './rot-puzzles.js';
 import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
@@ -428,6 +428,7 @@ function draw() {
     const counter = element('div', undefined, 'round-head rot-counter');
     counter.append(element('p', current === 'complete' ? (mode === 'daily' ? 'Daily results' : 'Practice results') :
         `Question ${state.index + 1} of ${roundCount}`));
+    showGameProgress(rushRound === null ? counter : undefined);
     const question = questions[state.index];
     const content = current === 'complete' ? summary(session) :
         mapGame ? drawMap(question, state, current === 'review') : yearGame ? drawTimeline(question, state, current === 'review') : drawBorders(question, state, current === 'review');
@@ -439,7 +440,7 @@ function draw() {
         next.append(button(state.index === roundCount - 1 ? 'See results' : 'Next question', () => update({ type: 'next' }), 'primary rot-next'));
         content.push(next);
     }
-    quiz.replaceChildren(...(rushRound === null ? [counter, ...content] : content).filter((node) => node !== null));
+    quiz.replaceChildren(...content.filter((node) => node !== null));
     reportDaily(current === 'complete' ? 'complete' : 'playing', current === 'complete' ? heading.textContent : undefined, day);
 }
 async function start() {
