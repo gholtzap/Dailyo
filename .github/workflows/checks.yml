@@ -8,7 +8,21 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: dailyo
+          POSTGRES_PASSWORD: dailyo-test
+          POSTGRES_DB: dailyo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -18,9 +32,24 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Verify Bend laws, compiler output, and rejected regressions
+        run: npm run verify
       - run: npm test
       - run: npm run build
       - run: node tests/world-ranking.mjs
+      - name: Verify score API with real Postgres
+        env:
+          DATABASE_URL: postgres://dailyo:dailyo-test@127.0.0.1:5432/dailyo_test
+          TRAINROT_TEST_URL: http://127.0.0.1:4174
+        run: |
+          node --input-type=module -e 'import pg from "pg"; import {readFileSync} from "node:fs"; const db = new pg.Client({connectionString:process.env.DATABASE_URL}); await db.connect(); await db.query(readFileSync("scripts/daily-scores.sql","utf8")); await db.end();'
+          node scripts/test-score-server.mjs > /tmp/dailyo-score-api.log 2>&1 &
+          for attempt in 1 2 3 4 5; do
+            if curl --silent http://127.0.0.1:4174/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node tests/score-protection.mjs
+          node tests/train-ranking.mjs
       - run: node node_modules/playwright/cli.js install --with-deps chromium
       - name: Verify desktop and mobile journeys
         run: |

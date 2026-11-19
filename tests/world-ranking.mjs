@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {spawnSync} from 'node:child_process';
 const compiled=spawnSync(process.execPath,['node_modules/typescript/bin/tsc','-p','tsconfig.tests.json'],{stdio:'inherit'});assert.equal(compiled.status,0);
+const staged=spawnSync(process.execPath,['scripts/stage-verified.mjs','.test-build/src'],{stdio:'inherit'});assert.equal(staged.status,0);
 const bundle=new URL('../.test-build/dist/',import.meta.url);
 for(const name of ['data/network.json','data/challenges.json','world-data/cities.json',...fs.readdirSync(new URL('../dist/world-data/',import.meta.url),{withFileTypes:true}).filter(d=>d.isDirectory()).flatMap(d=>[`world-data/${d.name}/network.json`,`world-data/${d.name}/challenges.json`])]){const target=new URL(name,bundle);fs.mkdirSync(new URL('./',target),{recursive:true});fs.copyFileSync(new URL('../dist/'+name,import.meta.url),target);}
 const {grade}=await import('../.test-build/api/daily-score.js');

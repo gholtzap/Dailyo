@@ -54,6 +54,35 @@ All browser application source lives in `src/`. The scores API is `api/daily-sco
 
 `npm run typecheck` checks the browser and API together with strict TypeScript settings. `npm run build` typechecks, compiles the browser modules, stages the transit data, and verifies the release. The Vercel function compiles the API TypeScript independently.
 
+## Verified lifecycle rules
+
+Train lifecycle decisions and Rush's phase, deadline, pause/resume, and stale-round
+rules are implemented in `verification/*.bend`. The browser and scores API use
+JavaScript compiled from those files; TypeScript handles routing assessments,
+browser effects, input validation, storage, and database access.
+
+Run `npm run verify` to check `LAWS.bend` and `PROOF.bend` with Bend's independent
+`--verdict` kernel, reproduce the generated JavaScript, and confirm the proof gate
+rejects deliberate regressions. The first run downloads checksum-pinned Bend
+2.0.40 and Lean 4.34.0 into `.cache/`; later runs reuse them. Verification supports
+Linux x64/arm64 and macOS arm64 and needs `tar` with Zstandard support.
+
+After changing Bend code or proofs, run `npm run verify:generate` and commit the
+updated `src/verified/*.mjs` files and `verification/generated.json`. Regular
+builds check their hashes and stage those modules for the browser; CI reruns the
+proof checker and compiler independently. Hosted builds use the checked-in
+modules and do not download the proof toolchain.
+
+The laws prove the stated lifecycle properties under Bend's semantics. They do
+not prove routing/scoring calculations, the JS compiler, browser events, or the
+database. Existing browser, HTTP, scoring, and database checks cover those
+boundaries. See [the transition table and proof scope](verification/README.md). CI also runs score-protection and train-score replay checks against a disposable Postgres service.
+For local API checks, compile with `npm test`, apply `scripts/daily-scores.sql` to
+an empty loopback database, then run `scripts/test-score-server.mjs` with
+`DATABASE_URL`. In another terminal, set that same variable and
+`TRAINROT_TEST_URL=http://127.0.0.1:4174`, then run
+`node tests/score-protection.mjs` and `node tests/train-ranking.mjs`.
+
 ## Build and test
 
 ```sh
