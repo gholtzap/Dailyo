@@ -121,11 +121,11 @@ function formatOrderValue(value: number, unit?: string) {
   const precision = value !== 0 && Math.abs(value) < .001 ? {maximumSignificantDigits:3} : {maximumFractionDigits:3};
   return value.toLocaleString('en-US',{...precision,useGrouping:unit !== 'CE'});
 }
-function reveal(q: VisualQuestion,a: VisualAnswer) {
+function reveal(q: VisualQuestion,a: VisualAnswer,review=false) {
   const content=el('div',undefined,'visual-reveal');
   const points=answerPoints(game,q,a);
   const feedback=el('h3',a.skipped ? 'Answer revealed' : `${points} / 100 points`);
-  feedback.id='visual-feedback'; feedback.tabIndex=-1;
+  if(!review){feedback.id='visual-feedback'; feedback.tabIndex=-1;}
   const status=el('div'); status.setAttribute('role','status'); status.append(feedback); content.append(status);
   if (game==='pricerot') {
     content.append(el('p',`Recorded price: ${money(q.item.cents!)}${a.price===null ? '' : ` · Your guess: ${money(a.price)} · ${Math.round(priceError(a.price,q.item.cents!)*100)}% off`}`));
@@ -206,12 +206,14 @@ function drawResults() {
   const score=gradeVisual(game,s.questions,s.answers) ?? 0;
   const title=el('h2',`${score} / ${s.questions.length*100} points`); title.id='question-title'; title.tabIndex=-1;
   const dots=s.answers.map((a,i)=>answerPoints(game,s.questions[i]!,a)>=65 ? '🟩' : answerPoints(game,s.questions[i]!,a)>0 ? '🟨' : '⬛').join('');
-  quiz.append(title,el('p',`${mode==='daily' ? day : 'Practice'} · ${s.questions.length} puzzles completed`),el('p',dots,'visual-share-grid'));
+  quiz.append(title,el('p',`${mode==='daily' ? 'Daily' : 'Practice'} · ${s.questions.length} puzzles completed`));
   const review=el('ol',undefined,'visual-recap');
   for(const [i,q] of s.questions.entries()) {
-    const li=el('li');li.append(el('span',q.item.name),el('span',`${answerPoints(game,q,s.answers[i]!)} / 100`));review.append(li);
+    const li=el('li'),details=el('details'),summary=el('summary');
+    summary.append(el('span',q.item.name),el('span',s.answers[i]!.skipped?'Answer shown':`${answerPoints(game,q,s.answers[i]!)} / 100`));
+    details.append(summary,reveal(q,s.answers[i]!,true));li.append(details);review.append(li);
   }
-  quiz.append(review);
+  quiz.append(el('h3','Review answers'),review);
   if(mode==='daily') {
     const rank=el('div',undefined,'daily-rank');
     void showRank(rank,{game,day,puzzle:visualPuzzle(s.questions),answers:s.answers.map(a=>({...a}))},score);quiz.append(rank);

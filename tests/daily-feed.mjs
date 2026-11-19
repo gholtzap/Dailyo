@@ -243,7 +243,7 @@ try{
       await check.close();
       return result;
     }
-    const copyRecap=page.getByRole('button',{name:'Copy daily recap',exact:true});
+    const copyRecap=page.getByRole('button',{name:'Copy results',exact:true});
     const copyStatus=page.locator('#feed-copy-status');
     const fallback=page.getByRole('textbox',{name:'Daily recap to copy',exact:true});
     const expectedRecap=`dailyo | Nov 16, 2026

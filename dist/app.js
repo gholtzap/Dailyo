@@ -347,13 +347,15 @@ async function start() {
         const tied = r.valid && r.optimal && r.seconds === r.optimal.seconds && !same(rideKey(r.legs), rideKey(r.optimal.legs));
         const subtitle = tied ? 'Your route ties the fastest time. The alternative below takes the same time.' : displayed.assisted ? '' : r.valid ? r.score === 100 ? '' : formatTime((r.seconds ?? 0) - (r.optimal?.seconds ?? 0)) + ' slower' : displayed.skipped ? '' : r.error ?? 'Add another train to reach the destination.';
         const canResume = !r.valid && !displayed.skipped && !displayed.guesses?.length && displayed.legs.length;
-        const nextAction = mode === 'daily' ? '<button id="start-practice" class="secondary-button">Play practice</button>' : '<button id="next" class="primary-button next-action">Next journey</button>';
+        const nextAction = mode === 'daily' ? '<button id="start-practice" class="primary-button">Play practice</button>' : '<button id="next" class="primary-button next-action">Next journey</button>';
         const sequence = displayed.legs.length ? `<ol class="train-sequence result-sequence" aria-label="Your train sequence">${displayed.legs.map(l => `<li>${badge(l.route)}</li>`).join('')}</ol>` : '';
-        const score = `${displayed.assisted ? '—' : r.score ?? 0}${displayed.assisted ? '' : '<small> points</small>'}`;
+        const score = displayed.assisted ? 'Completed with map' : `${r.score ?? 0}<small> points</small>`;
         const status = displayed.guesses?.length === MAX_GUESSES ? 'Out of guesses.' : 'Partial route.';
         const resultTitle = displayed.skipped ? '<h1>Answer shown</h1>' : r.valid ? `<h1 class="result-score">${score}</h1>` : `<h1>${status}</h1><div class="result-score">${score}</div>`;
+        const verdict = displayed.skipped ? '' : displayed.assisted ? '' : r.valid ? (r.seconds === r.optimal?.seconds ? (tied ? 'Tied fastest route' : 'Fastest route') : 'Route completed') : '';
         const copyControl = mode === 'daily' ? '<span class="copy-control"><button id="copy-results" class="copy-icon" type="button" aria-label="Copy results" >Copy results</button></span>' : '';
-        planner.innerHTML = `${!displayed.skipped || copyControl ? `<div class="result-heading">${resultTitle}${copyControl}</div>` : ''}
+        planner.innerHTML = `<div class="result-heading">${resultTitle}${copyControl}</div>
+      ${verdict ? `<p class="result-verdict">${verdict}</p>` : ''}
       ${subtitle ? `<p class="result-subtitle">${escape(subtitle)}</p>` : ''}
       ${copyControl ? '<p id="copy-status" class="share-status" role="status"></p>' : ''}
       ${ticket(c, displayed.skipped ? '' : sequence)}

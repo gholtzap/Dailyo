@@ -153,7 +153,7 @@ try{
     await page.reload();await ready(page);assert.deepEqual(await page.locator('.train-sequence .train-badge').allTextContents(),['G','A']);await inspect(page,`${prefix}-legacy-draft`);
     await add(page,'R');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),100);
     await page.evaluate(()=>{const key=Object.keys(localStorage).find(k=>k.startsWith('trainrot-endless-v1:'));const s=JSON.parse(localStorage.getItem(key));s.state={phase:'revealed',legs:[{route:'G',to:'R31'}],assisted:false};localStorage.setItem(key,JSON.stringify(s));});
-    await page.reload();await page.getByRole('button',{name:'Keep guessing',exact:true}).click();await ready(page);await add(page,'A');await add(page,'R');await check(page);assert.equal(await page.locator('.result-score').textContent(),'—');
+    await page.reload();await page.getByRole('button',{name:'Keep guessing',exact:true}).click();await ready(page);await add(page,'A');await add(page,'R');await check(page);assert.equal(await page.locator('.result-score').textContent(),'Completed with map');
     await puzzle(page,'G22','R29');await add(page,'G');await check(page);
     assert.equal(await page.locator('#guess-feedback-title p').textContent(),'G to Hoyt-Schermerhorn Sts. What next?');
     assert.equal(await page.locator('.partial-score').textContent(),'77 points so far');

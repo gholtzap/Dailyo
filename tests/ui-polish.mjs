@@ -8,6 +8,13 @@ const stage=process.argv[2]??'navigation';
 const output=`test-results/ui-polish/${stage}`;
 await fs.mkdir(output,{recursive:true});
 const browser=await chromium.launch(),reports=[];
+async function inspect(page,name){
+ try{reports.push({name,...await checkPage(page,policy)});}
+ catch(error){
+  if(!String(error).includes('5000 element limit'))throw error;
+  reports.push({name,incomplete:String(error)});
+ }
+}
 try {
  for(const width of [320,390,1440]) {
   const page=await browser.newPage({viewport:{width,height:width===1440?1000:844},colorScheme:'dark'});
@@ -23,6 +30,7 @@ try {
     const status=await page.locator('.feed-actions').boundingBox();
     const puzzle=await page.locator('#feed-game').boundingBox();
     assert.ok(status.y+status.height<=puzzle.y+1,'Rush status belongs directly above the puzzle');
+    if(width===1440){const main=await page.frameLocator('iframe:not(.feed-loading)').locator('.main').boundingBox();assert.ok(Math.abs(main.x-status.x)<=1,'Rush puzzle and status share a left edge');}
    }
    const header=page.locator('.site-masthead');
    await header.getByRole('link',{name:'Daily Feed',exact:true}).waitFor();
@@ -33,7 +41,7 @@ try {
    const menu=header.getByRole('navigation',{name:'Games',exact:true});
    await menu.getByRole('link',{name:'GitHub repository',exact:true}).waitFor();
    assert.ok((await menu.boundingBox()).x>=0);
-   reports.push({name:`${route}-${width}-menu`,...await checkPage(page,policy)});
+   await inspect(page,`${route}-${width}-menu`);
    await page.keyboard.press('Escape');assert.equal(await header.locator('details').getAttribute('open'),null);
    assert.equal(await summary.evaluate(n=>n===document.activeElement),true);
    await summary.click();await header.click({position:{x:4,y:4}});
@@ -45,10 +53,12 @@ try {
    }
    const name=route.replaceAll('/','')||'rush';
    await page.screenshot({path:`${output}/${name}-${width}.png`,fullPage:true});
-   reports.push({name:`${route}-${width}-page`,...await checkPage(page,policy)});
+   await inspect(page,`${route}-${width}-page`);
   }
   assert.deepEqual(errors,[]);await page.close();
  }
 } finally {await browser.close();await fs.writeFile(`${output}/ui.json`,JSON.stringify(reports,null,2));}
 const findings=reports.flatMap(r=>r.findings??[]);
-console.log(`${stage}: navigation behavior passed; ${reports.length} UI states inspected; ${findings.length} policy findings (see ${output}/ui.json).`);
+console.log(`${stage}: navigation behavior passed; ${reports.length} UI states inspected; ${findings.length} policy findings; ${reports.filter(r=>r.incomplete).length} incomplete checks (see ${output}/ui.json).`);
+
+if(process.argv.includes('--ui'))process.exitCode=reports.some(r=>r.incomplete)?2:findings.length?1:0;

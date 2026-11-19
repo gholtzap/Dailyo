@@ -89,6 +89,8 @@ function showGame(position: number){
     clearPreload();
     gamePanel.replaceChildren();
     progress.textContent='';
+    const completed=games.filter(({id})=>results.has(id)).length;
+    $('#feed-summary').textContent=`${completed} of ${games.length} games completed${completed<games.length?` · ${games.length-completed} skipped`:''}`;
     const rows=games.map(({id,label})=>{
       const li=document.createElement('li');
       const name=document.createElement('span'),status=document.createElement('span');

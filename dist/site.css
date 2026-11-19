@@ -110,3 +110,22 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 [data-rush] .visual-viewport { max-height: 36dvh; }
 
 @media (max-width:700px) { .site-masthead .site-more-links { right: -8px; } }
+.answer-review { margin: 24px 0; }
+.answer-review h3 { margin: 0 0 8px; font-size: 14px; font-weight: 500; }
+.answer-review details { border-bottom: 1px solid var(--line); }
+.answer-review summary { display: flex; justify-content: space-between; align-items: start; gap: 16px; padding: 12px 8px; min-height: 44px; cursor: pointer; line-height: 1.5; }
+.answer-review summary span:last-child { color: var(--muted); white-space: nowrap; }
+.answer-review p { margin: 8px; line-height: 1.5; }
+.answer-review details[open] { padding-bottom: 8px; }
+.answer-review summary:hover { background: var(--panel); }
+.answer-review summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.result-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.result-actions button { flex: 1 1 128px; width: auto; }
+.result-actions + [role=status]:empty { display: none; }
+.result-actions + [role=status] textarea { width: 100%; min-height: 96px; padding: 12px; background: var(--panel); color: var(--ink); font: inherit; }
+.result .result-actions .secondary { margin: 0; }
+.result-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.result-verdict { margin: 0 0 16px; color: var(--ink); font-size: 16px; line-height: 1.5; }
+
+.answer-review .review-flag { display: block; width: 96px; height: 64px; object-fit: contain; margin: 8px; }
+.answer-review .review-sample { overflow-wrap: anywhere; }
