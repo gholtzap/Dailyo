@@ -41,15 +41,7 @@ jobs:
         env:
           DATABASE_URL: postgres://dailyo:dailyo-test@127.0.0.1:5432/dailyo_test
           TRAINROT_TEST_URL: http://127.0.0.1:4174
-        run: |
-          node --input-type=module -e 'import pg from "pg"; import {readFileSync} from "node:fs"; const db = new pg.Client({connectionString:process.env.DATABASE_URL}); await db.connect(); await db.query(readFileSync("scripts/daily-scores.sql","utf8")); await db.end();'
-          node scripts/test-score-server.mjs > /tmp/dailyo-score-api.log 2>&1 &
-          for attempt in 1 2 3 4 5; do
-            if curl --silent http://127.0.0.1:4174/ > /dev/null; then break; fi
-            sleep 1
-          done
-          node tests/score-protection.mjs
-          node tests/train-ranking.mjs
+        run: node scripts/test-score-api.mjs
       - run: node node_modules/playwright/cli.js install --with-deps chromium
       - name: Verify desktop and mobile journeys
         run: |

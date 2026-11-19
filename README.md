@@ -77,11 +77,10 @@ The laws prove the stated lifecycle properties under Bend's semantics. They do
 not prove routing/scoring calculations, the JS compiler, browser events, or the
 database. Existing browser, HTTP, scoring, and database checks cover those
 boundaries. See [the transition table and proof scope](verification/README.md). CI also runs score-protection and train-score replay checks against a disposable Postgres service.
-For local API checks, compile with `npm test`, apply `scripts/daily-scores.sql` to
-an empty loopback database, then run `scripts/test-score-server.mjs` with
-`DATABASE_URL`. In another terminal, set that same variable and
-`TRAINROT_TEST_URL=http://127.0.0.1:4174`, then run
-`node tests/score-protection.mjs` and `node tests/train-ranking.mjs`.
+For local API checks, compile with `npm test`, then run
+`DATABASE_URL=postgres://... node scripts/test-score-api.mjs` with an empty,
+disposable loopback database. The runner applies the schema, starts a fresh
+score API for each scenario, and cleans up its test rows.
 
 ## Build and test
 
