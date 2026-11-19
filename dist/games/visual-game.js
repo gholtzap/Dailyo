@@ -161,15 +161,15 @@ function formatOrderValue(value, unit) {
 function reveal(q, a, review = false) {
     const content = el('div', undefined, 'visual-reveal');
     const points = answerPoints(game, q, a);
-    const feedback = el('h3', a.skipped ? 'Answer revealed' : `${points} / 100 points`);
     if (!review) {
+        const feedback = el('h3', a.skipped ? 'Answer revealed' : `${points} / 100 points`);
         feedback.id = 'visual-feedback';
         feedback.tabIndex = -1;
+        const status = el('div');
+        status.setAttribute('role', 'status');
+        status.append(feedback);
+        content.append(status);
     }
-    const status = el('div');
-    status.setAttribute('role', 'status');
-    status.append(feedback);
-    content.append(status);
     if (game === 'pricerot') {
         content.append(el('p', `Recorded price: ${money(q.item.cents)}${a.price === null ? '' : ` · Your guess: ${money(a.price)} · ${Math.round(priceError(a.price, q.item.cents) * 100)}% off`}`));
     }
@@ -180,7 +180,8 @@ function reveal(q, a, review = false) {
         content.append(el('p', 'Correct order, from lowest to highest:'), list);
     }
     else {
-        content.append(el('p', `Answer: ${q.item.name}`));
+        if (!review)
+            content.append(el('p', `Answer: ${q.item.name}`));
         if (review) {
             const image = el('img', undefined, 'review-photo');
             image.src = q.item.image;
