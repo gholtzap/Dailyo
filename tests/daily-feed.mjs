@@ -44,7 +44,7 @@ try{
       const game=frame(name);
       const button=game.getByRole('button',{name:'How to play',exact:true});
       const dialog=game.getByRole('dialog',{name:'How to play',exact:true});
-      assert.equal(await button.textContent(),'');
+      assert.equal(await button.textContent(),'How to play');
       await button.press('Enter');
       await dialog.waitFor();
       assert.ok((await dialog.locator('p').first().innerText()).length>20);
