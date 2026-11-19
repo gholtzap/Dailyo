@@ -1,3 +1,5 @@
+import {RushMachine} from '../verified/rush-state.js';
+import type {RushEffect} from '../verified/rush.mjs';
 import {required} from '../dom.js';
 import type {RushMessage} from '../types.js';
 interface Round {frame: HTMLIFrameElement; ready: boolean}
@@ -35,25 +37,11 @@ const actions=$('.feed-actions'),retry=$('#rush-retry'),next=$('#rush-next');
 const pause=$('#rush-pause');
 const scores=games.map(()=>0);
 const copyStatus=$('#rush-copy-status'),copyText=$('#rush-copy-text');
-type Phase='loading'|'playing'|'feedback'|'paused'|'error'|'recap';
-type Event='load'|'ready'|'fail'|'answer'|'pause'|'resume'|'complete';
-// State/event table: only these transitions may change the run phase.
-// Loading/playing/error: Skip game abandons this game. Paused: skipping is disabled.
-// Feedback: Next puzzle continues a correct run; Next game/See recap leaves a miss.
-const transitions: Record<Phase,Partial<Record<Event,Phase>>>={
-  loading:{load:'loading',ready:'playing',fail:'error',complete:'recap'},
-  playing:{load:'loading',answer:'feedback',pause:'paused'},
-  feedback:{load:'loading'}, paused:{load:'loading',resume:'playing'},
-  error:{load:'loading'}, recap:{load:'loading'},
-};
-let phase: Phase='recap',index=0,round=0,deadline=Infinity,duration=0,remainingOnPause=0;
-function transition(event: Event){
-  const target=transitions[phase][event];
-  if(!target)return false;
-  phase=target;
-  pause.hidden=!['playing','paused'].includes(phase)||!Number.isFinite(deadline);
-  pause.textContent=phase==='paused'?'Resume':'Pause';
-  return true;
+const run = new RushMachine();
+let index=0,round=0,duration=0;
+function updatePauseControl(){
+  pause.hidden=!['playing','paused'].includes(run.phase)||run.phase==='playing'&&!Number.isFinite(run.deadline);
+  pause.textContent=run.phase==='paused'?'Resume':'Pause';
 }
 let current: Round | null | undefined, visible: HTMLIFrameElement | null = null;
 let timer: ReturnType<typeof setTimeout> | undefined, ticker: ReturnType<typeof setInterval> | undefined;
@@ -80,8 +68,9 @@ function preload(gameIndex: number,roundIndex: number){
   if(games[gameIndex]&&!upcoming.has(key))upcoming.set(key,makeRound(gameIndex,roundIndex));
 }
 
-function openRound(gameIndex: number,roundIndex=0){
-  if(!transition('load'))return;
+function openRound(gameIndex: number,roundIndex=0,generation=run.generation){
+  if(run.load(generation).$==='NoChange')return;
+  updatePauseControl();
   stopClock();
   if(current?.frame!==visible)current?.frame.remove();
   index=gameIndex;
@@ -106,11 +95,13 @@ function openRound(gameIndex: number,roundIndex=0){
   current??=makeRound(index,round);
   if(current.ready){showRound();return;}
   status.textContent=`Loading ${game.label}…`;
-  timer=setTimeout(showError,12000);
+  const loadingGeneration=run.generation;
+  timer=setTimeout(()=>showError(loadingGeneration),12000);
 }
 
-function showError(){
-  if(!transition('fail'))return;
+function showError(generation=run.generation){
+  if(run.fail(generation).$==='NoChange')return;
+  updatePauseControl();
   stopClock();
   current?.frame.remove();
   current=null;
@@ -120,12 +111,15 @@ function showError(){
 }
 
 function showRound(){
-  if(!current||!transition('ready'))return;
+  if(!current)return;
+  const game=games[index],timedRound=round+Number(index>0);
+  duration=timedRound?game.seconds[Math.min(timedRound,game.seconds.length)-1]*1000:0;
+  if(run.ready(performance.now(),timedRound?duration:undefined).$==='NoChange')return;
+  updatePauseControl();
   stopClock();
   next.textContent='Skip game';
   next.className='secondary rush-skip';
   const {frame}=current;
-  const game=games[index];
   frame.title=game.label;
   frame.classList.remove('feed-loading');
   if(visible)frame.classList.add('rush-enter');
@@ -133,18 +127,14 @@ function showRound(){
   visible=frame;
   frame.inert=false;
   status.textContent=`${game.label} · Round ${round+1}`;
-  const timedRound=round+Number(index>0);
   if(timedRound){
-    duration=game.seconds[Math.min(timedRound,game.seconds.length)-1]*1000;
-    deadline=performance.now()+duration;
     timeDisplay.dataset.timed='';
     updateClock();
     ticker=setInterval(updateClock,100);
   }else{
-    deadline=Infinity;
     clock.textContent='Untimed';
   }
-  pause.hidden=!Number.isFinite(deadline);
+  pause.hidden=!Number.isFinite(run.deadline);
   if(document.hidden)pauseRound();
   frame.contentDocument?.querySelector<HTMLElement>('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
   if(!document.hidden&&!navigator.connection?.saveData){
@@ -154,14 +144,20 @@ function showRound(){
 }
 
 function updateClock(){
-  const remaining=deadline-performance.now();
+  const remaining=run.deadline-performance.now();
   if(remaining<=0){finishRound(false,true);return;}
   clock.textContent=`${Math.ceil(remaining/1000)}s`;
   timeDisplay.style.setProperty('--rush-remaining',String(Math.min(1,remaining/duration)));
 }
 
 function finishRound(correct: boolean,expired=false){
-  if(!transition('answer'))return;
+  showFinish(expired?run.timeout(performance.now()):run.answer(correct,performance.now()));
+}
+
+function showFinish(effect: RushEffect){
+  if(effect.$!=='Finished')return;
+  updatePauseControl();
+  const {correct,expired}=effect;
   stopClock();
   if(correct)scores[index]++;
   status.textContent=expired?'Time’s up':correct?'Correct':'Missed';
@@ -170,12 +166,14 @@ function finishRound(correct: boolean,expired=false){
   next.className='primary rush-continue';
   status.focus({preventScroll:true});
   // Correct answers keep the pace; missed answers stay available for review.
-  if(correct)timer=setTimeout(()=>openRound(index,round+1),180);
-  next.onclick=()=>{if(phase==='feedback')openRound(correct?index:index+1,correct?round+1:0);else skipGame();};
+  const answeredGeneration=run.generation;
+  if(correct)timer=setTimeout(()=>openRound(index,round+1,answeredGeneration),180);
+  next.onclick=()=>{if(run.phase==='feedback')openRound(correct?index:index+1,correct?round+1:0);else skipGame();};
 }
 
 function showRecap(){
-  if(!transition('complete'))return;
+  if(run.complete().$==='NoChange')return;
+  updatePauseControl();
   current=null;
   visible=null;
   upcoming.clear();
@@ -218,11 +216,10 @@ window.addEventListener('message',(event: MessageEvent<RushMessage>)=>{
     }
     return;
   }
-  if(phase==='loading'&&reported==='ready')showRound();
-  if(phase==='loading'&&reported==='error')showError();
-  if(phase==='playing'&&reported==='answered'&&typeof correct==='boolean'){
-    const expired=performance.now()>=deadline;
-    finishRound(correct&&!expired,expired);
+  if(run.phase==='loading'&&reported==='ready')showRound();
+  if(run.phase==='loading'&&reported==='error')showError();
+  if(run.phase==='playing'&&reported==='answered'&&typeof correct==='boolean'){
+    showFinish(run.answer(correct,performance.now()));
   }
 });
 
@@ -254,14 +251,14 @@ function shareText(){
 }
 
 $('#rush-copy').onclick=async()=>{
-  if(phase!=='recap')return;
+  if(run.phase!=='recap')return;
   const text=shareText();
   let copied=false;
   try{
     await navigator.clipboard.writeText(text);
     copied=true;
   }catch{}
-  if(phase!=='recap'||shareText()!==text)return;
+  if(run.phase!=='recap'||shareText()!==text)return;
   copyStatus.textContent=copied?'Copied':'Select and copy your results.';
   copyText.hidden=copied;
   if(!copied){
@@ -278,24 +275,23 @@ function start(){
   openRound(0);
   status.focus({preventScroll:true});
 }
-$('#rush-replay').onclick=()=>{if(phase==='recap')start();};
-retry.onclick=()=>{if(phase==='error')openRound(index,round);};
-function skipGame(){if(['loading','playing','error'].includes(phase))openRound(index+1);}
+$('#rush-replay').onclick=()=>{if(run.phase==='recap')start();};
+retry.onclick=()=>{if(run.phase==='error')openRound(index,round);};
+function skipGame(){if(['loading','playing','error'].includes(run.phase))openRound(index+1);}
 next.onclick=skipGame;
 function pauseRound(){
-  if(phase!=='playing'||!Number.isFinite(deadline))return;
-  const remaining=deadline-performance.now();
-  if(remaining<=0){finishRound(false,true);return;}
-  if(!transition('pause'))return;
-  remainingOnPause=remaining;
+  const effect=run.pause(performance.now());
+  if(effect.$==='Finished'){showFinish(effect);return;}
+  if(effect.$!=='Suspended')return;
+  updatePauseControl();
   clearInterval(ticker);
   if(visible)visible.inert=true;
   status.textContent=`${games[index].label} · Paused`;
   next.setAttribute('disabled','');
 }
 function resumeRound(){
-  if(document.hidden||!transition('resume'))return;
-  deadline=performance.now()+remainingOnPause;
+  if(run.resume(performance.now(),!document.hidden).$!=='Resumed')return;
+  updatePauseControl();
   if(visible)visible.inert=false;
   status.textContent=`${games[index].label} · Round ${round+1}`;
   next.removeAttribute('disabled');
@@ -303,7 +299,7 @@ function resumeRound(){
   ticker=setInterval(updateClock,100);
   visible?.contentDocument?.querySelector<HTMLElement>('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
 }
-pause.onclick=()=>{if(phase==='paused')resumeRound();else pauseRound();};
+pause.onclick=()=>{if(run.phase==='paused')resumeRound();else pauseRound();};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseRound();});
 
 start();

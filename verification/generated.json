@@ -1,0 +1,13 @@
+{
+  "inputs": {
+    "LAWS.bend": "108dee6edd5f0c195cec1b30599968a6d7141f983ea1b74461b7b06f1bdfb7c6",
+    "PROOF.bend": "75daa3c323de02ff40dc4a0f3479c46f66cb2fb71d36e91b77cbb40b878ec46b",
+    "verification/toolchain.json": "52e68a90edb19ef399ca2898df525769c7947bd1b03c7b192e0d0fdeb8817042",
+    "verification/train.bend": "4e9d70c4ff8032ed18d46ac956ca51c560a8837df117064619b6041c6a3159dc",
+    "verification/rush.bend": "6fccfebc0725cc7c5a693d9ceb2d64db665e422b9ac76132e3a80919b07caab0"
+  },
+  "outputs": {
+    "src/verified/train.mjs": "23f46387a86a8e89b9af87f3a227d372fac6257262fef3b9ec0243be9b37ec63",
+    "src/verified/rush.mjs": "ed43a1c768e81c9d90231164131b01041146f2791a52fa251da9616795b372e0"
+  }
+}

@@ -4,7 +4,8 @@ interface Evaluation {valid: boolean; legs: Ride[]; optimal: RoutePath | null; s
 
 // Ride edges are whole, directed train trips. Each leg must fit one published
 // daytime pattern: an express cannot silently stop at a local station.
-export const MAX_GUESSES = 6;
+import {trainTransition} from './verified/train-state.js';
+export {MAX_GUESSES} from './verified/train-state.js';
 
 export function createRouter(data: Network) {
   const outgoing = new Map<string, {p: Pattern; patternIndex: number; index: number}[]>();
@@ -219,36 +220,9 @@ export function createRouter(data: Network) {
   return {best, evaluate, rides, feedback, assess, grade};
 }
 
-// planning: incomplete guesses stay editable; a complete route or six tries reveals.
-// revealed: edits are rejected; legacy failures can explicitly resume unscored.
+// Routing assessments are facts supplied to the shared, verified lifecycle.
 export function transition(state: TrainState, event: TrainEvent, router: ReturnType<typeof createRouter>): TrainState {
-  if(event.type==='retry'&&state.phase==='revealed'&&!state.result?.valid&&!state.skipped&&!state.guesses?.length&&state.legs.length){
-    return {phase:'planning',challenge:state.challenge,legs:state.legs.slice(0,-1),guesses:[state.legs],assisted:true};
-  }
-  if (event.type === 'finish' && state.phase === 'revealed') return {...state,phase:'complete'};
-  if (event.type === 'next' && ['planning','revealed'].includes(state.phase) && event.challenge) return {phase:'planning',challenge:event.challenge,legs:[]};
-  if (state.phase !== 'planning') return state;
-  if (event.type === 'show-answer') {
-    const result=router.grade(state.challenge.from,state.challenge.to,state.guesses??[]);
-    return {...state,phase:'revealed',skipped:true,legs:[],result};
-  }
-  if (event.type === 'hint') return {...state,assisted:true};
-  if(event.type==='continue'&&state.legs.length<5){
-    const guess=state.guesses?.at(-1);if(!guess)return state;
-    const assessment=router.assess(state.challenge.from,state.challenge.to,guess),leg=assessment.continuation;
-    if(!leg||event.route!==leg.route||JSON.stringify(state.legs)!==JSON.stringify(assessment.legs.map(({route,to})=>({route,to}))))return state;
-    return {...state,legs:[...state.legs,leg]};
-  }
-  if (event.type === 'add' && event.leg?.route && state.legs.length < 6) return {...state, legs:[...state.legs,event.leg]};
-  if (event.type === 'remove' && Number.isInteger(event.index) && event.index >= 0 && event.index < state.legs.length) return {...state,legs:state.legs.filter((_,i)=>i!==event.index)};
-  if (event.type === 'submit') {
-    const draft=event.draft??state.legs,guesses=state.guesses??[];
-    if(!Array.isArray(draft)||!draft.length||draft.length>6||guesses.length>=MAX_GUESSES||JSON.stringify(guesses.at(-1))===JSON.stringify(draft))return state;
-    const result=router.evaluate(state.challenge.from,state.challenge.to,draft),nextGuesses=[...guesses.filter(guess=>JSON.stringify(guess)!==JSON.stringify(draft)),draft.map(({route,to})=>to===undefined?{route}:{route,to})];
-    if(result.valid||nextGuesses.length===MAX_GUESSES){const winner=router.grade(state.challenge.from,state.challenge.to,nextGuesses);return {...state,legs:winner.draft,guesses:nextGuesses,phase:'revealed',result:winner};}
-    return {...state,guesses:nextGuesses};
-  }
-  return state;
+  return trainTransition(state, event, router);
 }
 
 export function formatTime(seconds: number) {
