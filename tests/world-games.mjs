@@ -100,7 +100,7 @@ try{
  await fresh.reload();
  assert.equal(await fresh.locator('.result h2').innerText(),completed);
  await shared.close();
- const exhaustive=await browser.newPage({viewport:{width:320,height:844}});await exhaustive.goto(`${base}/flags/`);await exhaustive.locator('#practice').click();const seen=new Set();let previous;
+ const exhaustive=await browser.newPage({viewport:{width:320,height:844}});await exhaustive.goto(`${base}/flags/`);await exhaustive.locator('.choice').first().waitFor();await exhaustive.locator('#practice').click();assert.equal(await exhaustive.locator('#practice').getAttribute('aria-pressed'),'true');const seen=new Set();let previous;
  for(let i=0;i<flags.length+1;i++){
   const src=await exhaustive.locator('.flag').getAttribute('src'),id=decodeURIComponent(src.split('/').at(-1).replace('.svg',''));
   if(i<flags.length){assert.ok(!seen.has(id),`Repeated ${id} before the deck ended`);seen.add(id);}else assert.notEqual(id,previous,'The next deck should not repeat the last flag');
