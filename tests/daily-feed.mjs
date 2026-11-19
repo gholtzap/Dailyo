@@ -69,8 +69,8 @@ try{
     await directory.press('Enter');
     const nav=page.getByRole('navigation',{name:'Games'});
     assert.equal(await nav.getByRole('link').count(),17);
-    assert.equal(await nav.locator('a[data-game-mark]').count(),17);
-    assert.equal(await nav.getByRole('link',{name:'Rush',exact:true}).getAttribute('href'),'/');
+    await nav.getByRole('link',{name:'GitHub repository',exact:true}).waitFor();
+    assert.equal(await page.getByRole('link',{name:'Rush',exact:true}).getAttribute('href'),'/rush/');
     const bounds=await nav.boundingBox();
     assert.ok(bounds.x>=0&&bounds.x+bounds.width<=width);
     await inspect('directory');
@@ -80,7 +80,7 @@ try{
     await page.getByRole('button',{name:'Practice',exact:true}).click();
     const home=page.getByRole('link',{name:'Daily Feed',exact:true});
     assert.equal(await home.getAttribute('href'),'/daily/');
-    assert.equal(await home.evaluate(node=>getComputedStyle(node,'::before').backgroundColor),'rgb(255, 212, 92)');
+    assert.equal(await home.innerText(),'Daily');
     const flagData = await page.request.get(new URL('/games/data/flags.json',base).href);
     assert.ok(flagData.ok());
     let flagLoads=0;
