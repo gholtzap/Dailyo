@@ -15,7 +15,7 @@ try{
   else{await page.locator('.map-hint summary').click();assert.equal(await page.locator('.map-hint').getAttribute('open'),null);assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Subway lines are hidden/);}
   for(const {route} of best.legs)await page.locator(`[data-route="${route}"]`).click();
  await page.locator('#reveal').click();await page.locator('#copy-results').waitFor();
-  assert.equal(await page.locator('.result-score').textContent(),reveal?'—':'100 points');await page.reload();await page.locator('#copy-results').waitFor();assert.equal(await page.locator('.result-score').textContent(),reveal?'—':'100 points');
+  assert.equal(await page.locator('.result-score').textContent(),reveal?'Completed with map':'100 points');await page.reload();await page.locator('#copy-results').waitFor();assert.equal(await page.locator('.result-score').textContent(),reveal?'Completed with map':'100 points');
   await page.close();console.log(`${width}px: ${reveal?'revealed map is unscored':'dismissed hint keeps score'} after reload`);
  }
  for (const width of [390, 1440]) {

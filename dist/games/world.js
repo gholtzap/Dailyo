@@ -150,17 +150,71 @@ function dailyProgress() {
 }
 function result() {
     const s = modeState.daily, deck = dailyDeck(), score = s.answers.filter((answer, i) => answer === deck[i].id).length;
-    const box = make('div', undefined, 'result'), title = make('h2', `${score} out of 5`), description = make('p', 'Next daily set at midnight in New York.'), button = make('button', 'Play practice', 'secondary');
+    const box = make('div', undefined, 'result'), title = make('h2', `${score} out of 5`);
     title.tabIndex = -1;
-    button.type = 'button';
-    button.onclick = () => selectMode('practice');
-    box.append(title, dailyProgress(), description);
-    if (!inFeed)
-        box.append(button);
-    quiz.replaceChildren(box);
+    box.append(title, dailyProgress());
     const rank = make('div', undefined, 'daily-rank');
-    description.before(rank);
+    box.append(rank);
     showRank(rank, { game: kind, day, puzzle: quizPuzzle(deck), answers: s.answers }, score);
+    const review = make('section', undefined, 'answer-review');
+    review.setAttribute('aria-label', 'Review answers');
+    review.append(make('h3', 'Review answers'));
+    for (const [index, item] of deck.entries()) {
+        const details = make('details'), summary = make('summary');
+        const selected = s.answers[index], correct = selected === item.id;
+        summary.append(make('span', `${index + 1}. ${vocabulary ? item.id : item.name}`), make('span', correct ? 'Correct' : 'Missed'));
+        details.append(summary);
+        if (kind === 'flags') {
+            const image = make('img', undefined, 'review-flag');
+            image.src = `/games/flags/${encodeURIComponent(item.id)}.svg`;
+            image.alt = `Flag of ${item.name}`;
+            details.append(image);
+        }
+        else if (vocabulary)
+            details.append(make('p', `Answer: ${item.name}`));
+        else {
+            const sample = make('p', item.samples[hash(`daily:${kind}:${day}:${index}:sample`) % item.samples.length], 'review-sample');
+            sample.dir = 'auto';
+            details.append(sample);
+        }
+        if (!correct) {
+            const guess = quizOptions(items, kind, item, `daily:${kind}:${day}:${index}`).find(option => option.id === selected);
+            if (guess)
+                details.append(make('p', `Your answer: ${guess.name}`));
+        }
+        if (vocabulary && item.example)
+            details.append(make('p', item.example));
+        review.append(details);
+    }
+    box.append(review, make('p', 'Next daily set at midnight in New York.'));
+    if (!inFeed) {
+        const actions = make('div', undefined, 'result-actions'), status = make('p');
+        status.setAttribute('role', 'status');
+        const copy = make('button', 'Copy results', 'secondary');
+        copy.type = 'button';
+        copy.onclick = async () => {
+            const text = [`${kind} ${day}`, `${score} out of 5`, s.answers.map((answer, i) => answer === deck[i].id ? '🟩' : '⬛').join(''), `https://trainrot.vercel.app${location.pathname}`].join('\n');
+            try {
+                await navigator.clipboard.writeText(text);
+                status.textContent = 'Copied results.';
+            }
+            catch {
+                const area = make('textarea', undefined, 'rot-copy');
+                area.value = text;
+                area.readOnly = true;
+                area.setAttribute('aria-label', 'Results to copy');
+                status.replaceChildren(area);
+                area.focus();
+                area.select();
+            }
+        };
+        const practice = make('button', 'Play practice', 'primary');
+        practice.type = 'button';
+        practice.onclick = () => selectMode('practice');
+        actions.append(copy, practice);
+        box.append(actions, status);
+    }
+    quiz.replaceChildren(box);
     reportDaily('complete', title.textContent, day);
 }
 function draw() {
