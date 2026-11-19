@@ -64,6 +64,7 @@ try {
       await page.locator('#rush-status').filter({hasText:`${game} · Round 2`}).waitFor();
       assert.match(await page.locator('#rush-clock').textContent(),/s$/);
       await page.clock.fastForward(60000);
+      await page.getByRole('button',{name:'See recap',exact:true}).click();
       await page.getByRole('heading',{name:'Rush recap',exact:true}).waitFor();
       assert.match(await page.locator('#rush-score').textContent(),/^1 correct/);
       const after=await page.evaluate(()=>Object.fromEntries(Object.entries(localStorage).filter(([key])=>!key.startsWith('dailyo:rush:best:'))));
@@ -100,6 +101,7 @@ try {
   await page.locator('#rush-status').filter({hasText:'skyrot · Round 1'}).waitFor();
   const rushQ=visualSet('skyrot',data.skyrot,`rush:skyrot:${day}`,true,0)[0];
   await page.frameLocator('iframe:not(.feed-loading)').getByRole('button',{name:rushQ.options.find(x=>x.id!==rushQ.item.id).name,exact:true}).click();
+  await page.getByRole('button',{name:'See recap',exact:true}).click();
   await page.getByRole('heading',{name:'Rush recap',exact:true}).waitFor();
   assert.equal(await page.locator('#rush-score').textContent(),'0 correct');
   await page.route('**/games/media/skyrot-*.jpg',route=>route.fulfill({status:503}));

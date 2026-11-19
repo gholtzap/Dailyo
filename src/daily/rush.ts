@@ -32,9 +32,27 @@ const $=required;
 const panel=$('#feed-game'),status=$('#rush-status'),clock=$('#rush-clock');
 const timeDisplay=$('.rush-time');
 const actions=$('.feed-actions'),retry=$('#rush-retry'),next=$('#rush-next');
+const pause=$('#rush-pause');
 const scores=games.map(()=>0);
 const copyStatus=$('#rush-copy-status'),copyText=$('#rush-copy-text');
-let phase='loading',index=0,round=0,deadline=Infinity,duration=0;
+type Phase='loading'|'playing'|'feedback'|'paused'|'error'|'recap';
+type Event='load'|'ready'|'fail'|'answer'|'pause'|'resume'|'complete';
+// State/event table: only these transitions may change the run phase.
+const transitions: Record<Phase,Partial<Record<Event,Phase>>>={
+  loading:{load:'loading',ready:'playing',fail:'error',complete:'recap'},
+  playing:{load:'loading',answer:'feedback',pause:'paused'},
+  feedback:{load:'loading'}, paused:{load:'loading',resume:'playing'},
+  error:{load:'loading'}, recap:{load:'loading'},
+};
+let phase: Phase='recap',index=0,round=0,deadline=Infinity,duration=0,remainingOnPause=0;
+function transition(event: Event){
+  const target=transitions[phase][event];
+  if(!target)return false;
+  phase=target;
+  pause.hidden=!['playing','paused'].includes(phase)||!Number.isFinite(deadline);
+  pause.textContent=phase==='paused'?'Resume':'Pause';
+  return true;
+}
 let current: Round | null | undefined, visible: HTMLIFrameElement | null = null;
 let timer: ReturnType<typeof setTimeout> | undefined, ticker: ReturnType<typeof setInterval> | undefined;
 const upcoming=new Map<string, Round>();
@@ -61,14 +79,17 @@ function preload(gameIndex: number,roundIndex: number){
 }
 
 function openRound(gameIndex: number,roundIndex=0){
+  if(!transition('load'))return;
   stopClock();
   if(current?.frame!==visible)current?.frame.remove();
   index=gameIndex;
   round=roundIndex;
   const game=games[index];
   if(!game){showRecap();return;}
-  phase='loading';
   retry.hidden=true;
+  next.removeAttribute('disabled');
+  next.textContent='Next game';
+  next.onclick=skipGame;
   panel.hidden=false;
   if(visible)if (visible) visible!.inert=true;
   const key=`${index}:${round}`;
@@ -86,8 +107,8 @@ function openRound(gameIndex: number,roundIndex=0){
 }
 
 function showError(){
+  if(!transition('fail'))return;
   stopClock();
-  phase='error';
   current?.frame.remove();
   current=null;
   status.textContent=`${games[index].label} didn’t load.`;
@@ -96,9 +117,9 @@ function showError(){
 }
 
 function showRound(){
+  if(!current||!transition('ready'))return;
   stopClock();
-  phase='playing';
-  if (!current) return;
+  next.textContent='Next game';
   const {frame}=current;
   const game=games[index];
   frame.title=game.label;
@@ -119,6 +140,8 @@ function showRound(){
     deadline=Infinity;
     clock.textContent='Untimed';
   }
+  pause.hidden=!Number.isFinite(deadline);
+  if(document.hidden)pauseRound();
   frame.contentDocument?.querySelector<HTMLElement>('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
   if(!document.hidden&&!navigator.connection?.saveData){
     preload(index,round+1);
@@ -134,22 +157,20 @@ function updateClock(){
 }
 
 function finishRound(correct: boolean,expired=false){
-  if(phase!=='playing')return;
+  if(!transition('answer'))return;
   stopClock();
-  phase='feedback';
-  const game=games[index];
   if(correct)scores[index]++;
   status.textContent=expired?'Time’s up':correct?'Correct':'Missed';
   if(expired)visible?.contentWindow?.postMessage('rush-timeout',location.origin);
-  // Disable further input while leaving the answer visible.
-  if (visible) visible.inert=true;
+  next.textContent=correct?'Next puzzle':index===games.length-1?'See recap':'Next game';
   status.focus({preventScroll:true});
-  timer=setTimeout(()=>correct?openRound(index,round+1):openRound(index+1),
-    correct?180:game.path==='/trainrot/'?2200:1300);
+  // Correct answers keep the pace; missed answers stay available for review.
+  if(correct)timer=setTimeout(()=>openRound(index,round+1),180);
+  next.onclick=()=>{if(phase==='feedback')openRound(correct?index:index+1,correct?round+1:0);else skipGame();};
 }
 
 function showRecap(){
-  phase='recap';
+  if(!transition('complete'))return;
   current=null;
   visible=null;
   upcoming.clear();
@@ -254,6 +275,30 @@ function start(){
 }
 $('#rush-replay').onclick=()=>{if(phase==='recap')start();};
 retry.onclick=()=>{if(phase==='error')openRound(index,round);};
-next.onclick=()=>{if(['loading','playing','feedback','error'].includes(phase))openRound(index+1);};
+function skipGame(){if(['loading','playing','error'].includes(phase))openRound(index+1);}
+next.onclick=skipGame;
+function pauseRound(){
+  if(phase!=='playing'||!Number.isFinite(deadline))return;
+  const remaining=deadline-performance.now();
+  if(remaining<=0){finishRound(false,true);return;}
+  if(!transition('pause'))return;
+  remainingOnPause=remaining;
+  clearInterval(ticker);
+  if(visible)visible.inert=true;
+  status.textContent=`${games[index].label} · Paused`;
+  next.setAttribute('disabled','');
+}
+function resumeRound(){
+  if(document.hidden||!transition('resume'))return;
+  deadline=performance.now()+remainingOnPause;
+  if(visible)visible.inert=false;
+  status.textContent=`${games[index].label} · Round ${round+1}`;
+  next.removeAttribute('disabled');
+  updateClock();
+  ticker=setInterval(updateClock,100);
+  visible?.contentDocument?.querySelector<HTMLElement>('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
+}
+pause.onclick=()=>{if(phase==='paused')resumeRound();else pauseRound();};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseRound();});
 
 start();
