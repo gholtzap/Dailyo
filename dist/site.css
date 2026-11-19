@@ -134,3 +134,7 @@ button:is(:hover, :focus-visible) + .game-tooltip,
   .daily-header { flex-wrap: wrap; }
   .daily-header #feed-progress { order: 4; flex-basis: 100%; text-align: right; }
 }
+
+.site-masthead .site-more-links .game-picker-context { grid-column: 1 / -1; margin: 0; padding: 8px; font-size: 12px; color: var(--muted); }
+.site-masthead .site-more-links a:not(.repository-link) { flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; }
+.site-more-links small { font-size: 12px; color: var(--muted); line-height: 1.4; }
