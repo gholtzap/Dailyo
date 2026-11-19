@@ -1,7 +1,16 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const games=[['trainrot','trainrot'],['flagrot','flags'],['langrot','languages'],['Vocabulary','vocabulary'],...['maprot','yearrot','borderrot','ladderrot','cluerot','scalerot','swaprot','skyrot','pricerot','skylinerot','zoomrot','orderrot'].map(name=>[name,name])];
+const games=[
+  ['trainrot','trainrot','Subway routes'],['flagrot','flags','Flags'],
+  ['langrot','languages','Languages'],['Vocabulary','vocabulary','Word meanings'],
+  ['maprot','maprot','City locations'],['yearrot','yearrot','Timelines'],
+  ['borderrot','borderrot','Country routes'],['ladderrot','ladderrot','Word ladders'],
+  ['cluerot','cluerot','Clues'],['scalerot','scalerot','Estimates'],
+  ['swaprot','swaprot','Number sorting'],['skyrot','skyrot','Overhead cities'],
+  ['pricerot','pricerot','Prices'],['skylinerot','skylinerot','Skylines'],
+  ['zoomrot','zoomrot','Close-up objects'],['orderrot','orderrot','Ordering'],
+];
 async function visit(directory){
   for(const entry of await fs.readdir(directory,{withFileTypes:true})){
     const file=path.join(directory,entry.name);
@@ -12,7 +21,7 @@ async function visit(directory){
       const route='/'+path.relative('dist',directory).split(path.sep).filter(Boolean).join('/')+'/';
       const rush=route==='//'||route.startsWith('/rush/'),daily=route==='/daily/';
       const current=games.find(([,slug])=>route===`/${slug}/`);
-      const links=games.filter(game=>rush||game!==current).map(([name,slug])=>`<a href="${rush?`/rush/${name.toLowerCase()}/`:`/${slug}/`}">${name}</a>`).join('\n          ');
+      const links=games.filter(game=>rush||game!==current).map(([name,slug,description])=>`<a aria-description="${description}${rush?' in Rush':' · Daily and Practice'}" href="${rush?`/rush/${name.toLowerCase()}/`:`/${slug}/`}"><span>${name}</span> <small>${description}</small></a>`).join('\n          ');
       const header=`<header class="site-masthead${rush||daily?' feed-header':''}${daily?' daily-header':''}">
     <a class="site-brand" href="/">dailyo</a>
     <nav class="site-modes" aria-label="Play mode">
@@ -23,6 +32,7 @@ async function visit(directory){
     <details class="site-more${rush||daily?' feed-directory':''}">
       <summary>Games</summary>
       <nav class="site-more-links" aria-label="Games">
+          <p class="game-picker-context">${rush?'Play in Rush':'Daily & practice'}</p>
           ${links}
           <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
       </nav>

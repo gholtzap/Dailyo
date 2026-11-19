@@ -56,7 +56,7 @@ try{
     await status.filter({hasText:'flagrot didn’t load.'}).waitFor();
     await inspect('error');
     await page.getByText('Games',{exact:true}).press('Enter');
-    await page.getByRole('navigation',{name:'Games'}).getByRole('link',{name:'Vocabulary'}).waitFor();
+    await page.getByRole('navigation',{name:'Games'}).getByRole('link',{name:/^Vocabulary Word meanings$/}).waitFor();
     await inspect('directory');
     await page.getByText('Games',{exact:true}).press('Enter');
     await page.getByRole('button',{name:'Retry',exact:true}).press('Enter');
