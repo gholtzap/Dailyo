@@ -20,13 +20,13 @@ try{
     if(route!=='/daily/'){
      assert.equal(await games.isVisible(),false);
      await menu.press('Enter');
-     await games.getByRole('link',{name:'Vocabulary',exact:true}).waitFor();
+     await games.getByRole('link',{name:/^Vocabulary Word meanings$/}).waitFor();
      await other.keyboard.press('Escape');
      assert.equal(await games.isVisible(),false);
      assert.equal(await menu.evaluate(element=>element===document.activeElement),true);
     }
     await menu.click();
-    await other.getByRole('link',{name:'Vocabulary',exact:true}).click();
+    await other.getByRole('link',{name:/^Vocabulary Word meanings$/}).click();
     await other.locator('.vocabulary-word').waitFor();
     assert.equal(await other.title(),'Vocabulary | dailyo');
     assert.equal(await other.locator('.site-more').getAttribute('open'),null);

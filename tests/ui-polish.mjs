@@ -45,7 +45,7 @@ try {
    const menu=header.getByRole('navigation',{name:'Games',exact:true});
    await menu.getByRole('link',{name:'GitHub repository',exact:true}).waitFor();
    assert.equal(await menu.locator('.game-picker-context').textContent(),route==='/'?'Play in Rush':'Daily & practice');
-   const vocabulary=menu.getByRole('link',{name:'Vocabulary',exact:true});
+   const vocabulary=menu.getByRole('link',{name:/^Vocabulary Word meanings$/});
    assert.equal(await vocabulary.locator('small').textContent(),'Word meanings');
    assert.equal(await vocabulary.getAttribute('href'),route==='/'?'/rush/vocabulary/':'/vocabulary/');
    assert.ok((await menu.boundingBox()).x>=0);

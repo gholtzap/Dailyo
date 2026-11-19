@@ -74,7 +74,7 @@ try{
     const bounds=await nav.boundingBox();
     assert.ok(bounds.x>=0&&bounds.x+bounds.width<=width);
     await inspect('directory');
-    await nav.getByRole('link',{name:'trainrot',exact:true}).press('Enter');
+    await nav.getByRole('link',{name:/^trainrot Subway routes$/}).press('Enter');
     await page.waitForURL(url=>url.pathname==='/trainrot/');
     await page.locator('[data-route]').first().waitFor();
     await page.getByRole('button',{name:'Practice',exact:true}).click();
