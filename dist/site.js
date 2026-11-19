@@ -4,6 +4,11 @@ for (const moreGames of document.querySelectorAll('.site-more')) {
         if (!moreGames.contains(event.target) || (event.target instanceof Element && event.target.closest('a')))
             moreGames.open = false;
     });
+    // Focus entering an embedded game does not bubble to the parent document.
+    window.addEventListener('blur', () => queueMicrotask(() => {
+        if (document.activeElement instanceof HTMLIFrameElement)
+            moreGames.open = false;
+    }));
     moreGames.addEventListener('focusout', event => {
         if (event.relatedTarget && !moreGames.contains(event.relatedTarget))
             moreGames.open = false;

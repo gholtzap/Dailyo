@@ -33,6 +33,11 @@ try {
    assert.equal(await summary.evaluate(n=>n===document.activeElement),true);
    await summary.click();await header.click({position:{x:4,y:4}});
    assert.equal(await header.locator('details').getAttribute('open'),null);
+   if(route==='/'){
+    await summary.click();
+    await page.frameLocator('iframe:not(.feed-loading)').locator('.prompt').click({position:{x:8,y:8}});
+    assert.equal(await header.locator('details').getAttribute('open'),null,'Clicking inside an embedded game closes the menu');
+   }
    const name=route.replaceAll('/','')||'rush';
    await page.screenshot({path:`${output}/${name}-${width}.png`,fullPage:true});
    reports.push({name:`${route}-${width}-page`,...await checkPage(page,policy)});
