@@ -85,6 +85,24 @@ try{
       const [red,green]=backgroundColor.match(/\d+/g).map(Number);
       return {width:fill.getBoundingClientRect().width,red,green};
     });
+    // Pause preserves the deadline, rejects late answers, and resumes explicitly.
+    await page.getByRole('button',{name:'Pause',exact:true}).click();
+    await status.filter({hasText:'Paused'}).waitFor();
+    await page.clock.fastForward(20000);
+    assert.equal(await timer.textContent(),'8s');
+    await flag.locator('body').evaluate(()=>parent.postMessage({type:'rush-game',phase:'answered',correct:true},location.origin));
+    assert.match(await status.textContent(),/Paused/);
+    assert.equal(await page.getByRole('button',{name:'Next game',exact:true}).isDisabled(),true);
+    await page.getByRole('button',{name:'Resume',exact:true}).click();
+    await status.filter({hasText:'flagrot · Round 2'}).waitFor();
+    // A controlled visibility event exercises backgrounding in headless Chromium.
+    await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});
+    await status.filter({hasText:'Paused'}).waitFor();
+    await page.clock.fastForward(20000);
+    assert.equal(await timer.textContent(),'8s');
+    await page.evaluate(()=>{delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));});
+    assert.match(await status.textContent(),/Paused/,'Returning must not start the clock until Resume');
+    await page.getByRole('button',{name:'Resume',exact:true}).click();
     const full=await meter();
     assert.ok(full.width>30 && full.green>full.red);
     await page.clock.fastForward(4000);
@@ -109,7 +127,9 @@ try{
     await status.filter({hasText:'Missed'}).waitFor();
     await flag.locator('.choice.correct').filter({hasText:flagDeck[5].name}).waitFor();
     await inspect('miss',true);
-    await page.clock.fastForward(1400);
+    await page.clock.fastForward(5000);
+    assert.ok(['Missed','Time’s up'].includes(await status.textContent()),'Miss/timeout stays visible until continuation');
+    await page.getByRole('button',{name:/^(Next game|See recap)$/}).click();
 
     const language=game('langrot');
     await timer.filter({hasText:'8s'}).waitFor();
@@ -123,7 +143,9 @@ try{
     await page.clock.fastForward(6100);
     await status.filter({hasText:'Time’s up'}).waitFor();
     await language.locator('.choice.correct').waitFor();
-    await page.clock.fastForward(1400);
+    await page.clock.fastForward(5000);
+    assert.ok(['Missed','Time’s up'].includes(await status.textContent()),'Miss/timeout stays visible until continuation');
+    await page.getByRole('button',{name:/^(Next game|See recap)$/}).click();
 
     await status.filter({hasText:'Loading trainrot…'}).waitFor();
     assert.equal(await timer.textContent(),'');
@@ -276,7 +298,9 @@ try{
     await timer.filter({hasText:'20s'}).waitFor();
     await page.clock.fastForward(20100);
     await scale.locator('.rot-feedback').filter({hasText:'Answer:'}).waitFor();
-    await page.clock.fastForward(1400);
+    await page.clock.fastForward(5000);
+    assert.ok(['Missed','Time’s up'].includes(await status.textContent()),'Miss/timeout stays visible until continuation');
+    await page.getByRole('button',{name:/^(Next game|See recap)$/}).click();
     assert.equal(await page.locator('#feed-results li').count(),1);
     assert.equal(await page.locator('#rush-personal-best').textContent(),'New best · 1 correct');
     assert.equal(await page.evaluate(()=>localStorage.getItem('dailyo:rush:best:all')),'20');
