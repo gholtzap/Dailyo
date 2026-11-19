@@ -105,6 +105,7 @@ try{
   const src=await exhaustive.locator('.flag').getAttribute('src'),id=decodeURIComponent(src.split('/').at(-1).replace('.svg',''));
   if(i<flags.length){assert.ok(!seen.has(id),`Repeated ${id} before the deck ended`);seen.add(id);}else assert.notEqual(id,previous,'The next deck should not repeat the last flag');
   previous=id;const correct=flags.find(f=>f.id===id).name;await exhaustive.getByRole('button',{name:correct,exact:true}).click();await exhaustive.locator('#next').click();
+  await exhaustive.waitForFunction(previous=>document.querySelector('.flag')?.getAttribute('src')!==previous,src);
  }
  assert.equal(seen.size,flags.length);assert.equal(await exhaustive.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);console.log('Practice covers every flag before repeating');await exhaustive.close();
  for(const action of ['answer','advance']){
