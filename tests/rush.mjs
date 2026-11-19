@@ -52,7 +52,7 @@ try{
     const loadJson=async path=>(await page.request.get(new URL(path,base).href)).json();
 
     await page.goto(base);
-    await page.getByRole('heading',{name:'Rush',exact:true}).waitFor();
+    await page.getByRole('link',{name:'Rush',exact:true}).waitFor();
     await status.filter({hasText:'flagrot didn’t load.'}).waitFor();
     await inspect('error');
     await page.getByText('Games',{exact:true}).press('Enter');
@@ -250,7 +250,7 @@ try{
     await timer.filter({hasText:'Untimed'}).waitFor();
     await page.getByRole('link',{name:'Daily Feed',exact:true}).click();
     await page.waitForURL('**/daily/');
-    await page.getByRole('heading',{name:'Daily Feed'}).waitFor();
+    await page.getByRole('link',{name:'Daily Feed',exact:true}).waitFor();
     if(new URL(base).hostname==='127.0.0.1'){
       await page.route('**/rush/**',async route=>{
         await route.fulfill({response:await page.request.get(base)});

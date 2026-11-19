@@ -1,5 +1,4 @@
-const moreGames = document.querySelector('.site-more');
-if (moreGames) {
+for (const moreGames of document.querySelectorAll('.site-more')) {
     const toggle = moreGames.querySelector('summary');
     document.addEventListener('click', event => {
         if (!moreGames.contains(event.target) || (event.target instanceof Element && event.target.closest('a')))

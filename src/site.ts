@@ -1,6 +1,4 @@
-const moreGames = document.querySelector<HTMLDetailsElement>('.site-more');
-
-if (moreGames) {
+for (const moreGames of document.querySelectorAll<HTMLDetailsElement>('.site-more')) {
   const toggle = moreGames.querySelector('summary');
   document.addEventListener('click', event => {
     if (!moreGames.contains(event.target as Node | null) || (event.target instanceof Element && event.target.closest('a'))) moreGames.open = false;
