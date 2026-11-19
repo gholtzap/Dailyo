@@ -63,7 +63,7 @@ try{
     await page.getByRole('link',{name:'Rush',exact:true}).waitFor();
     assert.equal(new URL(page.url()).pathname,'/');
     await enterFeed();
-    await page.getByRole('heading',{name:'Daily Feed',exact:true}).waitFor();
+    await page.getByRole('link',{name:'Daily Feed',exact:true}).waitFor();
     await page.waitForURL(url=>url.pathname==='/daily/');
     const directory=page.getByText('Games',{exact:true});
     await directory.press('Enter');

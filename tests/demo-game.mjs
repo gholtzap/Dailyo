@@ -27,7 +27,7 @@ try {
       await games.getByRole('link', { name: game, exact: true }).press('Enter');
       await page.waitForURL(url => url.pathname === path);
       assert.equal(await page.title(), `${game} | dailyo`);
-      assert.equal(await games.locator('[aria-current="page"]').textContent(), game);
+      assert.equal(await page.locator('.site-more').getAttribute('open'),null);
     }
     await page.getByRole('group', { name: 'Add a train' }).waitFor();
     assert.equal(await page.locator('.demo-map-label').innerText(), 'Harbour City · Fictional network');
