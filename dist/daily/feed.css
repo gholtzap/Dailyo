@@ -187,3 +187,7 @@
   .rush-feed .rush-time[data-timed] { order: 3; flex: 1 0 100%; max-width: none; }
   .rush-feed .feed-actions:has(.rush-time[data-timed]) { display: flex; }
 }
+
+#rush-next.rush-skip { background: transparent; border-color: transparent; color: var(--muted); margin-top: 0; }
+#rush-next.rush-skip:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+#rush-next.rush-continue { margin-top: 0; }
