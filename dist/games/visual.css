@@ -59,3 +59,7 @@
 
 .review-photo { display: block; width: min(100%, 320px); max-height: 200px; object-fit: contain; object-position: left center; margin: 8px 0; border-radius: 4px; }
 #quiz > .rot-actions:has(.primary) { margin: 16px 0; }
+
+.visual-reveal { padding: 16px 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: transparent; }
+.visual-recap .visual-reveal { padding: 0 8px 16px; }
+.visual-order li { background: transparent; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
