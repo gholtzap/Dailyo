@@ -242,3 +242,30 @@ a[data-game-mark="pricerot"]::before { content: "＄"; background: #3b4b46; colo
 a[data-game-mark="skylinerot"]::before { content: "▥"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
 a[data-game-mark="zoomrot"]::before { content: "⌕"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
 a[data-game-mark="orderrot"]::before { content: "↕"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
+
+.site-github {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  border-radius: 6px;
+  color: var(--muted);
+}
+.site-github::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  mask: url("/assets/github.svg") center / contain no-repeat;
+}
+.site-github:hover {
+  color: var(--ink);
+  background: #383b40;
+}
+
+@media (max-width: 360px) {
+  .site-masthead { padding-inline: 8px; column-gap: 8px; }
+  .site-masthead.feed-header h1 { font-size: 18px; }
+}
