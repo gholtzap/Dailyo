@@ -1,131 +1,16 @@
-.site-masthead {
-  min-height: 72px;
-  padding: 8px 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px 24px;
-  background: #1c1d1f;
-  border-bottom: 1px solid var(--line);
-}
-.site-masthead a { background: #1c1d1f; }
-.site-brand {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px;
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--ink);
-  text-decoration: none;
-}
-.site-games {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-.site-games a {
-  display: flex;
-  align-items: center;
-  min-height: 40px;
-  padding: 4px 12px;
-  border-radius: 6px;
-  color: var(--muted);
-  text-decoration: none;
-}
-.site-games a:hover, .site-games a[aria-current="page"] {
-  color: var(--ink);
-  background: #383b40;
-}
-.site-masthead :is(a, summary):focus-visible {
-  outline: 2px solid #e4e5e7;
-  outline-offset: 2px;
-}
-.site-more {
-  position: relative;
-  z-index: 10;
-}
-.site-more summary {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  color: var(--muted);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  list-style: none;
-}
-.site-more summary::before {
-  content: "";
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: -5px 0, 5px 0;
-}
-.site-more [role="tooltip"] {
-  display: none;
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 8px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #1c1d1f;
-  color: var(--ink);
-  font-size: 12px;
-}
-.site-more:not([open]) summary:is(:hover, :focus-visible) [role="tooltip"] {
-  display: block;
-}
+/* Neutral surfaces and a small, shared control vocabulary. */
+:root { --line: #35373c; }
+.site-masthead { padding: 8px 32px; display: flex; align-items: center; background: #1c1d1f; border-bottom: 1px solid var(--line); }
+.site-brand { display: inline-flex; align-items: center; min-height: 40px; color: var(--ink); font-size: 18px; font-weight: 500; text-decoration: none; }
+.site-masthead :is(a,summary):focus-visible { outline: 2px solid #e4e5e7; outline-offset: 3px; }
+.site-more { position: relative; z-index: 10; }
+.site-more summary { cursor: pointer; color: var(--muted); border-radius: 8px; }
 .site-more summary::-webkit-details-marker { display: none; }
-.site-more summary:hover,
-.site-more[open] summary {
-  color: var(--ink);
-  background: #383b40;
-}
-.site-more-links {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  display: grid;
-  gap: 8px;
-  min-width: 144px;
-  max-height: 65vh;
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding: 8px;
-  background: #1c1d1f;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-.site-games .site-more-links a { padding-inline: 12px; }
-
-@media (max-width: 700px) {
-  .site-masthead { min-height: 60px; padding: 8px 16px; column-gap: 12px; }
-  .site-brand { font-size: 16px; }
-  .site-games a { padding-inline: 4px; }
-}
-
-[data-daily-feed] :is(.site-masthead, .modes, .site-header, #start-practice, .standalone-only) {
-  display: none;
-}
-
-.home-star {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.home-star::before {
-  content: "";
-  width: 14px;
-  height: 14px;
-  flex: none;
-  background: #ffd45c;
-  clip-path: polygon(50% 0%, 62% 35%, 100% 38%, 71% 62%, 80% 100%, 50% 77%, 20% 100%, 29% 62%, 0% 38%, 38% 35%);
-}
-
+.site-more summary:hover, .site-more[open] summary { color: var(--ink); background: #303237; }
+.site-more-links { position: absolute; overflow: auto; overscroll-behavior: contain; background: #1c1d1f; border: 1px solid var(--line); border-radius: 8px; }
+[data-daily-feed] :is(.site-masthead,.modes,.site-header,#start-practice,.standalone-only) { display: none; }
+:is(.choice,.primary,.secondary,.primary-button,.secondary-button,.country-search) { border-radius: 8px; }
+@media(max-width:700px) { .site-masthead { padding-inline:16px; } .site-brand { font-size:16px; } }
 .game-tooltip {
   display: none;
   position: absolute;
@@ -145,19 +30,18 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 .game-icon {
   position: relative;
   display: block;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 50%;
+  width: auto;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
   background: var(--paper, #1c1d1f);
   color: var(--ink);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
 }
 .game-icon:hover { background: #383b40; }
-.game-icon#help::before { content: "?" / ""; }
-.heading:has(.game-help) { position: relative; padding-right: 52px; }
+.heading:has(.game-help) { position: relative; padding-right: 112px; }
 .game-help { position: absolute; top: 0; right: 0; z-index: 3; }
 .map-panel > .game-help { top: 12px; right: 12px; }
 .game-help .game-tooltip { top: 100%; right: 0; }
@@ -180,7 +64,7 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 }
 .game-help-header h2 { margin: 0; font-size: 18px; font-weight: 500; }
 .game-help-header button {
-  min-height: 44px;
+  min-min-height: 40px;
   padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -190,91 +74,6 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 .game-help-header button:hover { background: #383b40; }
 .game-help-dialog p { margin: 16px 0 0; line-height: 1.5; }
 
-.copy-icon::before,
-.copy-icon::after {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 12px;
-  border: 1px solid currentColor;
-  border-radius: 2px;
-}
-.copy-icon::before { top: 12px; left: 13px; }
-.copy-icon::after { top: 16px; left: 17px; background: var(--paper, #1c1d1f); }
-
-a[data-game-mark] { gap: 8px; }
-a[data-game-mark]::before {
-  content: "";
-  display: block;
-  flex: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
-  background-image: var(--game-mark, url("/assets/game-brand-atlas.webp"));
-  background-size: var(--game-mark-size, 400% 400%);
-  background-position: var(--game-mark-x, 0%) var(--game-mark-y, 8%);
-  background-repeat: no-repeat;
-}
-[data-game-mark="trainrot"] { --game-mark: url("/assets/nav-train-logo.png"); --game-mark-size: cover; }
-[data-game-mark="flagrot"] { --game-mark: url("/assets/nav-flagrot-logo.jpg"); --game-mark-size: cover; }
-[data-game-mark="langrot"] { --game-mark: url("/assets/nav-langrot-logo.jpg"); --game-mark-size: cover; }
-[data-game-mark="maprot"], [data-game-mark="cluerot"], [data-game-mark="daily"] { --game-mark-x: 33.333%; }
-[data-game-mark="yearrot"], [data-game-mark="scalerot"] { --game-mark-x: 66.667%; }
-[data-game-mark="borderrot"], [data-game-mark="swaprot"] { --game-mark-x: 100%; }
-[data-game-mark="ladderrot"], [data-game-mark="cluerot"],
-[data-game-mark="scalerot"], [data-game-mark="swaprot"] { --game-mark-y: 50%; }
-[data-game-mark="rush"], [data-game-mark="daily"] { --game-mark-y: 94%; }
-
-@media (max-width: 440px) {
-  .site-games a[aria-current="page"][data-game-mark],
-  .feed-link[data-game-mark="daily"] {
-    min-width: 40px;
-    justify-content: center;
-  }
-  .current-game-name, .daily-link-name {
-    display: none;
-  }
-}
-
-/* Native marks for the five visual and everyday-knowledge games. */
-a[data-game-mark="skyrot"]::before { content: "◉"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
-a[data-game-mark="pricerot"]::before { content: "＄"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
-a[data-game-mark="skylinerot"]::before { content: "▥"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
-a[data-game-mark="zoomrot"]::before { content: "⌕"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
-a[data-game-mark="orderrot"]::before { content: "↕"; background: #3b4b46; color: #d5eddc; display: inline-grid; place-items: center; border-radius: 6px; width: 28px; height: 28px; font-size: 19px; margin-right: 8px; flex: none; }
-
-.site-github {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 40px;
-  height: 40px;
-  margin-left: auto;
-  border-radius: 6px;
-  color: var(--muted);
-}
-.site-github::before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background: currentColor;
-  mask: url("/assets/github.svg") center / contain no-repeat;
-}
-.site-github:hover {
-  color: var(--ink);
-  background: #383b40;
-}
-
-@media (max-width: 360px) {
-  .site-masthead { padding-inline: 8px; column-gap: 8px; }
-  .site-masthead.feed-header h1 { font-size: 18px; }
-}
-
-/* Shared navigation across standalone games, Daily, and Rush. */
-.screen-reader-only {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
-}
 .site-masthead { position: relative; min-height: 60px; gap: 16px; }
 .site-modes { display: flex; gap: 8px; align-items: center; }
 .site-modes a { display: flex; align-items: center; min-height: 40px; padding: 8px 12px; border-radius: 6px; text-decoration: none; color: var(--muted); }

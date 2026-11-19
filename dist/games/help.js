@@ -54,8 +54,7 @@ const game = (document.body.dataset.game ?? 'train');
 const anchor = document.querySelector('.map-panel, .heading');
 anchor.insertAdjacentHTML('beforeend', `
   <span class="game-help">
-    <button id="help" class="game-icon" type="button" aria-label="How to play" aria-haspopup="dialog" data-ui-tooltip="help-tooltip"></button>
-    <span id="help-tooltip" class="game-tooltip" role="tooltip">How to play</span>
+    <button id="help" class="game-icon" type="button" aria-label="How to play" aria-haspopup="dialog">How to play</button>
   </span>
 `);
 document.body.insertAdjacentHTML('beforeend', `

@@ -103,27 +103,6 @@
 
 .feed-undo { position: relative; }
 .feed-undo .game-tooltip { bottom: 100%; left: 0; }
-#feed-undo::before,
-#feed-undo::after { content: ""; position: absolute; }
-#feed-undo::before {
-  top: 15px;
-  left: 13px;
-  width: 17px;
-  height: 14px;
-  border: 2px solid currentColor;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-  border-radius: 50%;
-}
-#feed-undo::after {
-  top: 14px;
-  left: 13px;
-  width: 7px;
-  height: 7px;
-  border-bottom: 2px solid currentColor;
-  border-left: 2px solid currentColor;
-  transform: rotate(24deg);
-}
 
 .feed-recap-heading { display: flex; align-items: center; gap: 12px; }
 .feed-recap-heading h2 { margin: 0; }
@@ -164,24 +143,6 @@
   background: hsl(calc(140 * var(--rush-remaining)) 72% 58%);
   transform: scaleX(var(--rush-remaining));
   transform-origin: left;
-}
-.rush-clock-icon {
-  position: relative;
-  flex: none;
-  width: 13px;
-  height: 13px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-}
-.rush-clock-icon::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 5px;
-  width: 3px;
-  height: 4px;
-  border-left: 1px solid currentColor;
-  border-bottom: 1px solid currentColor;
 }
 @media (prefers-reduced-motion: no-preference) {
   .rush-track span { transition: transform 100ms linear, background-color 100ms linear; }
