@@ -80,7 +80,7 @@ try{
     await page.getByRole('button',{name:'Practice',exact:true}).click();
     const home=page.getByRole('link',{name:'Daily mix',exact:true});
     assert.equal(await home.getAttribute('href'),'/daily/');
-    assert.equal(await home.innerText(),'Daily');
+    assert.equal(await home.innerText(),'Daily mix');
     const flagData = await page.request.get(new URL('/games/data/flags.json',base).href);
     assert.ok(flagData.ok());
     let flagLoads=0;
