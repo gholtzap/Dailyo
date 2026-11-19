@@ -21,6 +21,18 @@ try{
    assert.equal(await page.locator('.world-bar h1').textContent(),city.name);
    if(['london','tokyo','nyc'].includes(city.slug)){fs.mkdirSync(new URL('../test-results/world/',import.meta.url),{recursive:true});await page.screenshot({path:new URL(`../test-results/world/${city.slug}-${width}.png`,import.meta.url).pathname,fullPage:true});}
    assert.equal(await page.locator('#daily-mode').getAttribute('aria-pressed'),'true');
+   assert.equal(await page.locator('.route-editor #reveal').count(),1);
+   assert.equal(await page.locator('.journey-ticket .journey-route').count(),0);
+   if(city.slug==='london'){
+    assert.ok(await page.locator('.train-line-name').count()>0);
+    await page.locator('#line-search').fill('no matching line');
+    assert.equal(await page.locator('[data-route]:visible').count(),0);
+    await page.locator('#line-search').fill('');
+    await page.getByRole('button',{name:'How to play',exact:true}).click();
+    await page.getByRole('link',{name:'Network data and timing',exact:true}).waitFor();
+    await page.getByRole('button',{name:'Close',exact:true}).click();
+    assert.match(await page.locator('.world-map-note').textContent(),/OpenStreetMap/);
+   }
    const solution=await page.evaluate(async slug=>{
     const prefix=slug==='nyc'?'/data/':`/world-data/${slug}/`;
     const [network,challenges,{createRouter},{worldDailyChallenge},{dailyDate}]=await Promise.all([
