@@ -64,6 +64,7 @@ try{
     const flagDeck=shuffle(flags,`rush:flags:${day}`);
     const flag=game('flagrot');
     await timer.filter({hasText:'Untimed'}).waitFor();
+    assert.equal(await page.getByRole('button',{name:'Skip game',exact:true}).getAttribute('class'),'secondary rush-skip');
     await page.clock.fastForward(30000);
     assert.equal(await timer.textContent(),'Untimed');
     assert.equal(await track.isVisible(),false);
@@ -92,7 +93,7 @@ try{
     assert.equal(await timer.textContent(),'8s');
     await flag.locator('body').evaluate(()=>parent.postMessage({type:'rush-game',phase:'answered',correct:true},location.origin));
     assert.match(await status.textContent(),/Paused/);
-    assert.equal(await page.getByRole('button',{name:'Next game',exact:true}).isDisabled(),true);
+    assert.equal(await page.getByRole('button',{name:'Skip game',exact:true}).isDisabled(),true);
     await page.getByRole('button',{name:'Resume',exact:true}).click();
     await status.filter({hasText:'flagrot · Round 2'}).waitFor();
     // A controlled visibility event exercises backgrounding in headless Chromium.
@@ -126,6 +127,7 @@ try{
     }).first().click();
     await status.filter({hasText:'Missed'}).waitFor();
     await flag.locator('.choice.correct').filter({hasText:flagDeck[5].name}).waitFor();
+    assert.equal(await page.getByRole('button',{name:'Next game',exact:true}).getAttribute('class'),'primary rush-continue');
     await inspect('miss',true);
     await page.clock.fastForward(5000);
     assert.ok(['Missed','Time’s up'].includes(await status.textContent()),'Miss/timeout stays visible until continuation');
@@ -166,7 +168,7 @@ try{
     await status.filter({hasText:'Correct'}).waitFor();
     await page.clock.fastForward(200);
     await timer.filter({hasText:'28s'}).waitFor();
-    const next=page.getByRole('button',{name:'Next game'});
+    const next=page.locator('#rush-next');
     const rot=async (kind,round=0)=>{
       const data=preparePuzzles(kind,await loadJson(`/games/data/${kind}.json`));
       const index=round%roundCount;
@@ -262,7 +264,7 @@ try{
     await inspect('recap');
     await page.getByRole('button',{name:'Play again'}).click();
     await timer.filter({hasText:'Untimed'}).waitFor();
-    for(let i=0;i<16;i++)await page.getByRole('button',{name:'Next game'}).click();
+    for(let i=0;i<16;i++)await page.getByRole('button',{name:'Skip game',exact:true}).click();
     assert.equal(await page.locator('#rush-score').textContent(),'0 correct');
     assert.equal(await page.locator('#rush-copy-status').textContent(),'');
     assert.equal(await page.locator('#rush-personal-best').textContent(),'Personal best · 20 correct');

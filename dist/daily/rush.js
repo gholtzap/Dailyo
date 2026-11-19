@@ -33,6 +33,8 @@ const pause = $('#rush-pause');
 const scores = games.map(() => 0);
 const copyStatus = $('#rush-copy-status'), copyText = $('#rush-copy-text');
 // State/event table: only these transitions may change the run phase.
+// Loading/playing/error: Skip game abandons this game. Paused: skipping is disabled.
+// Feedback: Next puzzle continues a correct run; Next game/See recap leaves a miss.
 const transitions = {
     loading: { load: 'loading', ready: 'playing', fail: 'error', complete: 'recap' },
     playing: { load: 'loading', answer: 'feedback', pause: 'paused' },
@@ -86,7 +88,8 @@ function openRound(gameIndex, roundIndex = 0) {
     }
     retry.hidden = true;
     next.removeAttribute('disabled');
-    next.textContent = 'Next game';
+    next.textContent = 'Skip game';
+    next.className = 'secondary rush-skip';
     next.onclick = skipGame;
     panel.hidden = false;
     if (visible)
@@ -123,7 +126,8 @@ function showRound() {
     if (!current || !transition('ready'))
         return;
     stopClock();
-    next.textContent = 'Next game';
+    next.textContent = 'Skip game';
+    next.className = 'secondary rush-skip';
     const { frame } = current;
     const game = games[index];
     frame.title = game.label;
@@ -174,6 +178,7 @@ function finishRound(correct, expired = false) {
     if (expired)
         visible?.contentWindow?.postMessage('rush-timeout', location.origin);
     next.textContent = correct ? 'Next puzzle' : index === games.length - 1 ? 'See recap' : 'Next game';
+    next.className = 'primary rush-continue';
     status.focus({ preventScroll: true });
     // Correct answers keep the pace; missed answers stay available for review.
     if (correct)
