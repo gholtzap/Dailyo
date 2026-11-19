@@ -213,3 +213,16 @@
     max-width: none;
   }
 }
+
+/* Keep the clock and outcome next to the puzzle at every screen size. */
+.rush-feed { grid-template-rows: auto auto minmax(0, 1fr); }
+.rush-feed .feed-actions { width: min(100%, 760px); margin-inline: auto; padding: 12px 24px; border-top: 0; border-bottom: 1px solid var(--line); min-height: 68px; }
+.rush-feed .feed-body { width: min(100%, 760px); margin-inline: auto; }
+.rush-feed:has(iframe[title="trainrot"]) .feed-body { width: 100%; }
+.rush-feed .rush-time[data-timed] { max-width: 240px; }
+@media (max-width: 440px) {
+  .rush-feed .feed-actions { padding: 8px 16px; flex-wrap: wrap; gap: 8px 16px; }
+  .rush-feed #rush-status { flex: 1 1 auto; }
+  .rush-feed .rush-time[data-timed] { order: 3; flex: 1 0 100%; max-width: none; }
+  .rush-feed .feed-actions:has(.rush-time[data-timed]) { display: flex; }
+}
