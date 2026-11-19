@@ -182,5 +182,533 @@
       "singapore",
       "chicago"
     ]
+  },
+  {
+    "id": "boston",
+    "name": "Boston",
+    "image": "/games/media/skyrot-boston.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-46_Boston,_Massachusetts.jpg",
+    "credit": "NASA/Tim Kopra",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "new-york",
+      "chicago",
+      "washington-d-c"
+    ]
+  },
+  {
+    "id": "los-angeles",
+    "name": "Los Angeles",
+    "image": "/games/media/skyrot-los-angeles.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-40_Los_Angeles_basin.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "san-francisco",
+      "seattle",
+      "vancouver"
+    ]
+  },
+  {
+    "id": "las-vegas",
+    "name": "Las Vegas",
+    "image": "/games/media/skyrot-las-vegas.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-40_Las_Vegas_Strip_and_McCarran_International_Airport.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "dubai",
+      "cairo",
+      "mexico-city"
+    ]
+  },
+  {
+    "id": "seattle",
+    "name": "Seattle",
+    "image": "/games/media/skyrot-seattle.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Seattle_WA,_USA_from_space.JPG",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "vancouver",
+      "auckland",
+      "melbourne"
+    ]
+  },
+  {
+    "id": "montreal",
+    "name": "Montreal",
+    "image": "/games/media/skyrot-montreal.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Montreal,_Canada_-_Flickr_-_NASA_Goddard_Photo_and_Video.jpg",
+    "credit": "National Aeronautics and Space Administration (NASA). Image courtesy of the Image Science & Analysis Laboratory, NASA Johnson Space Center\n\nNASA Goddard Space Flight Center from Greenbelt, MD, USA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "boston",
+      "new-york",
+      "chicago"
+    ]
+  },
+  {
+    "id": "vancouver",
+    "name": "Vancouver",
+    "image": "/games/media/skyrot-vancouver.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-35_Night_image_of_Vancouver,_British_Columbia,_Canada.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "auckland",
+      "melbourne",
+      "los-angeles"
+    ]
+  },
+  {
+    "id": "mexico-city",
+    "name": "Mexico City",
+    "image": "/games/media/skyrot-mexico-city.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-46_Mexico_City,_Mexico.jpg",
+    "credit": "NASA/Tim Kopra",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "las-vegas",
+      "dubai",
+      "cairo"
+    ]
+  },
+  {
+    "id": "buenos-aires",
+    "name": "Buenos Aires",
+    "image": "/games/media/skyrot-buenos-aires.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Buenos_Aires,_Argentina.jpg",
+    "credit": "NASA ISS023-E-39845",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "barcelona",
+      "lima",
+      "cape-town"
+    ]
+  },
+  {
+    "id": "santiago",
+    "name": "Santiago",
+    "image": "/games/media/skyrot-santiago.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Santiago,_Chile.jpg",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "rome",
+      "athens",
+      "berlin"
+    ]
+  },
+  {
+    "id": "lima",
+    "name": "Lima",
+    "image": "/games/media/skyrot-lima.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Lima,_Peru_Astronaut_Imagery.JPG",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "cape-town",
+      "mumbai",
+      "venice"
+    ]
+  },
+  {
+    "id": "barcelona",
+    "name": "Barcelona",
+    "image": "/games/media/skyrot-barcelona.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Barcelona_ISS009-E-9987.jpg",
+    "credit": "Earth Observations Laboratory, Johnson Space Center.",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "lima",
+      "cape-town",
+      "mumbai"
+    ]
+  },
+  {
+    "id": "rome",
+    "name": "Rome",
+    "image": "/games/media/skyrot-rome.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Rome,_Italy.JPG",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "athens",
+      "berlin",
+      "paris"
+    ]
+  },
+  {
+    "id": "athens",
+    "name": "Athens",
+    "image": "/games/media/skyrot-athens.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-44_Athens,_Greece.jpg",
+    "credit": "NASA/Scott Kelly",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "berlin",
+      "paris",
+      "london"
+    ]
+  },
+  {
+    "id": "amsterdam",
+    "name": "Amsterdam",
+    "image": "/games/media/skyrot-amsterdam.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Amsterdam,_Netherlands.JPG",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "bangkok",
+      "shanghai",
+      "beijing"
+    ]
+  },
+  {
+    "id": "berlin",
+    "name": "Berlin",
+    "image": "/games/media/skyrot-berlin.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS067-E-147067_-_View_of_Berlin_-_Berlin-Tempelhof_-_green_field_in_the_city_(cropped).jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "paris",
+      "london",
+      "santiago"
+    ]
+  },
+  {
+    "id": "washington-d-c",
+    "name": "Washington, D.C.",
+    "image": "/games/media/skyrot-washington-d-c.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS002-E-8125_-_View_of_Washington,_D.C..jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "montreal",
+      "boston",
+      "new-york"
+    ]
+  },
+  {
+    "id": "cape-town",
+    "name": "Cape Town",
+    "image": "/games/media/skyrot-cape-town.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Cape_of_Good_Hope_Iss059e078303_lrg,_Cape_Peninsula.jpg",
+    "credit": "The International Space Station Program supports the laboratory as part of the ISS National Lab to help astronauts take pictures of Earth that will be of the greatest value to scientists and the public, and to make those images freely available on the Internet. Additional images taken by astronauts and cosmonauts can be viewed at the NASA/JSC Gateway to Astronaut Photography of Earth. Caption by Sarah Deitrick, Jacobs-JETS Contract at NASA-JSC.",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "mumbai",
+      "venice",
+      "istanbul"
+    ]
+  },
+  {
+    "id": "mumbai",
+    "name": "Mumbai",
+    "image": "/games/media/skyrot-mumbai.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Mumbai,_India_(4446).jpg",
+    "credit": "Photograph ISS008-E-19273 was taken March 25, 2004, with a Kodak DCS760 digital camera equipped with an 800-mm lens, with information provided by Kamlesh P. Lulla, Earth Observations Laboratory, Johnson Space Center. The International Space Station Program supports the laboratory to help astronauts take pictures of Earth that will be of the greatest value to scientists and the public, and to make those images freely available on the Internet. Additional images taken by astronauts and cosmonauts can be viewed at the NASA/JSC Gateway to Astronaut Photography of Earth.",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "venice",
+      "istanbul",
+      "buenos-aires"
+    ]
+  },
+  {
+    "id": "bangkok",
+    "name": "Bangkok",
+    "image": "/games/media/skyrot-bangkok.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Astronaut_Photography_of_Earth_-_Bangkok-Gulf_of_Thailand_-_ISS006-E-49922.JPG",
+    "credit": "Image Science and Analysis Laboratory, NASA-Johnson Space Center (astronaut not stated)",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "shanghai",
+      "beijing",
+      "seoul"
+    ]
+  },
+  {
+    "id": "shanghai",
+    "name": "Shanghai",
+    "image": "/games/media/skyrot-shanghai.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-30_Nighttime_view_of_Shanghai.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "beijing",
+      "seoul",
+      "tokyo"
+    ]
+  },
+  {
+    "id": "beijing",
+    "name": "Beijing",
+    "image": "/games/media/skyrot-beijing.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-47_Beijing,_China_at_night.jpg",
+    "credit": "NASA/Tim Kopra",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "seoul",
+      "tokyo",
+      "singapore"
+    ]
+  },
+  {
+    "id": "seoul",
+    "name": "Seoul",
+    "image": "/games/media/skyrot-seoul.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-62_Seoul,_South_Korea_at_night.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "tokyo",
+      "singapore",
+      "amsterdam"
+    ]
+  },
+  {
+    "id": "melbourne",
+    "name": "Melbourne",
+    "image": "/games/media/skyrot-melbourne.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-60_Melbourne,_Australia_on_Port_Philip_Bay.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "los-angeles",
+      "san-francisco",
+      "seattle"
+    ]
+  },
+  {
+    "id": "auckland",
+    "name": "Auckland",
+    "image": "/games/media/skyrot-auckland.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:East_Coast_Bays,_Auckland,_New_Zealand_(ISS016-E-14040).jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "focus": [
+      50,
+      50
+    ],
+    "detailFocus": [
+      50,
+      50
+    ],
+    "distractors": [
+      "melbourne",
+      "los-angeles",
+      "san-francisco"
+    ]
   }
 ]

@@ -85,7 +85,7 @@ export async function configureWorld() {
 export function describeWorldNetwork(world, network) {
     const help = document.querySelector('#help-dialog');
     const model = document.createElement('p');
-    model.textContent = network.metadata.timeModel === 'estimated' ? 'Puzzle times are estimated from mapped distance, with four minutes per transfer.' : 'Times use a fixed daytime timetable, with four minutes per transfer.';
+    model.textContent = network.metadata.timeModel === 'estimated' ? 'Puzzle times are estimates.' : 'Puzzle times use a fixed timetable.';
     help.append(model);
     const credits = document.createElement('p');
     credits.className = 'world-credits';

@@ -45,3 +45,7 @@ body[data-world-city] .map-panel:has(.demo-map-label:not([hidden])) .world-map-n
 body[data-world-city] .game-help-dialog { margin:32px auto; z-index:100; }
 
 body[data-world-city] .game-help-dialog p { line-height:20px; }
+
+body[data-world-city] input::placeholder { color:var(--muted); opacity:1; }
+body[data-world-city] .endpoint,body[data-world-city] .endpoint>div { min-width:0; }
+body[data-world-city] .endpoint strong { line-height:20px; overflow-wrap:anywhere; }

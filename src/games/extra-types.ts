@@ -17,8 +17,8 @@ export interface ExtraState {
   phase: 'playing' | 'complete'; moves: ExtraMove[]; score: number | null;
   board: number[]; path: string[]; clue: number;
 }
-export interface ExtraSession {slot?: string; token?: string; puzzle: ExtraPuzzle; state: ExtraState}
-export interface ExtraSave {token: string; puzzle: string; moves: JsonValue[]}
+export interface ExtraSession {slot?: string; token?: string; puzzle: ExtraPuzzle; state: ExtraState; cycle?: JsonValue}
+export interface ExtraSave {token: string; puzzle: string; moves: JsonValue[]; cycle?: JsonValue}
 export function isExtraGame(value: string): value is ExtraGame {
   return ['ladderrot', 'cluerot', 'scalerot', 'swaprot'].includes(value);
 }

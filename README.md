@@ -145,3 +145,8 @@ solution after finishing. Subway results show your submitted itinerary first;
 when another route ties it, the result explains the tie and offers the alternative.
 Country search accepts words within a name, country codes, and familiar aliases
 such as DRC, Ivory Coast, and UK.
+
+Word-ladder, clue, and estimation Practice work through the available puzzles
+before starting another cycle. The current puzzle and cycle progress resume
+on reload. Map, timeline, and country-route results include a review of each
+completed question; opening a review does not change the saved score.

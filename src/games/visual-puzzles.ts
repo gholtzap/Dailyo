@@ -1,4 +1,5 @@
 import type {JsonValue} from '../types.js';
+import {releasedPool} from './pool-version.js';
 import {shuffle} from '../daily/puzzles.js';
 import type {PracticeDifficulty} from './difficulty.js';
 
@@ -32,6 +33,7 @@ export function prepareVisual(game: VisualGame, value: JsonValue): VisualItem[] 
   return value as VisualItem[];
 }
 export function visualSet(game: VisualGame, rows: VisualItem[], seed: string, rush = false, round = 0, difficulty: PracticeDifficulty = 'standard'): VisualQuestion[] {
+  rows = releasedPool(game, rows, seed);
   const deck = shuffle(rows, `${game}:v1:${seed}`);
   const chosen = rush ? [deck[round % deck.length]!] : deck.slice(0, 5);
   return chosen.map((item, index) => {

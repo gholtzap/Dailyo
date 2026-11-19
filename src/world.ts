@@ -44,7 +44,7 @@ export async function configureWorld(): Promise<WorldSelection | null>{
 export function describeWorldNetwork(world: WorldSelection,network: Network){
  const help=document.querySelector('#help-dialog')!;
  const model=document.createElement('p');
- model.textContent=network.metadata.timeModel==='estimated'?'Puzzle times are estimated from mapped distance, with four minutes per transfer.':'Times use a fixed daytime timetable, with four minutes per transfer.';
+ model.textContent=network.metadata.timeModel==='estimated'?'Puzzle times are estimates.':'Puzzle times use a fixed timetable.';
  help.append(model);
  const credits=document.createElement('p');credits.className='world-credits';
  const source=document.createElement('a');source.href=`/trainrot-world/sources/#${world.city.slug}`;source.textContent='Network data and timing';credits.append(source);help.append(credits);

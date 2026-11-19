@@ -2,7 +2,7 @@ import { element as el, required } from '../dom.js';
 import './help.js';
 import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
-import { extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra, } from './extra-puzzles.js';
+import { extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra, nextPracticePuzzle, } from './extra-puzzles.js';
 const game = document.body.dataset.game;
 const quiz = required('#quiz');
 const controls = [...document.querySelectorAll('.modes button')];
@@ -41,10 +41,10 @@ function mount(slot, token) {
     const puzzle = extraPuzzle(game, data, token);
     const saved = read(slot);
     const state = saved?.token === token && saved.puzzle === puzzle.id && replayExtra(game, puzzle, saved.moves);
-    return { slot, token, puzzle, state: state || initialExtra(game, puzzle) };
+    return { slot, token, puzzle, state: state || initialExtra(game, puzzle), cycle: state ? saved?.cycle ?? null : null };
 }
 function save(session) {
-    write(session.slot, { token: session.token, puzzle: session.puzzle.id, moves: session.state.moves });
+    write(session.slot, { token: session.token, puzzle: session.puzzle.id, moves: session.state.moves, cycle: session.cycle });
 }
 function resetDay() {
     const next = dailyDate();
@@ -205,7 +205,10 @@ function result({ puzzle, state }) {
     const actions = el('div', undefined, 'rot-actions');
     if (mode === 'practice') {
         actions.append(button('New practice puzzle', () => {
-            sessions.practice = mount('practice', seed());
+            if (mode !== 'practice' || sessions.practice.state.phase !== 'complete')
+                return;
+            const next = nextPracticePuzzle(data, seed().slice('practice:'.length), sessions.practice.puzzle.id, sessions.practice.cycle ?? null);
+            sessions.practice = { ...mount('practice', next.token), cycle: next.cycle };
             save(sessions.practice);
             draw();
             quiz.querySelector('h2').focus();
