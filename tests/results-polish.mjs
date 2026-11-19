@@ -37,6 +37,12 @@ try {
    await page.getByRole('button',{name:'Play practice',exact:true}).click();await page.locator('.choice').first().waitFor();
   }
   await page.goto(`${base}/skyrot/`);
+  await page.locator('#quiz img').waitFor();
+  const photoPath=await page.locator('#quiz img').getAttribute('src');
+  const photoRows=await (await page.request.get(`${base}/games/data/skyrot.json`)).json();
+  const correctCity=photoRows.find(row=>row.image===photoPath).name;
+  const guessedCity=(await page.locator('.visual-choice').allTextContents()).find(name=>name!==correctCity);
+  await page.getByRole('button',{name:guessedCity,exact:true}).click();
   for(let i=0;i<5;i++){
    await page.getByRole('button',{name:'Show answer',exact:true}).click();
    await page.getByRole('button',{name:i===4?'See results':'Next puzzle',exact:true}).click();
@@ -45,6 +51,14 @@ try {
   assert.equal(await page.locator('.visual-recap > li > details').count(),5);
   assert.equal(await page.locator('.visual-recap summary').filter({hasText:'Answer shown'}).count(),5);
   await page.locator('.visual-recap summary').first().click();
+  const photo=page.locator('.visual-recap .review-photo').first();
+  await photo.evaluate(img=>img.decode());
+  assert.equal(await photo.getAttribute('alt'),await page.locator('.visual-recap > li > details > summary span').first().textContent());
+  assert.ok(await page.locator('.visual-recap .visual-reveal').first().textContent().then(text=>text.includes(`Your guess: ${guessedCity}`)));
+  assert.equal(await page.locator('.visual-recap .visual-source').first().getAttribute('open'),null);
+  const practiceAction=await page.getByRole('button',{name:'Play practice',exact:true}).boundingBox();
+  const review=await page.locator('.visual-recap').boundingBox();
+  assert.ok(practiceAction.y<review.y,'The next action precedes the detailed review');
   await page.locator('.visual-recap .visual-source summary').first().click();
   assert.equal(await page.locator('[id=visual-feedback]').count(),0,'Review rows must not duplicate live feedback IDs');
   await inspect('photo-review');

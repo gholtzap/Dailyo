@@ -124,16 +124,27 @@ function formatOrderValue(value: number, unit?: string) {
 function reveal(q: VisualQuestion,a: VisualAnswer,review=false) {
   const content=el('div',undefined,'visual-reveal');
   const points=answerPoints(game,q,a);
-  const feedback=el('h3',a.skipped ? 'Answer revealed' : `${points} / 100 points`);
-  if(!review){feedback.id='visual-feedback'; feedback.tabIndex=-1;}
-  const status=el('div'); status.setAttribute('role','status'); status.append(feedback); content.append(status);
+  if(!review) {
+    const feedback=el('h3',a.skipped ? 'Answer revealed' : `${points} / 100 points`);
+    feedback.id='visual-feedback';feedback.tabIndex=-1;
+    const status=el('div');status.setAttribute('role','status');status.append(feedback);content.append(status);
+  }
   if (game==='pricerot') {
     content.append(el('p',`Recorded price: ${money(q.item.cents!)}${a.price===null ? '' : ` · Your guess: ${money(a.price)} · ${Math.round(priceError(a.price,q.item.cents!)*100)}% off`}`));
   } else if (game==='orderrot') {
     const list=el('ol',undefined,'visual-solution');
     for(const item of [...q.tiles].sort((x,y)=>x.value-y.value)) list.append(el('li',`${item.name} — ${formatOrderValue(item.value,q.item.unit)} ${q.item.unit ?? ''}`));
     content.append(el('p','Correct order, from lowest to highest:'),list);
-  } else content.append(el('p',`Answer: ${q.item.name}`));
+  } else {
+    if(!review)content.append(el('p',`Answer: ${q.item.name}`));
+    if(review) {
+      const image=el('img',undefined,'review-photo');
+      image.src=q.item.image!;image.alt=q.item.name;image.loading='lazy';
+      image.onerror=()=>image.replaceWith(el('p','The photograph could not load.'));
+      const guesses=a.guesses.map(id=>q.options.find(option=>option.id===id)?.name).filter(Boolean);
+      content.append(image,el('p',guesses.length?`Your ${guesses.length===1?'guess':'guesses'}: ${guesses.join(', ')}`:'Your answer: Answer shown'));
+    }
+  }
   if(q.item.explanation)content.append(el('p',q.item.explanation));
   content.append(source(q.item));
   return content;
@@ -222,7 +233,8 @@ function drawResults() {
     summary.append(el('span',q.item.name),el('span',s.answers[i]!.skipped?'Answer shown':`${answerPoints(game,q,s.answers[i]!)} / 100`));
     details.append(summary,reveal(q,s.answers[i]!,true));li.append(details);review.append(li);
   }
-  quiz.append(el('h3','Review answers'),review);
+  const reviewTitle=el('h3','Review answers');
+  quiz.append(reviewTitle,review);
   if(mode==='daily') {
     const rank=el('div',undefined,'daily-rank');
     void showRank(rank,{game,day,puzzle:visualPuzzle(s.questions),answers:s.answers.map(a=>({...a}))},score);quiz.append(rank);
@@ -238,7 +250,8 @@ function drawResults() {
       if(mode==='practice'){sessions.practice=mount(freshSeed(),undefined,difficulty);save();draft=[];focusNext=true;draw();}
       else selectMode('practice');
     },'primary'));
-    quiz.append(actions,status);
+    quiz.insertBefore(actions,reviewTitle);
+    quiz.insertBefore(status,reviewTitle);
   }
   reportDaily('complete',`${score} / 500 points`,day);
 }
