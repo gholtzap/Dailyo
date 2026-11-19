@@ -102,3 +102,15 @@
   [data-rush] .map-panel { height: 220px; min-height: 220px; }
   [data-rush] .planner { padding: 16px; min-height: 0; }
 }
+
+/* One journey summary; the editable sequence stays beside its submit action. */
+.planner > .journey-ticket { padding: 0; border: 0; border-radius: 0; background: transparent; margin-bottom: 16px; }
+.route-editor { margin-top: 16px; }
+.route-editor .journey-route { border-top: 0; margin-top: 0; padding-top: 0; }
+.route-editor .sequence-row { margin-bottom: 8px; }
+.route-editor .route-actions { margin-top: 0; }
+@media (max-width: 700px) {
+  .planner { padding: 16px; }
+  .map-panel { height: clamp(180px, 28dvh, 260px); min-height: 180px; }
+  .planner > .journey-ticket .endpoint strong { font-size: 13px; }
+}

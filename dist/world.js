@@ -96,17 +96,13 @@ export function describeWorldNetwork(world, network) {
     help.append(credits);
     const note = document.createElement('div');
     note.className = 'world-map-note';
-    const a = document.createElement('a');
-    a.href = '/trainrot-world/sources/';
-    a.textContent = network.metadata.mapName ? `${network.metadata.mapName} · Fictional network` : network.metadata.timeModel === 'estimated' ? 'Schematic map · Estimated puzzle times' : 'Schematic map · Scheduled puzzle times';
-    note.append(a);
     if (network.metadata.attribution?.some(text => text.includes('OpenStreetMap'))) {
         const credit = document.createElement('a');
         credit.href = 'https://www.openstreetmap.org/copyright';
         credit.textContent = '© OpenStreetMap contributors';
         credit.target = '_blank';
         credit.rel = 'noopener';
-        note.append(document.createTextNode(' '), credit);
+        note.append(credit);
     }
     document.querySelector('.map-panel').append(note);
     const first = help.querySelector('p');

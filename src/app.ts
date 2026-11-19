@@ -139,7 +139,7 @@ async function start(){
     const symbol=shuttleSuffix[id]?'S'+shuttleSuffix[id]:routeSymbol(id);
     const actionName=world?symbol:`Add ${symbol}${shuttleSuffix[id]?' '+routeTitle(id):id.endsWith('X')?' express':''} train`;
     const content=world?badge(id).replace('role="img"','').replace(/ aria-label="[^"]*"/,''):badge(id).replace('role="img"','aria-hidden="true"');
-    return `<button type="button" ${world?`aria-description="Add ${escape(routeTitle(id))} train"`:`aria-label="${escape(actionName)}"`} title="${escape(world?routeTitle(id):shuttleSuffix[id]?routeTitle(id):routeSymbol(id))}" tabindex="${id===usedRoutes[0]?0:-1}" class="train-choice" data-route="${id}" ${state.legs.length>=6?'disabled':''}>${content}</button>`;
+    return `<button type="button" ${world?`aria-description="Add ${escape(routeTitle(id))} train"`:`aria-label="${escape(actionName)}"`} title="${escape(world?routeTitle(id):shuttleSuffix[id]?routeTitle(id):routeSymbol(id))}" tabindex="${id===usedRoutes[0]?0:-1}" class="train-choice" data-route="${id}" ${state.legs.length>=6?'disabled':''}>${content}${world&&citySlug!=='nyc'&&routeTitle(id)!==symbol?`<span class="train-line-name">${escape(routeTitle(id))}</span>`:''}</button>`;
   }
   const same=(a: object | undefined,b: object)=>JSON.stringify(a)===JSON.stringify(b);
   function guessFeedback(){
@@ -165,10 +165,11 @@ async function start(){
     mapTools(true);
     planner.innerHTML=`
       ${rushRound!==null?'<h2 id="rush-journey" tabindex="-1">Find the fastest route</h2>':''}
-      ${ticket(c,`<div class="journey-route"><div class="sequence-row">${state.legs.length?`<ol class="train-sequence" aria-label="Your train sequence">${state.legs.map(l=>`<li>${badge(l.route)}</li>`).join('')}</ol>`:'<p class="route-empty">Tap your trains in order.</p>'}${state.legs.length?'<button id="undo-train" class="quiet-button" aria-label="Undo last train">Undo</button>':''}</div>${guessFeedback()}${state.guesses?.length?`<p class="check-count">${state.guesses.length} of ${MAX_GUESSES} checks</p>`:''}</div>`)}
+      ${ticket(c)}
       ${world&&usedRoutes.length>14?`<label class="world-line-search">Find a line<input id="line-search" type="search" value="${escape(lineFilter)}" placeholder="Line name or number" autocomplete="off"></label>`:''}<div class="train-picker" role="group" aria-label="Add a train"><div class="train-grid">${usedRoutes.map(trainButton).join('')}</div></div>
       ${full?'<p class="ready-note">Six trains maximum. Check your route or undo a train.</p>':''}
-      <div class="route-actions"><button id="reveal" class="primary-button" ${state.legs.length&&!same(state.guesses?.at(-1),state.legs)?'':'disabled'}>Check route</button></div>
+      <div class="route-editor"><div class="journey-route"><div class="sequence-row">${state.legs.length?`<ol class="train-sequence" aria-label="Your train sequence">${state.legs.map(l=>`<li>${badge(l.route)}</li>`).join('')}</ol>`:'<p class="route-empty">Tap your trains in order.</p>'}${state.legs.length?'<button id="undo-train" class="quiet-button" aria-label="Undo last train">Undo</button>':''}</div>${guessFeedback()}${state.guesses?.length?`<p class="check-count">${state.guesses.length} of ${MAX_GUESSES} checks</p>`:''}</div>
+      <div class="route-actions"><button id="reveal" class="primary-button" ${state.legs.length&&!same(state.guesses?.at(-1),state.legs)?'':'disabled'}>Check route</button></div></div>
       <div class="help-actions">${mode==='practice'?'<button id="skip" class="hint-button">Skip</button>':''}<button id="show-answer" class="hint-button">Show answer</button></div>
       ${state.assisted?'':`<details class="map-hint"><summary>Map hint</summary><p>Showing the map makes this journey unscored.</p><button id="hint" type="button" class="secondary-button">${world?'Show rail map':'Show subway map'}</button></details>`}`;
     const filterInput=document.querySelector<HTMLInputElement>('#line-search');
