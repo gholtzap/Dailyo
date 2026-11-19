@@ -17,6 +17,11 @@ const games = [
     { id: 'skylinerot', label: 'skylinerot', path: '/skylinerot/' },
     { id: 'zoomrot', label: 'zoomrot', path: '/zoomrot/' },
     { id: 'orderrot', label: 'orderrot', path: '/orderrot/' },
+    { id: 'countrot', label: 'countrot', path: '/countrot/' },
+    { id: 'trackrot', label: 'trackrot', path: '/trackrot/' },
+    { id: 'anglerot', label: 'anglerot', path: '/anglerot/' },
+    { id: 'temporot', label: 'temporot', path: '/temporot/' },
+    { id: 'splitrot', label: 'splitrot', path: '/splitrot/' },
 ];
 const $ = required;
 const gamePanel = $('#feed-game'), recap = $('#feed-recap'), progress = $('#feed-progress');

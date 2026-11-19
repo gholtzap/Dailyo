@@ -22,6 +22,12 @@ const rotation=[
   {label:'skylinerot',path:'/skylinerot/',seconds:[12,9,6]},
   {label:'zoomrot',path:'/zoomrot/',seconds:[12,9,6]},
   {label:'orderrot',path:'/orderrot/',seconds:[25,20,15]},
+  {label:'countrot',path:'/countrot/',seconds:[15,12,10]},
+  {label:'trackrot',path:'/trackrot/',seconds:[18,14,10]},
+  {label:'anglerot',path:'/anglerot/',seconds:[20,15,10]},
+  {label:'temporot',path:'/temporot/',seconds:[24,22,20]},
+  {label:'splitrot',path:'/splitrot/',seconds:[20,15,10]},
+
 
 ];
 const slug=location.pathname.split('/')[2];
@@ -286,6 +292,7 @@ function pauseRound(){
   updatePauseControl();
   clearInterval(ticker);
   if(visible)visible.inert=true;
+  visible?.contentWindow?.postMessage('rush-pause',location.origin);
   status.textContent=`${games[index].label} · Paused`;
   next.setAttribute('disabled','');
 }
@@ -293,6 +300,7 @@ function resumeRound(){
   if(run.resume(performance.now(),!document.hidden).$!=='Resumed')return;
   updatePauseControl();
   if(visible)visible.inert=false;
+  visible?.contentWindow?.postMessage('rush-resume',location.origin);
   status.textContent=`${games[index].label} · Round ${round+1}`;
   next.removeAttribute('disabled');
   updateClock();

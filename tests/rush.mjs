@@ -250,7 +250,7 @@ try{
         }
       }
     }
-    for(let i=0;i<6;i++)await next.click();
+    for(let i=0;i<11;i++)await next.click();
     await page.getByRole('heading',{name:'Rush recap'}).waitFor();
     assert.equal(await page.locator('#rush-score').textContent(),'20 correct · Best run: 6 in yearrot');
     assert.equal(await page.locator('#rush-personal-best').textContent(),'New best · 20 correct');
@@ -264,7 +264,7 @@ try{
     await inspect('recap');
     await page.getByRole('button',{name:'Play again'}).click();
     await timer.filter({hasText:'Untimed'}).waitFor();
-    for(let i=0;i<16;i++)await page.getByRole('button',{name:'Skip game',exact:true}).click();
+    for(let i=0;i<21;i++)await page.getByRole('button',{name:'Skip game',exact:true}).click();
     assert.equal(await page.locator('#rush-score').textContent(),'0 correct');
     assert.equal(await page.locator('#rush-copy-status').textContent(),'');
     assert.equal(await page.locator('#rush-personal-best').textContent(),'Personal best · 20 correct');
@@ -315,7 +315,7 @@ try{
     await inspect('copy fallback');
     assert.deepEqual(errors,[]);
     await page.close();
-    console.log(`${width}px Rush: all sixteen games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`);
+    console.log(`${width}px Rush: all twenty-one games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`);
   }
   if(lint){
     await fs.mkdir('test-results',{recursive:true});

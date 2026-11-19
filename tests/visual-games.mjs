@@ -78,8 +78,9 @@ try {
       await page.getByRole('button',{name:'Skip game',exact:true}).waitFor();
       await page.getByRole('button',{name:'Skip game',exact:true}).click();
     }
+    for(let i=0;i<5;i++)await page.getByRole('button',{name:'Skip game',exact:true}).click();
     await page.getByRole('heading',{name:'Daily recap',exact:true}).waitFor();
-    assert.equal(await page.locator('#feed-results li').count(),16);
+    assert.equal(await page.locator('#feed-results li').count(),21);
     for(const [i,game] of visualGames.entries())assert.match(await page.locator('#feed-results li').nth(11+i).textContent(),new RegExp(`${game}.*500 / 500 points`));
     assert.deepEqual(errors,[]);await context.close();
   }

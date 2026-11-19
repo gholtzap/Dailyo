@@ -10,6 +10,12 @@ const games=[
   ['swaprot','swaprot','Number sorting'],['skyrot','skyrot','Overhead cities'],
   ['pricerot','pricerot','Prices'],['skylinerot','skylinerot','Skylines'],
   ['zoomrot','zoomrot','Close-up objects'],['orderrot','orderrot','Ordering'],
+  ['countrot','countrot','Dot counting'],
+  ['trackrot','trackrot','Ball tracking'],
+  ['anglerot','anglerot','Angle estimation'],
+  ['temporot','temporot','Rhythm'],
+  ['splitrot','splitrot','Line proportions'],
+
 ];
 async function visit(directory){
   for(const entry of await fs.readdir(directory,{withFileTypes:true})){

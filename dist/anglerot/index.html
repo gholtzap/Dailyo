@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#1c1d1f">
+  <meta name="description" content="Angle estimation. Five daily perception rounds, plus unlimited practice.">
+  <title>anglerot | dailyo</title>
+  <link rel="stylesheet" href="/games/world.css">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/games/rot.css">
+  <link rel="stylesheet" href="/games/perception.css">
+  <script type="module" src="/site.js"></script>
+</head>
+<body data-game="anglerot">
+  <header class="site-masthead">
+    <a class="site-brand" href="/">dailyo</a>
+    <nav class="site-modes" aria-label="Play mode">
+      <a href="/daily/" aria-label="Daily mix">Daily mix</a>
+      <a href="/rush/">Rush</a>
+    </nav>
+
+    <details class="site-more">
+      <summary>Games</summary>
+      <nav class="site-more-links" aria-label="Games">
+          <p class="game-picker-context">Daily & practice</p>
+          <a aria-description="Subway routes · Daily and Practice" href="/trainrot/"><span>trainrot</span> <small>Subway routes</small></a>
+          <a aria-description="Flags · Daily and Practice" href="/flags/"><span>flagrot</span> <small>Flags</small></a>
+          <a aria-description="Languages · Daily and Practice" href="/languages/"><span>langrot</span> <small>Languages</small></a>
+          <a aria-description="Word meanings · Daily and Practice" href="/vocabulary/"><span>Vocabulary</span> <small>Word meanings</small></a>
+          <a aria-description="City locations · Daily and Practice" href="/maprot/"><span>maprot</span> <small>City locations</small></a>
+          <a aria-description="Timelines · Daily and Practice" href="/yearrot/"><span>yearrot</span> <small>Timelines</small></a>
+          <a aria-description="Country routes · Daily and Practice" href="/borderrot/"><span>borderrot</span> <small>Country routes</small></a>
+          <a aria-description="Word ladders · Daily and Practice" href="/ladderrot/"><span>ladderrot</span> <small>Word ladders</small></a>
+          <a aria-description="Clues · Daily and Practice" href="/cluerot/"><span>cluerot</span> <small>Clues</small></a>
+          <a aria-description="Estimates · Daily and Practice" href="/scalerot/"><span>scalerot</span> <small>Estimates</small></a>
+          <a aria-description="Number sorting · Daily and Practice" href="/swaprot/"><span>swaprot</span> <small>Number sorting</small></a>
+          <a aria-description="Overhead cities · Daily and Practice" href="/skyrot/"><span>skyrot</span> <small>Overhead cities</small></a>
+          <a aria-description="Prices · Daily and Practice" href="/pricerot/"><span>pricerot</span> <small>Prices</small></a>
+          <a aria-description="Skylines · Daily and Practice" href="/skylinerot/"><span>skylinerot</span> <small>Skylines</small></a>
+          <a aria-description="Close-up objects · Daily and Practice" href="/zoomrot/"><span>zoomrot</span> <small>Close-up objects</small></a>
+          <a aria-description="Ordering · Daily and Practice" href="/orderrot/"><span>orderrot</span> <small>Ordering</small></a>
+          <a aria-description="Dot counting · Daily and Practice" href="/countrot/"><span>countrot</span> <small>Dot counting</small></a>
+          <a aria-description="Ball tracking · Daily and Practice" href="/trackrot/"><span>trackrot</span> <small>Ball tracking</small></a>
+          <a aria-description="Rhythm · Daily and Practice" href="/temporot/"><span>temporot</span> <small>Rhythm</small></a>
+          <a aria-description="Line proportions · Daily and Practice" href="/splitrot/"><span>splitrot</span> <small>Line proportions</small></a>
+          <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+      </nav>
+    </details>
+  </header>
+  <main class="main rot-main">
+    <div class="heading">
+      <p class="game-title">anglerot</p>
+    </div>
+    <nav class="modes" aria-label="Game mode">
+      <button id="daily" type="button" aria-pressed="true">Daily</button>
+      <button id="practice" type="button" aria-pressed="false">Practice</button>
+    </nav>
+    <section id="quiz" aria-label="anglerot game"><p role="status">Loading game…</p></section>
+  </main>
+  <script type="module" src="/games/perception-game.js"></script>
+</body>
+</html>

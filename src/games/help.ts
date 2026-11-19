@@ -1,4 +1,9 @@
 const instructions: Record<string,string[]> = {
+  countrot: ['Start the round and estimate how many dots flash on screen. Enter your count after they disappear.', 'Five rounds, each worth up to 100 points. Hard practice uses moving dots.'],
+  trackrot: ['Watch the ball until it disappears. Tap the field or use the Landing position slider to predict where it reaches the floor.', 'Five rounds, each worth up to 100 points. Hard practice adds wall bounces.'],
+  anglerot: ['Use the Rotate line slider to set the requested counterclockwise angle from the right-facing starting line. Arrow keys make small adjustments.', 'Five rounds, each worth up to 100 points. Hard practice includes full turns: 450° means one turn plus 90°.'],
+  temporot: ['Listen to four beats, then tap eight more using Tap or Space. Keep sound on.', 'Hard practice asks you to tap halfway between the imagined beats. Scores measure your timing against the reference schedule.'],
+  splitrot: ['Measure the requested percentage from the named endpoint. Tap the line or use the Split position slider, then check your answer.', 'Hard practice extends beyond the line. 150% from the left is one and a half line lengths from the left endpoint.'],
   skyrot: ['Identify the city from an overhead photograph. Each missed guess reveals a wider view. You have three guesses per photo.', 'A correct answer earns 100, 65, or 35 points depending on the view and guesses used. Rush gives one guess per photo.'],
   pricerot: ['Guess the listed US supermarket price in dollars, before tax. Check the exact package size, retailer, and recorded date.', 'Five products per set. Your score rewards accuracy; within 20% counts as correct in Rush. Product images are original illustrations.'],
   skylinerot: ['Choose the city shown in the skyline photograph. You have up to three guesses.', 'First guesses earn 100 points, second guesses 65, third guesses 35. Rush gives one guess per photo.'],

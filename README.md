@@ -2,9 +2,9 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
-[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all sixteen games. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout keeps the answer visible until you choose Next game (or See recap). Timed rounds pause when the tab is hidden; choose Resume when you return. You can also pause a timed round yourself. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
+[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all twenty-one games. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout keeps the answer visible until you choose Next game (or See recap). Timed rounds pause when the tab is hidden; choose Resume when you return. You can also pause a timed round yourself. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
 
-[Daily mix](https://trainrot.vercel.app/daily/) plays all sixteen daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
+[Daily mix](https://trainrot.vercel.app/daily/) plays all twenty-one daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
 
 [trainrot](https://trainrot.vercel.app/trainrot/) is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 
@@ -38,7 +38,7 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:4173](http://localhost:4173). The local build includes all sixteen games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
+Open [localhost:4173](http://localhost:4173). The local build includes all twenty-one games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
 
 ## trainrot
 
@@ -178,3 +178,17 @@ Word-ladder, clue, and estimation Practice work through the available puzzles
 before starting another cycle. The current puzzle and cycle progress resume
 on reload. Map, timeline, and country-route results include a review of each
 completed question; opening a review does not change the saved score.
+
+
+Perception games: **countrot** (dot counting), **trackrot** (ball tracking),
+**anglerot** (angle estimation), **temporot** (rhythm), and **splitrot** (line
+proportions). Each has five seeded daily rounds, saved progress, unlimited
+practice, and a harder practice variation. They also appear in Daily mix and
+Rush. Tempo requires sound; tap with the button or Space after four reference beats.
+
+Run `npm run test:e2e:perception` against the local server to check all five games,
+saved Daily results, hard Practice, sharing, Daily mix, Rush at
+390px and 1440px in the dark theme. Reports and screenshots go to
+`test-results/perception/`. Run `npm run lint:ui:perception` for the UI policy checks. These are original implementations of the five
+perception tasks described at https://perceptle.io/how-to-play/; no Perceptle
+code, artwork, or audio is used.

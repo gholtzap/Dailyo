@@ -1,5 +1,5 @@
 export type Coordinate = [number, number];
-export type Game = 'train' | 'flags' | 'languages' | 'vocabulary' | RotGame | ExtraGame | 'skyrot' | 'pricerot' | 'skylinerot' | 'zoomrot' | 'orderrot';
+export type Game = 'countrot' | 'trackrot' | 'anglerot' | 'temporot' | 'splitrot' | 'train' | 'flags' | 'languages' | 'vocabulary' | RotGame | ExtraGame | 'skyrot' | 'pricerot' | 'skylinerot' | 'zoomrot' | 'orderrot';
 export type RotGame = 'maprot' | 'yearrot' | 'borderrot';
 export type ExtraGame = 'ladderrot' | 'cluerot' | 'scalerot' | 'swaprot';
 export type QuizGame = 'flags' | 'languages' | 'vocabulary';
