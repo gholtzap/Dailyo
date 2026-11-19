@@ -13,10 +13,10 @@ try {
   const page=await browser.newPage({viewport:{width,height:width===1440?1000:844},colorScheme:'dark'});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/api/daily-score',r=>r.fulfill({status:404}));
-  for(const route of ['/','/daily/','/trainrot/','/zoomrot/']) {
+  for(const route of ['/','/daily/','/trainrot/','/zoomrot/','/trainrot-world/london/']) {
    await page.goto(base+route);
    await page.locator('.site-masthead .site-more summary').waitFor();
-   if(route==='/trainrot/')await page.locator('#reveal').waitFor();
+   if(route==='/trainrot/'||route.startsWith('/trainrot-world/'))await page.locator('#reveal').waitFor();
    else if(route==='/zoomrot/')await page.locator('#question-title').waitFor();
    else await page.locator('iframe:not(.feed-loading)').waitFor();
    const header=page.locator('.site-masthead');
