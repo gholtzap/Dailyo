@@ -1,5 +1,7 @@
 /* Neutral surfaces and a small, shared control vocabulary. */
 :root { --line: #35373c; }
+/* Keep announcement targets focused without drawing a selection box around text. */
+:is(h1,h2,h3,p,[role="status"],.journey-ticket,#question-title,#round-title,#extra-title)[tabindex="-1"]:focus { outline: none; }
 .site-masthead { padding: 8px 32px; display: flex; align-items: center; background: #1c1d1f; border-bottom: 1px solid var(--line); }
 .site-brand { display: inline-flex; align-items: center; min-height: 40px; color: var(--ink); font-size: 18px; font-weight: 500; text-decoration: none; }
 .site-masthead :is(a,summary):focus-visible { outline: 2px solid #e4e5e7; outline-offset: 3px; }
