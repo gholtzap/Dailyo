@@ -13,6 +13,7 @@ const instructions: Record<string,string[]> = {
     'Find the fastest subway route from A to B.',
     'Tap the trains you would take in order. You don’t need to choose transfer stations.',
     'Select Check route to compare your time with the fastest route. You have six checks.',
+    'Times use scheduled train travel, four minutes per transfer, and predefined walking links. Other walks, initial waits, and live delays aren’t included.',
   ],
   flags: [
     'Choose the place represented by the flag.',

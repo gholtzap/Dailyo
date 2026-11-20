@@ -388,7 +388,6 @@ https://trainrot.vercel.app/daily/`;
       if(name!=='splitrot')await next.click();
     }
     await page.getByRole('button',{name:'See recap',exact:true}).waitFor();
-    await page.getByRole('button',{name:'See recap',exact:true}).click();
     await page.getByRole('heading',{name:'Daily recap'}).waitFor();
     assert.equal(await replay.isVisible(),false);
     assert.equal(await rows.filter({hasText:'Skipped'}).count(),0);

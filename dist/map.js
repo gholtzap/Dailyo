@@ -171,6 +171,8 @@ export function createMap(svg, boroughs, network) {
         }
     }
     function showNetwork() {
+        if (!network.metadata.mapName && (!city || city.slug === 'nyc'))
+            return;
         if (shownNetwork)
             return;
         shownNetwork = true;

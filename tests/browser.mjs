@@ -108,12 +108,9 @@ try{
     await page.getByRole('button',{name:'Skip',exact:true}).click();await ready(page);
     assert.notEqual((await saved(page)).seed,oldSeed);assert.notDeepEqual(await current(page),last);
     const afterWrap=await current(page);await page.reload();await ready(page);assert.deepEqual(await current(page),afterWrap);
-    const hint=page.locator('.map-hint');assert.equal(await hint.getAttribute('open'),null);assert.equal(await page.getByRole('button',{name:'Show subway map',exact:true}).isVisible(),false);
-    await hint.locator('summary').focus();await page.keyboard.press('Enter');assert.equal(await hint.getAttribute('open'),'');assert.match(await hint.innerText(),/makes this journey unscored/);
-    assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Subway lines are hidden/);assert.equal((await saved(page)).state.assisted,false);await inspect(page,`${prefix}-hint-open`);
-    await page.keyboard.press('Enter');assert.equal(await hint.getAttribute('open'),null);assert.equal((await saved(page)).state.assisted,false);
-    await hint.locator('summary').click();await page.getByRole('button',{name:'Show subway map',exact:true}).click();assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Subway lines are shown/);assert.equal((await saved(page)).state.assisted,true);assert.equal(await page.locator('#city-map').evaluate(n=>n===document.activeElement),true);await inspect(page,`${prefix}-hint`);
-    assert.equal(await page.locator('.map-caption').isVisible(),false);assert.equal(await hint.count(),0);
+    assert.equal(await page.locator('.map-hint').count(),0);
+    assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Subway lines are hidden/);
+    assert.equal((await saved(page)).state.assisted,false);await inspect(page,`${prefix}-hidden-map`);
     await page.getByRole('button',{name:'Show answer',exact:true}).click();
     assert.equal(await page.locator('.result-heading').count(),0);assert.ok(await page.locator('.result-legs li').count());await inspect(page,`${prefix}-answer`);
     await page.reload();await page.locator('#next').waitFor();assert.equal(await page.locator('.result-heading').count(),0);

@@ -17,11 +17,29 @@ browser effects, timers, persistence, and Postgres remain integration boundaries
 | Train planning / revealed | Next | New challenge supplied | Fresh planning state |
 | Train revealed / complete | Editing event | Never | Unchanged |
 | Rush any | Load | Always | Loading |
+| Rush page entry / recap | New run / Play again | New run requested | Fresh random seed; load opening round |
+| Rush loading / playing | Retry / preload / next round | Same run | Retain run seed and select by game and round |
 | Rush loading | Ready / fail / complete | Current round only | Playing / error / recap |
 | Rush playing | Answer / timeout | Current round only | Feedback, at most one result |
 | Rush playing | Pause | Timed round with time remaining | Paused, remaining time retained |
 | Rush paused | Resume | Page visible | Playing, remaining time retained |
 | Any | Unsupported / repeated / stale event | Not permitted by state or round | Unchanged |
+
+The browser schedules Rush feedback completion after 180 ms for a correct
+answer and 2.4 seconds for a miss or timeout. Both automatic and manual
+continuation use the answered generation; an earlier timer cannot advance a
+new round. Daily mix uses the following host transitions:
+
+| State | Event | Conditions | Next state / effect |
+| --- | --- | --- | --- |
+| Loading | Child playing | Current frame and date | Playing; preload next game |
+| Loading | Child complete | Current frame and date | Load next game (already played) |
+| Playing | Child complete | Current frame and date | Complete; schedule advancement in 2.4 seconds |
+| Complete | Child complete | Same frame | Keep original advancement timer |
+| Complete | Timer / Next game | Same frame, index, and date | Load next game or recap; cancel timer |
+| Complete | Child playing / error | Current frame and date | Playing / error; cancel timer |
+| Any | Skip / undo / retry / date change | Existing action guards | Load selected game; cancel timer |
+| Any | Message from old frame / old date | Never current | Unchanged |
 
 ## Failure cases
 

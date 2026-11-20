@@ -69,13 +69,22 @@ try {
   const challenge=challenges.find(c=>c.fromTitle===from&&c.toTitle===to);
   assert.ok(challenge);
   const best=createRouter(network).best(challenge.from,challenge.to);
-  await page.locator('.map-hint summary').click();
-  await page.getByRole('button',{name:'Show subway map',exact:true}).click();
+  const hasMapHint=Boolean(network.metadata.mapName);
+  const revealMapHint=async()=>{
+   if(hasMapHint){
+    await page.locator('.map-hint summary').click();
+    await page.getByRole('button',{name:'Show subway map',exact:true}).click();
+   }else{
+    assert.equal(await page.locator('.map-hint').count(),0);
+    assert.match(await page.locator('#city-map').getAttribute('aria-label'),/lines are hidden/);
+   }
+  };
+  await revealMapHint();
   for(const leg of best.legs)await page.locator(`button[data-route="${leg.route}"]`).click();
   await page.locator('#reveal').click();
-  await page.locator('.result-score').filter({hasText:'Completed with map'}).waitFor();
+  await page.locator('.result-score').filter({hasText:hasMapHint?'Completed with map':'100 points'}).waitFor();
   assert.equal(await page.getByRole('button',{name:'Play practice',exact:true}).getAttribute('class'),'primary-button');
-  await inspect('train-assisted');
+  await inspect(hasMapHint?'train-assisted':'train-scored');
   await page.getByRole('button',{name:'Play practice',exact:true}).click();
   await page.locator('#reveal').waitFor();
   const endpoints=await page.locator('.endpoint strong').allTextContents();
@@ -83,14 +92,17 @@ try {
   const router=createRouter(network);
   const wrong=Object.keys(network.routes).find(route=>router.assess(practice.from,practice.to,[{route}]).brokenLeg===0);
   assert.ok(wrong);
-  await page.locator('.map-hint summary').click();
-  await page.getByRole('button',{name:'Show subway map',exact:true}).click();
+  await revealMapHint();
   for(let i=0;i<6;i++){
    await page.locator(`button[data-route="${wrong}"]`).click();await page.locator('#reveal').click();
   }
   await page.locator('.result-score').waitFor();
-  assert.equal(await page.locator('.result-score').textContent(),'Map used · Unscored','An incomplete assisted route must not claim completion');
-  await inspect('train-assisted-incomplete');
+  if(hasMapHint)assert.equal(await page.locator('.result-score').textContent(),'Map used · Unscored','An incomplete route must not claim completion');
+  else{
+   assert.ok(parseInt(await page.locator('.result-score').textContent())<100);
+   assert.equal(await page.locator('.result-verdict').count(),0);
+  }
+  await inspect(hasMapHint?'train-assisted-incomplete':'train-incomplete');
   assert.deepEqual(errors,[]);await page.close();
  }
  console.log('Phone and desktop: answer review, sharing fallback, saved scores, practice, photo sources, and assisted Trainrot verdict passed.');

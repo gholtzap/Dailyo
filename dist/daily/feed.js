@@ -34,6 +34,7 @@ let day = dailyDate(), skipped = readSkips(), results = new Map();
 let index = -1, phase = 'loading', focusOnReady = false;
 let frame = null, preload = null;
 let timeout, lastSkip;
+let advanceTimeout;
 function skipKey() { return `dailyo:daily-feed:skipped:${day}`; }
 function readSkips() {
     try {
@@ -84,6 +85,7 @@ function preloadNext() {
 }
 function showGame(position) {
     clearTimeout(timeout);
+    clearTimeout(advanceTimeout);
     frame?.remove();
     index = position;
     phase = 'loading';
@@ -135,6 +137,7 @@ function showGame(position) {
 }
 function showError() {
     clearTimeout(timeout);
+    clearTimeout(advanceTimeout);
     if (phase === 'loading' && skipped.has(games[index].id)) {
         showGame(index + 1);
         return;
@@ -197,8 +200,20 @@ window.addEventListener('message', (event) => {
         focusOnReady = false;
         preloadNext();
     }
+    const previous = phase;
     phase = reported;
     renderActions();
+    if (phase === 'complete' && previous !== 'complete') {
+        const completedFrame = frame, completedDay = day, completedIndex = index;
+        advanceTimeout = setTimeout(() => {
+            if (changeDay() || phase !== 'complete' || frame !== completedFrame || day !== completedDay || index !== completedIndex)
+                return;
+            focusOnReady = true;
+            showGame(index + 1);
+        }, 2400);
+    }
+    else if (phase !== 'complete')
+        clearTimeout(advanceTimeout);
 });
 skip.onclick = () => {
     if (changeDay() || !['playing', 'error'].includes(phase))

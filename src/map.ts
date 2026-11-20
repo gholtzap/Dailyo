@@ -127,6 +127,7 @@ export function createMap(svg: SVGSVGElement, boroughs: Boroughs, network: Netwo
     }
   }
   function showNetwork(){
+    if(!network.metadata.mapName&&(!city||city.slug==='nyc'))return;
     if(shownNetwork)return;shownNetwork=true;
     if(currentChallenge)svg.setAttribute('aria-label',`${mapName} map. Start at ${currentChallenge.fromTitle}; finish at ${currentChallenge.toTitle}. ${city?'Rail':'Subway'} lines are shown.`);
     networkLayer.style.display='';

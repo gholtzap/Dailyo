@@ -39,6 +39,7 @@ const pause = $('#rush-pause');
 const scores = games.map(() => 0);
 const copyStatus = $('#rush-copy-status'), copyText = $('#rush-copy-text');
 const run = new RushMachine();
+let runId = '';
 let index = 0, round = 0, duration = 0;
 function updatePauseControl() {
     pause.hidden = !['playing', 'paused'].includes(run.phase) || run.phase === 'playing' && !Number.isFinite(run.deadline);
@@ -55,7 +56,7 @@ function stopClock() {
 }
 function makeRound(gameIndex, roundIndex) {
     const frame = document.createElement('iframe');
-    frame.src = `${games[gameIndex].path}?rush=${roundIndex}&date=${date}`;
+    frame.src = `${games[gameIndex].path}?rush=${roundIndex}&date=${date}&run=${runId}`;
     frame.className = 'feed-loading';
     frame.inert = true;
     panel.append(frame);
@@ -181,12 +182,11 @@ function showFinish(effect) {
     next.textContent = correct ? 'Next puzzle' : index === games.length - 1 ? 'See recap' : 'Next game';
     next.className = 'primary rush-continue';
     status.focus({ preventScroll: true });
-    // Correct answers keep the pace; missed answers stay available for review.
+    // Brief feedback, then continue automatically to the next puzzle or game.
     const answeredGeneration = run.generation;
-    if (correct)
-        timer = setTimeout(() => openRound(index, round + 1, answeredGeneration), 180);
+    timer = setTimeout(() => openRound(correct ? index : index + 1, correct ? round + 1 : 0, answeredGeneration), correct ? 180 : 2400);
     next.onclick = () => { if (run.phase === 'feedback')
-        openRound(correct ? index : index + 1, correct ? round + 1 : 0);
+        openRound(correct ? index : index + 1, correct ? round + 1 : 0, answeredGeneration);
     else
         skipGame(); };
 }
@@ -295,6 +295,7 @@ $('#rush-copy').onclick = async () => {
     }
 };
 function start() {
+    runId = crypto.randomUUID();
     scores.fill(0);
     $('#feed-recap').hidden = true;
     actions.hidden = false;

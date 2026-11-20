@@ -1,3 +1,4 @@
+import {rushSeed} from './rush-helpers.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
@@ -76,7 +77,7 @@ try{
    await page.goto(`${base}/rush/${game}/?date=${day}`);
    await page.locator('#rush-status').filter({hasText:'Round 1'}).waitFor();
    const frame=page.frames().find(f=>f.url().includes(`/${game}/?rush=0`));
-   const q=perceptionPuzzle(game,`rush:${game}:${day}`,0);
+   const q=perceptionPuzzle(game,await rushSeed(page,game),0);
    // Use the page's clock for the frame's actual timers.
    frame.clock=page.clock;await solve(frame,game,q);
    await page.locator('#rush-status').filter({hasText:'Round 2'}).waitFor();
@@ -87,7 +88,7 @@ try{
    assert.equal(await second.locator('#perception-feedback').count(),0,'Paused playback must not score or time out');
    await page.getByRole('button',{name:'Resume',exact:true}).click();
    await page.clock.runFor(30000);
-   await page.getByRole('button',{name:'See recap',exact:true}).click();await page.getByRole('heading',{name:'Rush recap',exact:true}).waitFor();
+   await page.getByRole('heading',{name:'Rush recap',exact:true}).waitFor();
    receipt.push(`${game}: Rush ready, correct, pause/resume, timeout, recap`);
  }
  assert.deepEqual(errors,[]);

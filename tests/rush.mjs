@@ -1,3 +1,4 @@
+import {rushSeed} from './rush-helpers.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
@@ -31,7 +32,7 @@ try{
     });
     let releaseTrain;
     const trainNetwork=new Promise(resolve=>{releaseTrain=resolve;});
-    await page.route(`**/trainrot/?rush=0&date=${day}`,async route=>{
+    await page.route(`**/trainrot/?rush=0&date=${day}&run=*`,async route=>{
       await trainNetwork;
       await route.continue();
     },{times:1});
@@ -61,7 +62,7 @@ try{
     await page.getByText('Games',{exact:true}).press('Enter');
     await page.getByRole('button',{name:'Retry',exact:true}).press('Enter');
     const flags=await loadJson('/games/data/flags.json');
-    const flagDeck=shuffle(flags,`rush:flags:${day}`);
+    const flagDeck=shuffle(flags,await rushSeed(page,'flags'));
     const flag=game('flagrot');
     await timer.filter({hasText:'Untimed'}).waitFor();
     assert.equal(await page.getByRole('button',{name:'Skip game',exact:true}).getAttribute('class'),'secondary rush-skip');
@@ -70,7 +71,7 @@ try{
     assert.equal(await track.isVisible(),false);
     assert.equal(await flag.locator('#question-title').evaluate(node=>node===document.activeElement),true);
     await inspect('flagrot',true);
-    const preloadedFlag=page.locator(`iframe[src="/flags/?rush=1&date=${day}"]`);
+    const preloadedFlag=page.locator(`iframe[src^="/flags/?rush=1&date=${day}&run="]`);
     assert.equal(await preloadedFlag.evaluate(node=>node.inert),true);
     await preloadedFlag.evaluate(node=>{node.dataset.preloadCheck='';});
     await flag.getByRole('button',{name:flagDeck[0].name,exact:true}).press('Enter');
@@ -129,14 +130,12 @@ try{
     await flag.locator('.choice.correct').filter({hasText:flagDeck[5].name}).waitFor();
     assert.equal(await page.getByRole('button',{name:'Next game',exact:true}).getAttribute('class'),'primary rush-continue');
     await inspect('miss',true);
-    await page.clock.fastForward(5000);
-    assert.ok(['Missed','Time’s up'].includes(await status.textContent()),'Miss/timeout stays visible until continuation');
-    await page.getByRole('button',{name:/^(Next game|See recap)$/}).click();
+    await page.clock.fastForward(2400);
 
     const language=game('langrot');
     await timer.filter({hasText:'8s'}).waitFor();
     const languages=await loadJson('/games/data/languages.json');
-    const firstLanguage=shuffle(languages,`rush:languages:${day}`)[0];
+    const firstLanguage=shuffle(languages,await rushSeed(page,'languages'))[0];
     await language.getByRole('button',{name:firstLanguage.name,exact:true}).click();
     await status.filter({hasText:'Correct'}).waitFor();
     await page.clock.fastForward(200);
@@ -145,9 +144,7 @@ try{
     await page.clock.fastForward(6100);
     await status.filter({hasText:'Time’s up'}).waitFor();
     await language.locator('.choice.correct').waitFor();
-    await page.clock.fastForward(5000);
-    assert.ok(['Missed','Time’s up'].includes(await status.textContent()),'Miss/timeout stays visible until continuation');
-    await page.getByRole('button',{name:/^(Next game|See recap)$/}).click();
+    await page.clock.fastForward(2400);
 
     await status.filter({hasText:'Loading trainrot…'}).waitFor();
     assert.equal(await timer.textContent(),'');
@@ -161,7 +158,7 @@ try{
     const network=await loadJson('/data/network.json');
     const challenges=await loadJson('/data/challenges.json');
     const easy=challenges.filter(c=>c.difficulty==='easy');
-    const challenge=seededDeck(`rush:train:${day}`,easy.length>=3?easy:challenges)[0];
+    const challenge=seededDeck(await rushSeed(page,'train'),easy.length>=3?easy:challenges)[0];
     const best=createRouter(network).best(challenge.from,challenge.to);
     for(const {route} of best.legs)await train.locator(`button[data-route="${route}"]`).click();
     await train.getByRole('button',{name:'Check route'}).click();
@@ -172,11 +169,11 @@ try{
     const rot=async (kind,round=0)=>{
       const data=preparePuzzles(kind,await loadJson(`/games/data/${kind}.json`));
       const index=round%roundCount;
-      return {data,question:makeSet(kind,data,`rush:${kind}:${day}`,round-index)[index]};
+      return {data,question:makeSet(kind,data,await rushSeed(page,kind),round-index)[index]};
     };
     const extra=async (kind,...datasets)=>{
       const data=prepareExtra(kind,...await Promise.all(datasets.map(name=>loadJson(`/games/data/${name}.json`))));
-      return extraPuzzle(kind,data,`rush:${kind}:${day}:0`);
+      return extraPuzzle(kind,data,`${await rushSeed(page,kind)}:0`);
     };
     const placeYear=async (child,round=0)=>{
       const {question:{event,timeline}}=await rot('yearrot',round);
@@ -185,7 +182,7 @@ try{
     const slots=[
       ['Vocabulary',12,9,async child=>{
         const words=await loadJson('/games/data/vocabulary.json');
-        await child.getByRole('button',{name:shuffle(words,`rush:vocabulary:${day}`)[0].name,exact:true}).click();
+        await child.getByRole('button',{name:shuffle(words,await rushSeed(page,'vocabulary'))[0].name,exact:true}).click();
       }],
       ['maprot',20,15,async child=>{
         const {question:[,,lon,lat]}=await rot('maprot');
@@ -283,16 +280,17 @@ try{
     const sharedChallenge=new URL(share.split('\n').at(-1));
     await page.clock.setFixedTime(new Date('2026-11-17T16:00:00Z'));
     await page.goto(new URL(sharedChallenge.pathname+sharedChallenge.search,base).href);
-    await game('flagrot').getByRole('button',{name:flagDeck[0].name,exact:true}).click();
+    const sharedDeck=shuffle(flags,await rushSeed(page,'flags'));
+    await game('flagrot').getByRole('button',{name:sharedDeck[0].name,exact:true}).click();
     await status.filter({hasText:'Correct'}).waitFor();
     await page.clock.fastForward(200);
-    await game('flagrot').getByRole('button',{name:flagDeck[1].name,exact:true}).click();
+    await game('flagrot').getByRole('button',{name:sharedDeck[1].name,exact:true}).click();
     await status.filter({hasText:'Correct'}).waitFor();
     await page.goto(new URL(`/rush/scalerot/?date=${day}`,base).href);
     await page.getByRole('timer').filter({hasText:'Untimed'}).waitFor();
     const scale=game('scalerot');
     const data=prepareExtra('scalerot',await loadJson('/games/data/scalerot.json'));
-    const puzzle=extraPuzzle('scalerot',data,`rush:scalerot:${day}:0`);
+    const puzzle=extraPuzzle('scalerot',data,`${await rushSeed(page,'scalerot')}:0`);
     await scale.getByRole('spinbutton').fill(String(puzzle.actual));
     await scale.getByRole('button',{name:'Check estimate'}).click();
     await status.filter({hasText:'Correct'}).waitFor();
@@ -300,9 +298,8 @@ try{
     await timer.filter({hasText:'20s'}).waitFor();
     await page.clock.fastForward(20100);
     await scale.locator('.rot-feedback').filter({hasText:'Answer:'}).waitFor();
-    await page.clock.fastForward(5000);
-    assert.ok(['Missed','Time’s up'].includes(await status.textContent()),'Miss/timeout stays visible until continuation');
-    await page.getByRole('button',{name:/^(Next game|See recap)$/}).click();
+    await page.clock.fastForward(2400);
+    await page.locator('#feed-results li').waitFor();
     assert.equal(await page.locator('#feed-results li').count(),1);
     assert.equal(await page.locator('#rush-personal-best').textContent(),'New best · 1 correct');
     assert.equal(await page.evaluate(()=>localStorage.getItem('dailyo:rush:best:all')),'20');

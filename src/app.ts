@@ -34,6 +34,7 @@ async function start(){
     label.hidden=false;
   }
   const router=createRouter(network),map=createMap($('#city-map'),boroughs,network);
+  const allowMapHint=Boolean(network.metadata.mapName)||Boolean(world&&citySlug!=='nyc');
   const rewards=createRewards(planner,$('#city-map'));
   const storageKey=`${world?'trainrot-world-practice':'trainrot-endless-v1'}:${network.metadata.feedVersion}`;
   const nycRouteOrder=['1','2','3','4','5','6','6X','7','7X','A','C','E','B','D','F','M','G','J','L','N','Q','R','W','GS','FS','H'];
@@ -171,7 +172,7 @@ async function start(){
       <div class="route-editor"><div class="journey-route"><div class="sequence-row">${state.legs.length?`<ol class="train-sequence" aria-label="Your train sequence">${state.legs.map(l=>`<li>${badge(l.route)}</li>`).join('')}</ol>`:'<p class="route-empty">Tap your trains in order.</p>'}${state.legs.length?'<button id="undo-train" class="quiet-button" aria-label="Undo last train">Undo</button>':''}</div>${guessFeedback()}${state.guesses?.length?`<p class="check-count">${state.guesses.length} of ${MAX_GUESSES} checks</p>`:''}</div>
       <div class="route-actions"><button id="reveal" class="primary-button" ${state.legs.length&&!same(state.guesses?.at(-1),state.legs)?'':'disabled'}>Check route</button></div></div>
       <div class="help-actions">${mode==='practice'?'<button id="skip" class="hint-button">Skip</button>':''}<button id="show-answer" class="hint-button">Show answer</button></div>
-      ${state.assisted?'':`<details class="map-hint"><summary>Map hint</summary><p>Showing the map makes this journey unscored.</p><button id="hint" type="button" class="secondary-button">${world?'Show rail map':'Show subway map'}</button></details>`}`;
+      ${state.assisted||!allowMapHint?'':`<details class="map-hint"><summary>Map hint</summary><p>Showing the map makes this journey unscored.</p><button id="hint" type="button" class="secondary-button">${world?'Show rail map':'Show subway map'}</button></details>`}`;
     const filterInput=document.querySelector<HTMLInputElement>('#line-search');
     function filterLines(){
       const term=lineFilter.toLocaleLowerCase();let first=true;
@@ -309,7 +310,7 @@ async function start(){
   function draw(){
     map.setChallenge(state.challenge);map.filter('compare');
     if(state.phase==='planning'){
-      if(state.assisted)map.showNetwork();drawPlanning();
+      if(state.assisted&&rushRound===null)map.showNetwork();drawPlanning();
     }else{map.reveal(state.result!);drawResult();}
   }
   let initialMode;try{initialMode=localStorage.getItem(modeKey);}catch{}

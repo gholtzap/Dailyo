@@ -8,6 +8,20 @@ const challenge=read('challenges')[0];
 const best=createRouter(read('network')).best(challenge.from,challenge.to);
 const browser=await chromium.launch();
 try{
+ if(!read('network').metadata.mapName){
+  for(const width of [390,1440]){
+   const page=await browser.newPage({viewport:{width,height:844}});
+   await page.route('**/data/challenges.json',r=>r.fulfill({json:[challenge]}));
+   await page.goto(new URL('/trainrot/',base).href);await page.locator('#reveal').waitFor();
+   assert.equal(await page.locator('.map-hint').count(),0);
+   assert.match(await page.locator('#city-map').getAttribute('aria-label'),/Subway lines are hidden/);
+   for(const {route} of best.legs)await page.locator(`[data-route="${route}"]`).click();
+   await page.locator('#reveal').click();await page.locator('#copy-results').waitFor();
+   assert.equal(await page.locator('.result-score').textContent(),'100 points');
+   assert.ok(await page.locator('.route-path').count());
+   await page.close();console.log(`${width}px: NYC hides map hints and reveals routes only after solving`);
+  }
+ }else{
  for(const width of [390,1440])for(const reveal of [false,true]){
   const page=await browser.newPage({viewport:{width,height:844},reducedMotion:'reduce'});await page.route('**/data/challenges.json',r=>r.fulfill({json:[challenge]}));await page.goto(new URL('/trainrot/',base).href);await page.locator('.map-hint summary').waitFor();
   await page.locator('.map-hint summary').click();assert.match(await page.locator('.map-hint').innerText(),/makes this journey unscored/);
@@ -37,5 +51,6 @@ try{
   assert.equal(await layer.locator('path').first().evaluate((current, first) => current === first, path), true);
   await page.close();
   console.log(`${width}px: hint paths stay hidden between practice journeys and are reused`);
+ }
  }
 }finally{await browser.close();}
