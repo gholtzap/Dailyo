@@ -4,6 +4,7 @@ import {required} from '../dom.js';
 import type {RushMessage,RushHelpMessage} from '../types.js';
 interface Round {frame: HTMLIFrameElement; ready: boolean}
 import {rushDate} from './puzzles.js';
+import {closeRushAudio} from './rush-audio.js';
 
 const rotation=[
   {label:'flagrot',path:'/flags/',seconds:[8,6,4]},
@@ -184,6 +185,7 @@ function preload(gameIndex: number,roundIndex: number){
 
 function openRound(gameIndex: number,roundIndex=0,generation=run.generation){
   if(run.load(generation).$==='NoChange')return;
+  if(gameIndex!==index)closeRushAudio();
   review={state:'closed'};advance=null;updateReviewControl();
   updatePauseControl();
   stopClock();
@@ -260,6 +262,7 @@ function showRound(){
   if(run.phase==='paused')pause.focus();
   else frame.contentDocument?.querySelector<HTMLElement>('#question-title, #rush-journey, #round-title, #extra-title')?.focus({preventScroll:true});
   checkpoint();
+  if(run.phase==='playing')frame.contentWindow?.postMessage('rush-activate',location.origin);
   if(!document.hidden&&!navigator.connection?.saveData){
     preload(index,round+1);
     preload(index+1,0);
@@ -302,6 +305,7 @@ function showFinish(effect: RushEffect){
 
 function showRecap(){
   if(run.complete().$==='NoChange')return;
+  closeRushAudio();
   updatePauseControl();
   current=null;
   visible=null;
@@ -411,6 +415,7 @@ $('#rush-copy').onclick=async()=>{
 };
 
 function start(){
+  closeRushAudio();
   lastAnswer?.frame.remove();lastAnswer=null;review={state:'closed'};advance=null;updateReviewControl();
   recovery=null;
   runId=crypto.randomUUID();
@@ -446,6 +451,7 @@ function resumeRound(){
   updatePauseControl();
   if(visible){visible.inert=false;delete visible.contentDocument!.documentElement.dataset.rushPaused;}
   visible?.contentWindow?.postMessage('rush-resume',location.origin);
+  visible?.contentWindow?.postMessage('rush-activate',location.origin);
   status.textContent=`${games[index].label} · Round ${round+1}`;
   next.removeAttribute('disabled');
   updateClock();
@@ -458,6 +464,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){holdAnswer
 // Playing + help/background/leave -> Paused; Paused + explicit Resume -> Playing.
 // Reload + valid checkpoint -> Loading -> Paused (or untimed Playing); feedback checkpoints the next round once.
 window.addEventListener('pagehide',()=>{
+  closeRushAudio();
   if(run.phase==='playing')pauseRound();
   if(run.phase!=='feedback'&&run.phase!=='loading')checkpoint();
 });

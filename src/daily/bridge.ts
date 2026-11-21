@@ -57,6 +57,12 @@ export function rushFeedback(correct: boolean,tolerance=false){
   return rushExpired?'Time’s up':tolerance?`${correct?'Within':'Outside'} Rush tolerance`:correct?'Correct':'Missed';
 }
 
+export function onRushActivation(activate: ()=>void){
+  window.addEventListener('message',event=>{
+    if(rushRound!==null&&event.origin===location.origin&&event.source===parent&&event.data==='rush-activate')activate();
+  });
+}
+
 export function onRushTimeout(reveal: () => void){
   window.addEventListener('message',event=>{
     if(event.origin===location.origin&&event.source===window.parent&&event.data==='rush-timeout'){rushExpired=true;reveal();}

@@ -133,7 +133,7 @@ try{
   assert.equal(await train.locator('.sequence-row').innerText(),route);
 
   const angle=await enter('anglerot');
-  await angle.getByRole('button',{name:'Start round',exact:true}).click();
+  await angle.getByRole('slider').waitFor();
   await angle.getByRole('slider').fill('42.5');
   await page.reload();await status.filter({hasText:'Round 1'}).waitFor();
   assert.equal(await angle.getByRole('slider').inputValue(),'42.5');
