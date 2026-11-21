@@ -132,6 +132,12 @@
 .feed-link { display: inline-flex; align-items: center; min-height: 44px; }
 .feed-header .feed-link:nth-child(3) { margin-left: auto; }
 #rush-status { margin: 0; font-size: 13px; }
+.rush-progress { display: flex; flex-direction: column; gap: 4px; }
+#rush-streak { font-size: 12px; color: #92d6aa; font-weight: 500; }
+@media (prefers-reduced-motion: no-preference) {
+  #rush-streak.rush-milestone { animation: rush-streak 240ms ease-out; }
+  @keyframes rush-streak { from { transform: scale(1.04); } to { transform: scale(1); } }
+}
 #rush-clock { min-width: 3ch; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rush-time { display: flex; align-items: center; gap: 8px; }
 .rush-time[hidden] { display: none; }
@@ -185,7 +191,7 @@
 .rush-feed .rush-time[data-timed] { max-width: 240px; }
 @media (max-width: 440px) {
   .rush-feed .feed-actions { padding: 8px 16px; flex-wrap: wrap; gap: 8px 16px; }
-  .rush-feed #rush-status { flex: 1 1 auto; }
+  .rush-feed .rush-progress { flex: 1 1 auto; }
   .rush-feed .rush-time[data-timed] { order: 3; flex: 1 0 100%; max-width: none; }
   .rush-feed .feed-actions:has(.rush-time[data-timed]) { display: flex; }
 }

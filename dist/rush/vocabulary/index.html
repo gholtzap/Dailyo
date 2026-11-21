@@ -50,7 +50,10 @@
     </details>
   </header>
   <section aria-label="Rush status" class="feed-actions" hidden>
-    <p id="rush-status" role="status" tabindex="-1"></p>
+    <div class="rush-progress">
+      <p id="rush-status" role="status" tabindex="-1"></p>
+      <span id="rush-streak" role="status" aria-live="polite" aria-atomic="true" hidden></span>
+    </div>
     <div class="rush-time">
       <span class="rush-track" aria-hidden="true"><span></span></span>
       <span id="rush-clock" role="timer" aria-label="Time left"></span>
