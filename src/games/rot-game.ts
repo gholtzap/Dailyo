@@ -6,7 +6,7 @@ import {showGameProgress} from './help.js';
 import {
   makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition,
 } from './rot-puzzles.js';
-import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
+import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice, readRushDraft, saveRushDraft } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import {searchCountries, exactCountryMatch} from './country-search.js';
 import {parseDifficulty, practiceSettings, practiceSlot} from './difficulty.js';
@@ -444,7 +444,9 @@ async function start() {
     const position=rushRound%data.items.length;
     const index=position%roundCount;
     const question=makeSet(kind,data,seed,position-index)[index];
-    sessions.daily={questions:[question],state:newSession(seed)};
+    const saved=readRushDraft<RotState>();
+    sessions.daily={questions:[question],state:saved?.index===0&&Array.isArray(saved.answers)&&!saved.answers.length?restoreSession(kind,data,[question],saved,seed):newSession(seed)};
+    saveRushDraft(()=>sessions.daily.state);
     if(mapGame){const rule=element('p','Place your pin within 500 km.','rush-rule');quiz.closest('main')!.querySelector('.heading')!.append(rule);}
     onRushTimeout(()=>{
       const session=sessions.daily;
