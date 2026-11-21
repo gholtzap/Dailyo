@@ -71,7 +71,7 @@ const rushRules: Record<string,string[]>={
   skylinerot:['Identify the city from the skyline photograph. You have one guess.'],
   zoomrot:['Identify the object from the close-up photograph. You have one guess.'],
   pricerot:[instructions.pricerot[0],'Estimate within 20%.'],orderrot:[instructions.orderrot[0]],
-  countrot:[instructions.countrot[0],'Earn at least 70 points to continue.'],
+  countrot:['Estimate how many dots flash on screen. Enter your count after they disappear.','Earn at least 70 points to continue.'],
   trackrot:[instructions.trackrot[0],'Earn at least 70 points to continue.'],
   anglerot:[instructions.anglerot[0],'Earn at least 70 points to continue.'],
   temporot:[instructions.temporot[0],'Earn at least 70 points to continue.'],

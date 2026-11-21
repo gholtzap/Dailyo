@@ -1,7 +1,8 @@
-import {dailyDate,inFeed,startPractice,waitForFeedActivation,reportDaily,rushRound,rushSeed,reportRush,onRushTimeout,readRushDraft,saveRushDraft,rushFeedback} from '../daily/bridge.js';
+import {dailyDate,inFeed,startPractice,waitForFeedActivation,reportDaily,rushRound,rushSeed,reportRush,onRushTimeout,readRushDraft,saveRushDraft,rushFeedback,onRushActivation} from '../daily/bridge.js';
 import {showGameProgress} from './help.js';
 import {perceptionGames,perceptionPuzzle,perceptionGrade,reflect} from './perception-puzzles.js';
 import type {PerceptionGame,PerceptionPuzzle} from './perception-puzzles.js';
+import {acquireRushAudio} from '../daily/rush-audio.js';
 const name=document.body.dataset.game!;
 if(!perceptionGames.includes(name as PerceptionGame))throw new Error('Unknown perception game');
 const game=name as PerceptionGame,quiz=document.querySelector<HTMLElement>('#quiz')!;
@@ -22,11 +23,21 @@ let timerCallback: (()=>void) | undefined,timerDeadline=0,animateRound: (()=>voi
 // Host pause is independent of the puzzle phase; it freezes playback and answer deadlines.
 let playback: {state:'running'} | {state:'paused';since: number;remaining: number}={state:'running'};
 let draft=50,taps: number[]=[],beatStart=0,feedback: Answer | undefined;
+// Waiting + host activation -> queued -> started. Preloading never activates playback.
+// Pause freezes a queued cue. Repeated activation/resume cannot restart a stimulus.
+let activation: 'waiting'|'queued'|'started'|'manual'='waiting';
+const automaticRush=()=>isRush&&(game==='anglerot'||game==='splitrot'||(rushRound??0)>0);
+function activateRush(){
+  if(!automaticRush()||phase!=='ready'||activation!=='waiting')return;
+  activation='queued';
+  if(game==='anglerot'||game==='splitrot')start();
+  else{draw();later(start,600);}
+}
 const el=<K extends keyof HTMLElementTagNameMap>(tag: K,text?: string,className?: string)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;};
 const button=(text: string,action: ()=>void,kind='secondary')=>{const b=el('button',text,kind);b.type='button';b.onclick=action;return b;};
 const key=()=>`dailyo:${game}:v1:${mode==='daily'?day:`practice:${hard?'hard':'standard'}`}`;
-function stop(){clearTimeout(timer);timerCallback=undefined;animateRound=undefined;cancelAnimationFrame(animation);if(audio){void audio.close().catch(()=>{});audio=undefined;}}
-function later(callback: ()=>void,delay: number){clearTimeout(timer);timerCallback=callback;timerDeadline=performance.now()+delay;timer=setTimeout(()=>{timerCallback=undefined;callback();},delay);}
+function stop(){clearTimeout(timer);timerCallback=undefined;animateRound=undefined;cancelAnimationFrame(animation);if(audio){void (isRush?audio.suspend():audio.close()).catch(()=>{});audio=undefined;}}
+function later(callback: ()=>void,delay: number){clearTimeout(timer);timerCallback=callback;timerDeadline=performance.now()+delay;if(playback.state==='paused'){playback={...playback,remaining:delay};return;}timer=setTimeout(()=>{timerCallback=undefined;callback();},delay);}
 function pausePlayback(){if(playback.state==='paused')return;playback={state:'paused',since:performance.now(),remaining:Math.max(0,timerDeadline-performance.now())};clearTimeout(timer);cancelAnimationFrame(animation);if(audio)void audio.suspend().catch(()=>{});}
 function resumePlayback(){if(playback.state!=='paused')return;const elapsed=performance.now()-playback.since,remaining=playback.remaining;playback={state:'running'};pausedFor+=elapsed;beatStart+=elapsed;if(audio)void audio.resume().catch(()=>{});if(timerCallback)later(timerCallback,remaining);if(animateRound)animation=requestAnimationFrame(animateRound);}
 function transition(event: Event){
@@ -76,7 +87,10 @@ function track(c: HTMLCanvasElement,t: number,reveal=false){
 function angle(c: HTMLCanvasElement,reveal=false){const ctx=c.getContext('2d')!;ctx.clearRect(0,0,960,560);ctx.strokeStyle='#62666d';ctx.lineWidth=2;ctx.beginPath();ctx.arc(480,280,200,0,Math.PI*2);ctx.stroke();line(ctx,480,280,680,280,'#7d8088',3);const ray=(a: number,color: string)=>line(ctx,480,280,480+200*Math.cos(a*Math.PI/180),280-200*Math.sin(a*Math.PI/180),color,5);if(reveal)ray(q.target,'#92d6aa');ray(draft,'#f3ce78');ball(ctx,480,280,7);}
 function slider(label: string,min: number,max: number,value: number,change: (value: number)=>void){const wrap=el('div',undefined,'perception-control');const id='perception-input';const l=el('label',label);l.htmlFor=id;const input=el('input');input.id=id;input.type='range';input.min=String(min);input.max=String(max);input.step='0.1';input.value=String(value);input.oninput=()=>change(Number(input.value));wrap.append(l,input);return wrap;}
 function start(){
+  // The host marks Pause synchronously; its message can arrive after a queued cue.
+  if(isRush&&document.documentElement.hasAttribute('data-rush-paused')){pausePlayback();later(start,0);return;}
   if(checkDate()||!transition('start'))return;
+  activation='started';
   pausedFor=0;draft=game==='countrot'?20:game==='anglerot'?0:50;taps=[];draw();
   if(game==='countrot'||game==='trackrot'){
     const c=quiz.querySelector('canvas')!,ctx=c.getContext('2d')!,begin=performance.now();
@@ -94,16 +108,22 @@ function start(){
 async function startAudio(){
   let attempt: AudioContext | undefined;
   try{
-    audio=new AudioContext();const currentAudio=audio;attempt=currentAudio;await audio.resume();
+    audio=isRush?acquireRushAudio():new AudioContext();const currentAudio=audio;attempt=currentAudio;
+    const resumed=audio.resume();
+    // A browser may require another gesture for audio in a newly displayed frame.
+    // Keep a working control available rather than waiting on a suspended context.
+    const enable=isRush&&audio.state==='suspended'?button('Enable sound',()=>{void currentAudio.resume();},'primary'):null;
+    if(enable)quiz.append(enable);
+    await resumed;enable?.remove();
     if(phase!=='showing'||audio!==currentAudio)return;
-    const when=audio.currentTime+.15;beatStart=performance.now()+150;
+    const when=audio.currentTime+.15;beatStart=(playback.state==='paused'?playback.since:performance.now())+150;
     quiz.querySelector('.tempo-status')!.textContent='Listen to the four reference beats…';
     for(let i=0;i<4;i++){
       const tone=(offset: number,volume: number)=>{const osc=currentAudio.createOscillator(),gain=currentAudio.createGain(),at=when+offset/1000;osc.frequency.value=660;gain.gain.setValueAtTime(volume,at);gain.gain.exponentialRampToValueAtTime(.001,at+.07);osc.connect(gain);gain.connect(currentAudio.destination);osc.start(at);osc.stop(at+.08);};
       tone(i*q.interval,.3);if(q.hard&&i<3)tone((i+.5)*q.interval,.08);
     }
     later(()=>{if(!transition('shown'))return;draw();quiz.querySelector<HTMLElement>('#tap')?.focus();later(()=>finish(taps.length===8?taps:null),q.interval*10);},150+3*q.interval+100);
-  }catch{if(attempt&&audio!==attempt)return;stop();transition('reset');draw();quiz.prepend(el('p','Sound could not start. Check your audio settings and try again.','feedback'));}
+  }catch{if(attempt&&audio!==attempt)return;stop();activation='manual';transition('reset');draw();quiz.prepend(el('p','Sound could not start. Check your audio settings and try again.','feedback'));}
 }
 function tap(){if(phase!=='answering'||game!=='temporot')return;taps.push(performance.now()-beatStart);const status=quiz.querySelector('#tap-progress');if(status)status.textContent=`${taps.length} of 8 taps`;if(taps.length===8)finish(taps);}
 function drawRound(){
@@ -116,7 +136,8 @@ function drawRound(){
     quiz.append(el('p',instructions[game],'perception-note'));
     if(q.hard)quiz.append(el('p',game==='countrot'?'The dots move.':game==='trackrot'?'The ball bounces off the side walls.':game==='anglerot'?'Include every full turn.':game==='temporot'?'Tap halfway between the beats.':'The fraction extends beyond the line.','perception-note'));
     if(game==='temporot')quiz.append(el('p','Turn on sound. Use Tap or the Space key.','perception-note'));
-    quiz.append(button('Start round',start,'primary'));return;
+    if(automaticRush()&&activation!=='manual')quiz.append(el('p','Starting…','perception-note'));
+    else quiz.append(button('Start round',start,'primary'));return;
   }
   const reveal=phase==='feedback';
   if(game==='countrot'){
@@ -185,7 +206,8 @@ async function init(){
   window.addEventListener('message',event=>{if(!isRush||event.source!==parent||event.origin!==location.origin)return;if(event.data==='rush-pause')pausePlayback();if(event.data==='rush-resume')resumePlayback();});
   window.addEventListener('pagehide',stop);window.addEventListener('pageshow',()=>checkDate());
   setInterval(()=>checkDate(),30000);
-  onRushTimeout(()=>{if(phase==='ready')transition('start');finish(null);});draw();
+  onRushActivation(activateRush);
+  onRushTimeout(()=>{if(phase==='feedback'){draw();return;}if(phase==='ready')transition('start');finish(null);});draw();
   const countDraft=readRushDraft<{count?: string}>()?.count;
   if(typeof countDraft==='string'&&/^\d{0,3}$/.test(countDraft)&&quiz.querySelector<HTMLInputElement>('#dot-count'))quiz.querySelector<HTMLInputElement>('#dot-count')!.value=countDraft;
   if(isRush)reportRush('ready');

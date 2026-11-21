@@ -1,6 +1,7 @@
-import { dailyDate, inFeed, startPractice, waitForFeedActivation, reportDaily, rushRound, rushSeed, reportRush, onRushTimeout, readRushDraft, saveRushDraft, rushFeedback } from '../daily/bridge.js';
+import { dailyDate, inFeed, startPractice, waitForFeedActivation, reportDaily, rushRound, rushSeed, reportRush, onRushTimeout, readRushDraft, saveRushDraft, rushFeedback, onRushActivation } from '../daily/bridge.js';
 import { showGameProgress } from './help.js';
 import { perceptionGames, perceptionPuzzle, perceptionGrade, reflect } from './perception-puzzles.js';
+import { acquireRushAudio } from '../daily/rush-audio.js';
 const name = document.body.dataset.game;
 if (!perceptionGames.includes(name))
     throw new Error('Unknown perception game');
@@ -17,16 +18,34 @@ let timerCallback, timerDeadline = 0, animateRound, pausedFor = 0;
 // Host pause is independent of the puzzle phase; it freezes playback and answer deadlines.
 let playback = { state: 'running' };
 let draft = 50, taps = [], beatStart = 0, feedback;
+// Waiting + host activation -> queued -> started. Preloading never activates playback.
+// Pause freezes a queued cue. Repeated activation/resume cannot restart a stimulus.
+let activation = 'waiting';
+const automaticRush = () => isRush && (game === 'anglerot' || game === 'splitrot' || (rushRound ?? 0) > 0);
+function activateRush() {
+    if (!automaticRush() || phase !== 'ready' || activation !== 'waiting')
+        return;
+    activation = 'queued';
+    if (game === 'anglerot' || game === 'splitrot')
+        start();
+    else {
+        draw();
+        later(start, 600);
+    }
+}
 const el = (tag, text, className) => { const n = document.createElement(tag); if (text !== undefined)
     n.textContent = text; if (className)
     n.className = className; return n; };
 const button = (text, action, kind = 'secondary') => { const b = el('button', text, kind); b.type = 'button'; b.onclick = action; return b; };
 const key = () => `dailyo:${game}:v1:${mode === 'daily' ? day : `practice:${hard ? 'hard' : 'standard'}`}`;
 function stop() { clearTimeout(timer); timerCallback = undefined; animateRound = undefined; cancelAnimationFrame(animation); if (audio) {
-    void audio.close().catch(() => { });
+    void (isRush ? audio.suspend() : audio.close()).catch(() => { });
     audio = undefined;
 } }
-function later(callback, delay) { clearTimeout(timer); timerCallback = callback; timerDeadline = performance.now() + delay; timer = setTimeout(() => { timerCallback = undefined; callback(); }, delay); }
+function later(callback, delay) { clearTimeout(timer); timerCallback = callback; timerDeadline = performance.now() + delay; if (playback.state === 'paused') {
+    playback = { ...playback, remaining: delay };
+    return;
+} timer = setTimeout(() => { timerCallback = undefined; callback(); }, delay); }
 function pausePlayback() { if (playback.state === 'paused')
     return; playback = { state: 'paused', since: performance.now(), remaining: Math.max(0, timerDeadline - performance.now()) }; clearTimeout(timer); cancelAnimationFrame(animation); if (audio)
     void audio.suspend().catch(() => { }); }
@@ -118,8 +137,15 @@ function angle(c, reveal = false) { const ctx = c.getContext('2d'); ctx.clearRec
     ray(q.target, '#92d6aa'); ray(draft, '#f3ce78'); ball(ctx, 480, 280, 7); }
 function slider(label, min, max, value, change) { const wrap = el('div', undefined, 'perception-control'); const id = 'perception-input'; const l = el('label', label); l.htmlFor = id; const input = el('input'); input.id = id; input.type = 'range'; input.min = String(min); input.max = String(max); input.step = '0.1'; input.value = String(value); input.oninput = () => change(Number(input.value)); wrap.append(l, input); return wrap; }
 function start() {
+    // The host marks Pause synchronously; its message can arrive after a queued cue.
+    if (isRush && document.documentElement.hasAttribute('data-rush-paused')) {
+        pausePlayback();
+        later(start, 0);
+        return;
+    }
     if (checkDate() || !transition('start'))
         return;
+    activation = 'started';
     pausedFor = 0;
     draft = game === 'countrot' ? 20 : game === 'anglerot' ? 0 : 50;
     taps = [];
@@ -159,14 +185,21 @@ function start() {
 async function startAudio() {
     let attempt;
     try {
-        audio = new AudioContext();
+        audio = isRush ? acquireRushAudio() : new AudioContext();
         const currentAudio = audio;
         attempt = currentAudio;
-        await audio.resume();
+        const resumed = audio.resume();
+        // A browser may require another gesture for audio in a newly displayed frame.
+        // Keep a working control available rather than waiting on a suspended context.
+        const enable = isRush && audio.state === 'suspended' ? button('Enable sound', () => { void currentAudio.resume(); }, 'primary') : null;
+        if (enable)
+            quiz.append(enable);
+        await resumed;
+        enable?.remove();
         if (phase !== 'showing' || audio !== currentAudio)
             return;
         const when = audio.currentTime + .15;
-        beatStart = performance.now() + 150;
+        beatStart = (playback.state === 'paused' ? playback.since : performance.now()) + 150;
         quiz.querySelector('.tempo-status').textContent = 'Listen to the four reference beats…';
         for (let i = 0; i < 4; i++) {
             const tone = (offset, volume) => { const osc = currentAudio.createOscillator(), gain = currentAudio.createGain(), at = when + offset / 1000; osc.frequency.value = 660; gain.gain.setValueAtTime(volume, at); gain.gain.exponentialRampToValueAtTime(.001, at + .07); osc.connect(gain); gain.connect(currentAudio.destination); osc.start(at); osc.stop(at + .08); };
@@ -181,6 +214,7 @@ async function startAudio() {
         if (attempt && audio !== attempt)
             return;
         stop();
+        activation = 'manual';
         transition('reset');
         draw();
         quiz.prepend(el('p', 'Sound could not start. Check your audio settings and try again.', 'feedback'));
@@ -205,7 +239,10 @@ function drawRound() {
             quiz.append(el('p', game === 'countrot' ? 'The dots move.' : game === 'trackrot' ? 'The ball bounces off the side walls.' : game === 'anglerot' ? 'Include every full turn.' : game === 'temporot' ? 'Tap halfway between the beats.' : 'The fraction extends beyond the line.', 'perception-note'));
         if (game === 'temporot')
             quiz.append(el('p', 'Turn on sound. Use Tap or the Space key.', 'perception-note'));
-        quiz.append(button('Start round', start, 'primary'));
+        if (automaticRush() && activation !== 'manual')
+            quiz.append(el('p', 'Starting…', 'perception-note'));
+        else
+            quiz.append(button('Start round', start, 'primary'));
         return;
     }
     const reveal = phase === 'feedback';
@@ -400,7 +437,11 @@ async function init() {
     window.addEventListener('pagehide', stop);
     window.addEventListener('pageshow', () => checkDate());
     setInterval(() => checkDate(), 30000);
-    onRushTimeout(() => { if (phase === 'ready')
+    onRushActivation(activateRush);
+    onRushTimeout(() => { if (phase === 'feedback') {
+        draw();
+        return;
+    } if (phase === 'ready')
         transition('start'); finish(null); });
     draw();
     const countDraft = readRushDraft()?.count;

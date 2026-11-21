@@ -184,7 +184,7 @@ Perception games: **countrot** (dot counting), **trackrot** (ball tracking),
 **anglerot** (angle estimation), **temporot** (rhythm), and **splitrot** (line
 proportions). Each has five seeded daily rounds, saved progress, unlimited
 practice, and a harder practice variation. They also appear in Daily mix and
-Rush. Tempo requires sound; tap with the button or Space after four reference beats.
+Rush. Tempo requires sound; tap with the button or Space after four reference beats. In Rush, angle and line-split puzzles open ready to answer. After the first dot-counting, ball-tracking, or rhythm round, later rounds start after a short ready cue. Preloaded rounds stay idle, and pausing freezes the cue and playback. Browsers that block automatic audio offer Enable sound.
 Anglerot and Splitrot practice open directly on the controls. Memory, motion, and
 audio rounds keep an explicit Start round action. Games use Next to continue,
 See results to finish a set, and New puzzle or New set to start fresh practice.

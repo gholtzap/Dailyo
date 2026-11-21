@@ -15,7 +15,7 @@ async function solve(page,game,q){
   if(game==='temporot')await page.clock.pauseAt(await page.evaluate(()=>new Date(Date.now()+1000).toISOString()));
   const start=page.getByRole('button',{name:'Start round',exact:true});
   if(await start.count())await start.press('Enter');
-  else assert.ok(['anglerot','splitrot'].includes(game)&&await page.getByRole('button',{name:'Practice',pressed:true,exact:true}).count());
+  else assert.ok(['anglerot','splitrot'].includes(game)&&(new URL(page.url()).searchParams.has('rush')||await page.getByRole('button',{name:'Practice',pressed:true,exact:true}).count()));
   if(game==='countrot'||game==='trackrot')await page.clock.runFor(1400);
   if(game==='countrot'){await page.getByLabel('How many dots?').fill(String(q.target));await page.getByRole('button',{name:'Check estimate',exact:true}).click();}
   if(game==='trackrot'){await setRange(page,q.target*100);await page.getByRole('button',{name:'Check landing',exact:true}).click();}
@@ -85,7 +85,7 @@ try{
    frame.clock=page.clock;await solve(frame,game,q);
    await page.locator('#rush-status').filter({hasText:'Round 2'}).waitFor();
    const second=page.frames().find(f=>f.url().includes(`/${game}/?rush=1`));
-   await second.getByRole('button',{name:'Start round',exact:true}).click();
+   assert.equal(await second.getByRole('button',{name:'Start round',exact:true}).count(),0,'Later Rush rounds start automatically');
    await page.getByRole('button',{name:'Pause',exact:true}).click();
    await page.clock.runFor(30000);
    assert.equal(await second.locator('#perception-feedback').count(),0,'Paused playback must not score or time out');

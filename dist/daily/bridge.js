@@ -63,6 +63,12 @@ let rushExpired = false;
 export function rushFeedback(correct, tolerance = false) {
     return rushExpired ? 'Time’s up' : tolerance ? `${correct ? 'Within' : 'Outside'} Rush tolerance` : correct ? 'Correct' : 'Missed';
 }
+export function onRushActivation(activate) {
+    window.addEventListener('message', event => {
+        if (rushRound !== null && event.origin === location.origin && event.source === parent && event.data === 'rush-activate')
+            activate();
+    });
+}
 export function onRushTimeout(reveal) {
     window.addEventListener('message', event => {
         if (event.origin === location.origin && event.source === window.parent && event.data === 'rush-timeout') {

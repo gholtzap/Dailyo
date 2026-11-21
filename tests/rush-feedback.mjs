@@ -35,8 +35,16 @@ try{
   await page.clock.pauseAt(await page.evaluate(()=>Date.now()+100));
   if(correct){
    await page.getByRole('button',{name:'Next',exact:true}).click();await page.locator('#rush-status').filter({hasText:'Round 2'}).waitFor();
-   await page.clock.runFor(game==='pricerot'?18100:20100);await page.locator('#rush-status').filter({hasText:'Time’s up'}).waitFor();
+   if(game==='pricerot')await child().getByRole('spinbutton').fill('10');
+   else{const q=perceptionPuzzle('anglerot',await rushSeed(page,'anglerot'),1);await child().getByRole('slider').fill(String(q.target));}
+   await page.clock.runFor(game==='pricerot'?17999:19999);
+   // Model a correct answer message crossing the host deadline before its next ticker.
+   await page.evaluate(()=>{const now=performance.now.bind(performance);Object.defineProperty(performance,'now',{value:()=>now()+1000});});
+   await child().getByRole('button',{name:game==='pricerot'?'Check price':'Check angle',exact:true}).click();
+   await page.locator('#rush-status').filter({hasText:'Time’s up'}).waitFor();
    await child().getByRole('heading',{name:'Time’s up',exact:true}).waitFor();
+   await page.getByRole('button',{name:'See recap',exact:true}).click();
+   assert.match(await page.locator('#rush-score').innerText(),/^1 correct/,'A correct but late answer never earns credit');
   }
   assert.deepEqual(errors,[]);await page.close();
  }
