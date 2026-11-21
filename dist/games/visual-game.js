@@ -409,10 +409,8 @@ async function start() {
         if (tiles && Array.isArray(saved?.draft) && saved.draft.length === tiles.length && new Set(saved.draft).size === tiles.length && saved.draft.every(id => tiles.some(t => t.id === id)))
             draft = saved.draft;
         saveRushDraft(() => ({ seed: sessions.daily.seed, answers: sessions.daily.answers, draft }));
-        onRushTimeout(() => { const { q, a } = current(); if (q && !answered(game, q, a)) {
-            sessions.daily.answers[0] = { ...a, skipped: true };
-            draw();
-        } });
+        onRushTimeout(() => { const { q, a } = current(); if (q && !answered(game, q, a))
+            sessions.daily.answers[0] = { ...a, skipped: true }; draw(); });
         draw();
         // The parent must not start the timer until the puzzle image has decoded.
         const img = quiz.querySelector('img');

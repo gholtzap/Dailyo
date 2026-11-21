@@ -207,7 +207,7 @@ async function init(){
   window.addEventListener('pagehide',stop);window.addEventListener('pageshow',()=>checkDate());
   setInterval(()=>checkDate(),30000);
   onRushActivation(activateRush);
-  onRushTimeout(()=>{if(phase==='ready')transition('start');finish(null);});draw();
+  onRushTimeout(()=>{if(phase==='feedback'){draw();return;}if(phase==='ready')transition('start');finish(null);});draw();
   const countDraft=readRushDraft<{count?: string}>()?.count;
   if(typeof countDraft==='string'&&/^\d{0,3}$/.test(countDraft)&&quiz.querySelector<HTMLInputElement>('#dot-count'))quiz.querySelector<HTMLInputElement>('#dot-count')!.value=countDraft;
   if(isRush)reportRush('ready');

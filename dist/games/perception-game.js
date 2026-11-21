@@ -438,7 +438,10 @@ async function init() {
     window.addEventListener('pageshow', () => checkDate());
     setInterval(() => checkDate(), 30000);
     onRushActivation(activateRush);
-    onRushTimeout(() => { if (phase === 'ready')
+    onRushTimeout(() => { if (phase === 'feedback') {
+        draw();
+        return;
+    } if (phase === 'ready')
         transition('start'); finish(null); });
     draw();
     const countDraft = readRushDraft()?.count;
