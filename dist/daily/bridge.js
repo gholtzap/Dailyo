@@ -29,7 +29,7 @@ export function saveRushDraft(read) {
     if (rushRound === null)
         return;
     window.addEventListener('pagehide', () => {
-        if (!window.frameElement?.hasAttribute('title'))
+        if (!window.frameElement?.hasAttribute('title') || window.frameElement.hasAttribute('data-rush-answer'))
             return;
         try {
             sessionStorage.setItem('dailyo:rush:draft', JSON.stringify({ run: rushRun, round: rushRound, path: location.pathname, value: read() }));
