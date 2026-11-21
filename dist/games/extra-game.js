@@ -1,6 +1,6 @@
 import { element as el, required } from '../dom.js';
 import './help.js';
-import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
+import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice, readRushDraft, saveRushDraft } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import { extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra, nextPracticePuzzle, } from './extra-puzzles.js';
 const game = document.body.dataset.game;
@@ -275,8 +275,9 @@ async function start() {
         prepareExtra(game, await load(game), ladder ? await load('ladder-words') : undefined);
     if (rushRound !== null) {
         const puzzle = extraPuzzle(game, data, `${rushSeed(game)}:${rushRound}`);
-        const session = { puzzle, state: initialExtra(game, puzzle) };
+        const session = { puzzle, state: replayExtra(game, puzzle, readRushDraft()) || initialExtra(game, puzzle) };
         sessions.daily = session;
+        saveRushDraft(() => session.state.moves);
         onRushTimeout(() => {
             if (session.state.phase !== 'playing')
                 return;

@@ -15,6 +15,22 @@ export const startPractice=!inFeed&&params.get('practice')==='1';
 if(inFeed)document.documentElement.dataset.dailyFeed='';
 if(rushRound!==null)document.documentElement.dataset.rush='';
 
+// Only the displayed round checkpoints its draft; preloaded frames never overwrite it.
+export function readRushDraft<T>(): T | null {
+  if(rushRound===null)return null;
+  try{
+    const saved=JSON.parse(sessionStorage.getItem('dailyo:rush:draft')??'null');
+    return saved?.run===rushRun&&saved.round===rushRound&&saved.path===location.pathname?saved.value as T:null;
+  }catch{return null;}
+}
+export function saveRushDraft(read: ()=>unknown){
+  if(rushRound===null)return;
+  window.addEventListener('pagehide',()=>{
+    if(!window.frameElement?.hasAttribute('title'))return;
+    try{sessionStorage.setItem('dailyo:rush:draft',JSON.stringify({run:rushRun,round:rushRound,path:location.pathname,value:read()}));}catch{}
+  });
+}
+
 // Upcoming games can load data before they read or change the player's session.
 export function waitForFeedActivation(){
   if(!inFeed||!window.frameElement?.hasAttribute('data-feed-preload'))return;

@@ -268,6 +268,8 @@ try{
     await page.getByRole('link',{name:'Play more langrot'}).click();
     await page.getByRole('button',{name:'Practice',exact:true,pressed:true}).waitFor();
     await page.goto(base);
+    await page.getByRole('heading',{name:'Rush recap'}).waitFor();
+    await page.getByRole('button',{name:'Play again'}).click();
     await timer.filter({hasText:'Untimed'}).waitFor();
     await page.getByRole('link',{name:'Daily mix',exact:true}).click();
     await page.waitForURL('**/daily/');

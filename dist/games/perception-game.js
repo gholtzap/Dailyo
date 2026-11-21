@@ -1,4 +1,4 @@
-import { dailyDate, inFeed, startPractice, waitForFeedActivation, reportDaily, rushRound, rushSeed, reportRush, onRushTimeout } from '../daily/bridge.js';
+import { dailyDate, inFeed, startPractice, waitForFeedActivation, reportDaily, rushRound, rushSeed, reportRush, onRushTimeout, readRushDraft, saveRushDraft } from '../daily/bridge.js';
 import { showGameProgress } from './help.js';
 import { perceptionGames, perceptionPuzzle, perceptionGrade, reflect } from './perception-puzzles.js';
 const name = document.body.dataset.game;
@@ -344,6 +344,15 @@ async function init() {
     load();
     save();
     transition('reset');
+    if (isRush) {
+        const saved = readRushDraft();
+        if (saved?.phase === 'answering' && Number.isFinite(saved.draft) && saved.draft >= 0 && saved.draft <= (game === 'anglerot' ? 360 : 100) && game !== 'temporot') {
+            transition('start');
+            transition('shown');
+            draft = saved.draft;
+        }
+        saveRushDraft(() => ({ phase, draft, count: quiz.querySelector('#dot-count')?.value }));
+    }
     for (const control of document.querySelectorAll('.modes button'))
         control.onclick = () => switchMode(control.id === 'practice' ? 'practice' : 'daily');
     if (!inFeed) {
@@ -382,6 +391,9 @@ async function init() {
     onRushTimeout(() => { if (phase === 'ready')
         transition('start'); finish(null); });
     draw();
+    const countDraft = readRushDraft()?.count;
+    if (typeof countDraft === 'string' && /^\d{0,3}$/.test(countDraft) && quiz.querySelector('#dot-count'))
+        quiz.querySelector('#dot-count').value = countDraft;
     if (isRush)
         reportRush('ready');
 }

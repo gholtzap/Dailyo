@@ -1,4 +1,4 @@
-import {dailyDate,inFeed,startPractice,waitForFeedActivation,reportDaily,rushRound,rushSeed,reportRush,onRushTimeout} from '../daily/bridge.js';
+import {dailyDate,inFeed,startPractice,waitForFeedActivation,reportDaily,rushRound,rushSeed,reportRush,onRushTimeout,readRushDraft,saveRushDraft} from '../daily/bridge.js';
 import {showGameProgress} from './help.js';
 import {perceptionGames,perceptionPuzzle,perceptionGrade,reflect} from './perception-puzzles.js';
 import type {PerceptionGame,PerceptionPuzzle} from './perception-puzzles.js';
@@ -163,6 +163,13 @@ function draw(){
 }
 async function init(){
   await waitForFeedActivation();load();save();transition('reset');
+  if(isRush){
+    const saved=readRushDraft<{phase: Phase; draft: number; count?: string}>();
+    if(saved?.phase==='answering'&&Number.isFinite(saved.draft)&&saved.draft>=0&&saved.draft<=(game==='anglerot'?360:100)&&game!=='temporot'){
+      transition('start');transition('shown');draft=saved.draft;
+    }
+    saveRushDraft(()=>({phase,draft,count:quiz.querySelector<HTMLInputElement>('#dot-count')?.value}));
+  }
   for(const control of document.querySelectorAll<HTMLButtonElement>('.modes button'))control.onclick=()=>switchMode(control.id==='practice'?'practice':'daily');
   if(!inFeed){const settings=el('div',undefined,'perception-settings');settings.id='perception-settings';const label=el('label','Practice variation'),select=el('select');select.id='variation';label.htmlFor=select.id;for(const [value,text] of [['standard','Standard'],['hard','Hard']]){const option=el('option',text);option.value=value!;select.append(option);}select.onchange=()=>{hard=select.value==='hard';reset();};settings.append(label,select);quiz.before(settings);}
   document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&game==='temporot'&&phase==='answering'&&!(e.target instanceof HTMLButtonElement)){e.preventDefault();tap();}});
@@ -170,6 +177,9 @@ async function init(){
   window.addEventListener('message',event=>{if(!isRush||event.source!==parent||event.origin!==location.origin)return;if(event.data==='rush-pause')pausePlayback();if(event.data==='rush-resume')resumePlayback();});
   window.addEventListener('pagehide',stop);window.addEventListener('pageshow',()=>checkDate());
   setInterval(()=>checkDate(),30000);
-  onRushTimeout(()=>{if(phase==='ready')transition('start');finish(null);});draw();if(isRush)reportRush('ready');
+  onRushTimeout(()=>{if(phase==='ready')transition('start');finish(null);});draw();
+  const countDraft=readRushDraft<{count?: string}>()?.count;
+  if(typeof countDraft==='string'&&/^\d{0,3}$/.test(countDraft)&&quiz.querySelector<HTMLInputElement>('#dot-count'))quiz.querySelector<HTMLInputElement>('#dot-count')!.value=countDraft;
+  if(isRush)reportRush('ready');
 }
 void init();

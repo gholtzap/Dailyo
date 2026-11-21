@@ -1,6 +1,6 @@
 import type {JsonValue, Mode} from '../types.js';
 import {showGameProgress} from './help.js';
-import {dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice} from '../daily/bridge.js';
+import {dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice, readRushDraft, saveRushDraft} from '../daily/bridge.js';
 import {showRank} from '../daily/rank.js';
 import {parseDifficulty, practiceSettings, practiceSlot} from './difficulty.js';
 import type {PracticeDifficulty} from './difficulty.js';
@@ -267,7 +267,12 @@ async function start() {
   const response=await fetch(`/games/data/${game}.json`);if(!response.ok)throw new Error('Data unavailable');
   rows=prepareVisual(game,await response.json());
   if(isRush) {
-    mode='daily';sessions={daily:mount(rushSeed(game)),practice:mount(freshSeed())};
+    const saved=readRushDraft<{seed: string; answers: VisualAnswer[]; draft: string[]}>();
+    mode='daily';sessions={daily:mount(rushSeed(game),saved as JsonValue),practice:mount(freshSeed())};
+    if(sessions.daily.index!==0)sessions.daily=mount(rushSeed(game));
+    const tiles=sessions.daily.questions[0].tiles;
+    if(tiles&&Array.isArray(saved?.draft)&&saved.draft.length===tiles.length&&new Set(saved.draft).size===tiles.length&&saved.draft.every(id=>tiles.some(t=>t.id===id)))draft=saved.draft;
+    saveRushDraft(()=>({seed:sessions.daily.seed,answers:sessions.daily.answers,draft}));
     onRushTimeout(()=>{const {q,a}=current();if(q&&!answered(game,q,a)){sessions.daily.answers[0]={...a,skipped:true};draw();}});
     draw();
     // The parent must not start the timer until the puzzle image has decoded.
