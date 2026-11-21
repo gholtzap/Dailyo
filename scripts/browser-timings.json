@@ -1,0 +1,28 @@
+{
+  "sourceSha": "da6b2865be1fab5de6fd4d6ca28bd554f4af8853",
+  "measurement": "Node 24, sequential complete browser suite, local fictional data",
+  "durationsMs": {
+    "node tests/puzzle-pools-browser.mjs": 32203.438,
+    "node tests/second-playtest.mjs": 14722.692,
+    "node tests/play-improvements.mjs": 6597.264,
+    "node tests/visual-games.mjs": 41364.845,
+    "node tests/extra-games.mjs": 3046.766,
+    "node tests/rot-games.mjs": 6549.348,
+    "node tests/daily-feed.mjs": 33319.205,
+    "node tests/rush.mjs": 9801.891,
+    "node tests/world-games.mjs": 30639.996,
+    "node tests/daily.mjs": 3451.953,
+    "node tests/map-hint.mjs": 1780.861,
+    "node tests/demo-game.mjs": 1112.077,
+    "node tests/map-labels.mjs": 660.768,
+    "node tests/map-framing.mjs": 610.247,
+    "node tests/map-gestures.mjs": 1565.402,
+    "node tests/dark-theme.mjs": 977.876,
+    "node tests/ui-polish.mjs final": 6002.278,
+    "node tests/results-polish.mjs": 10257.83,
+    "node tests/perception-games.mjs": 25323.994,
+    "node tests/automatic-progression.mjs": 3274.207,
+    "node tests/rush-randomization.mjs": 1612.733,
+    "node tests/trainrot-world.mjs": 227212.303
+  }
+}
