@@ -10,7 +10,7 @@
 
 The site also has [flagrot](https://trainrot.vercel.app/flags/), [langrot](https://trainrot.vercel.app/languages/), and [Vocabulary](https://trainrot.vercel.app/vocabulary/). Each has a shared five-question daily set and unlimited practice. Daily sets reset at midnight in New York; progress is stored in the browser. flagrot includes all 249 ISO country and territory codes, plus England, Scotland, Wales, and Kosovo. langrot uses 512 written excerpts across 64 languages. Vocabulary asks you to match English words to definitions and shows an example sentence after each answer.
 
-- [maprot](https://trainrot.vercel.app/maprot/) asks you to pin five cities on a blank world map. Your score is the total distance from the answers.
+- [maprot](https://trainrot.vercel.app/maprot/) asks you to pin five cities on a blank world map. Enlarge the map, zoom with the controls or pinch, drag to pan, and drag your pin for precision. Arrow keys move the pin; hold Shift for finer adjustment. Your score is the total distance from the answers.
 - [yearrot](https://trainrot.vercel.app/yearrot/) asks you to place five events on a timeline that grows with each turn.
 - [borderrot](https://trainrot.vercel.app/borderrot/) asks you to connect countries by crossing as few land borders as possible.
 

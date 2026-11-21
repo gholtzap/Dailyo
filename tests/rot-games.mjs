@@ -21,10 +21,10 @@ async function answerMap(page, [city, , lon, lat], index) {
   if (index === 0) {
     await map.press('ArrowRight');
     await map.press('Shift+ArrowUp');
-    assert.match(await page.locator('.rot-coordinate').textContent(), /1.0° N, 5.0° E/);
+    assert.match(await page.locator('.rot-coordinate').textContent(), /0.10° N, 1.00° E/);
     await page.reload();
     await map.waitFor();
-    assert.match(await page.locator('.rot-coordinate').textContent(), /1.0° N, 5.0° E/);
+    assert.match(await page.locator('.rot-coordinate').textContent(), /0.10° N, 1.00° E/);
   }
   await map.scrollIntoViewIfNeeded();
   const box = await map.boundingBox();
