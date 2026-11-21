@@ -2,7 +2,7 @@ import type {Mode, ExtraGame, JsonValue} from '../types.js';
 import {element as el, required} from '../dom.js';
 import type {ExtraData, ExtraSession, ExtraMove, ExtraSave} from './extra-types.js';
 import './help.js';
-import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice } from '../daily/bridge.js';
+import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice, readRushDraft, saveRushDraft } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import {
   extraPuzzle, extraScoreLabel, initialExtra, moveLimit, prepareExtra, replayExtra, stepExtra, nextPracticePuzzle,
@@ -256,8 +256,9 @@ async function start() {
     prepareExtra(game, await load(game), ladder ? await load('ladder-words') : undefined);
   if(rushRound!==null){
     const puzzle=extraPuzzle(game,data,`${rushSeed(game)}:${rushRound}`);
-    const session={puzzle,state:initialExtra(game,puzzle)};
+    const session={puzzle,state:replayExtra(game,puzzle,readRushDraft<JsonValue>())||initialExtra(game,puzzle)};
     sessions.daily=session;
+    saveRushDraft(()=>session.state.moves);
     onRushTimeout(()=>{
       if(session.state.phase!=='playing')return;
       session.state={...session.state,phase:'complete',score:null};

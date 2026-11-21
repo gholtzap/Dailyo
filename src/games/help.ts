@@ -1,3 +1,5 @@
+import {rushRound} from '../daily/bridge.js';
+
 const instructions: Record<string,string[]> = {
   countrot: ['Start the round and estimate how many dots flash on screen. Enter your count after they disappear.', 'Five rounds, each worth up to 100 points. Hard practice uses moving dots.'],
   trackrot: ['Watch the ball until it disappears. Tap the field or use the Landing position slider to predict where it reaches the floor.', 'Five rounds, each worth up to 100 points. Hard practice adds wall bounces.'],
@@ -58,6 +60,24 @@ const instructions: Record<string,string[]> = {
 };
 
 const game = (document.body.dataset.game ?? 'train') as keyof typeof instructions;
+const rushRules: Record<string,string[]>={
+  train:[instructions.train[0],instructions.train[1],'You have one check. Your route must match the fastest time.'],
+  flags:[instructions.flags[0]],languages:[instructions.languages[0]],vocabulary:[instructions.vocabulary[0]],
+  maprot:[instructions.maprot[0],'Place your pin within 500 km.'],yearrot:[instructions.yearrot[0]],
+  borderrot:[instructions.borderrot[0],'Reach the destination using a shortest route.'],
+  ladderrot:[instructions.ladderrot[0]],cluerot:[instructions.cluerot[0],'An incorrect guess ends this game.'],
+  scalerot:[instructions.scalerot[0],'Estimate within 10%.'],swaprot:instructions.swaprot,
+  skyrot:['Identify the city from the overhead photograph. You have one guess.'],
+  skylinerot:['Identify the city from the skyline photograph. You have one guess.'],
+  zoomrot:['Identify the object from the close-up photograph. You have one guess.'],
+  pricerot:[instructions.pricerot[0],'Estimate within 20%.'],orderrot:[instructions.orderrot[0]],
+  countrot:[instructions.countrot[0],'Earn at least 70 points to continue.'],
+  trackrot:[instructions.trackrot[0],'Earn at least 70 points to continue.'],
+  anglerot:[instructions.anglerot[0],'Earn at least 70 points to continue.'],
+  temporot:[instructions.temporot[0],'Earn at least 70 points to continue.'],
+  splitrot:[instructions.splitrot[0],'Earn at least 70 points to continue.'],
+};
+const steps=rushRound===null?instructions[game]:[...rushRules[game],'Keep answering correctly before the clock runs out. A miss or timeout ends this game.'];
 const anchor = document.querySelector<HTMLElement>('.map-panel, .heading')!;
 anchor.insertAdjacentHTML('beforeend', `
   <span class="game-help">
@@ -70,12 +90,19 @@ document.body.insertAdjacentHTML('beforeend', `
       <h2 id="help-title">How to play</h2>
       <form method="dialog"><button type="submit">Close</button></form>
     </div>
-    ${instructions[game].map(step => `<p>${step}</p>`).join('')}
+    ${steps.map(step => `<p>${step}</p>`).join('')}
     ${['skyrot','skylinerot','zoomrot','yearrot'].includes(game) ? '<p class="standalone-only">Practice offers Easy, Standard, and Hard, with separate progress for each level. Daily and Rush use Standard difficulty.</p>' : ''}
     <p class="standalone-only">The daily game resets at midnight in New York. Use Practice to play more.</p>
   </dialog>
 `);
-document.querySelector<HTMLElement>('#help')!.onclick = () => document.querySelector<HTMLDialogElement>('#help-dialog')!.showModal();
+const dialog=document.querySelector<HTMLDialogElement>('#help-dialog')!;
+document.querySelector<HTMLElement>('#help')!.onclick=()=>{
+  dialog.showModal();
+  if(rushRound!==null)parent.postMessage({type:'rush-help',open:true},location.origin);
+};
+dialog.addEventListener('close',()=>{
+  if(rushRound!==null)parent.postMessage({type:'rush-help',open:false},location.origin);
+});
 
 // Progress belongs to the game identity, rather than another row above the puzzle.
 export function showGameProgress(progress?: HTMLElement) {

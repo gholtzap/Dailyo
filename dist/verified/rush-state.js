@@ -14,6 +14,7 @@ export class RushMachine {
     get phase() { return phases[this.value.phase.$]; }
     get generation() { return this.value.generation; }
     get deadline() { return this.value.clock.$ === 'Running' ? this.value.clock.deadline / 1000 : Infinity; }
+    get remaining() { return this.value.clock.$ === 'Stopped' ? this.value.clock.remaining / 1000 : undefined; }
     send(event) {
         const result = core.rush_step(this.value, event);
         this.value = result.state;

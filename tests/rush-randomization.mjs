@@ -29,9 +29,9 @@ try{
   await page.reload();await ready();
   const secondSeed=await rushSeed(page,'flags'),secondDeck=shuffle(flags,secondSeed);
   const secondImage=await page.frameLocator('iframe[title="flagrot"]').locator('.flag').getAttribute('src');
-  assert.notEqual(secondSeed,firstSeed,'Refresh starts a new run even for a dated URL');
-  assert.notDeepEqual(secondDeck.map(x=>x.id),firstDeck.map(x=>x.id));
-  assert.notEqual(secondImage,firstImage,'The controlled refresh fixture must visibly change the question');
+  assert.equal(secondSeed,firstSeed,'Refresh restores the same run, including a dated URL');
+  assert.deepEqual(secondDeck.map(x=>x.id),firstDeck.map(x=>x.id));
+  assert.equal(secondImage,firstImage,'Refresh must preserve the current puzzle');
   assert.ok(secondImage.includes(encodeURIComponent(secondDeck[0].id)));
 
   const currentRun=new URL(await page.locator('iframe[title="flagrot"]').getAttribute('src'),base).searchParams.get('run');
@@ -71,7 +71,7 @@ try{
   assert.deepEqual(errors,[]);
   receipts.push({width,firstSeed,secondSeed,replaySeed,firstImage,secondImage,retryRun:failedRun,preloadedFrames:seededFrames.length});
   await page.close();
-  console.log(`${width}px: refresh and replay randomize; retry, next round, and preloaded games retain the run seed`);
+  console.log(`${width}px: refresh, retry, next round, and preloaded games retain the run; replay starts a new run`);
  }
 }finally{
  await browser.close();

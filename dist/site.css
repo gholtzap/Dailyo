@@ -160,3 +160,4 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 .prompt:has(.flag) { min-height: 0; }
 .choice:not(.correct):not(.wrong) { border-color: transparent; background: #25272a; }
 .choice:not(.correct):not(.wrong):hover:not(:disabled) { border-color: #62666d; background: #303237; }
+:root[data-rush-paused] body > :not(dialog) { visibility: hidden; }

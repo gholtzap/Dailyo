@@ -39,3 +39,4 @@ export type JsonValue = string | number | boolean | null | JsonValue[] | { [key:
 export type JsonObject = { [key: string]: JsonValue };
 export interface DailyMessage { type: 'daily-game'; date: string; phase: 'playing' | 'complete' | 'error'; result?: string | null }
 export interface RushMessage { type: 'rush-game'; phase: 'ready' | 'answered' | 'error'; correct?: boolean }
+export interface RushHelpMessage {type: 'rush-help'; open: boolean}
