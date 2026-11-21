@@ -52,8 +52,13 @@ export function reportRush(phase: RushMessage['phase'],correct?: boolean){
   if(rushRound!==null)window.parent.postMessage({type:'rush-game',phase,correct},location.origin);
 }
 
+let rushExpired=false;
+export function rushFeedback(correct: boolean,tolerance=false){
+  return rushExpired?'Time’s up':tolerance?`${correct?'Within':'Outside'} Rush tolerance`:correct?'Correct':'Missed';
+}
+
 export function onRushTimeout(reveal: () => void){
   window.addEventListener('message',event=>{
-    if(event.origin===location.origin&&event.source===window.parent&&event.data==='rush-timeout')reveal();
+    if(event.origin===location.origin&&event.source===window.parent&&event.data==='rush-timeout'){rushExpired=true;reveal();}
   });
 }

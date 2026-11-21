@@ -59,10 +59,16 @@ export function reportRush(phase, correct) {
     if (rushRound !== null)
         window.parent.postMessage({ type: 'rush-game', phase, correct }, location.origin);
 }
+let rushExpired = false;
+export function rushFeedback(correct, tolerance = false) {
+    return rushExpired ? 'Time’s up' : tolerance ? `${correct ? 'Within' : 'Outside'} Rush tolerance` : correct ? 'Correct' : 'Missed';
+}
 export function onRushTimeout(reveal) {
     window.addEventListener('message', event => {
-        if (event.origin === location.origin && event.source === window.parent && event.data === 'rush-timeout')
+        if (event.origin === location.origin && event.source === window.parent && event.data === 'rush-timeout') {
+            rushExpired = true;
             reveal();
+        }
     });
 }
 //# sourceMappingURL=bridge.js.map
