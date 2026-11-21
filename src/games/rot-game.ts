@@ -485,7 +485,7 @@ function summary(session: RotSession): Content {
     }, 'primary'));
     footer.append(element('p', 'Next daily set at midnight in New York.', 'rot-coordinate'), actions, status);
   } else {
-    actions.append(button('New practice set', () => {
+    actions.append(button('New set', () => {
       sessions.practice = mountSession(practiceSlot(difficulty), randomSeed(), difficulty);
       write(practiceSlot(difficulty), sessions.practice.state);
       draw();
@@ -515,7 +515,7 @@ function draw() {
   heading.tabIndex = -1;
   if (current === 'review' && rushRound===null) {
     const next = element('div', undefined, 'rot-actions');
-    next.append(button(state.index === roundCount - 1 ? 'See results' : 'Next question',
+    next.append(button(state.index === roundCount - 1 ? 'See results' : 'Next',
       () => update({ type: 'next' }), 'primary rot-next'));
     content.push(next);
   }

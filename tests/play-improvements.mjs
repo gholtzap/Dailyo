@@ -81,7 +81,7 @@ try {
   const seed=await page.evaluate(()=>JSON.parse(localStorage.getItem('dailyo:yearrot:v1:practice:hard')).seed);
   const questions=makeSet('yearrot',preparePuzzles('yearrot',await read('games/data/yearrot.json')),seed,0,'hard');
   const slot=questions[0].timeline.filter(([year])=>year<questions[0].event[0]).length;
-  await page.locator('.rot-slot').nth(slot).click();await page.getByRole('button',{name:'Next question',exact:true}).click();
+  await page.locator('.rot-slot').nth(slot).click();await page.getByRole('button',{name:'Next',exact:true}).click();
   const hardTimeline=await page.locator('#quiz').innerText();
   await page.getByLabel('Difficulty',{exact:true}).selectOption('easy');
   await page.getByLabel('Difficulty',{exact:true}).selectOption('hard');assert.equal(await page.locator('#quiz').innerText(),hardTimeline);

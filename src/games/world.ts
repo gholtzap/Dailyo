@@ -160,7 +160,7 @@ function draw(){
     button.onclick=()=>rushRound===null?withCurrentProgress(()=>choose(option.id,item)):choose(option.id,item);
     choices.append(button);
   }
-  const next=make('button',mode==='daily'&&s.index===4?'See results':'Next question','primary');
+  const next=make('button',mode==='daily'&&s.index===4?'See results':'Next','primary');
   next.id='next';next.type='button';next.hidden=selected===null;next.onclick=()=>withCurrentProgress(advance);
   const content=[prompt,choices];
   if(selected!==null){

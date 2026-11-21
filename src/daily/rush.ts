@@ -197,7 +197,7 @@ function showFinish(effect: RushEffect){
   checkpoint(nextIndex,nextRound,roundDuration(nextIndex,nextRound));
   status.textContent=expired?'Time’s up':correct?'Correct':'Missed';
   if(expired)visible?.contentWindow?.postMessage('rush-timeout',location.origin);
-  next.textContent=correct?'Next puzzle':index===games.length-1?'See recap':'Next game';
+  next.textContent=correct?'Next':index===games.length-1?'See recap':'Next game';
   next.className='primary rush-continue';
   status.focus({preventScroll:true});
   // Brief feedback, then continue automatically to the next puzzle or game.

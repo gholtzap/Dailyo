@@ -13,7 +13,9 @@ await fs.mkdir('test-results/perception',{recursive:true});
 async function setRange(page,value){await page.locator('input[type=range]').fill(String(Number(value.toFixed(1))));}
 async function solve(page,game,q){
   if(game==='temporot')await page.clock.pauseAt(await page.evaluate(()=>new Date(Date.now()+1000).toISOString()));
-  await page.getByRole('button',{name:'Start round',exact:true}).press('Enter');
+  const start=page.getByRole('button',{name:'Start round',exact:true});
+  if(await start.count())await start.press('Enter');
+  else assert.ok(['anglerot','splitrot'].includes(game)&&await page.getByRole('button',{name:'Practice',pressed:true,exact:true}).count());
   if(game==='countrot'||game==='trackrot')await page.clock.runFor(1400);
   if(game==='countrot'){await page.getByLabel('How many dots?').fill(String(q.target));await page.getByRole('button',{name:'Check estimate',exact:true}).click();}
   if(game==='trackrot'){await setRange(page,q.target*100);await page.getByRole('button',{name:'Check landing',exact:true}).click();}
@@ -44,7 +46,7 @@ try{
     for(let i=0;i<5;i++){
       total+=await solve(page,game,perceptionPuzzle(game,day,i));
       if(i===0){await inspect(game,'feedback');await page.reload();}
-      else await page.getByRole('button',{name:i===4?'See results':'Next round',exact:true}).click();
+      else await page.getByRole('button',{name:i===4?'See results':'Next',exact:true}).click();
     }
     await page.getByRole('heading',{name:`${total} / 500 points`,exact:true}).waitFor();await inspect(game,'results');
     await page.getByRole('button',{name:'Copy results',exact:true}).click();assert.match(await page.evaluate(()=>navigator.clipboard.readText()),new RegExp(`${game} ${day}`));
@@ -52,14 +54,15 @@ try{
     await page.getByRole('button',{name:'Play practice',exact:true}).click();await page.getByLabel('Practice variation').selectOption('hard');await inspect(game,'hard-ready');
     const seed=await page.evaluate(game=>JSON.parse(localStorage.getItem(`dailyo:${game}:v1:practice:hard`)??'null')?.seed,game);
     // Starting fresh practice saves its seed before the first round for repeatable replay.
-    await page.getByRole('button',{name:'Start round',exact:true}).click();
+    if(game==='anglerot'||game==='splitrot')assert.equal(await page.getByRole('button',{name:'Start round',exact:true}).count(),0);
+    else await page.getByRole('button',{name:'Start round',exact:true}).click();
     if(game==='countrot'||game==='trackrot')await page.clock.runFor(1400);
     if(game==='temporot')await page.clock.runFor(3000);
     await inspect(game,'hard-answer');
     if(game==='anglerot'){await page.locator('input').focus();await page.keyboard.press('ArrowRight');assert.ok(Number(await page.locator('input').inputValue())>0);}
     await page.screenshot({path:`test-results/perception/${game}-${width}.png`});
     await page.getByRole('button',{name:'Skip round',exact:true}).click();await inspect(game,'skipped');
-    await page.getByRole('button',{name:'Next round',exact:true}).click();
+    await page.getByRole('button',{name:'Next',exact:true}).click();
     await solve(page,game,perceptionPuzzle(game,seed,1,true));
     await page.getByRole('button',{name:'Daily',exact:true}).click();await page.getByRole('heading',{name:`${total} / 500 points`,exact:true}).waitFor();
     receipt.push(`${width}px ${game}: five accurate rounds, reload/resume, sharing, hard practice, skip, daily preservation`);

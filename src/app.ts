@@ -237,7 +237,7 @@ async function start(){
     const tied=r.valid&&r.optimal&&r.seconds===r.optimal.seconds&&!same(rideKey(r.legs),rideKey(r.optimal.legs));
     const subtitle=tied?'Your route ties the fastest time. The alternative below takes the same time.':displayed.assisted?'':r.valid?r.score===100?'':formatTime((r.seconds??0)-(r.optimal?.seconds??0))+' slower':displayed.skipped?'':r.error??'Add another train to reach the destination.';
     const canResume=!r.valid&&!displayed.skipped&&!displayed.guesses?.length&&displayed.legs.length;
-    const nextAction=mode==='daily'?'<button id="start-practice" class="primary-button">Play practice</button>':'<button id="next" class="primary-button next-action">Next journey</button>';
+    const nextAction=mode==='daily'?'<button id="start-practice" class="primary-button">Play practice</button>':'<button id="next" class="primary-button next-action">Next</button>';
     const sequence=displayed.legs.length?`<ol class="train-sequence result-sequence" aria-label="Your train sequence">${displayed.legs.map(l=>`<li>${badge(l.route)}</li>`).join('')}</ol>`:'';
     const score=displayed.assisted?(r.valid?'Completed with map':'Map used · Unscored'):`${r.score??0}<small> points</small>`;
     const status=displayed.guesses?.length===MAX_GUESSES?'Out of guesses.':'Partial route.';

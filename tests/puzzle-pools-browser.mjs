@@ -52,7 +52,7 @@ try {
    for(const [i,q] of visualSet(game,rows,'2026-11-19').entries()) {
     await page.getByRole('button',{name:q.item.name,exact:true}).click();
     await page.locator('#visual-feedback').filter({hasText:'100 / 100 points'}).waitFor();
-    await page.getByRole('button',{name:i===4?'See results':'Next puzzle',exact:true}).click();
+    await page.getByRole('button',{name:i===4?'See results':'Next',exact:true}).click();
    }
    await page.getByRole('heading',{name:'500 / 500 points',exact:true}).waitFor();
    await page.reload();await page.getByRole('heading',{name:'500 / 500 points',exact:true}).waitFor();
@@ -67,7 +67,7 @@ try {
    for(const word of puzzle.solution.slice(1)) {
     await page.getByLabel('Next word').fill(word);await page.getByRole('button',{name:'Add word',exact:true}).click();
    }
-   await page.getByRole('button',{name:'New practice puzzle',exact:true}).waitFor();
+   await page.getByRole('button',{name:'New puzzle',exact:true}).waitFor();
    checks.push({game:'ladderrot',id:puzzle.id,width:viewport.width,passed:true});
   }
   await context.close();

@@ -140,7 +140,7 @@ try {
   for(let i=0;i<2;i++){
     await astana.locator('.rot-map').press('ArrowRight');
     await astana.getByRole('button',{name:'Check pin'}).click();
-    await astana.getByRole('button',{name:'Next question'}).click();
+    await astana.getByRole('button',{name:'Next'}).click();
   }
   assert.equal(await astana.locator('#round-title').innerText(),'Find Astana');
   await astana.close();
@@ -192,7 +192,7 @@ try {
       await inspect('question');
       for (const [index, question] of questions.entries()) {
         await play(page, question, index, data.graph, inspect);
-        const next = page.getByRole('button', { name: index === 4 ? 'See results' : 'Next question', exact: true });
+        const next = page.getByRole('button', { name: index === 4 ? 'See results' : 'Next', exact: true });
         if (index === 0) {
           assert.ok(await next.evaluate(node => node === document.activeElement));
           await page.reload();

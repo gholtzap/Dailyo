@@ -143,7 +143,7 @@ To exercise all seven games against an empty test database, set
 - **pricerot** estimates recorded US supermarket prices before tax, with the exact package size, retailer, currency, and snapshot date displayed. Images are original product illustrations. Rush accepts estimates within 20%.
 - **skylinerot** identifies cities from skyline photos.
 - **zoomrot** identifies everyday objects from cropped photos, revealing more after misses.
-- **orderrot** arranges four items from lowest to highest across facts, measurements, and chronology. Rush uses three.
+- **orderrot** arranges four items from lowest to highest across facts, measurements, and chronology. Results show your submitted order beside the correct order. Rush uses three.
 
 Each has five daily questions, unlimited Practice sets, local progress, shareable results, daily rankings when configured, and a dedicated `/rush/<game>/` route. All five join the full Daily Feed and Rush rotation. Photo and answer sources appear after each round.
 
@@ -185,6 +185,9 @@ Perception games: **countrot** (dot counting), **trackrot** (ball tracking),
 proportions). Each has five seeded daily rounds, saved progress, unlimited
 practice, and a harder practice variation. They also appear in Daily mix and
 Rush. Tempo requires sound; tap with the button or Space after four reference beats.
+Anglerot and Splitrot practice open directly on the controls. Memory, motion, and
+audio rounds keep an explicit Start round action. Games use Next to continue,
+See results to finish a set, and New puzzle or New set to start fresh practice.
 
 Run `npm run test:e2e:perception` against the local server to check all five games,
 saved Daily results, hard Practice, sharing, Daily mix, Rush at

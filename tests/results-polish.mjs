@@ -45,7 +45,7 @@ try {
   await page.getByRole('button',{name:guessedCity,exact:true}).click();
   for(let i=0;i<5;i++){
    await page.getByRole('button',{name:'Show answer',exact:true}).click();
-   await page.getByRole('button',{name:i===4?'See results':'Next puzzle',exact:true}).click();
+   await page.getByRole('button',{name:i===4?'See results':'Next',exact:true}).click();
   }
   await page.locator('.visual-recap summary').first().waitFor();
   assert.equal(await page.locator('.visual-recap > li > details').count(),5);
