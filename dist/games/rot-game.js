@@ -34,6 +34,7 @@ let mode = startPractice || (!inFeed && readMode() === 'practice') ? 'practice' 
 let difficulty = parseDifficulty(read('difficulty'));
 let settings;
 let data, day, borderGeometry;
+let mapObserver;
 function button(text, callback, className = 'secondary') {
     const node = element('button', text, className);
     node.type = 'button';
@@ -112,8 +113,8 @@ function zoomToPins(map, guess, [lon, lat]) {
     }
     map.append(svg('line', { x1, y1, x2, y2, class: 'rot-connector' }), marker([lon, lat], 'answer', width / 115), marker([guessLon, guess[1]], 'guess', width / 80));
 }
-function coordinates([lon, lat]) {
-    return `${Math.abs(lat).toFixed(1)}° ${lat < 0 ? 'S' : 'N'}, ${Math.abs(lon).toFixed(1)}° ${lon < 0 ? 'W' : 'E'}`;
+function coordinates([lon, lat], digits = 1) {
+    return `${Math.abs(lat).toFixed(digits)}° ${lat < 0 ? 'S' : 'N'}, ${Math.abs(lon).toFixed(digits)}° ${lon < 0 ? 'W' : 'E'}`;
 }
 function drawMap(question, state, reviewing) {
     const [city, country, lon, lat] = question;
@@ -121,7 +122,7 @@ function drawMap(question, state, reviewing) {
     const map = svg('svg', {
         viewBox: '0 0 360 180', class: reviewing ? 'rot-map' : 'rot-map rot-picking',
         role: reviewing ? 'img' : 'group',
-        'aria-label': reviewing ? `World map showing your pin and ${city}` : 'World map. Use arrow keys to move the pin.',
+        'aria-label': reviewing ? `World map showing your pin and ${city}` : 'World map. Arrow keys move the pin; hold Shift for finer adjustment.',
         ...(reviewing ? {} : { tabindex: 0 }),
     });
     map.append(svg('path', { d: data.land, class: 'rot-land', 'fill-rule': 'evenodd', 'aria-hidden': 'true' }));
@@ -138,31 +139,160 @@ function drawMap(question, state, reviewing) {
         feedback.append(element('p', `${number.format(scoreAnswer(kind, question, guess))} km away`), element('p', `Yellow pin: your guess at ${coordinates(guess)}. Green pin: ${city}, ${country}.`));
         return [heading, map, feedback];
     }
-    const pointLabel = element('p', state.draft.length ? `Your pin: ${coordinates(state.draft)}` :
-        'Tap the map or use the arrow keys to move your pin.', 'rot-coordinate');
+    const pointLabel = element('p', state.draft.length ? `Your pin: ${coordinates(state.draft, 2)}` :
+        'Tap to place a pin. Drag the map to pan or drag the pin to adjust.', 'rot-coordinate');
     pointLabel.setAttribute('role', 'status');
-    const submit = button('Check pin', () => update({ type: 'submit' }), 'primary');
+    const dialog = element('dialog', undefined, 'rot-map-dialog');
+    dialog.setAttribute('aria-label', 'Find the city');
+    const header = element('div', undefined, 'rot-map-dialog-heading');
+    header.append(element('h2', `Find ${city}`), button('Close', () => dialog.close()));
+    dialog.append(header);
+    const inline = element('div'), editor = element('div', undefined, 'rot-map-editor');
+    const submit = button('Check pin', () => { if (dialog.open)
+        dialog.close(); update({ type: 'submit' }); }, 'primary');
     submit.disabled = !state.draft.length;
     let pin = state.draft.length ? marker(state.draft, 'guess') : null;
     if (pin)
         map.append(pin);
-    function move(point) {
+    let zoom = 1, center = { x: 180, y: 90 };
+    function viewSize() {
+        const box = map.getBoundingClientRect(), aspect = box.width && box.height ? box.width / box.height : 2;
+        const width = Math.max(360, 180 * aspect) / zoom;
+        return { width, height: width / aspect };
+    }
+    function renderView() {
+        const { width, height } = viewSize();
+        center.x = width >= 360 ? 180 : Math.max(width / 2, Math.min(360 - width / 2, center.x));
+        center.y = height >= 180 ? 90 : Math.max(height / 2, Math.min(180 - height / 2, center.y));
+        map.setAttribute('viewBox', `${center.x - width / 2} ${center.y - height / 2} ${width} ${height}`);
+        if (pin)
+            pin.setAttribute('r', String(5 * width / (map.getBoundingClientRect().width || 360)));
+        zoomIn.disabled = zoom >= 16;
+        zoomOut.disabled = zoom <= 1;
+    }
+    function setZoom(value, anchor, client) {
+        zoom = Math.max(1, Math.min(16, value));
+        if (anchor && client) {
+            const box = map.getBoundingClientRect(), size = viewSize();
+            center = { x: anchor.x - (client.x - box.left - box.width / 2) * size.width / box.width, y: anchor.y - (client.y - box.top - box.height / 2) * size.height / box.height };
+        }
+        else if (pin)
+            center = { x: Number(pin.getAttribute('cx')), y: Number(pin.getAttribute('cy')) };
+        renderView();
+    }
+    const tools = element('div', undefined, 'rot-map-tools');
+    const zoomIn = button('Zoom in', () => setZoom(zoom * 2)), zoomOut = button('Zoom out', () => setZoom(zoom / 2));
+    const reset = button('Reset view', () => { zoom = 1; center = { x: 180, y: 90 }; renderView(); });
+    const enlarge = button('Enlarge map', () => {
+        dialog.append(editor);
+        enlarge.hidden = true;
+        dialog.showModal();
+        renderView();
+        map.focus();
+    });
+    dialog.addEventListener('close', () => {
+        if (!inline.isConnected)
+            return;
+        inline.append(editor);
+        enlarge.hidden = false;
+        renderView();
+        enlarge.focus();
+    });
+    tools.append(zoomIn, zoomOut, reset, enlarge);
+    const actions = element('div', undefined, 'rot-actions');
+    actions.append(submit);
+    editor.append(map, tools, pointLabel, actions);
+    inline.append(editor);
+    mapObserver = new ResizeObserver(() => renderView());
+    mapObserver.observe(map);
+    function move(point, follow = false) {
         const bounded = point.map((value, index) => Math.round(Math.max(-[180, 90][index], Math.min([180, 90][index], value)) * 100) / 100);
         if (!update({ type: 'position', point: bounded }, false))
             return;
         pin?.remove();
         pin = marker(bounded, 'guess');
         map.append(pin);
-        pointLabel.textContent = `Your pin: ${coordinates(bounded)}`;
+        pointLabel.textContent = `Your pin: ${coordinates(bounded, 2)}`;
         submit.disabled = false;
+        if (follow)
+            center = { x: bounded[0] + 180, y: 90 - bounded[1] };
+        renderView();
     }
-    map.onclick = event => {
+    function locationAt(client) {
         const matrix = map.getScreenCTM();
-        if (!matrix)
+        return matrix ? new DOMPoint(client.x, client.y).matrixTransform(matrix.inverse()) : null;
+    }
+    const pointers = new Map();
+    let gesture = null;
+    const midpoint = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+    const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    map.onpointerdown = event => {
+        if (event.button !== 0)
             return;
-        const { x, y } = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
-        if (x >= 0 && x <= 360 && y >= 0 && y <= 180)
-            move([x - 180, 90 - y]);
+        map.setPointerCapture(event.pointerId);
+        map.focus({ preventScroll: true });
+        const point = { x: event.clientX, y: event.clientY };
+        pointers.set(event.pointerId, point);
+        if (pointers.size === 2) {
+            const [a, b] = [...pointers.values()], anchor = locationAt(midpoint(a, b));
+            if (anchor)
+                gesture = { type: 'pinch', distance: Math.max(1, distance(a, b)), zoom, anchor };
+        }
+        else if (pointers.size === 1) {
+            const matrix = map.getScreenCTM(), p = pin && matrix ? new DOMPoint(Number(pin.getAttribute('cx')), Number(pin.getAttribute('cy'))).matrixTransform(matrix) : null;
+            gesture = { type: 'drag', start: point, center: { ...center }, pin: !!p && distance(point, p) < 22, moved: false };
+        }
+    };
+    map.onpointermove = event => {
+        if (!pointers.has(event.pointerId) || !gesture)
+            return;
+        const point = { x: event.clientX, y: event.clientY };
+        pointers.set(event.pointerId, point);
+        if (gesture.type === 'pinch' && pointers.size === 2) {
+            const [a, b] = [...pointers.values()];
+            setZoom(gesture.zoom * distance(a, b) / gesture.distance, gesture.anchor, midpoint(a, b));
+        }
+        else if (gesture.type === 'drag') {
+            if (distance(point, gesture.start) > 4)
+                gesture.moved = true;
+            if (!gesture.moved)
+                return;
+            if (gesture.pin) {
+                const p = locationAt(point);
+                if (p)
+                    move([p.x - 180, 90 - p.y]);
+            }
+            else {
+                const box = map.getBoundingClientRect(), size = viewSize();
+                center = { x: gesture.center.x - (point.x - gesture.start.x) * size.width / box.width, y: gesture.center.y - (point.y - gesture.start.y) * size.height / box.height };
+                renderView();
+            }
+        }
+    };
+    function release(event, cancelled = false) {
+        if (!pointers.has(event.pointerId))
+            return;
+        if (!cancelled && gesture?.type === 'drag' && !gesture.moved) {
+            const p = locationAt({ x: event.clientX, y: event.clientY });
+            const edge = 2 * viewSize().width / map.clientWidth;
+            if (p && p.x >= -edge && p.x <= 360 + edge && p.y >= -edge && p.y <= 180 + edge)
+                move([p.x - 180, 90 - p.y]);
+        }
+        pointers.delete(event.pointerId);
+        gesture = null;
+        if (map.hasPointerCapture(event.pointerId))
+            map.releasePointerCapture(event.pointerId);
+    }
+    map.onpointerup = event => release(event);
+    map.onpointercancel = event => release(event, true);
+    map.onlostpointercapture = event => { pointers.delete(event.pointerId); gesture = null; };
+    map.onwheel = event => {
+        if (!event.ctrlKey)
+            return;
+        event.preventDefault();
+        const client = { x: event.clientX, y: event.clientY }, anchor = locationAt(client);
+        if (anchor)
+            setZoom(zoom * Math.exp(-event.deltaY * .01), anchor, client);
     };
     map.onkeydown = event => {
         const shift = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[event.key];
@@ -170,12 +300,10 @@ function drawMap(question, state, reviewing) {
             return;
         event.preventDefault();
         const point = sessions[mode].state.draft;
-        const step = event.shiftKey ? 1 : 5;
-        move(shift.map((direction, index) => (point[index] ?? 0) + direction * step));
+        const step = (event.shiftKey ? .1 : 1) / zoom;
+        move(shift.map((direction, index) => (point[index] ?? 0) + direction * step), true);
     };
-    const actions = element('div', undefined, 'rot-actions');
-    actions.append(submit);
-    return [heading, map, pointLabel, actions];
+    return [heading, inline, dialog];
 }
 function drawTimeline(question, state, reviewing) {
     const { event, timeline } = question;
@@ -419,6 +547,8 @@ function summary(session) {
     return [...content, footer];
 }
 function draw() {
+    mapObserver?.disconnect();
+    mapObserver = undefined;
     settings?.sync(difficulty, mode === 'practice');
     for (const control of modes)
         control.setAttribute('aria-pressed', String(control.id === mode));
