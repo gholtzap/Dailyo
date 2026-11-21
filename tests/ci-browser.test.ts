@@ -18,7 +18,7 @@ test('browser shards cover every package command once and preserve child failure
     for(let shard=1;shard<=3;shard++)assert.equal(spawnSync(process.execPath,['scripts/ci-browser.mjs',`--shard=${shard}/3`],{cwd:root}).status,0);
     const visited=(await readFile(join(root,'visited'),'utf8')).trim().split('\n').map(line=>JSON.parse(line) as string[]).sort();
     assert.deepEqual(visited.filter(row=>row[0]!=='d'),[['a'],['b','extra'],['c']]);
-    assert.deepEqual(visited.filter(row=>row[0]==='d').flatMap(row=>row.slice(1)).sort(),['four','one','three','two']);
+    assert.deepEqual(visited.filter(row=>row[0]==='d').flatMap(row=>row.slice(1)).sort(),['deliberate-gate-fault']);
     for(const shard of ['0/3','4/3','1/0','wrong'])assert.notEqual(spawnSync(process.execPath,['scripts/ci-browser.mjs',`--shard=${shard}`],{cwd:root}).status,0);
     await writeFile(join(root,'tests/a.mjs'),'process.exitCode=7;');
     assert.notEqual(spawnSync(process.execPath,['scripts/ci-browser.mjs','--shard=1/3'],{cwd:root}).status,0);
