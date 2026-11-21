@@ -28,12 +28,12 @@ try {
     try{await page.locator('#question-title').waitFor();}
     catch(error){console.error({route,width,errors,body:await page.locator('body').innerText()});throw error;}
    }
-   else await page.locator('iframe:not(.feed-loading)').waitFor();
+   else await page.locator('iframe:not(.feed-loading):not([hidden])').waitFor();
    if(stage!=='navigation'&&stage!=='hierarchy'&&route==='/') {
     const status=await page.locator('.feed-actions').boundingBox();
     const puzzle=await page.locator('#feed-game').boundingBox();
     assert.ok(status.y+status.height<=puzzle.y+1,'Rush status belongs directly above the puzzle');
-    if(width===1440){const main=await page.frameLocator('iframe:not(.feed-loading)').locator('.main').boundingBox();assert.ok(Math.abs(main.x-status.x)<=1,'Rush puzzle and status share a left edge');}
+    if(width===1440){const main=await page.frameLocator('iframe:not(.feed-loading):not([hidden])').locator('.main').boundingBox();assert.ok(Math.abs(main.x-status.x)<=1,'Rush puzzle and status share a left edge');}
    }
    if(route==='/zoomrot/'){
     assert.equal(await page.locator('.heading .game-progress').textContent(),'1 of 5');
@@ -63,7 +63,7 @@ try {
    assert.equal(await header.locator('details').getAttribute('open'),null);
    if(route==='/'){
     await summary.click();
-    await page.frameLocator('iframe:not(.feed-loading)').locator('.prompt').click({position:{x:8,y:8}});
+    await page.frameLocator('iframe:not(.feed-loading):not([hidden])').locator('.prompt').click({position:{x:8,y:8}});
     assert.equal(await header.locator('details').getAttribute('open'),null,'Clicking inside an embedded game closes the menu');
    }
    const name=route.replaceAll('/','')||'rush';

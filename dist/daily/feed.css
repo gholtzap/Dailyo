@@ -12,6 +12,7 @@
 .feed-body { min-height: 0; overflow: auto; }
 #feed-game { height: 100%; position: relative; }
 #feed-game iframe { width: 100%; height: 100%; border: 0; display: block; }
+#feed-game iframe[hidden] { display: none; }
 #feed-game iframe.feed-loading { position: absolute; inset: 0; visibility: hidden; }
 #feed-game > p { padding: 16px; margin: 0; text-align: center; }
 .feed-actions {
@@ -133,6 +134,7 @@
 #rush-status { margin: 0; font-size: 13px; }
 #rush-clock { min-width: 3ch; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rush-time { display: flex; align-items: center; gap: 8px; }
+.rush-time[hidden] { display: none; }
 .rush-time:not([data-timed]) :is(.rush-track, .rush-clock-icon) { display: none; }
 .rush-time[data-timed] { flex: 1; min-width: 0; max-width: 288px; }
 .rush-track { flex: 1; height: 6px; border-radius: 4px; overflow: hidden; background: var(--line); }

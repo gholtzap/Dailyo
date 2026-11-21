@@ -41,7 +41,7 @@ try{
       await page.clock.resume();
       reports.push({name:`${width}-${name}`,...await checkPage(page,policy)});
       if(child){
-        const frame=await (await page.locator('iframe:not(.feed-loading)').elementHandle()).contentFrame();
+        const frame=await (await page.locator('iframe:not(.feed-loading):not([hidden])').elementHandle()).contentFrame();
         reports.push({name:`${width}-${name}-game`,...await checkPage(frame,policy)});
       }
       await page.clock.pauseAt(await page.evaluate(()=>Date.now()+100));

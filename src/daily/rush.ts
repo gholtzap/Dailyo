@@ -41,6 +41,7 @@ const panel=$('#feed-game'),status=$('#rush-status'),clock=$('#rush-clock');
 const timeDisplay=$('.rush-time');
 const actions=$('.feed-actions'),retry=$('#rush-retry'),next=$('#rush-next');
 const pause=$('#rush-pause');
+const reviewButton=$('#rush-review'),recapReview=$('#rush-review-recap');
 const scores=games.map(()=>0);
 const copyStatus=$('#rush-copy-status'),copyText=$('#rush-copy-text');
 const run = new RushMachine();
@@ -75,6 +76,81 @@ let current: Round | null | undefined, visible: HTMLIFrameElement | null = null;
 let timer: ReturnType<typeof setTimeout> | undefined, ticker: ReturnType<typeof setInterval> | undefined;
 const upcoming=new Map<string, Round>();
 
+// Feedback + press -> held until release; Feedback + Keep/help/background -> held until Next.
+// Playing/Paused/Recap + Review -> previous answer; Back -> same draft and prior pause state.
+// Load/replay clears held feedback; stale timers cannot advance a different generation.
+type ReviewState={state:'closed'}|{state:'held';reason:'pointer'|'explicit'}|{state:'previous';from:'playing'|'paused'|'recap';scroll: number};
+let review: ReviewState={state:'closed'};
+let lastAnswer: {frame: HTMLIFrameElement;label: string;outcome: string} | null=null;
+let advance: {generation: number;index: number;round: number;remaining: number;deadline: number} | null=null;
+function updateReviewControl(){
+  reviewButton.hidden=!lastAnswer||review.state==='previous'||review.state==='held'&&review.reason==='explicit'||run.phase==='loading'||run.phase==='error';
+  reviewButton.textContent=run.phase==='feedback'?'Keep answer':'Review answer';
+  recapReview.hidden=!lastAnswer;
+}
+function scheduleAdvance(){
+  if(!advance||review.state!=='closed'||run.phase!=='feedback')return;
+  advance.deadline=performance.now()+advance.remaining;
+  const pending=advance;
+  timer=setTimeout(()=>{if(advance===pending&&review.state==='closed'&&run.phase==='feedback')openRound(pending.index,pending.round,pending.generation);},pending.remaining);
+}
+function holdAnswer(reason: 'pointer'|'explicit'){
+  if(run.phase!=='feedback'||!advance||review.state==='previous')return;
+  if(review.state==='closed')advance.remaining=Math.max(0,advance.deadline-performance.now());
+  if(review.state==='held'&&review.reason==='explicit'&&reason==='pointer')return;
+  clearTimeout(timer);review={state:'held',reason};clock.textContent='Held';updateReviewControl();
+}
+function releaseAnswer(){
+  if(review.state!=='held'||review.reason!=='pointer')return;
+  review={state:'closed'};
+  clock.textContent='';
+  if(advance)advance.remaining=Math.max(600,advance.remaining);
+  updateReviewControl();scheduleAdvance();
+}
+function watchAnswer(doc: Document){
+  doc.addEventListener('pointerdown',event=>{if(event.button===0)holdAnswer('pointer');},true);
+  doc.addEventListener('pointerup',releaseAnswer,true);
+  doc.addEventListener('pointercancel',()=>holdAnswer('explicit'),true);
+  doc.addEventListener('focusin',event=>{if((event.target as Element | null)?.closest?.('details,dialog,a'))holdAnswer('explicit');});
+}
+watchAnswer(document);
+function openReview(){
+  if(!lastAnswer||review.state!=='closed')return;
+  if(run.phase==='feedback'){holdAnswer('explicit');return;}
+  if(!['playing','paused','recap'].includes(run.phase))return;
+  const from=run.phase as 'playing'|'paused'|'recap';
+  if(from==='playing')pauseRound();
+  // A deadline reached while opening Review belongs to the newly finished round.
+  if(from==='playing'&&advance){holdAnswer('explicit');return;}
+  review={state:'previous',from,scroll:panel.parentElement!.scrollTop};clearInterval(ticker);
+  if(visible){visible.hidden=true;visible.inert=true;}
+  const frame=lastAnswer.frame;frame.hidden=false;frame.inert=false;frame.title='Previous answer';
+  panel.hidden=false;actions.hidden=false;$('#feed-recap').hidden=true;
+  panel.parentElement!.scrollTop=0;
+  timeDisplay.hidden=true;
+  status.textContent=`${lastAnswer.label} · ${lastAnswer.outcome}`;
+  pause.hidden=true;next.removeAttribute('disabled');next.textContent=from==='recap'?'Back to recap':'Back to puzzle';
+  next.className='primary rush-continue';next.onclick=closeReview;updateReviewControl();next.focus();
+}
+function closeReview(){
+  if(review.state!=='previous'||!lastAnswer)return;
+  const {from,scroll}=review;review={state:'closed'};
+  timeDisplay.hidden=false;
+  for(const dialog of lastAnswer.frame.contentDocument?.querySelectorAll('dialog[open]')??[]) (dialog as HTMLDialogElement).close();
+  lastAnswer.frame.hidden=true;lastAnswer.frame.inert=true;lastAnswer.frame.removeAttribute('title');
+  if(from==='recap'){
+    panel.hidden=true;actions.hidden=true;$('#feed-recap').hidden=false;recapReview.focus();
+  }else{
+    if(visible)visible.hidden=false;
+    next.textContent='Skip game';next.className='secondary rush-skip';next.onclick=skipGame;
+    if(from==='playing'&&run.phase==='paused')resumeRound();
+    else{status.textContent=`${games[index].label} · ${run.phase==='paused'?'Paused':`Round ${round+1}`}`;next.toggleAttribute('disabled',run.phase==='paused');updatePauseControl();if(visible)visible.inert=run.phase==='paused';reviewButton.focus();}
+  }
+  panel.parentElement!.scrollTop=scroll;
+  updateReviewControl();
+}
+reviewButton.onclick=openReview;recapReview.onclick=openReview;
+
 function stopClock(){
   clearTimeout(timer);
   clearInterval(ticker);
@@ -98,6 +174,7 @@ function preload(gameIndex: number,roundIndex: number){
 
 function openRound(gameIndex: number,roundIndex=0,generation=run.generation){
   if(run.load(generation).$==='NoChange')return;
+  review={state:'closed'};advance=null;updateReviewControl();
   updatePauseControl();
   stopClock();
   if(current?.frame!==visible)current?.frame.remove();
@@ -154,9 +231,12 @@ function showRound(){
   frame.title=game.label;
   frame.classList.remove('feed-loading');
   if(visible)frame.classList.add('rush-enter');
-  visible?.remove();
+  if(visible===lastAnswer?.frame){visible!.hidden=true;visible!.inert=true;visible!.removeAttribute('title');}
+  else visible?.remove();
   visible=frame;
   frame.inert=false;
+  if(frame.contentDocument)watchAnswer(frame.contentDocument);
+  updateReviewControl();
   status.textContent=`${game.label} · Round ${round+1}`;
   if(duration){
     timeDisplay.dataset.timed='';
@@ -193,6 +273,9 @@ function showFinish(effect: RushEffect){
   const {correct,expired}=effect;
   stopClock();
   if(correct)scores[index]++;
+  if(lastAnswer&&lastAnswer.frame!==visible)lastAnswer.frame.remove();
+  lastAnswer=visible?{frame:visible,label:`${games[index].label} · Round ${round+1}`,outcome:expired?'Time’s up':correct?'Correct':'Missed'}:null;
+  if(visible)visible.dataset.rushAnswer='';
   const nextIndex=correct?index:index+1,nextRound=correct?round+1:0;
   checkpoint(nextIndex,nextRound,roundDuration(nextIndex,nextRound));
   status.textContent=expired?'Time’s up':correct?'Correct':'Missed';
@@ -201,9 +284,9 @@ function showFinish(effect: RushEffect){
   next.className='primary rush-continue';
   status.focus({preventScroll:true});
   // Brief feedback, then continue automatically to the next puzzle or game.
-  const answeredGeneration=run.generation;
-  timer=setTimeout(()=>openRound(correct?index:index+1,correct?round+1:0,answeredGeneration),correct?180:2400);
-  next.onclick=()=>{if(run.phase==='feedback')openRound(correct?index:index+1,correct?round+1:0,answeredGeneration);else skipGame();};
+  advance={generation:run.generation,index:nextIndex,round:nextRound,remaining:correct?180:2400,deadline:0};
+  scheduleAdvance();updateReviewControl();
+  next.onclick=()=>{if(run.phase==='feedback'&&advance)openRound(advance.index,advance.round,advance.generation);else skipGame();};
 }
 
 function showRecap(){
@@ -212,7 +295,9 @@ function showRecap(){
   current=null;
   visible=null;
   upcoming.clear();
-  panel.replaceChildren();
+  for(const child of [...panel.children])if(child!==lastAnswer?.frame)child.remove();
+  if(lastAnswer){lastAnswer.frame.hidden=true;lastAnswer.frame.inert=true;lastAnswer.frame.removeAttribute('title');}
+  updateReviewControl();
   panel.hidden=true;
   actions.hidden=true;
   $('#feed-recap').hidden=false;
@@ -240,7 +325,7 @@ window.addEventListener('message',(event: MessageEvent<RushMessage | RushHelpMes
   if(event.origin!==location.origin)return;
   if(event.data?.type==='rush-help'){
     if(event.source!==visible?.contentWindow||typeof event.data.open!=='boolean')return;
-    if(event.data.open)pauseRound();
+    if(event.data.open){holdAnswer('explicit');pauseRound();}
     updatePauseControl();
     if(run.phase==='paused'){
       visible!.inert=!helpOpen();
@@ -315,6 +400,7 @@ $('#rush-copy').onclick=async()=>{
 };
 
 function start(){
+  lastAnswer?.frame.remove();lastAnswer=null;review={state:'closed'};advance=null;updateReviewControl();
   recovery=null;
   runId=crypto.randomUUID();
   scores.fill(0);
@@ -356,7 +442,7 @@ function resumeRound(){
   checkpoint();
 }
 pause.onclick=()=>{if(run.phase==='paused')resumeRound();else pauseRound();};
-document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseRound();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){holdAnswer('explicit');pauseRound();}});
 // Playing + help/background/leave -> Paused; Paused + explicit Resume -> Playing.
 // Reload + valid checkpoint -> Loading -> Paused (or untimed Playing); feedback checkpoints the next round once.
 window.addEventListener('pagehide',()=>{

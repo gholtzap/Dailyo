@@ -63,7 +63,14 @@ try{
   await page.reload();
   await status.filter({hasText:'Paused'}).waitFor();
   assert.equal(await timer.innerText(),'6s','Reload must preserve elapsed time');
-  await page.route('**/games/data/flags.json',route=>route.fulfill({status:503}),{times:1});
+  let failReload=true;
+  await page.route('**/games/data/flags.json',route=>{
+    // Fail the restored active round, not an in-flight preload from the old page.
+    if(failReload&&new URL(route.request().frame().url()).searchParams.get('rush')==='1'){
+      failReload=false;return route.fulfill({status:503});
+    }
+    return route.continue();
+  });
   await page.reload();
   await status.filter({hasText:'flagrot didn’t load.'}).waitFor();
   await page.reload();await status.filter({hasText:'Paused'}).waitFor();

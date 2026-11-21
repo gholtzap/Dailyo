@@ -60,7 +60,7 @@ try {
       await page.goto(`${base}/rush/${game}/?date=${day}`);
       await page.locator('#rush-status').filter({hasText:`${game} · Round 1`}).waitFor();
       assert.equal(await page.locator('#rush-clock').textContent(),'Untimed');
-      const frame=page.frameLocator('iframe:not(.feed-loading)');
+      const frame=page.frameLocator('iframe:not(.feed-loading):not([hidden])');
       await solve(frame,game,visualSet(game,data[game],await rushSeed(page,game),true,0)[0]);
       await page.locator('#rush-status').filter({hasText:`${game} · Round 2`}).waitFor();
       assert.match(await page.locator('#rush-clock').textContent(),/s$/);
@@ -101,7 +101,7 @@ try {
   await page.goto(`${base}/rush/skyrot/?date=${day}`);
   await page.locator('#rush-status').filter({hasText:'skyrot · Round 1'}).waitFor();
   const rushQ=visualSet('skyrot',data.skyrot,await rushSeed(page,'skyrot'),true,0)[0];
-  await page.frameLocator('iframe:not(.feed-loading)').getByRole('button',{name:rushQ.options.find(x=>x.id!==rushQ.item.id).name,exact:true}).click();
+  await page.frameLocator('iframe:not(.feed-loading):not([hidden])').getByRole('button',{name:rushQ.options.find(x=>x.id!==rushQ.item.id).name,exact:true}).click();
   await page.getByRole('button',{name:'See recap',exact:true}).click();
   await page.getByRole('heading',{name:'Rush recap',exact:true}).waitFor();
   assert.equal(await page.locator('#rush-score').textContent(),'0 correct');
