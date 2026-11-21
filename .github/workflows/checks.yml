@@ -5,10 +5,30 @@ on:
   pull_request:
 permissions:
   contents: read
+concurrency:
+  group: game-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  verify:
+  proofs:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - uses: actions/cache@v4
+        with:
+          path: .cache
+          key: proof-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('verification/toolchain.json') }}
+      - name: Verify Bend laws, compiler output, and rejected regressions
+        run: npm run verify
+
+  journeys:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:17-alpine
@@ -30,12 +50,13 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-          cache: npm
-      - run: npm ci
-      - name: Verify Bend laws, compiler output, and rejected regressions
-        run: npm run verify
-      - run: npm test
-      - run: npm run build
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.5
+      - run: bun install --frozen-lockfile
+      - name: Check types and build once in parallel
+        run: bun run --parallel --no-exit-on-error typecheck:ci build:ci
+      - run: bun run test:compiled
       - run: node tests/world-ranking.mjs
       - name: Verify score API with real Postgres
         env:
@@ -46,9 +67,40 @@ jobs:
       - name: Verify desktop and mobile journeys
         run: |
           python3 -m http.server 4173 --protocol HTTP/1.1 --bind 127.0.0.1 --directory dist > /tmp/trainrot-server.log 2>&1 &
-          for attempt in 1 2 3 4 5; do
+          for _attempt in 1 2 3 4 5; do
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
             sleep 1
           done
-          npm run test:e2e
-          TRAINROT_TEST_URL=http://127.0.0.1:4173 npm run test:e2e:world
+          trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
+          mkdir -p test-results
+          pids=()
+          for shard in 1 2 3 4; do
+            TRAINROT_TEST_URL=http://127.0.0.1:4173 node scripts/ci-browser.mjs --shard="$shard/4" > "test-results/ci-browser-$shard.log" 2>&1 &
+            pids+=("$!")
+          done
+          result=0
+          for pid in "${pids[@]}"; do
+            wait "$pid" || result=1
+          done
+          cat test-results/ci-browser-*.log
+          exit "$result"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-shards
+          path: |
+            test-results/ci-browser-*.json
+            test-results/ci-browser-*.log
+          retention-days: 7
+
+  verify:
+    needs: [proofs, journeys]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Require every check
+        env:
+          PROOFS: ${{ needs.proofs.result }}
+          JOURNEYS: ${{ needs.journeys.result }}
+        run: test "$PROOFS" = success && test "$JOURNEYS" = success
