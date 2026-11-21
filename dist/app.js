@@ -4,7 +4,7 @@ import './games/help.js';
 import { createRouter, transition, formatTime, MAX_GUESSES } from './router.js';
 import { createMap } from './map.js';
 import { createRewards } from './rewards.js';
-import { dailyDate as dateToday, inFeed, reportDaily, rushRound, reportRush, onRushTimeout, startPractice, rushSeed } from './daily/bridge.js';
+import { dailyDate as dateToday, inFeed, reportDaily, rushRound, reportRush, onRushTimeout, startPractice, rushSeed, readRushDraft, saveRushDraft } from './daily/bridge.js';
 import { dailyChallenge, seededDeck, trainPuzzle, worldDailyChallenge } from './daily/puzzles.js';
 import { showRank } from './daily/rank.js';
 const $ = required;
@@ -482,6 +482,12 @@ async function start() {
         const rushDeck = seededDeck(rushSeed('train'), easy.length >= 3 ? easy : challenges);
         const challenge = rushDeck[rushRound % rushDeck.length];
         state = { phase: 'planning', challenge, legs: [], assisted: true };
+        const draft = readRushDraft();
+        if (Array.isArray(draft) && draft.length <= 6 && draft.every(route => typeof route === 'string' && Object.hasOwn(network.routes, route))) {
+            for (const route of draft)
+                state = transition(state, { type: 'add', leg: { route } }, router);
+        }
+        saveRushDraft(() => state.legs.map(l => l.route));
         onRushTimeout(() => finishRush(false));
         draw();
         reportRush('ready');

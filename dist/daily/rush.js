@@ -41,8 +41,33 @@ const copyStatus = $('#rush-copy-status'), copyText = $('#rush-copy-text');
 const run = new RushMachine();
 let runId = '';
 let index = 0, round = 0, duration = 0;
+const saveKey = `dailyo:rush:run:${selected ? slug : 'all'}`;
+let recovery = null;
+function roundDuration(gameIndex, roundIndex) {
+    const game = games[gameIndex], timedRound = roundIndex + Number(gameIndex > 0);
+    return game && timedRound ? game.seconds[Math.min(timedRound, game.seconds.length) - 1] * 1000 : 0;
+}
+function checkpoint(gameIndex = index, roundIndex = round, remaining = run.remaining ?? (Number.isFinite(run.deadline) ? Math.max(0, run.deadline - performance.now()) : roundDuration(gameIndex, roundIndex))) {
+    try {
+        sessionStorage.setItem(saveKey, JSON.stringify({ date, games: games.map(g => g.label).join(','), runId, index: gameIndex, round: roundIndex, remaining, scores }));
+    }
+    catch { }
+}
+function readCheckpoint() {
+    try {
+        const s = JSON.parse(sessionStorage.getItem(saveKey) ?? 'null');
+        if (s && s.date === date && s.games === games.map(g => g.label).join(',') && typeof s.runId === 'string' && /^[\da-f-]{36}$/i.test(s.runId) &&
+            Number.isSafeInteger(s.index) && s.index >= 0 && s.index <= games.length && Number.isSafeInteger(s.round) && s.round >= 0 && s.round <= 1_000_000 &&
+            Number.isFinite(s.remaining) && s.remaining >= 0 && s.remaining <= roundDuration(s.index, s.round) &&
+            (s.remaining > 0 || roundDuration(s.index, s.round) === 0) && Array.isArray(s.scores) && s.scores.length === games.length && s.scores.every(n => Number.isSafeInteger(n) && n >= 0 && n <= 1_000_000))
+            return s;
+    }
+    catch { }
+    return null;
+}
+function helpOpen() { return !!visible?.contentDocument?.querySelector('dialog[open]'); }
 function updatePauseControl() {
-    pause.hidden = !['playing', 'paused'].includes(run.phase) || run.phase === 'playing' && !Number.isFinite(run.deadline);
+    pause.hidden = helpOpen() || !['playing', 'paused'].includes(run.phase) || run.phase === 'playing' && !Number.isFinite(run.deadline);
     pause.textContent = run.phase === 'paused' ? 'Resume' : 'Pause';
 }
 let current, visible = null;
@@ -76,6 +101,7 @@ function openRound(gameIndex, roundIndex = 0, generation = run.generation) {
         current?.frame.remove();
     index = gameIndex;
     round = roundIndex;
+    checkpoint(index, round, recovery?.remaining ?? roundDuration(index, round));
     const game = games[index];
     if (!game) {
         showRecap();
@@ -122,9 +148,11 @@ function showError(generation = run.generation) {
 function showRound() {
     if (!current)
         return;
-    const game = games[index], timedRound = round + Number(index > 0);
-    duration = timedRound ? game.seconds[Math.min(timedRound, game.seconds.length) - 1] * 1000 : 0;
-    if (run.ready(performance.now(), timedRound ? duration : undefined).$ === 'NoChange')
+    const game = games[index];
+    duration = roundDuration(index, round);
+    const restoring = recovery;
+    recovery = null;
+    if (run.ready(performance.now(), duration ? (restoring?.remaining ?? duration) : undefined).$ === 'NoChange')
         return;
     updatePauseControl();
     stopClock();
@@ -139,7 +167,7 @@ function showRound() {
     visible = frame;
     frame.inert = false;
     status.textContent = `${game.label} · Round ${round + 1}`;
-    if (timedRound) {
+    if (duration) {
         timeDisplay.dataset.timed = '';
         updateClock();
         ticker = setInterval(updateClock, 100);
@@ -148,9 +176,13 @@ function showRound() {
         clock.textContent = 'Untimed';
     }
     pause.hidden = !Number.isFinite(run.deadline);
-    if (document.hidden)
+    if (document.hidden || restoring && duration)
         pauseRound();
-    frame.contentDocument?.querySelector('#question-title, #rush-journey, #round-title, #extra-title')?.focus({ preventScroll: true });
+    if (run.phase === 'paused')
+        pause.focus();
+    else
+        frame.contentDocument?.querySelector('#question-title, #rush-journey, #round-title, #extra-title')?.focus({ preventScroll: true });
+    checkpoint();
     if (!document.hidden && !navigator.connection?.saveData) {
         preload(index, round + 1);
         preload(index + 1, 0);
@@ -176,6 +208,8 @@ function showFinish(effect) {
     stopClock();
     if (correct)
         scores[index]++;
+    const nextIndex = correct ? index : index + 1, nextRound = correct ? round + 1 : 0;
+    checkpoint(nextIndex, nextRound, roundDuration(nextIndex, nextRound));
     status.textContent = expired ? 'Time’s up' : correct ? 'Correct' : 'Missed';
     if (expired)
         visible?.contentWindow?.postMessage('rush-timeout', location.origin);
@@ -218,10 +252,24 @@ function showRecap() {
         return row;
     }));
     $('#feed-recap h2').focus();
+    checkpoint(games.length, 0, 0);
 }
 window.addEventListener('message', (event) => {
     if (event.origin !== location.origin)
         return;
+    if (event.data?.type === 'rush-help') {
+        if (event.source !== visible?.contentWindow || typeof event.data.open !== 'boolean')
+            return;
+        if (event.data.open)
+            pauseRound();
+        updatePauseControl();
+        if (run.phase === 'paused') {
+            visible.inert = !helpOpen();
+            if (!helpOpen())
+                pause.focus();
+        }
+        return;
+    }
     const { type, phase: reported, correct } = event.data ?? {};
     if (type !== 'rush-game')
         return;
@@ -295,6 +343,7 @@ $('#rush-copy').onclick = async () => {
     }
 };
 function start() {
+    recovery = null;
     runId = crypto.randomUUID();
     scores.fill(0);
     $('#feed-recap').hidden = true;
@@ -319,24 +368,32 @@ function pauseRound() {
         return;
     updatePauseControl();
     clearInterval(ticker);
-    if (visible)
-        visible.inert = true;
+    if (visible) {
+        visible.inert = !helpOpen();
+        visible.contentDocument.documentElement.dataset.rushPaused = '';
+    }
     visible?.contentWindow?.postMessage('rush-pause', location.origin);
     status.textContent = `${games[index].label} · Paused`;
     next.setAttribute('disabled', '');
+    checkpoint();
 }
 function resumeRound() {
+    if (helpOpen())
+        return;
     if (run.resume(performance.now(), !document.hidden).$ !== 'Resumed')
         return;
     updatePauseControl();
-    if (visible)
+    if (visible) {
         visible.inert = false;
+        delete visible.contentDocument.documentElement.dataset.rushPaused;
+    }
     visible?.contentWindow?.postMessage('rush-resume', location.origin);
     status.textContent = `${games[index].label} · Round ${round + 1}`;
     next.removeAttribute('disabled');
     updateClock();
     ticker = setInterval(updateClock, 100);
     visible?.contentDocument?.querySelector('#question-title, #rush-journey, #round-title, #extra-title')?.focus({ preventScroll: true });
+    checkpoint();
 }
 pause.onclick = () => { if (run.phase === 'paused')
     resumeRound();
@@ -344,5 +401,22 @@ else
     pauseRound(); };
 document.addEventListener('visibilitychange', () => { if (document.hidden)
     pauseRound(); });
-start();
+// Playing + help/background/leave -> Paused; Paused + explicit Resume -> Playing.
+// Reload + valid checkpoint -> Loading -> Paused (or untimed Playing); feedback checkpoints the next round once.
+window.addEventListener('pagehide', () => {
+    if (run.phase === 'playing')
+        pauseRound();
+    if (run.phase !== 'feedback' && run.phase !== 'loading')
+        checkpoint();
+});
+recovery = readCheckpoint();
+if (recovery) {
+    runId = recovery.runId;
+    scores.splice(0, scores.length, ...recovery.scores);
+    $('#feed-recap').hidden = true;
+    actions.hidden = false;
+    openRound(recovery.index, recovery.round);
+}
+else
+    start();
 //# sourceMappingURL=rush.js.map
