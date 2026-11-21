@@ -37,11 +37,18 @@ const timeDisplay = $('.rush-time');
 const actions = $('.feed-actions'), retry = $('#rush-retry'), next = $('#rush-next');
 const pause = $('#rush-pause');
 const reviewButton = $('#rush-review'), recapReview = $('#rush-review-recap');
+const streakLabel = $('#rush-streak');
 const scores = games.map(() => 0);
 const copyStatus = $('#rush-copy-status'), copyText = $('#rush-copy-text');
 const run = new RushMachine();
 let runId = '';
 let index = 0, round = 0, duration = 0;
+let streak = 0;
+function showStreak() {
+    streakLabel.hidden = streak === 0;
+    streakLabel.textContent = streak ? `${streak} in a row` : '';
+    streakLabel.classList.toggle('rush-milestone', streak > 0 && streak % 5 === 0);
+}
 const saveKey = `dailyo:rush:run:${selected ? slug : 'all'}`;
 let recovery = null;
 function roundDuration(gameIndex, roundIndex) {
@@ -50,7 +57,7 @@ function roundDuration(gameIndex, roundIndex) {
 }
 function checkpoint(gameIndex = index, roundIndex = round, remaining = recovery?.remaining ?? run.remaining ?? (Number.isFinite(run.deadline) ? Math.max(0, run.deadline - performance.now()) : roundDuration(gameIndex, roundIndex))) {
     try {
-        sessionStorage.setItem(saveKey, JSON.stringify({ date, games: games.map(g => g.label).join(','), runId, index: gameIndex, round: roundIndex, remaining, scores }));
+        sessionStorage.setItem(saveKey, JSON.stringify({ date, games: games.map(g => g.label).join(','), runId, index: gameIndex, round: roundIndex, remaining, scores, streak }));
     }
     catch { }
 }
@@ -60,7 +67,8 @@ function readCheckpoint() {
         if (s && s.date === date && s.games === games.map(g => g.label).join(',') && typeof s.runId === 'string' && /^[\da-f-]{36}$/i.test(s.runId) &&
             Number.isSafeInteger(s.index) && s.index >= 0 && s.index <= games.length && Number.isSafeInteger(s.round) && s.round >= 0 && s.round <= 1_000_000 &&
             Number.isFinite(s.remaining) && s.remaining >= 0 && s.remaining <= roundDuration(s.index, s.round) &&
-            (s.remaining > 0 || roundDuration(s.index, s.round) === 0) && Array.isArray(s.scores) && s.scores.length === games.length && s.scores.every(n => Number.isSafeInteger(n) && n >= 0 && n <= 1_000_000))
+            (s.remaining > 0 || roundDuration(s.index, s.round) === 0) && Array.isArray(s.scores) && s.scores.length === games.length && s.scores.every(n => Number.isSafeInteger(n) && n >= 0 && n <= 1_000_000) &&
+            (s.streak === undefined || Number.isSafeInteger(s.streak) && s.streak >= 0 && s.streak <= s.scores.reduce((n, score) => n + score, 0)))
             return s;
     }
     catch { }
@@ -153,6 +161,7 @@ function openReview() {
     $('#feed-recap').hidden = true;
     panel.parentElement.scrollTop = 0;
     timeDisplay.hidden = true;
+    streakLabel.hidden = true;
     status.textContent = `${lastAnswer.label} · ${lastAnswer.outcome}`;
     pause.hidden = true;
     next.removeAttribute('disabled');
@@ -168,6 +177,7 @@ function closeReview() {
     const { from, scroll } = review;
     review = { state: 'closed' };
     timeDisplay.hidden = false;
+    showStreak();
     for (const dialog of lastAnswer.frame.contentDocument?.querySelectorAll('dialog[open]') ?? [])
         dialog.close();
     lastAnswer.frame.hidden = true;
@@ -348,6 +358,8 @@ function showFinish(effect) {
     stopClock();
     if (correct)
         scores[index]++;
+    streak = correct ? streak + 1 : 0;
+    showStreak();
     if (lastAnswer && lastAnswer.frame !== visible)
         lastAnswer.frame.remove();
     lastAnswer = visible ? { frame: visible, label: `${games[index].label} · Round ${round + 1}`, outcome: expired ? 'Time’s up' : correct ? 'Correct' : 'Missed' } : null;
@@ -507,6 +519,8 @@ function start() {
     recovery = null;
     runId = crypto.randomUUID();
     scores.fill(0);
+    streak = 0;
+    showStreak();
     $('#feed-recap').hidden = true;
     actions.hidden = false;
     openRound(0);
@@ -518,6 +532,8 @@ retry.onclick = () => { if (run.phase === 'error')
     openRound(index, round); };
 function skipGame() { if (['loading', 'playing', 'error'].includes(run.phase)) {
     recovery = null;
+    streak = 0;
+    showStreak();
     openRound(index + 1);
 } }
 next.onclick = skipGame;
@@ -578,6 +594,8 @@ recovery = readCheckpoint();
 if (recovery) {
     runId = recovery.runId;
     scores.splice(0, scores.length, ...recovery.scores);
+    streak = recovery.streak ?? 0;
+    showStreak();
     $('#feed-recap').hidden = true;
     actions.hidden = false;
     openRound(recovery.index, recovery.round);
