@@ -29,7 +29,7 @@ async function solve(page,game,q){
   }
   await page.locator('#perception-feedback').waitFor();
   if(game==='temporot')await page.clock.resume();
-  const points=Number((await page.locator('#perception-feedback').innerText()).split(' ')[0]);
+  const points=Number((await page.locator('.perception-feedback').innerText()).match(/(\d+) \/ 100/)[1]);
   assert.ok(points>=(game==='temporot'?98:100),`${game}: expected accurate input, received ${points}`);
   return points;
 }

@@ -1,4 +1,4 @@
-import {dailyDate,inFeed,startPractice,waitForFeedActivation,reportDaily,rushRound,rushSeed,reportRush,onRushTimeout,readRushDraft,saveRushDraft} from '../daily/bridge.js';
+import {dailyDate,inFeed,startPractice,waitForFeedActivation,reportDaily,rushRound,rushSeed,reportRush,onRushTimeout,readRushDraft,saveRushDraft,rushFeedback} from '../daily/bridge.js';
 import {showGameProgress} from './help.js';
 import {perceptionGames,perceptionPuzzle,perceptionGrade,reflect} from './perception-puzzles.js';
 import type {PerceptionGame,PerceptionPuzzle} from './perception-puzzles.js';
@@ -153,7 +153,7 @@ function drawRound(){
     if(phase==='showing')quiz.append(el('p','Starting sound…','tempo-status'));
     if(phase==='answering'){const progress=el('p','0 of 8 taps','tempo-status');progress.id='tap-progress';const b=button('Tap',tap,'primary tempo-tap');b.id='tap';quiz.append(progress,b);}
   }
-  if(reveal&&feedback){const box=el('div',undefined,'perception-feedback');box.setAttribute('role','status');const h=el('h3',`${feedback.points} / 100 points`);h.id='perception-feedback';h.tabIndex=-1;box.append(h,el('p',feedback.detail));quiz.append(box);
+  if(reveal&&feedback){const box=el('div',undefined,'perception-feedback');box.setAttribute('role','status');const h=el('h3',isRush?rushFeedback(feedback.points>=70,true):`${feedback.points} / 100 points`);h.id='perception-feedback';h.tabIndex=-1;box.append(h,el('p',feedback.detail));if(isRush&&feedback.guess!==null)box.append(el('p',`${feedback.points} / 100 · 70 needed to continue`,'perception-note'));quiz.append(box);
     if(!isRush)quiz.append(button(session.answers.length===count()?'See results':'Next',()=>{if(!transition('next'))return;feedback=undefined;draw();quiz.querySelector<HTMLElement>('#question-title, .result h2')?.focus();},'primary'));
   }else if(!isRush&&(phase==='showing'||phase==='answering'))quiz.append(button('Skip round',()=>finish(null),'secondary perception-skip'));
 }

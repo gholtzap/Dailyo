@@ -1,4 +1,4 @@
-import { dailyDate, inFeed, startPractice, waitForFeedActivation, reportDaily, rushRound, rushSeed, reportRush, onRushTimeout, readRushDraft, saveRushDraft } from '../daily/bridge.js';
+import { dailyDate, inFeed, startPractice, waitForFeedActivation, reportDaily, rushRound, rushSeed, reportRush, onRushTimeout, readRushDraft, saveRushDraft, rushFeedback } from '../daily/bridge.js';
 import { showGameProgress } from './help.js';
 import { perceptionGames, perceptionPuzzle, perceptionGrade, reflect } from './perception-puzzles.js';
 const name = document.body.dataset.game;
@@ -302,10 +302,12 @@ function drawRound() {
     if (reveal && feedback) {
         const box = el('div', undefined, 'perception-feedback');
         box.setAttribute('role', 'status');
-        const h = el('h3', `${feedback.points} / 100 points`);
+        const h = el('h3', isRush ? rushFeedback(feedback.points >= 70, true) : `${feedback.points} / 100 points`);
         h.id = 'perception-feedback';
         h.tabIndex = -1;
         box.append(h, el('p', feedback.detail));
+        if (isRush && feedback.guess !== null)
+            box.append(el('p', `${feedback.points} / 100 · 70 needed to continue`, 'perception-note'));
         quiz.append(box);
         if (!isRush)
             quiz.append(button(session.answers.length === count() ? 'See results' : 'Next', () => { if (!transition('next'))

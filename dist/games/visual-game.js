@@ -1,5 +1,5 @@
 import { showGameProgress } from './help.js';
-import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice, readRushDraft, saveRushDraft } from '../daily/bridge.js';
+import { dailyDate, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice, readRushDraft, saveRushDraft, rushFeedback } from '../daily/bridge.js';
 import { showRank } from '../daily/rank.js';
 import { parseDifficulty, practiceSettings, practiceSlot } from './difficulty.js';
 import { isVisualGame, prepareVisual, visualSet, visualPuzzle, emptyAnswer, validAnswer, answered, answerPoints, gradeVisual, priceError, rushCorrect, photoScale, photoPoints } from './visual-puzzles.js';
@@ -162,7 +162,7 @@ function reveal(q, a, review = false) {
     const content = el('div', undefined, 'visual-reveal');
     const points = answerPoints(game, q, a);
     if (!review) {
-        const feedback = el('h3', a.skipped ? 'Answer revealed' : `${points} / 100 points`);
+        const feedback = el('h3', isRush ? rushFeedback(rushCorrect(game, q, a), game === 'pricerot') : a.skipped ? 'Answer revealed' : `${points} / 100 points`);
         feedback.id = 'visual-feedback';
         feedback.tabIndex = -1;
         const status = el('div');
