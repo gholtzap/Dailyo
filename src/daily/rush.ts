@@ -53,7 +53,7 @@ function roundDuration(gameIndex: number,roundIndex: number){
   const game=games[gameIndex],timedRound=roundIndex+Number(gameIndex>0);
   return game&&timedRound?game.seconds[Math.min(timedRound,game.seconds.length)-1]*1000:0;
 }
-function checkpoint(gameIndex=index,roundIndex=round,remaining=run.remaining??(Number.isFinite(run.deadline)?Math.max(0,run.deadline-performance.now()):roundDuration(gameIndex,roundIndex))){
+function checkpoint(gameIndex=index,roundIndex=round,remaining=recovery?.remaining??run.remaining??(Number.isFinite(run.deadline)?Math.max(0,run.deadline-performance.now()):roundDuration(gameIndex,roundIndex))){
   try{sessionStorage.setItem(saveKey,JSON.stringify({date,games:games.map(g=>g.label).join(','),runId,index:gameIndex,round:roundIndex,remaining,scores}));}catch{}
 }
 function readCheckpoint(): SavedRun | null{
@@ -325,7 +325,7 @@ function start(){
 }
 $('#rush-replay').onclick=()=>{if(run.phase==='recap')start();};
 retry.onclick=()=>{if(run.phase==='error')openRound(index,round);};
-function skipGame(){if(['loading','playing','error'].includes(run.phase))openRound(index+1);}
+function skipGame(){if(['loading','playing','error'].includes(run.phase)){recovery=null;openRound(index+1);}}
 next.onclick=skipGame;
 function pauseRound(){
   const effect=run.pause(performance.now());
