@@ -48,7 +48,7 @@ try {
     const text=await page.locator('.visual-solution').innerText();
     if(q.item.unit==='CE'){assert.match(text,/1957 CE/);assert.doesNotMatch(text,/1,957/);}else assert.match(text,/micro — 0\.000001 multiplier/);
     await inspect(page,`precise-values-${sizeName}-${index}`);
-    await page.getByRole('button',{name:index===4?'See results':'Next puzzle',exact:true}).click();
+    await page.getByRole('button',{name:index===4?'See results':'Next',exact:true}).click();
    }
   });
   for(const game of ['maprot','yearrot','borderrot'])await check(`${sizeName} ${game} completed question review`,async()=>{
@@ -61,7 +61,7 @@ try {
     }else if(game==='yearrot'){const slot=q.timeline.filter(([year])=>year<q.event[0]).length;await page.locator('.rot-slot').nth(index===1?(slot+1)%(q.timeline.length+1):slot).click();}
     else if(index===4)await page.getByRole('button',{name:'Show shortest route',exact:true}).click();
     else for(const id of q.slice(1)){const name=data.graph.get(id).name;await page.getByRole('searchbox').fill(name);await page.getByRole('button',{name,exact:true}).click();}
-    await page.getByRole('button',{name:index===4?'See results':'Next question',exact:true}).click();
+    await page.getByRole('button',{name:index===4?'See results':'Next',exact:true}).click();
    }
    await inspect(page,`recap-summary-${game}-${sizeName}`);
    assert.equal(await page.locator('.rot-recap details').count(),5,'Every completed question needs a review');
@@ -99,7 +99,7 @@ try {
    if(game==='cluerot'){await page.getByLabel('Your guess').fill(`Answer ${identity}`);await page.getByRole('button',{name:'Guess',exact:true}).click();}
    else if(game==='scalerot'){const row=rows.find(row=>row[1]===identity);await page.getByRole('spinbutton').fill(String(row[3]));await page.getByRole('button',{name:'Check estimate',exact:true}).click();}
    else for(const word of ladderPaths[identity]){await page.getByLabel('Next word').fill(word);await page.getByRole('button',{name:'Add word',exact:true}).click();}
-   await page.getByRole('button',{name:'New practice puzzle',exact:true}).click();await page.locator('#extra-title').waitFor();
+   await page.getByRole('button',{name:'New puzzle',exact:true}).click();await page.locator('#extra-title').waitFor();
   }
   assert.deepEqual(await page.evaluate(game=>Object.fromEntries(Object.entries(localStorage).filter(([key])=>key.startsWith(`dailyo:${game}:v1:daily:`))),game),dailyStorage,'Practice must not change daily progress');
   await inspect(page,`practice-cycle-${game}`);results.push({game,cycle:observed});await context.close();

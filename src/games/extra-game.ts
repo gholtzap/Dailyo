@@ -191,7 +191,7 @@ function result({ puzzle, state }: ExtraSession): HTMLElement[] {
   if (inFeed) return content;
   const actions = el('div', undefined, 'rot-actions');
   if (mode === 'practice') {
-    actions.append(button('New practice puzzle', () => {
+    actions.append(button('New puzzle', () => {
       if (mode !== 'practice' || sessions.practice.state.phase !== 'complete') return;
       const next = nextPracticePuzzle(data,seed().slice('practice:'.length),sessions.practice.puzzle.id,sessions.practice.cycle ?? null);
       sessions.practice = {...mount('practice', next.token), cycle: next.cycle};

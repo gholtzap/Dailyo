@@ -35,8 +35,18 @@ function resumePlayback() { if (playback.state !== 'paused')
     void audio.resume().catch(() => { }); if (timerCallback)
     later(timerCallback, remaining); if (animateRound)
     animation = requestAnimationFrame(animateRound); }
-function transition(event) { const next = transitions[phase][event]; if (!next)
-    return false; phase = (event === 'next' || event === 'reset') && session.answers.length >= count() ? 'results' : next; return true; }
+function transition(event) {
+    const next = transitions[phase][event];
+    if (!next)
+        return false;
+    phase = (event === 'next' || event === 'reset') && session.answers.length >= count() ? 'results' : next;
+    if (phase === 'ready' && !isRush && mode === 'practice' && (game === 'anglerot' || game === 'splitrot')) {
+        draft = game === 'anglerot' ? 0 : 50;
+        transition('start');
+        transition('shown');
+    }
+    return true;
+}
 function save() { if (isRush)
     return; try {
     localStorage.setItem(key(), JSON.stringify(session));
@@ -298,7 +308,7 @@ function drawRound() {
         box.append(h, el('p', feedback.detail));
         quiz.append(box);
         if (!isRush)
-            quiz.append(button(session.answers.length === count() ? 'See results' : 'Next round', () => { if (!transition('next'))
+            quiz.append(button(session.answers.length === count() ? 'See results' : 'Next', () => { if (!transition('next'))
                 return; feedback = undefined; draw(); quiz.querySelector('#question-title, .result h2')?.focus(); }, 'primary'));
     }
     else if (!isRush && (phase === 'showing' || phase === 'answering'))

@@ -99,7 +99,7 @@ try{
         if(size.width<700)await page.getByRole('button',{name:'View routes on map',exact:true}).click();
         await page.reload();await page.locator('#next').waitFor();assert.equal(parseInt(await page.locator('.result-score').textContent()),100);
       }
-      await page.getByRole('button',{name:'Next journey',exact:true}).click();await ready(page);
+      await page.getByRole('button',{name:'Next',exact:true}).click();await ready(page);
       assert.equal(await page.locator('.summary-value').count(),0);
     }
     // Force the end of the shuffled bag; the next bag continues and survives reload.
@@ -114,7 +114,7 @@ try{
     await page.getByRole('button',{name:'Show answer',exact:true}).click();
     assert.equal(await page.locator('.result-heading').count(),0);assert.ok(await page.locator('.result-legs li').count());await inspect(page,`${prefix}-answer`);
     await page.reload();await page.locator('#next').waitFor();assert.equal(await page.locator('.result-heading').count(),0);
-    await page.getByRole('button',{name:'Next journey',exact:true}).click();const beforeSkip=await current(page);
+    await page.getByRole('button',{name:'Next',exact:true}).click();const beforeSkip=await current(page);
     await page.getByRole('button',{name:'Skip',exact:true}).click();await ready(page);assert.notDeepEqual(await current(page),beforeSkip);
     await page.getByRole('button',{name:'Show answer',exact:true}).click();await page.locator('#next').waitFor();
     await page.route('**/data/network.json',route=>route.abort(),{times:1});await page.reload();await page.locator('#reload').waitFor();await inspect(page,`${prefix}-network-error`);
@@ -132,15 +132,15 @@ try{
     await page.locator('.route-details summary').click();const directions=await page.locator('.primary-itinerary').textContent();assert.match(directions,/Union Sq/);assert.match(directions,/Bleecker/);
     assert.equal((await page.locator('.ride-points li span:last-child').allTextContents()).reduce((sum,p)=>sum+parseInt(p),0),98);await inspect(page,`${prefix}-L6F-result`);
     await page.reload();await page.locator('#next').waitFor();assert.equal(parseInt(await page.locator('.result-score').textContent()),98);
-    await page.getByRole('button',{name:'Next journey',exact:true}).click();await add(page,'L');await add(page,'7');await check(page);
+    await page.getByRole('button',{name:'Next',exact:true}).click();await add(page,'L');await add(page,'7');await check(page);
     assert.match(await page.locator('.route-feedback').textContent(),/do not connect in this order/);await inspect(page,`${prefix}-disconnected`);
     await page.getByRole('button',{name:'Undo last train',exact:true}).click();await add(page,'F');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),100);
-    await page.getByRole('button',{name:'Next journey',exact:true}).click();await add(page,'L');await add(page,'6');await add(page,'M');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),95);
-    await page.getByRole('button',{name:'Next journey',exact:true}).click();await add(page,'L');await add(page,'M');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),98);
-    await page.getByRole('button',{name:'Next journey',exact:true}).click();
+    await page.getByRole('button',{name:'Next',exact:true}).click();await add(page,'L');await add(page,'6');await add(page,'M');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),95);
+    await page.getByRole('button',{name:'Next',exact:true}).click();await add(page,'L');await add(page,'M');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),98);
+    await page.getByRole('button',{name:'Next',exact:true}).click();
     for(let index=0;index<6;index++){if(index)await page.getByRole('button',{name:'Undo last train',exact:true}).click();await add(page,String(index+1));await check(page);}
     assert.equal(await page.locator('h1').textContent(),'Out of guesses.');await inspect(page,`${prefix}-out-of-guesses`);
-    await page.getByRole('button',{name:'Next journey',exact:true}).click();await ready(page);
+    await page.getByRole('button',{name:'Next',exact:true}).click();await ready(page);
     await puzzle(page,'G24','R31');
     await page.evaluate(()=>{
       const key=Object.keys(localStorage).find(k=>k.startsWith('trainrot-endless-v1:')),feed=key.slice('trainrot-endless-v1:'.length);localStorage.removeItem(key);
@@ -167,7 +167,7 @@ try{
     await page.screenshot({path:new URL(`${prefix}-charcoal-result.png`,output).pathname,fullPage:true});
     await puzzle(page,'D20','R31');await add(page,'A');await check(page);assert.match(await page.locator('.partial-score').textContent(),/^41 points so far/);
     await add(page,'R');await check(page);assert.equal(parseInt(await page.locator('.result-score').textContent()),73);await inspect(page,`${prefix}-AR-result`);
-    await page.getByRole('button',{name:'Next journey',exact:true}).click();for(let index=0;index<6;index++)await add(page,'L');
+    await page.getByRole('button',{name:'Next',exact:true}).click();for(let index=0;index<6;index++)await add(page,'L');
     assert.equal(await page.locator('[data-route=L]').isDisabled(),true);await inspect(page,`${prefix}-six-trains`);
     await page.getByRole('button',{name:'Undo last train',exact:true}).click();assert.equal(await page.locator('[data-route=L]').isEnabled(),true);
     assert.deepEqual(errors.filter(error=>!error.includes('Failed to fetch')),[]);

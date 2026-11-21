@@ -29,7 +29,15 @@ function stop(){clearTimeout(timer);timerCallback=undefined;animateRound=undefin
 function later(callback: ()=>void,delay: number){clearTimeout(timer);timerCallback=callback;timerDeadline=performance.now()+delay;timer=setTimeout(()=>{timerCallback=undefined;callback();},delay);}
 function pausePlayback(){if(playback.state==='paused')return;playback={state:'paused',since:performance.now(),remaining:Math.max(0,timerDeadline-performance.now())};clearTimeout(timer);cancelAnimationFrame(animation);if(audio)void audio.suspend().catch(()=>{});}
 function resumePlayback(){if(playback.state!=='paused')return;const elapsed=performance.now()-playback.since,remaining=playback.remaining;playback={state:'running'};pausedFor+=elapsed;beatStart+=elapsed;if(audio)void audio.resume().catch(()=>{});if(timerCallback)later(timerCallback,remaining);if(animateRound)animation=requestAnimationFrame(animateRound);}
-function transition(event: Event){const next=transitions[phase][event];if(!next)return false;phase=(event==='next'||event==='reset')&&session.answers.length>=count()?'results':next;return true;}
+function transition(event: Event){
+  const next=transitions[phase][event];if(!next)return false;
+  phase=(event==='next'||event==='reset')&&session.answers.length>=count()?'results':next;
+  if(phase==='ready'&&!isRush&&mode==='practice'&&(game==='anglerot'||game==='splitrot')){
+    draft=game==='anglerot'?0:50;
+    transition('start');transition('shown');
+  }
+  return true;
+}
 function save(){if(isRush)return;try{localStorage.setItem(key(),JSON.stringify(session));}catch{}}
 function load(){
   session={seed:mode==='daily'?day:`practice:${crypto.randomUUID()}`,answers:[]};
@@ -146,7 +154,7 @@ function drawRound(){
     if(phase==='answering'){const progress=el('p','0 of 8 taps','tempo-status');progress.id='tap-progress';const b=button('Tap',tap,'primary tempo-tap');b.id='tap';quiz.append(progress,b);}
   }
   if(reveal&&feedback){const box=el('div',undefined,'perception-feedback');box.setAttribute('role','status');const h=el('h3',`${feedback.points} / 100 points`);h.id='perception-feedback';h.tabIndex=-1;box.append(h,el('p',feedback.detail));quiz.append(box);
-    if(!isRush)quiz.append(button(session.answers.length===count()?'See results':'Next round',()=>{if(!transition('next'))return;feedback=undefined;draw();quiz.querySelector<HTMLElement>('#question-title, .result h2')?.focus();},'primary'));
+    if(!isRush)quiz.append(button(session.answers.length===count()?'See results':'Next',()=>{if(!transition('next'))return;feedback=undefined;draw();quiz.querySelector<HTMLElement>('#question-title, .result h2')?.focus();},'primary'));
   }else if(!isRush&&(phase==='showing'||phase==='answering'))quiz.append(button('Skip round',()=>finish(null),'secondary perception-skip'));
 }
 function drawResults(){

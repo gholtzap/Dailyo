@@ -63,6 +63,11 @@ try{
   await page.reload();
   await status.filter({hasText:'Paused'}).waitFor();
   assert.equal(await timer.innerText(),'6s','Reload must preserve elapsed time');
+  await page.route('**/games/data/flags.json',route=>route.fulfill({status:503}),{times:1});
+  await page.reload();
+  await status.filter({hasText:'flagrot didn’t load.'}).waitFor();
+  await page.reload();await status.filter({hasText:'Paused'}).waitFor();
+  assert.equal(await timer.innerText(),'6s','A failed reload must not reset the saved time budget');
   await page.getByRole('button',{name:'Resume',exact:true}).click();
   await flag.getByRole('button',{name:deck[1].name,exact:true}).click();
   // Refresh during feedback must count the answer exactly once and restore the next puzzle.
@@ -125,6 +130,17 @@ try{
   await angle.getByRole('slider').fill('42.5');
   await page.reload();await status.filter({hasText:'Round 1'}).waitFor();
   assert.equal(await angle.getByRole('slider').inputValue(),'42.5');
+
+  await page.goto(base);await status.filter({hasText:'Round 1'}).waitFor();
+  const mixed=shuffle(flags,await rushSeed(page,'flags'));
+  await flag.getByRole('button',{name:mixed[0].name,exact:true}).click();
+  await status.filter({hasText:'Correct'}).waitFor();await page.clock.runFor(200);
+  await status.filter({hasText:'Round 2'}).waitFor();await page.clock.runFor(2000);
+  await page.route('**/games/data/flags.json',route=>route.fulfill({status:503}),{times:1});
+  await page.reload();await status.filter({hasText:'flagrot didn’t load.'}).waitFor();
+  await page.getByRole('button',{name:'Skip game',exact:true}).click();
+  await status.filter({hasText:'langrot · Round 1'}).waitFor({timeout:3000});
+  assert.equal(await timer.innerText(),'8s','Skipping a failed recovery must give the next game its own budget');
 
   await page.evaluate(()=>sessionStorage.setItem('dailyo:rush:run:flagrot',JSON.stringify({date:'2026-11-20',index:-1,scores:[-100]})));
   await page.goto(`${base}/rush/flagrot/`);await status.filter({hasText:'Round 1'}).waitFor();

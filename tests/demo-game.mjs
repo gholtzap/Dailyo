@@ -52,7 +52,7 @@ try {
     await page.locator('.result-score').waitFor();
     assert.equal(parseInt(await page.locator('.result-score').textContent()), 100);
     await inspect('result');
-    await page.getByRole('button', { name: 'Next journey', exact: true }).click();
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
     assert.notDeepEqual(await page.locator('.endpoint strong').allTextContents(), endpoints);
     await page.close();
     console.log(`${viewport.width}px: navigation, fictional map, practice save, transfer scoring, and next puzzle passed`);

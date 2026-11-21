@@ -43,7 +43,7 @@ try {
         if(index===0) {
           // Reload a completed round: the next unanswered daily round is restored.
           await page.reload();await page.locator('#question-title').waitFor();
-        } else await page.getByRole('button',{name:index===4?'See results':'Next puzzle',exact:true}).click();
+        } else await page.getByRole('button',{name:index===4?'See results':'Next',exact:true}).click();
       }
       await page.getByRole('heading',{name:'500 / 500 points',exact:true}).waitFor();
       await page.getByRole('button',{name:'Copy results',exact:true}).click();

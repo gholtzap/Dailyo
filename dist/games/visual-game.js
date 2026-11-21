@@ -174,10 +174,23 @@ function reveal(q, a, review = false) {
         content.append(el('p', `Recorded price: ${money(q.item.cents)}${a.price === null ? '' : ` · Your guess: ${money(a.price)} · ${Math.round(priceError(a.price, q.item.cents) * 100)}% off`}`));
     }
     else if (game === 'orderrot') {
+        const comparison = el('div', undefined, 'visual-order-comparison');
+        if (a.order.length) {
+            const submitted = el('div'), list = el('ol', undefined, 'visual-submitted');
+            list.setAttribute('aria-label', 'Your order');
+            for (const id of a.order)
+                list.append(el('li', q.tiles.find(item => item.id === id).name));
+            submitted.append(el('h3', 'Your order'), list);
+            comparison.append(submitted);
+        }
+        const correct = el('div');
         const list = el('ol', undefined, 'visual-solution');
+        list.setAttribute('aria-label', 'Correct order');
         for (const item of [...q.tiles].sort((x, y) => x.value - y.value))
             list.append(el('li', `${item.name} — ${formatOrderValue(item.value, q.item.unit)} ${q.item.unit ?? ''}`));
-        content.append(el('p', 'Correct order, from lowest to highest:'), list);
+        correct.append(el('h3', 'Correct order'), list);
+        comparison.append(correct);
+        content.append(comparison);
     }
     else {
         if (!review)
@@ -221,7 +234,7 @@ function drawQuestion() {
     if (complete) {
         quiz.append(reveal(q, a));
         if (!isRush)
-            quiz.append(button(s.index === s.questions.length - 1 ? 'See results' : 'Next puzzle', () => { s.index++; draft = []; imageFailed = false; save(); focusNext = true; draw(); }, 'primary visual-next'));
+            quiz.append(button(s.index === s.questions.length - 1 ? 'See results' : 'Next', () => { s.index++; draft = []; imageFailed = false; save(); focusNext = true; draw(); }, 'primary visual-next'));
         return;
     }
     if (photoGame) {
@@ -349,7 +362,7 @@ function drawResults() {
                     }
                 })();
             }));
-        actions.append(button(mode === 'daily' ? 'Play practice' : 'New practice set', () => {
+        actions.append(button(mode === 'daily' ? 'Play practice' : 'New set', () => {
             if (mode === 'practice') {
                 sessions.practice = mount(freshSeed(), undefined, difficulty);
                 save();

@@ -153,7 +153,7 @@ try{
     await page.unroute('**/games/data/flags.json');
     assert.equal(await page.evaluate(()=>localStorage.getItem('trainrot-game-mode-v2')),'practice');
     assert.equal(await flags.locator('.flag').getAttribute('src'),flagSrc);
-    const nextQuestion=flags.getByRole('button',{name:'Next question',exact:true});
+    const nextQuestion=flags.getByRole('button',{name:'Next',exact:true});
     await nextQuestion.waitFor();
     await page.reload();
     await nextQuestion.waitFor();
@@ -314,7 +314,7 @@ https://trainrot.vercel.app/daily/`;
     await geoStandalone.getByRole('button',{name:'Practice',exact:true}).click();
     await geoStandalone.close();
     await page.reload();
-    await geo.getByRole('button',{name:'Next question'}).click();
+    await geo.getByRole('button',{name:'Next'}).click();
     assert.equal(await geo.getByRole('button',{name:'Practice',exact:true}).count(),0);
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('dailyo:maprot:v1:mode'))),'practice');
     for(let question=2;question<=5;question++){
@@ -374,7 +374,7 @@ https://trainrot.vercel.app/daily/`;
       const child=frame(name);
       for(let round=0;round<5;round++) {
         await child.getByRole('button',{name:'Show answer',exact:true}).click();
-        await child.getByRole('button',{name:round===4?'See results':'Next puzzle',exact:true}).click();
+        await child.getByRole('button',{name:round===4?'See results':'Next',exact:true}).click();
       }
       await next.click();
     }
@@ -383,7 +383,7 @@ https://trainrot.vercel.app/daily/`;
       for(let round=0;round<5;round++) {
         await child.getByRole('button',{name:'Start round',exact:true}).click();
         await child.getByRole('button',{name:'Skip round',exact:true}).click();
-        await child.getByRole('button',{name:round===4?'See results':'Next round',exact:true}).click();
+        await child.getByRole('button',{name:round===4?'See results':'Next',exact:true}).click();
       }
       if(name!=='splitrot')await next.click();
     }

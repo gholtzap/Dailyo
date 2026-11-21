@@ -25,6 +25,10 @@
 .visual-source summary { cursor: pointer; min-height: 36px; padding: 8px 0; }
 .visual-source a { display: inline-block; padding: 8px 0; }
 .visual-solution { padding-left: 24px; }
+.visual-order-comparison { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-top: 16px; }
+.visual-order-comparison > :only-child { grid-column: 1 / -1; }
+.visual-order-comparison ol { margin: 0; padding-left: 20px; }
+.visual-order-comparison li { padding: 4px 0; overflow-wrap: anywhere; }
 .visual-recap { margin: 24px 0; padding: 0; list-style: none; }
 .visual-recap li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .visual-recap li span:last-child { white-space: nowrap; color: var(--muted); }
