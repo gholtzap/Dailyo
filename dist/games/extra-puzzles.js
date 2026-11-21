@@ -81,8 +81,11 @@ export function extraPuzzle(game, data, seed) {
     const rows = releasedPool(game, data.rows, seed);
     const day = /^\d{4}-\d{2}-\d{2}$/.test(seed) ? Date.parse(seed) / 86400000 : null;
     const indexed = /^practice:deck:(\d+):/.exec(seed);
+    // Rush consumes one stable deck, including across preloads, retries and reloads.
+    // Cycling the same deck also keeps its last question distinct from its first.
+    const rush = /^(rush:[^:]+:\d{4}-\d{2}-\d{2}:[^:]+):(\d+)$/.exec(seed);
     const index = indexed ? Number(indexed[1]) : -1;
-    const row = indexed && Number.isSafeInteger(index) && index < rows.length ? rows[index] : Number.isInteger(day) ? rows[((day % rows.length) + rows.length) % rows.length] :
+    const row = rush ? shuffle(rows, rush[1])[Number(rush[2]) % rows.length] : indexed && Number.isSafeInteger(index) && index < rows.length ? rows[index] : Number.isInteger(day) ? rows[((day % rows.length) + rows.length) % rows.length] :
         shuffle(rows, seed)[0];
     if (data.game === 'ladderrot') {
         const [start, goal] = row;
