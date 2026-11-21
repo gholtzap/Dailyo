@@ -65,7 +65,7 @@ function readCheckpoint() {
     catch { }
     return null;
 }
-function helpOpen() { return !!visible?.contentDocument?.querySelector('dialog[open]'); }
+function helpOpen() { return !!visible?.contentDocument?.querySelector('#help-dialog[open]'); }
 function updatePauseControl() {
     pause.hidden = helpOpen() || !['playing', 'paused'].includes(run.phase) || run.phase === 'playing' && !Number.isFinite(run.deadline);
     pause.textContent = run.phase === 'paused' ? 'Resume' : 'Pause';

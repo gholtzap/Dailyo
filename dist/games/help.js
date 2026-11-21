@@ -29,7 +29,7 @@ const instructions = {
         'Get one point for each correct answer across five daily questions. An example sentence appears after each answer.',
     ],
     maprot: [
-        'Pin the named city on the map. Tap the map or move the pin with the arrow keys, then select Check pin.',
+        'Pin the named city, then select Check pin. Enlarge and zoom the map for precision. Drag the map to pan or drag your pin to adjust it. Arrow keys move the pin; hold Shift for finer adjustment.',
         'Your score is the total distance you were off across five cities. Lower is better.',
     ],
     yearrot: [
