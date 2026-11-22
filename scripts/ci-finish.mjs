@@ -34,6 +34,7 @@ const receipt = {
   run: run.html_url,
   elapsedMs,
   budgetMs: 60000,
+  finalizeReserveMs: 2000,
   checks: checks.map((job) => ({ name: job.name, conclusion: job.conclusion })),
 };
 mkdirSync("test-results/ci-optimization", { recursive: true });
@@ -44,5 +45,5 @@ writeFileSync(
 console.log(JSON.stringify(receipt));
 if (checks.some((job) => job.conclusion !== "success"))
   throw new Error("A required correctness check did not pass");
-if (elapsedMs > 60000)
+if (elapsedMs + receipt.finalizeReserveMs > receipt.budgetMs)
   throw new Error("Full CI exceeded one minute, including queue and setup");

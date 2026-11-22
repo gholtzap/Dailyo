@@ -153,3 +153,5 @@ async function worker(queue) {
   }
 }
 await Promise.all(receipt.lanes.map(worker));
+
+console.log("CI_BROWSER_RECEIPT " + JSON.stringify(receipt));
