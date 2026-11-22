@@ -36,6 +36,23 @@ try {
           .filter({ hasText: /Correct|Missed/ })
           .waitFor();
         const outcome = await page.locator("#rush-status").innerText();
+        await frame
+          .getByRole("button", {
+            name: game === "maprot" ? "Enlarge map" : "How to play",
+            exact: true,
+          })
+          .click();
+        await page.clock.fastForward(5000);
+        assert.equal(
+          await page.locator("#rush-clock").innerText(),
+          "Held",
+          "Reading an open dialog holds feedback",
+        );
+        await frame.getByRole("button", { name: "Close", exact: true }).click();
+        await page
+          .locator("#rush-clock")
+          .filter({ hasText: "Held" })
+          .waitFor({ state: "hidden" });
         const result = frame.locator("#round-title");
         await result.dispatchEvent("pointerdown", {
           button: 0,

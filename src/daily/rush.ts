@@ -162,12 +162,15 @@ let timer: ReturnType<typeof setTimeout> | undefined,
   ticker: ReturnType<typeof setInterval> | undefined;
 const upcoming = new Map<string, Round>();
 
-// Feedback + press -> held until release; Feedback + Keep/help -> held until Next; background resumes on return.
+// Feedback + press -> held until release; Feedback + Keep -> held until Next; inspection/background resume on close/return.
 // Playing/Paused/Recap + Review -> previous answer; Back -> same draft and prior pause state.
 // Load/replay clears held feedback; stale timers cannot advance a different generation.
 type ReviewState =
   | { state: "closed" }
-  | { state: "held"; reason: "pointer" | "explicit" | "background" }
+  | {
+      state: "held";
+      reason: "pointer" | "explicit" | "background" | "inspection";
+    }
   | { state: "previous"; from: "playing" | "paused" | "recap"; scroll: number };
 let review: ReviewState = { state: "closed" };
 const heldPointers = new Set<number>();
@@ -207,7 +210,9 @@ function scheduleAdvance() {
       openRound(pending.index, pending.round, pending.generation);
   }, pending.remaining);
 }
-function holdAnswer(reason: "pointer" | "explicit" | "background") {
+function holdAnswer(
+  reason: "pointer" | "explicit" | "background" | "inspection",
+) {
   if (run.phase !== "feedback" || !advance || review.state === "previous")
     return;
   if (review.state === "closed")
@@ -215,6 +220,7 @@ function holdAnswer(reason: "pointer" | "explicit" | "background") {
   if (
     review.state === "held" &&
     (review.reason === "explicit" ||
+      (review.reason === "inspection" && reason !== "explicit") ||
       (review.reason === "background" && reason === "pointer"))
   )
     return;
@@ -223,8 +229,26 @@ function holdAnswer(reason: "pointer" | "explicit" | "background") {
   clock.textContent = "Held";
   updateReviewControl();
 }
-function releaseAnswer(reason: "pointer" | "background" = "pointer") {
+function inspectingAnswer() {
+  return [document, visible?.contentDocument].some((doc) =>
+    doc?.querySelector("dialog[open],details[open]"),
+  );
+}
+function releaseAnswer(
+  reason: "pointer" | "background" | "inspection" = "pointer",
+) {
   if (review.state !== "held" || review.reason !== reason) return;
+  const remainingReason = document.hidden
+    ? "background"
+    : inspectingAnswer()
+      ? "inspection"
+      : heldPointers.size
+        ? "pointer"
+        : null;
+  if (remainingReason) {
+    review = { state: "held", reason: remainingReason };
+    return;
+  }
   review = { state: "closed" };
   clock.textContent = "";
   if (advance) advance.remaining = Math.max(600, advance.remaining);
@@ -268,10 +292,13 @@ function watchAnswer(doc: Document) {
     },
     true,
   );
-  doc.addEventListener("focusin", (event) => {
-    if ((event.target as Element | null)?.closest?.("details,dialog,a"))
-      holdAnswer("explicit");
-  });
+  const inspect = () => {
+    if (inspectingAnswer()) holdAnswer("inspection");
+    else releaseAnswer("inspection");
+  };
+  doc.addEventListener("focusin", inspect);
+  doc.addEventListener("close", inspect, true);
+  doc.addEventListener("toggle", inspect, true);
 }
 watchAnswer(document);
 function openReview() {

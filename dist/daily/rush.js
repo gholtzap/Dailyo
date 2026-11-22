@@ -154,6 +154,7 @@ function holdAnswer(reason) {
         advance.remaining = Math.max(0, advance.deadline - performance.now());
     if (review.state === "held" &&
         (review.reason === "explicit" ||
+            (review.reason === "inspection" && reason !== "explicit") ||
             (review.reason === "background" && reason === "pointer")))
         return;
     clearTimeout(timer);
@@ -161,9 +162,23 @@ function holdAnswer(reason) {
     clock.textContent = "Held";
     updateReviewControl();
 }
+function inspectingAnswer() {
+    return [document, visible?.contentDocument].some((doc) => doc?.querySelector("dialog[open],details[open]"));
+}
 function releaseAnswer(reason = "pointer") {
     if (review.state !== "held" || review.reason !== reason)
         return;
+    const remainingReason = document.hidden
+        ? "background"
+        : inspectingAnswer()
+            ? "inspection"
+            : heldPointers.size
+                ? "pointer"
+                : null;
+    if (remainingReason) {
+        review = { state: "held", reason: remainingReason };
+        return;
+    }
     review = { state: "closed" };
     clock.textContent = "";
     if (advance)
@@ -196,10 +211,15 @@ function watchAnswer(doc) {
         heldPointers.clear();
         releaseAnswer();
     }, true);
-    doc.addEventListener("focusin", (event) => {
-        if (event.target?.closest?.("details,dialog,a"))
-            holdAnswer("explicit");
-    });
+    const inspect = () => {
+        if (inspectingAnswer())
+            holdAnswer("inspection");
+        else
+            releaseAnswer("inspection");
+    };
+    doc.addEventListener("focusin", inspect);
+    doc.addEventListener("close", inspect, true);
+    doc.addEventListener("toggle", inspect, true);
 }
 watchAnswer(document);
 function openReview() {
