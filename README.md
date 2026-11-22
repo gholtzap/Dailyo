@@ -198,7 +198,7 @@ code, artwork, or audio is used.
 ### CI performance
 
 `bun test` runs source tests without compiling them first. `bun check` owns type
-checking; TypeScript is still used to emit browser and API JavaScript. `bun fmt`
+checking; TypeScript is still used to emit browser and API JavaScript. `bun fmt --check`
 checks changed source/configuration files, leaving existing unformatted files and
 generated output alone. Bun 1.4.5 does not expose the documented native linter, so
 `bun lint` currently runs the pinned Oxlint dependency.
@@ -213,7 +213,16 @@ successful job from the exact base commit only when every proof input and verifi
 file is identical. Missing evidence or changed inputs run the full prover.
 The final `verify` check requires source, browser, database, and proof checks and
 fails when total CI wall time exceeds 60 seconds, including runner waiting.
-This is a target, not a claim that hosted measurements have reached it yet.
+Two measured warm-cache runs completed in [59 seconds](https://github.com/gholtzap/Dailyo/actions/runs/44968559653)
+and [56 seconds](https://github.com/gholtzap/Dailyo/actions/runs/44968823813), compared
+with 5:38–8:59 for the five preceding Rush PRs. The final snapshot configuration
+has one measured run; cold-cache and p95 latency below one minute are not yet
+established. Measurement details are in `scripts/ci-benchmarks.json`.
+
+This uses 18 standard browser runners, with two worker queues per runner. It uses
+more aggregate compute to reduce waiting. Standard runners are
+[free for this public repository](https://docs.github.com/en/actions/reference/runners/github-hosted-runners);
+no paid capacity was added.
 
 `bun run ci:feedback origin/main` selects source tests through transitive imports;
 unknown configuration/resource changes use the full set. Browser runtime URLs

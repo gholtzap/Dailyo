@@ -1,0 +1,59 @@
+{
+  "baseline": {
+    "cohort": "Final successful pre-merge runs for Rush PRs 54\u201358; four processes on one standard Ubuntu runner",
+    "runsReviewed": 150,
+    "runs": [
+      {
+        "id": 44960636352,
+        "seconds": 338
+      },
+      {
+        "id": 44961555705,
+        "seconds": 450
+      },
+      {
+        "id": 44961570384,
+        "seconds": 518
+      },
+      {
+        "id": 44961906174,
+        "seconds": 539
+      },
+      {
+        "id": 44963021332,
+        "seconds": 356
+      }
+    ],
+    "sampleSize": 5,
+    "meanSeconds": 440.2,
+    "p50Seconds": 450,
+    "nearestRankP95Seconds": 539
+  },
+  "candidate": {
+    "cohort": "Full source, browser, database and proof validation; unchanged proofs may reuse a verified identical base result",
+    "runs": [
+      {
+        "id": 44968559653,
+        "sha": "3f3d88ddb5f6b484902d779602d1ff0c1bbf4f7a",
+        "seconds": 59,
+        "runtimeCache": "warm",
+        "aggregateRunnerSeconds": 861
+      },
+      {
+        "id": 44968823813,
+        "sha": "dc69d9316460019b3ae84ccf24daec5238904b91",
+        "seconds": 56,
+        "runtimeCache": "warm",
+        "aggregateRunnerSeconds": 869
+      }
+    ],
+    "finalConfigurationSampleSize": 1,
+    "p95BelowBudget": "unverified",
+    "coldCacheBelowBudget": "unverified"
+  },
+  "budgets": {
+    "fullCiSeconds": 60,
+    "localPrePushMilliseconds": 9000
+  },
+  "measurement": "Run creation to the latest required job completion; queue, setup and cleanup included. Runner seconds sum job start-to-completion; they are not CPU time. Raw 150-run baseline and job/step receipts retained locally under test-results/ci-optimization."
+}
