@@ -43,7 +43,7 @@
     "ci:feedback": "bun scripts/ci-feedback.ts",
     "build:api": "tsc --noCheck -p tsconfig.api.json && node scripts/stage-verified.mjs .test-build/src",
     "hooks:install": "git config core.hooksPath .githooks",
-    "test:ci": "node tests/ci-proof-reuse.mjs"
+    "test:ci": "node tests/ci-proof-reuse.mjs && node tests/ci-finish.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

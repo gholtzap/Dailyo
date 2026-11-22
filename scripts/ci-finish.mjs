@@ -12,6 +12,8 @@ async function get(url) {
 }
 const run = await get(endpoint);
 const count = Number(process.env.CI_BROWSER_SHARDS ?? 18);
+if (!Number.isInteger(count) || count < 1 || count > 98)
+  throw new Error("Invalid browser shard count");
 const required = [
   "proofs",
   "api",

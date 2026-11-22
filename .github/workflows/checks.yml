@@ -92,23 +92,35 @@ jobs:
         with:
           node-version: "24"
       - uses: actions/cache@v4
+        id: runtime
+        with:
+          path: |
+            node_modules/playwright
+            node_modules/playwright-core
+            node_modules/lintapple
+            node_modules/axe-core
+            ~/.cache/ms-playwright
+          key: browser-runtime-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+      - uses: actions/cache@v4
+        if: steps.runtime.outputs.cache-hit != 'true'
         id: dependencies
         with:
           path: node_modules
           key: dependencies-${{ runner.os }}-${{ runner.arch }}-bun-1.4.5-${{ hashFiles('bun.lock') }}
       - uses: oven-sh/setup-bun@v2
-        if: steps.dependencies.outputs.cache-hit != 'true'
+        if: steps.runtime.outputs.cache-hit != 'true' && steps.dependencies.outputs.cache-hit != 'true'
         with:
           bun-version: 1.4.5
-      - if: steps.dependencies.outputs.cache-hit != 'true'
+      - if: steps.runtime.outputs.cache-hit != 'true' && steps.dependencies.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
       - run: node scripts/stage-data.mjs
       - uses: actions/cache@v4
+        if: steps.runtime.outputs.cache-hit != 'true'
         id: chromium
         with:
           path: ~/.cache/ms-playwright
           key: chromium-shell-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
-      - if: steps.chromium.outputs.cache-hit != 'true'
+      - if: steps.runtime.outputs.cache-hit != 'true' && steps.chromium.outputs.cache-hit != 'true'
         run: node node_modules/playwright/cli.js install --only-shell chromium
       - name: Run the recorded-time shard
         env:
