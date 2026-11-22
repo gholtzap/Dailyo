@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "npm run build",
+  "buildCommand": "bun run build",
   "outputDirectory": "dist",
-  "installCommand": "npm ci",
+  "installCommand": "bun install --frozen-lockfile",
   "rewrites": [
     {
       "source": "/rush/",
@@ -36,9 +36,7 @@
   "functions": {
     "api/daily-score.ts": {
       "includeFiles": "dist/{data/{network,challenges}.json,games/data/*.json,world-data/cities.json,world-data/*/{network,challenges}.json}",
-      "regions": [
-        "iad1"
-      ]
+      "regions": ["iad1"]
     }
   },
   "git": {
