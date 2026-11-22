@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { checkPage } from "lintapple";
 import { shuffle } from "../dist/daily/puzzles.js";
-import { rushSeed } from "./rush-helpers.mjs";
+import { rushSeed, seedMixedRun } from "./rush-helpers.mjs";
 
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const policy = JSON.parse(
@@ -199,6 +199,7 @@ try {
     await status.filter({ hasText: "Round 1" }).waitFor();
     assert.equal(await angle.getByRole("slider").inputValue(), "42.5");
 
+    await seedMixedRun(page, "2026-11-20");
     await page.goto(base);
     await status.filter({ hasText: "Round 1" }).waitFor();
     const mixed = shuffle(flags, await rushSeed(page, "flags"));

@@ -1,4 +1,4 @@
-import { rushSeed } from "./rush-helpers.mjs";
+import { rushSeed, initialMixedRun, seedMixedRun } from "./rush-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -34,6 +34,7 @@ try {
       isMobile: width === 390,
       permissions: ["clipboard-read", "clipboard-write"],
     });
+    await initialMixedRun(page, day);
     const errors = [],
       writes = [];
     page.on("pageerror", (error) => errors.push(error.message));
@@ -498,6 +499,7 @@ try {
       });
     }
     const sharedChallenge = new URL(share.split("\n").at(-1));
+    await seedMixedRun(page, day);
     await page.clock.setFixedTime(new Date("2026-11-17T16:00:00Z"));
     await page.goto(
       new URL(sharedChallenge.pathname + sharedChallenge.search, base).href,
@@ -572,7 +574,7 @@ try {
     // Saved links fall back to the remaining Rush rotation; standalone games stay playable.
     for (const removed of ["ladderrot", "cluerot"]) {
       await page.goto(`${base}/rush/${removed}/`);
-      await status.filter({ hasText: "flagrot · Round 1" }).waitFor();
+      await status.filter({ hasText: "Round 1" }).waitFor();
       assert.equal(await page.locator(`iframe[title='${removed}']`).count(), 0);
       await page.goto(`${base}/${removed}/`);
       await page.locator("#extra-title").waitFor();

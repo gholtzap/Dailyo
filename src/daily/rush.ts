@@ -6,13 +6,13 @@ interface Round {
   frame: HTMLIFrameElement;
   ready: boolean;
 }
-import { rushDate } from "./puzzles.js";
+import { rushDate, shuffle } from "./puzzles.js";
 import { closeRushAudio } from "./rush-audio.js";
 
 import { rushGames as rotation } from "./rush-games.js";
 const slug = location.pathname.split("/")[2];
 const selected = rotation.find((game) => game.label.toLowerCase() === slug);
-const games = selected ? [selected] : rotation;
+let games = selected ? [selected] : [...rotation];
 const date = rushDate(new URLSearchParams(location.search).get("date"));
 const bestKey = `dailyo:rush:best:${selected ? slug : "all"}`;
 if (selected) document.title = `${selected.label} Rush | dailyo`;
@@ -57,8 +57,8 @@ interface SavedRun {
   streak?: number;
 }
 let recovery: SavedRun | null = null;
-function roundDuration(gameIndex: number, roundIndex: number) {
-  const game = games[gameIndex],
+function roundDuration(gameIndex: number, roundIndex: number, order = games) {
+  const game = order[gameIndex],
     timedRound = roundIndex + Number(gameIndex > 0);
   return game && timedRound
     ? game.seconds[Math.min(timedRound, game.seconds.length) - 1] * 1000
@@ -94,10 +94,17 @@ function readCheckpoint(): SavedRun | null {
     const s = JSON.parse(
       sessionStorage.getItem(saveKey) ?? "null",
     ) as SavedRun | null;
+    const labels = typeof s?.games === "string" ? s.games.split(",") : [];
+    const eligible = selected ? [selected] : rotation;
+    const order = labels.map((label) =>
+      eligible.find((game) => game.label === label),
+    );
     if (
       s &&
       s.date === date &&
-      s.games === games.map((g) => g.label).join(",") &&
+      labels.length === eligible.length &&
+      new Set(labels).size === eligible.length &&
+      order.every((game) => game !== undefined) &&
       typeof s.runId === "string" &&
       /^[\da-f-]{36}$/i.test(s.runId) &&
       Number.isSafeInteger(s.index) &&
@@ -108,8 +115,9 @@ function readCheckpoint(): SavedRun | null {
       s.round <= 1_000_000 &&
       Number.isFinite(s.remaining) &&
       s.remaining >= 0 &&
-      s.remaining <= roundDuration(s.index, s.round) &&
-      (s.remaining > 0 || roundDuration(s.index, s.round) === 0) &&
+      s.remaining <= roundDuration(s.index, s.round, order as typeof games) &&
+      (s.remaining > 0 ||
+        roundDuration(s.index, s.round, order as typeof games) === 0) &&
       Array.isArray(s.scores) &&
       s.scores.length === games.length &&
       s.scores.every(
@@ -119,8 +127,10 @@ function readCheckpoint(): SavedRun | null {
         (Number.isSafeInteger(s.streak) &&
           s.streak >= 0 &&
           s.streak <= s.scores.reduce((n, score) => n + score, 0)))
-    )
+    ) {
+      games = order as typeof games;
       return s;
+    }
   } catch {}
   return null;
 }
@@ -718,6 +728,7 @@ function start() {
   updateReviewControl();
   recovery = null;
   runId = crypto.randomUUID();
+  games = selected ? [selected] : shuffle(rotation, `rush:order:${runId}`);
   scores.fill(0);
   streak = 0;
   showStreak();
