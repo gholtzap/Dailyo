@@ -110,6 +110,31 @@ try {
       "Answer maps must pan",
     );
     await map.press("ArrowRight");
+    const keyboardWidth = await map.evaluate(
+      (svg) => svg.viewBox.baseVal.width,
+    );
+    await map.press("=");
+    assert.ok(
+      await map.evaluate(
+        (svg, w) => svg.viewBox.baseVal.width < w,
+        keyboardWidth,
+      ),
+    );
+    await map.press("-");
+    assert.equal(
+      await map.evaluate((svg) => {
+        const event = new KeyboardEvent("keydown", {
+          key: "+",
+          ctrlKey: true,
+          bubbles: true,
+          cancelable: true,
+        });
+        svg.dispatchEvent(event);
+        return event.defaultPrevented;
+      }),
+      false,
+      "Map controls must preserve browser zoom shortcuts",
+    );
     if (viewport.width === 390) {
       const cdp = await page.context().newCDPSession(page),
         x = box.x + box.width * 0.5,

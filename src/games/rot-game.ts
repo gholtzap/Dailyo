@@ -228,7 +228,7 @@ function drawMap(
     class: reviewing ? "rot-map rot-reviewing" : "rot-map rot-picking",
     role: "group",
     "aria-label": reviewing
-      ? `Map answer showing your pin and ${city}. Drag to pan; use the zoom controls to explore.`
+      ? `Map answer showing your pin and ${city}. Arrow keys pan; plus and minus zoom.`
       : "World map. Arrow keys move the pin; hold Shift for finer adjustment.",
     tabindex: 0,
   });
@@ -640,6 +640,7 @@ function drawMap(
   };
   map.onkeydown = (event) => {
     if (reviewing) {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
       if (event.key === "+" || event.key === "=") {
         event.preventDefault();
         setZoom(zoom * 2);
