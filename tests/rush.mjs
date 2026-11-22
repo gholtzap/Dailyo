@@ -97,6 +97,11 @@ try {
       .getByRole("link", { name: /^Vocabulary Word meanings$/ })
       .waitFor();
     await inspect("directory");
+    for (const removed of ["ladderrot", "cluerot"])
+      assert.equal(
+        await page.locator(`a[href='/rush/${removed}/']`).count(),
+        0,
+      );
     await page.getByText("Games", { exact: true }).press("Enter");
     await page
       .getByRole("button", { name: "Retry", exact: true })
@@ -378,30 +383,6 @@ try {
         },
       ],
       [
-        "ladderrot",
-        55,
-        45,
-        async (child) => {
-          const puzzle = await extra("ladderrot", "ladderrot", "ladder-words");
-          for (const word of puzzle.solution.slice(1)) {
-            await child.getByRole("textbox").fill(word);
-            await child.getByRole("button", { name: "Add word" }).click();
-          }
-        },
-      ],
-      [
-        "cluerot",
-        20,
-        15,
-        async (child) => {
-          const puzzle = await extra("cluerot", "cluerot");
-          await child.getByRole("textbox").fill(puzzle.answer);
-          await child
-            .getByRole("button", { name: "Guess", exact: true })
-            .click();
-        },
-      ],
-      [
         "scalerot",
         20,
         15,
@@ -455,14 +436,14 @@ try {
     await page.getByRole("heading", { name: "Rush recap" }).waitFor();
     assert.equal(
       await page.locator("#rush-score").textContent(),
-      "20 correct · Best run: 6 in yearrot",
+      "18 correct · Best run: 6 in yearrot",
     );
     assert.equal(
       await page.locator("#rush-personal-best").textContent(),
-      "New best · 20 correct",
+      "New best · 18 correct",
     );
     assert.deepEqual(await page.evaluate(() => Object.entries(localStorage)), [
-      ["dailyo:rush:best:all", "20"],
+      ["dailyo:rush:best:all", "18"],
     ]);
     assert.deepEqual(writes, []);
     await page.getByRole("button", { name: "Copy results" }).press("Enter");
@@ -474,11 +455,13 @@ try {
     const recapRows = await page
       .locator("#feed-results li span")
       .allTextContents();
+    assert.equal(recapRows.length, 19);
+    assert.ok(recapRows.every((row) => !/ladderrot|cluerot/.test(row)));
     assert.equal(
       share,
       [
         `dailyo Rush · ${day}`,
-        "20 correct · 6 in yearrot",
+        "18 correct · 6 in yearrot",
         "",
         ...recapRows,
         "",
@@ -488,7 +471,7 @@ try {
     await inspect("recap");
     await page.getByRole("button", { name: "Play again" }).click();
     await timer.filter({ hasText: "Untimed" }).waitFor();
-    for (let i = 0; i < 21; i++)
+    for (let i = 0; i < 19; i++)
       await page
         .getByRole("button", { name: "Skip game", exact: true })
         .click();
@@ -496,7 +479,7 @@ try {
     assert.equal(await page.locator("#rush-copy-status").textContent(), "");
     assert.equal(
       await page.locator("#rush-personal-best").textContent(),
-      "Personal best · 20 correct",
+      "Personal best · 18 correct",
     );
     await page.getByRole("link", { name: "Play more langrot" }).click();
     await page
@@ -560,7 +543,7 @@ try {
     );
     assert.equal(
       await page.evaluate(() => localStorage.getItem("dailyo:rush:best:all")),
-      "20",
+      "18",
     );
     assert.equal(
       await page.evaluate(() =>
@@ -586,10 +569,22 @@ try {
       ),
     );
     await inspect("copy fallback");
+    // Saved links fall back to the remaining Rush rotation; standalone games stay playable.
+    for (const removed of ["ladderrot", "cluerot"]) {
+      await page.goto(`${base}/rush/${removed}/`);
+      await status.filter({ hasText: "flagrot · Round 1" }).waitFor();
+      assert.equal(await page.locator(`iframe[title='${removed}']`).count(), 0);
+      await page.goto(`${base}/${removed}/`);
+      await page.locator("#extra-title").waitFor();
+      assert.equal(
+        await page.locator(`body[data-game='${removed}']`).count(),
+        1,
+      );
+    }
     assert.deepEqual(errors, []);
     await page.close();
     console.log(
-      `${width}px Rush: all twenty-one games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`,
+      `${width}px Rush: all nineteen games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`,
     );
   }
   if (lint) {
