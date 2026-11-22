@@ -179,7 +179,6 @@ before starting another cycle. The current puzzle and cycle progress resume
 on reload. Map, timeline, and country-route results include a review of each
 completed question; opening a review does not change the saved score.
 
-
 Perception games: **countrot** (dot counting), **trackrot** (ball tracking),
 **anglerot** (angle estimation), **temporot** (rhythm), and **splitrot** (line
 proportions). Each has five seeded daily rounds, saved progress, unlimited
@@ -195,3 +194,44 @@ saved Daily results, hard Practice, sharing, Daily mix, Rush at
 `test-results/perception/`. Run `npm run lint:ui:perception` for the UI policy checks. These are original implementations of the five
 perception tasks described at https://perceptle.io/how-to-play/; no Perceptle
 code, artwork, or audio is used.
+
+### CI performance
+
+`bun test` runs source tests without compiling them first. `bun check` owns type
+checking; TypeScript is still used to emit browser and API JavaScript. `bun fmt --check`
+checks changed source/configuration files, leaving existing unformatted files and
+generated output alone. Bun 1.4.5 does not expose the documented native linter, so
+`bun lint` currently runs the pinned Oxlint dependency.
+
+CI builds the browser and backend once. Browser shards start immediately using
+committed JavaScript; the build gate requires that output to match fresh compiler
+output exactly. Database tests use the one backend build. Shards use timings recorded from real
+runs. Successful shard receipts remain in GitHub logs; failures also upload them
+as artifacts. Expanded photo pools split by game and viewport; the other large suites
+split by viewport. Every original browser case and all 98 cities remain covered.
+Two independent browser processes run per shard. Unchanged proofs reuse a
+successful job from the exact base commit only when every proof input and verifier
+file is identical. Missing evidence or changed inputs run the full prover.
+The final `verify` check requires source, browser, database, and proof checks and
+fails when total CI wall time exceeds 60 seconds, including runner waiting.
+Two measured warm-cache runs completed in [59 seconds](https://github.com/gholtzap/Dailyo/actions/runs/44968559653)
+and [56 seconds](https://github.com/gholtzap/Dailyo/actions/runs/44968823813), compared
+with 5:38–8:59 for the five preceding Rush PRs. The final snapshot configuration
+has one measured run; cold-cache and p95 latency below one minute are not yet
+established. Measurement details are in `scripts/ci-benchmarks.json`.
+
+This uses 18 standard browser runners, with two worker queues per runner. It uses
+more aggregate compute to reduce waiting. Standard runners are
+[free for this public repository](https://docs.github.com/en/actions/reference/runners/github-hosted-runners);
+no paid capacity was added.
+
+`bun run ci:feedback origin/main` selects source tests through transitive imports;
+unknown configuration/resource changes use the full set. Browser runtime URLs
+fall back to full journeys. Authoritative CI still runs the full suite before
+merge: this personal repository cannot enable GitHub's native merge queue.
+`merge_group` is supported if the repository moves to an eligible account.
+
+Run `bun run hooks:install` to install the pre-push hook. It checks formatting,
+lint and types for the actual pushed range without rewriting files; the local
+budget is nine seconds. The optional production-NYC router suite still requires
+production data and is run explicitly with `bun run test:nyc`.

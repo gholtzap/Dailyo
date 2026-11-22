@@ -1,0 +1,84 @@
+import { createServer } from "node:http";
+import { spawn } from "node:child_process";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import assert from "node:assert/strict";
+const root = mkdtempSync(join(tmpdir(), "ci-finish-")),
+  script = resolve("scripts/ci-finish.mjs");
+let mode = "success",
+  calls = 0;
+const server = createServer((req, res) => {
+  res.setHeader("content-type", "application/json");
+  if (mode === "api-error") {
+    res.writeHead(503);
+    res.end("{}");
+    return;
+  }
+  if (req.url.includes("/jobs?")) {
+    calls++;
+    const jobs = ["proofs", "api", "browser (1)"].map((name) => ({
+      name,
+      status: "completed",
+      conclusion:
+        ["failure", "cancelled", "skipped"].includes(mode) && name === "api"
+          ? mode
+          : "success",
+    }));
+    res.end(
+      JSON.stringify({
+        jobs: mode === "missing-then-success" && calls === 1 ? [] : jobs,
+      }),
+    );
+  } else
+    res.end(
+      JSON.stringify({
+        html_url: "fixture://run",
+        created_at: new Date(
+          Date.now() - (mode === "over-budget" ? 61000 : 0),
+        ).toISOString(),
+      }),
+    );
+});
+await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+async function probe(scenario, expected) {
+  mode = scenario;
+  calls = 0;
+  const result = await new Promise((resolve) => {
+    const child = spawn(process.execPath, [script], {
+      cwd: root,
+      env: {
+        ...process.env,
+        GITHUB_API_URL: `http://127.0.0.1:${server.address().port}`,
+        GITHUB_REPOSITORY: "fixture/repo",
+        GITHUB_RUN_ID: "1",
+        GH_TOKEN: "fixture",
+        CI_BROWSER_SHARDS: "1",
+      },
+      stdio: "pipe",
+    });
+    child.once("error", (error) => resolve({ status: 1, error }));
+    child.once("exit", (status) => resolve({ status }));
+  });
+  assert.equal(result.status === 0, expected, scenario);
+  if (scenario === "missing-then-success")
+    assert.ok(calls >= 2, "A missing required job cannot pass");
+}
+try {
+  for (const scenario of ["success", "missing-then-success"])
+    await probe(scenario, true);
+  for (const scenario of [
+    "failure",
+    "cancelled",
+    "skipped",
+    "over-budget",
+    "api-error",
+  ])
+    await probe(scenario, false);
+  console.log(
+    "Final CI gate: missing jobs wait; failed, cancelled, skipped, over-budget and unavailable evidence fail.",
+  );
+} finally {
+  server.close();
+  rmSync(root, { recursive: true, force: true });
+}
