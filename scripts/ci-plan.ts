@@ -72,8 +72,8 @@ export function planChecks(changed: string[], options: Options) {
   const units = new Set<string>(),
     browsers = new Set<string>();
   for (let file of changed) {
-    if (/\.md$/.test(file) && !/(?:AGENTS|CLAUDE)\.md$/.test(file)) continue;
-    if (file.startsWith("dist/") && /\.js$/.test(file))
+    if (file.endsWith(".md") && !/(?:AGENTS|CLAUDE)\.md$/.test(file)) continue;
+    if (file.startsWith("dist/") && file.endsWith(".js"))
       file = file.replace(/^dist\//, "src/").replace(/\.js$/, ".ts");
     if (
       !existsSync(resolve(root, file)) ||

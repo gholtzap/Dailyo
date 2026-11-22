@@ -1,4 +1,4 @@
-import { ciWidths } from "./ci-parts.mjs";
+import { ciWidths, ciShared } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { chromium } from "playwright";
@@ -243,126 +243,130 @@ try {
         `${kind} ${width}px: five daily questions, results, reload, next day, and ten practice rounds passed`,
       );
     }
-  const shared = await browser.newContext();
-  await shared.route("**/api/daily-score", (route) =>
-    route.fulfill({ status: 503, json: { error: "Unavailable" } }),
-  );
-  const old = await shared.newPage(),
-    fresh = await shared.newPage();
-  for (const tab of [old, fresh]) {
-    await tab.goto(`${base}/vocabulary/`);
-    await tab.locator(".choice").first().waitFor();
-  }
-  const failedRank = fresh.waitForResponse("**/api/daily-score");
-  for (let i = 0; i < 5; i++) {
-    await fresh.locator(".choice").first().click();
-    await fresh.locator("#next").click();
-  }
-  const completed = await fresh.locator(".result h2").innerText();
-  const response = await failedRank;
-  assert.equal(response.status(), 503);
-  await response.finished();
-  await fresh.evaluate(() => new Promise((resolve) => setTimeout(resolve, 0)));
-  assert.equal(await fresh.locator(".daily-rank").isVisible(), false);
-  await old.locator(".choice").last().click();
-  await old.locator(".result h2").waitFor({ timeout: 3000 });
-  await fresh.reload();
-  assert.equal(await fresh.locator(".result h2").innerText(), completed);
-  await shared.close();
-  const exhaustive = await browser.newPage({
-    viewport: { width: 320, height: 844 },
-  });
-  await exhaustive.goto(`${base}/flags/`);
-  await exhaustive.locator(".choice").first().waitFor();
-  await exhaustive.locator("#practice").click();
-  assert.equal(
-    await exhaustive.locator("#practice").getAttribute("aria-pressed"),
-    "true",
-  );
-  const seen = new Set();
-  let previous;
-  for (let i = 0; i < flags.length + 1; i++) {
-    const src = await exhaustive.locator(".flag").getAttribute("src"),
-      id = decodeURIComponent(src.split("/").at(-1).replace(".svg", ""));
-    if (i < flags.length) {
-      assert.ok(!seen.has(id), `Repeated ${id} before the deck ended`);
-      seen.add(id);
-    } else
-      assert.notEqual(
-        id,
-        previous,
-        "The next deck should not repeat the last flag",
-      );
-    previous = id;
-    const correct = flags.find((f) => f.id === id).name;
-    await exhaustive
-      .getByRole("button", { name: correct, exact: true })
-      .click();
-    await exhaustive.locator("#next").click();
-    await exhaustive.waitForFunction(
-      (previous) =>
-        document.querySelector(".flag")?.getAttribute("src") !== previous,
-      src,
+  if (ciShared()) {
+    const shared = await browser.newContext();
+    await shared.route("**/api/daily-score", (route) =>
+      route.fulfill({ status: 503, json: { error: "Unavailable" } }),
     );
-  }
-  assert.equal(seen.size, flags.length);
-  assert.equal(
-    await exhaustive.evaluate(
-      () => document.documentElement.scrollWidth > innerWidth,
-    ),
-    false,
-  );
-  console.log("Practice covers every flag before repeating");
-  await exhaustive.close();
-  for (const action of ["answer", "advance"]) {
-    const midnight = await browser.newPage();
-    await midnight.clock.install({ time: new Date("2026-11-16T04:59:40Z") });
-    await midnight.goto(`${base}/vocabulary/`);
-    const prompt = midnight.locator(".vocabulary-word");
-    const previous = await prompt.innerText();
-    const choice = midnight.locator(".choice").first();
-    if (action === "advance") {
-      await choice.click();
-      await midnight.locator("#next").waitFor();
+    const old = await shared.newPage(),
+      fresh = await shared.newPage();
+    for (const tab of [old, fresh]) {
+      await tab.goto(`${base}/vocabulary/`);
+      await tab.locator(".choice").first().waitFor();
     }
-    await midnight.clock.setFixedTime(new Date("2026-11-16T05:00:01Z"));
-    if (action === "advance") await midnight.locator("#next").click();
-    else await choice.click();
-    await midnight.waitForFunction(
-      (word) =>
-        document.querySelector(".vocabulary-word")?.textContent !== word,
-      previous,
-      { timeout: 3000 },
+    const failedRank = fresh.waitForResponse("**/api/daily-score");
+    for (let i = 0; i < 5; i++) {
+      await fresh.locator(".choice").first().click();
+      await fresh.locator("#next").click();
+    }
+    const completed = await fresh.locator(".result h2").innerText();
+    const response = await failedRank;
+    assert.equal(response.status(), 503);
+    await response.finished();
+    await fresh.evaluate(
+      () => new Promise((resolve) => setTimeout(resolve, 0)),
     );
-    assert.match(
-      await midnight.locator(".round-head").innerText(),
-      /Question 1 of 5/,
+    assert.equal(await fresh.locator(".daily-rank").isVisible(), false);
+    await old.locator(".choice").last().click();
+    await old.locator(".result h2").waitFor({ timeout: 3000 });
+    await fresh.reload();
+    assert.equal(await fresh.locator(".result h2").innerText(), completed);
+    await shared.close();
+    const exhaustive = await browser.newPage({
+      viewport: { width: 320, height: 844 },
+    });
+    await exhaustive.goto(`${base}/flags/`);
+    await exhaustive.locator(".choice").first().waitFor();
+    await exhaustive.locator("#practice").click();
+    assert.equal(
+      await exhaustive.locator("#practice").getAttribute("aria-pressed"),
+      "true",
     );
-    assert.equal(await midnight.locator("#answer-feedback").count(), 0);
-    await midnight.close();
-  }
-  const imagePage = await browser.newPage();
-  await imagePage.goto(`${base}/flags/`);
-  const missing = await imagePage.evaluate(
-    async (ids) => {
-      const failed = [];
-      for (const id of ids) {
-        const img = new Image();
-        img.src = `/games/flags/${id}.svg`;
-        try {
-          await img.decode();
-          if (!img.naturalWidth || !img.naturalHeight) failed.push(id);
-        } catch {
-          failed.push(id);
-        }
+    const seen = new Set();
+    let previous;
+    for (let i = 0; i < flags.length + 1; i++) {
+      const src = await exhaustive.locator(".flag").getAttribute("src"),
+        id = decodeURIComponent(src.split("/").at(-1).replace(".svg", ""));
+      if (i < flags.length) {
+        assert.ok(!seen.has(id), `Repeated ${id} before the deck ended`);
+        seen.add(id);
+      } else
+        assert.notEqual(
+          id,
+          previous,
+          "The next deck should not repeat the last flag",
+        );
+      previous = id;
+      const correct = flags.find((f) => f.id === id).name;
+      await exhaustive
+        .getByRole("button", { name: correct, exact: true })
+        .click();
+      await exhaustive.locator("#next").click();
+      await exhaustive.waitForFunction(
+        (previous) =>
+          document.querySelector(".flag")?.getAttribute("src") !== previous,
+        src,
+      );
+    }
+    assert.equal(seen.size, flags.length);
+    assert.equal(
+      await exhaustive.evaluate(
+        () => document.documentElement.scrollWidth > innerWidth,
+      ),
+      false,
+    );
+    console.log("Practice covers every flag before repeating");
+    await exhaustive.close();
+    for (const action of ["answer", "advance"]) {
+      const midnight = await browser.newPage();
+      await midnight.clock.install({ time: new Date("2026-11-16T04:59:40Z") });
+      await midnight.goto(`${base}/vocabulary/`);
+      const prompt = midnight.locator(".vocabulary-word");
+      const previous = await prompt.innerText();
+      const choice = midnight.locator(".choice").first();
+      if (action === "advance") {
+        await choice.click();
+        await midnight.locator("#next").waitFor();
       }
-      return failed;
-    },
-    flags.map((f) => f.id),
-  );
-  assert.deepEqual(missing, []);
-  console.log(`All ${flags.length} flag images load`);
-  await imagePage.close();
+      await midnight.clock.setFixedTime(new Date("2026-11-16T05:00:01Z"));
+      if (action === "advance") await midnight.locator("#next").click();
+      else await choice.click();
+      await midnight.waitForFunction(
+        (word) =>
+          document.querySelector(".vocabulary-word")?.textContent !== word,
+        previous,
+        { timeout: 3000 },
+      );
+      assert.match(
+        await midnight.locator(".round-head").innerText(),
+        /Question 1 of 5/,
+      );
+      assert.equal(await midnight.locator("#answer-feedback").count(), 0);
+      await midnight.close();
+    }
+    const imagePage = await browser.newPage();
+    await imagePage.goto(`${base}/flags/`);
+    const missing = await imagePage.evaluate(
+      async (ids) => {
+        const failed = [];
+        for (const id of ids) {
+          const img = new Image();
+          img.src = `/games/flags/${id}.svg`;
+          try {
+            await img.decode();
+            if (!img.naturalWidth || !img.naturalHeight) failed.push(id);
+          } catch {
+            failed.push(id);
+          }
+        }
+        return failed;
+      },
+      flags.map((f) => f.id),
+    );
+    assert.deepEqual(missing, []);
+    console.log(`All ${flags.length} flag images load`);
+    await imagePage.close();
+  }
 } finally {
   await browser.close();
 }

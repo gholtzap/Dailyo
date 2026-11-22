@@ -1,12 +1,18 @@
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const planning = process.argv[2] === "--plan";
 const match = (planning ? "--shard=1/18" : process.argv[2])?.match(
   /^--shard=(\d+)\/(\d+)$/,
 );
-assert.ok(match && process.argv.length === 3, "Use --shard=index/count");
+assert.ok(
+  match && [3, 4].includes(process.argv.length),
+  "Use --shard=index/count [--jobs=1|2]",
+);
+const jobsArg = process.argv[3] ?? "--jobs=1";
+assert.match(jobsArg, /^--jobs=[12]$/);
+const jobs = Number(jobsArg.split("=")[1]);
 const index = Number(match[1]),
   count = Number(match[2]);
 const { scripts } = JSON.parse(readFileSync("package.json", "utf8"));
@@ -25,36 +31,46 @@ for (const [i, city] of cities.entries()) {
   assert.match(city.slug, /^[a-z0-9-]+$/);
   groups[i % count].push(city.slug);
 }
+const actualWorld =
+  scripts["test:e2e:world"] === "node tests/trainrot-world.mjs";
 const world = groups.map(
-  (cities) => `${scripts["test:e2e:world"]} ${cities.join(" ")}`,
+  (cities) =>
+    `${scripts["test:e2e:world"]} ${cities.join(" ")}${actualWorld ? " --ci-cities-only" : ""}`,
 );
 for (const command of world)
-  durationsMs[command] = durationsMs[scripts["test:e2e:world"]] / count;
+  durationsMs[command] ??= durationsMs[scripts["test:e2e:world"]] / count;
+if (actualWorld) {
+  world.push("node tests/trainrot-world.mjs --ci-shared");
+  durationsMs[world.at(-1)] ??= 5000;
+}
 const split = {
   "node tests/puzzle-pools-browser.mjs": [390, 1440].flatMap((width) =>
     ["skyrot", "skylinerot", "zoomrot"].map(
       (game) => `--ci-width=${width} --ci-game=${game}`,
     ),
   ),
-  "node tests/visual-games.mjs": [1280, 390].map(
-    (width) => `--ci-width=${width}`,
-  ),
+  "node tests/visual-games.mjs": [
+    ...[1280, 390].map((width) => `--ci-width=${width}`),
+    "--ci-shared",
+  ],
   "node tests/daily-feed.mjs": [390, 1440].map(
     (width) => `--ci-width=${width}`,
   ),
-  "node tests/world-games.mjs": [390, 1440].map(
-    (width) => `--ci-width=${width}`,
-  ),
-  "node tests/perception-games.mjs": [390, 1440].map(
-    (width) => `--ci-width=${width}`,
-  ),
+  "node tests/world-games.mjs": [
+    ...[390, 1440].map((width) => `--ci-width=${width}`),
+    "--ci-shared",
+  ],
+  "node tests/perception-games.mjs": [
+    ...[390, 1440].map((width) => `--ci-width=${width}`),
+    "--ci-shared",
+  ],
 };
 const browser = scripts["test:e2e"].split(" && ").flatMap((command) => {
   const parts = split[command];
   if (!parts) return [command];
   return parts.map((part) => {
     const key = `${command} ${part}`;
-    durationsMs[key] = durationsMs[command] / parts.length;
+    durationsMs[key] ??= durationsMs[command] / parts.length;
     return key;
   });
 });
@@ -100,27 +116,34 @@ if (planning) {
 }
 mkdirSync("test-results", { recursive: true });
 const receipt = { index, count, ...shards[index - 1], results: [] };
-for (const command of receipt.commands) {
-  const [program, file, ...args] = command.split(" ");
-  assert.equal(program, "node");
-  assert.match(file, /^tests\/[\w-]+\.mjs$/);
-  const start = performance.now();
-  const result = spawnSync(process.execPath, [file, ...args], {
-    stdio: "inherit",
-    env: { ...process.env, WORLD_TEST_CITIES: "" },
-  });
-  receipt.results.push({
-    command,
-    durationMs: performance.now() - start,
-    status: result.status,
-    signal: result.signal,
-  });
-  writeFileSync(
-    `test-results/ci-browser-${index}.json`,
-    JSON.stringify(receipt, null, 2) + "\n",
-  );
-  if (result.status !== 0) {
-    process.exitCode = result.status ?? 1;
-    break;
+let next = 0;
+async function worker() {
+  while (next < receipt.commands.length) {
+    const command = receipt.commands[next++];
+    const [program, file, ...args] = command.split(" ");
+    assert.equal(program, "node");
+    assert.match(file, /^tests\/[\w-]+\.mjs$/);
+    const start = performance.now();
+    const result = await new Promise((resolve) => {
+      const child = spawn(process.execPath, [file, ...args], {
+        stdio: "inherit",
+        env: { ...process.env, WORLD_TEST_CITIES: "" },
+      });
+      child.once("error", (error) =>
+        resolve({ status: 1, error: String(error) }),
+      );
+      child.once("exit", (status, signal) => resolve({ status, signal }));
+    });
+    receipt.results.push({
+      command,
+      durationMs: performance.now() - start,
+      ...result,
+    });
+    writeFileSync(
+      `test-results/ci-browser-${index}.json`,
+      JSON.stringify(receipt, null, 2) + "\n",
+    );
+    if (result.status !== 0) process.exitCode = result.status ?? 1;
   }
 }
+await Promise.all(Array.from({ length: jobs }, worker));

@@ -1,4 +1,4 @@
-import { ciWidths } from "./ci-parts.mjs";
+import { ciWidths, ciShared } from "./ci-parts.mjs";
 import { rushSeed } from "./rush-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -228,84 +228,86 @@ try {
     assert.deepEqual(errors, []);
     await context.close();
   }
-  // Misses reveal a wider crop, hint use costs points, corrupt saves reset safely.
-  const page = await browser.newPage();
-  await page.clock.setFixedTime(new Date(`${day}T16:00:00Z`));
-  await page.goto(`${base}/skyrot/`);
-  await page.locator(".visual-choice").first().waitFor();
-  const q = visualSet("skyrot", data.skyrot, day)[0];
-  await page
-    .getByRole("button", {
-      name: q.options.find((x) => x.id !== q.item.id).name,
-      exact: true,
-    })
-    .click();
-  assert.equal(
-    await page.locator(".visual-viewport").getAttribute("data-zoom"),
-    "1",
-  );
-  await page.reload();
-  await page.locator(".visual-choice").first().waitFor();
-  assert.equal(
-    await page.locator(".visual-viewport").getAttribute("data-zoom"),
-    "1",
-  );
-  await page.getByRole("button", { name: q.item.name, exact: true }).click();
-  await page
-    .locator("#visual-feedback")
-    .filter({ hasText: "65 / 100 points" })
-    .waitFor();
-  await page.evaluate(
-    (day) =>
-      localStorage.setItem(
-        `dailyo:skyrot:v1:daily:${day}`,
-        JSON.stringify({ seed: day, answers: [{}] }),
-      ),
-    day,
-  );
-  await page.reload();
-  await page.locator(".visual-choice").first().waitFor();
-  assert.equal(
-    await page.locator(".visual-viewport").getAttribute("data-zoom"),
-    "0",
-  );
-  // A wrong Rush guess must end the run, without waiting for a timeout.
-  await page.goto(`${base}/rush/skyrot/?date=${day}`);
-  await page
-    .locator("#rush-status")
-    .filter({ hasText: "skyrot · Round 1" })
-    .waitFor();
-  const rushQ = visualSet(
-    "skyrot",
-    data.skyrot,
-    await rushSeed(page, "skyrot"),
-    true,
-    0,
-  )[0];
-  await page
-    .frameLocator("iframe:not(.feed-loading):not([hidden])")
-    .getByRole("button", {
-      name: rushQ.options.find((x) => x.id !== rushQ.item.id).name,
-      exact: true,
-    })
-    .click();
-  await page.getByRole("button", { name: "See recap", exact: true }).click();
-  await page
-    .getByRole("heading", { name: "Rush recap", exact: true })
-    .waitFor();
-  assert.equal(await page.locator("#rush-score").textContent(), "0 correct");
-  await page.route("**/games/media/skyrot-*.jpg", (route) =>
-    route.fulfill({ status: 503 }),
-  );
-  await page.goto(`${base}/skyrot/`);
-  await page
-    .getByRole("button", { name: "Reload puzzle", exact: true })
-    .waitFor();
-  assert.equal(await page.locator(".visual-choice:enabled").count(), 0);
-  await page.close();
-  console.log(
-    "Visual games browser checks passed at desktop and mobile sizes.",
-  );
+  if (ciShared()) {
+    // Misses reveal a wider crop, hint use costs points, corrupt saves reset safely.
+    const page = await browser.newPage();
+    await page.clock.setFixedTime(new Date(`${day}T16:00:00Z`));
+    await page.goto(`${base}/skyrot/`);
+    await page.locator(".visual-choice").first().waitFor();
+    const q = visualSet("skyrot", data.skyrot, day)[0];
+    await page
+      .getByRole("button", {
+        name: q.options.find((x) => x.id !== q.item.id).name,
+        exact: true,
+      })
+      .click();
+    assert.equal(
+      await page.locator(".visual-viewport").getAttribute("data-zoom"),
+      "1",
+    );
+    await page.reload();
+    await page.locator(".visual-choice").first().waitFor();
+    assert.equal(
+      await page.locator(".visual-viewport").getAttribute("data-zoom"),
+      "1",
+    );
+    await page.getByRole("button", { name: q.item.name, exact: true }).click();
+    await page
+      .locator("#visual-feedback")
+      .filter({ hasText: "65 / 100 points" })
+      .waitFor();
+    await page.evaluate(
+      (day) =>
+        localStorage.setItem(
+          `dailyo:skyrot:v1:daily:${day}`,
+          JSON.stringify({ seed: day, answers: [{}] }),
+        ),
+      day,
+    );
+    await page.reload();
+    await page.locator(".visual-choice").first().waitFor();
+    assert.equal(
+      await page.locator(".visual-viewport").getAttribute("data-zoom"),
+      "0",
+    );
+    // A wrong Rush guess must end the run, without waiting for a timeout.
+    await page.goto(`${base}/rush/skyrot/?date=${day}`);
+    await page
+      .locator("#rush-status")
+      .filter({ hasText: "skyrot · Round 1" })
+      .waitFor();
+    const rushQ = visualSet(
+      "skyrot",
+      data.skyrot,
+      await rushSeed(page, "skyrot"),
+      true,
+      0,
+    )[0];
+    await page
+      .frameLocator("iframe:not(.feed-loading):not([hidden])")
+      .getByRole("button", {
+        name: rushQ.options.find((x) => x.id !== rushQ.item.id).name,
+        exact: true,
+      })
+      .click();
+    await page.getByRole("button", { name: "See recap", exact: true }).click();
+    await page
+      .getByRole("heading", { name: "Rush recap", exact: true })
+      .waitFor();
+    assert.equal(await page.locator("#rush-score").textContent(), "0 correct");
+    await page.route("**/games/media/skyrot-*.jpg", (route) =>
+      route.fulfill({ status: 503 }),
+    );
+    await page.goto(`${base}/skyrot/`);
+    await page
+      .getByRole("button", { name: "Reload puzzle", exact: true })
+      .waitFor();
+    assert.equal(await page.locator(".visual-choice:enabled").count(), 0);
+    await page.close();
+    console.log(
+      "Visual games browser checks passed at desktop and mobile sizes.",
+    );
+  }
 } finally {
   await browser.close();
 }

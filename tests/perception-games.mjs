@@ -1,4 +1,4 @@
-import { ciWidths } from "./ci-parts.mjs";
+import { ciWidths, ciShared } from "./ci-parts.mjs";
 import { rushSeed } from "./rush-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -223,45 +223,55 @@ try {
       );
     await context.close();
   }
-  // Rush readiness, correct answer, and timeout travel through the parent iframe contract.
-  const page = await browser.newPage();
-  await page.clock.install({ time: new Date(`${day}T16:00:00Z`) });
-  for (const game of perceptionGames) {
-    await page.goto(`${base}/rush/${game}/?date=${day}`);
-    await page.locator("#rush-status").filter({ hasText: "Round 1" }).waitFor();
-    const frame = page
-      .frames()
-      .find((f) => f.url().includes(`/${game}/?rush=0`));
-    const q = perceptionPuzzle(game, await rushSeed(page, game), 0);
-    // Use the page's clock for the frame's actual timers.
-    frame.clock = page.clock;
-    await solve(frame, game, q);
-    await page.locator("#rush-status").filter({ hasText: "Round 2" }).waitFor();
-    const second = page
-      .frames()
-      .find((f) => f.url().includes(`/${game}/?rush=1`));
-    assert.equal(
-      await second
-        .getByRole("button", { name: "Start round", exact: true })
-        .count(),
-      0,
-      "Later Rush rounds start automatically",
-    );
-    await page.getByRole("button", { name: "Pause", exact: true }).click();
-    await page.clock.runFor(30000);
-    assert.equal(
-      await second.locator("#perception-feedback").count(),
-      0,
-      "Paused playback must not score or time out",
-    );
-    await page.getByRole("button", { name: "Resume", exact: true }).click();
-    await page.clock.runFor(30000);
-    await page
-      .getByRole("heading", { name: "Rush recap", exact: true })
-      .waitFor();
-    receipt.push(`${game}: Rush ready, correct, pause/resume, timeout, recap`);
+  if (ciShared()) {
+    // Rush readiness, correct answer, and timeout travel through the parent iframe contract.
+    const page = await browser.newPage();
+    await page.clock.install({ time: new Date(`${day}T16:00:00Z`) });
+    for (const game of perceptionGames) {
+      await page.goto(`${base}/rush/${game}/?date=${day}`);
+      await page
+        .locator("#rush-status")
+        .filter({ hasText: "Round 1" })
+        .waitFor();
+      const frame = page
+        .frames()
+        .find((f) => f.url().includes(`/${game}/?rush=0`));
+      const q = perceptionPuzzle(game, await rushSeed(page, game), 0);
+      // Use the page's clock for the frame's actual timers.
+      frame.clock = page.clock;
+      await solve(frame, game, q);
+      await page
+        .locator("#rush-status")
+        .filter({ hasText: "Round 2" })
+        .waitFor();
+      const second = page
+        .frames()
+        .find((f) => f.url().includes(`/${game}/?rush=1`));
+      assert.equal(
+        await second
+          .getByRole("button", { name: "Start round", exact: true })
+          .count(),
+        0,
+        "Later Rush rounds start automatically",
+      );
+      await page.getByRole("button", { name: "Pause", exact: true }).click();
+      await page.clock.runFor(30000);
+      assert.equal(
+        await second.locator("#perception-feedback").count(),
+        0,
+        "Paused playback must not score or time out",
+      );
+      await page.getByRole("button", { name: "Resume", exact: true }).click();
+      await page.clock.runFor(30000);
+      await page
+        .getByRole("heading", { name: "Rush recap", exact: true })
+        .waitFor();
+      receipt.push(
+        `${game}: Rush ready, correct, pause/resume, timeout, recap`,
+      );
+    }
+    assert.deepEqual(errors, []);
   }
-  assert.deepEqual(errors, []);
 } finally {
   if (lint)
     await fs.writeFile(

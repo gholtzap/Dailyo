@@ -14,8 +14,6 @@ jobs:
   prepare:
     runs-on: ubuntu-24.04
     timeout-minutes: 3
-    outputs:
-      matrix: ${{ steps.plan.outputs.matrix }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -34,17 +32,8 @@ jobs:
         env:
           FORMAT_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
         run: bun scripts/ci-feedback.ts
-      - run: bun run build:api
-      - id: plan
-        run: echo "matrix=$(node scripts/ci-browser.mjs --plan)" >> "$GITHUB_OUTPUT"
-      - name: Package the single build and browser dependencies
-        run: tar -cf /tmp/browser-runtime.tar dist .test-build node_modules package.json
-      - uses: actions/upload-artifact@v4
-        with:
-          name: browser-runtime
-          path: /tmp/browser-runtime.tar
-          compression-level: 0
-          retention-days: 1
+      - name: Require committed output to match the build
+        run: git diff --exit-code -- dist
 
   proofs:
     runs-on: ubuntu-24.04
@@ -52,24 +41,33 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          filter: blob:none
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
+      - id: proof-inputs
+        env:
+          PROOF_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci-proofs.mjs
       - uses: actions/cache@v4
+        if: steps.proof-inputs.outputs.reuse != 'true'
         with:
           path: .cache
           key: proof-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('verification/toolchain.json') }}
-      - run: npm run verify
+      - if: steps.proof-inputs.outputs.reuse != 'true'
+        run: npm run verify
+      - run: node scripts/verify.mjs --check
 
   browser:
-    needs: prepare
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -77,11 +75,15 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
-      - uses: actions/download-artifact@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          name: browser-runtime
-          path: /tmp
-      - run: tar -xf /tmp/browser-runtime.tar
+          bun-version: 1.4.5
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: dependencies-${{ runner.os }}-${{ runner.arch }}-bun-1.4.5-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
+      - run: node scripts/stage-data.mjs
       - uses: actions/cache@v4
         id: chromium
         with:
@@ -99,16 +101,15 @@ jobs:
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
             sleep 0.1
           done
-          node scripts/ci-browser.mjs --shard=${{ matrix.shard.index }}/${{ matrix.shard.count }}
+          node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/18 --jobs=2
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: browser-shard-${{ matrix.shard.index }}
+          name: browser-shard-${{ matrix.shard }}
           path: test-results/ci-browser-*.json
           retention-days: 7
 
   api:
-    needs: prepare
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     services:
@@ -132,11 +133,16 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
-      - uses: actions/download-artifact@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          name: browser-runtime
-          path: /tmp
-      - run: tar -xf /tmp/browser-runtime.tar
+          bun-version: 1.4.5
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: dependencies-${{ runner.os }}-${{ runner.arch }}-bun-1.4.5-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
+      - run: node scripts/stage-data.mjs
+      - run: bun run build:api
       - run: node tests/world-ranking.mjs
       - env:
           DATABASE_URL: postgres://dailyo:dailyo-test@127.0.0.1:5432/dailyo_test
@@ -156,12 +162,18 @@ jobs:
           BROWSER: ${{ needs.browser.result }}
           API: ${{ needs.api.result }}
         run: test "$PREPARE" = success && test "$PROOFS" = success && test "$BROWSER" = success && test "$API" = success
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        if: always()
-        with:
-          persist-credentials: false
       - name: Enforce full CI wall-time budget
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node scripts/ci-budget.mjs
+        run: |
+          node --input-type=module <<'JS'
+          const response = await fetch(`${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`, {
+            headers: {Authorization: `Bearer ${process.env.GH_TOKEN}`, Accept: 'application/vnd.github+json'}
+          });
+          if (!response.ok) throw new Error(`Timing API returned ${response.status}`);
+          const run = await response.json();
+          const elapsedMs = Date.now() - Date.parse(run.created_at);
+          console.log(JSON.stringify({run: run.html_url, elapsedMs, budgetMs: 60000}));
+          if (elapsedMs > 60000) throw new Error('Full CI exceeded one minute, including queue and setup');
+          JS

@@ -203,10 +203,14 @@ checks changed source/configuration files, leaving existing unformatted files an
 generated output alone. Bun 1.4.5 does not expose the documented native linter, so
 `bun lint` currently runs the pinned Oxlint dependency.
 
-CI builds the browser and backend once, then distributes that exact build to
-18 browser shards and the database tests. Shards use timings recorded from real
+CI builds the browser and backend once. Browser shards start immediately using
+committed JavaScript; the build gate requires that output to match fresh compiler
+output exactly. Database tests use the one backend build. Shards use timings recorded from real
 runs. Expanded photo pools split by game and viewport; the other large suites
 split by viewport. Every original browser case and all 98 cities remain covered.
+Two independent browser processes run per shard. Unchanged proofs reuse a
+successful job from the exact base commit only when every proof input and verifier
+file is identical. Missing evidence or changed inputs run the full prover.
 The final `verify` check requires source, browser, database, and proof checks and
 fails when total CI wall time exceeds 60 seconds, including runner waiting.
 This is a target, not a claim that hosted measurements have reached it yet.

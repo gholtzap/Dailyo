@@ -1,0 +1,10 @@
+{
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "unicorn/no-useless-spread": "off"
+  },
+  "ignorePatterns": ["src/verified/*.mjs"]
+}
