@@ -31,11 +31,11 @@ The dailyo and game names, logo artwork, and bundled third-party materials are o
 
 ## Run locally
 
-You need Node 24 and Python 3.
+You need Bun 1.4.5, Node 24, and Python 3.
 
 ```sh
 bun install --frozen-lockfile
-npm run dev
+bun run dev
 ```
 
 Open [localhost:4173](http://localhost:4173). The local build includes all twenty-one games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
