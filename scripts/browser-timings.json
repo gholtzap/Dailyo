@@ -67,6 +67,25 @@
     "node tests/trainrot-world.mjs seattle glasgow barcelona zurich tokyo --ci-cities-only": 21067.498354,
     "node tests/trainrot-world.mjs baltimore london dusseldorf stockholm taipei --ci-cities-only": 23749.025004,
     "node tests/world-games.mjs --ci-width=1440": 8787.718089,
-    "node tests/daily-feed.mjs --ci-width=390": 28098.001809999998
-  }
+    "node tests/daily-feed.mjs --ci-width=390": 28098.001809999998,
+    "node tests/rush-map-feedback.mjs": 1809.101209,
+    "node tests/map-answer-review.mjs": 1665.0914169999999
+  },
+  "additionalMeasurements": [
+    {
+      "environment": "macOS arm64, local single browser process",
+      "measuredAt": "2026-11-22T16:33:26.572Z",
+      "inputHash": "fd47d22f814de64fdc5c540d92226896e9a9556465b549e0d8dc41c4fead4082",
+      "measurements": [
+        {
+          "command": "node tests/rush-map-feedback.mjs",
+          "durationMs": 1809.101209
+        },
+        {
+          "command": "node tests/map-answer-review.mjs",
+          "durationMs": 1665.0914169999999
+        }
+      ]
+    }
+  ]
 }
