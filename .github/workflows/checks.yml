@@ -75,14 +75,17 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.4.5
       - uses: actions/cache@v4
+        id: dependencies
         with:
           path: node_modules
           key: dependencies-${{ runner.os }}-${{ runner.arch }}-bun-1.4.5-${{ hashFiles('bun.lock') }}
-      - run: bun install --frozen-lockfile
+      - uses: oven-sh/setup-bun@v2
+        if: steps.dependencies.outputs.cache-hit != 'true'
+        with:
+          bun-version: 1.4.5
+      - if: steps.dependencies.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
       - run: node scripts/stage-data.mjs
       - uses: actions/cache@v4
         id: chromium

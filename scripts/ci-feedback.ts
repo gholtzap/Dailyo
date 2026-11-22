@@ -42,6 +42,9 @@ const formatted = formatChanged.filter(
     /\.(?:[cm]?[jt]s|tsx|json|ya?ml|md|toml)$/.test(file),
 );
 const tasks: [string, string[]][] = [
+  ...(!local
+    ? [["ci-contracts", ["bun", "run", "test:ci"]] as [string, string[]]]
+    : []),
   ["lint", ["bun", "run", "lint"]],
   ["typecheck", ["bun", "check", "--no-script"]],
   ...(formatted.length
