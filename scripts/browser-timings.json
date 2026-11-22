@@ -22,7 +22,7 @@
     "node tests/results-polish.mjs": 13985.142090999998,
     "node tests/perception-games.mjs": 31099.10134600001,
     "node tests/automatic-progression.mjs": 7557.971779000003,
-    "node tests/rush-randomization.mjs": 3950.135897,
+    "node tests/rush-randomization.mjs": 9599.802573,
     "node tests/trainrot-world.mjs": 376989.997857,
     "node tests/interaction-polish.mjs": 3069.0725249999996,
     "node tests/rush-feedback.mjs": 10605.064588000001,
@@ -96,6 +96,19 @@
         {
           "command": "node tests/border-country-input.mjs",
           "durationMs": 1980.314542
+        }
+      ]
+    },
+    {
+      "environment": "GitHub Ubuntu 24.04, 18 runners, two independent processes each",
+      "sourceSha": "74c903a5dc32afa36d3fb3101053137fb9abbf0e",
+      "runUrl": "https://github.com/gholtzap/Dailyo/actions/runs/45047934404",
+      "measuredAt": "2026-11-22T17:12:54.318288+00:00",
+      "measurements": [
+        {
+          "command": "node tests/rush-randomization.mjs",
+          "durationMs": 9599.802573,
+          "status": 0
         }
       ]
     }
