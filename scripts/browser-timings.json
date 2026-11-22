@@ -69,7 +69,8 @@
     "node tests/world-games.mjs --ci-width=1440": 8787.718089,
     "node tests/daily-feed.mjs --ci-width=390": 28098.001809999998,
     "node tests/rush-map-feedback.mjs": 1809.101209,
-    "node tests/map-answer-review.mjs": 1665.0914169999999
+    "node tests/map-answer-review.mjs": 1665.0914169999999,
+    "node tests/border-country-input.mjs": 1980.314542
   },
   "additionalMeasurements": [
     {
@@ -84,6 +85,17 @@
         {
           "command": "node tests/map-answer-review.mjs",
           "durationMs": 1665.0914169999999
+        }
+      ]
+    },
+    {
+      "environment": "macOS arm64, local single browser process",
+      "measuredAt": "2026-11-22T16:55:36.363Z",
+      "inputHash": "8ff49f69fcde0dfd940a6a06fe065ec906f2a1569207973e41d61a7c0f0df4b5",
+      "measurements": [
+        {
+          "command": "node tests/border-country-input.mjs",
+          "durationMs": 1980.314542
         }
       ]
     }

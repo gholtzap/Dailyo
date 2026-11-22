@@ -291,6 +291,7 @@
   margin-bottom: 12px;
 }
 .border-marker {
+  pointer-events: none;
   position: absolute;
   width: 8px;
   height: 8px;
@@ -298,6 +299,9 @@
   border-radius: 50%;
   background: #b0e6c6;
   transform: translate(-50%, -50%);
+}
+.border-selectable {
+  cursor: pointer;
 }
 .border-destination {
   background: #f3ce78;
