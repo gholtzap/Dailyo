@@ -89,19 +89,27 @@ const duration = (command) =>
   Number.isFinite(durationsMs[command]) && durationsMs[command] > 0
     ? durationsMs[command]
     : fallback;
-const shards = Array.from({ length: count }, () => ({
+const lanes = Array.from({ length: count * jobs }, () => ({
   commands: [],
   estimatedMs: 0,
 }));
 for (const command of commands.sort(
   (a, b) => duration(b) - duration(a) || a.localeCompare(b),
 )) {
-  const shard = shards.reduce((best, next) =>
+  const lane = lanes.reduce((best, next) =>
     next.estimatedMs < best.estimatedMs ? next : best,
   );
-  shard.commands.push(command);
-  shard.estimatedMs += duration(command);
+  lane.commands.push(command);
+  lane.estimatedMs += duration(command);
 }
+const shards = Array.from({ length: count }, (_, i) => {
+  const workers = lanes.slice(i * jobs, (i + 1) * jobs);
+  return {
+    commands: workers.flatMap((lane) => lane.commands),
+    lanes: workers.map((lane) => lane.commands),
+    estimatedMs: Math.max(...workers.map((lane) => lane.estimatedMs)),
+  };
+});
 if (planning) {
   console.log(
     JSON.stringify(
@@ -116,10 +124,8 @@ if (planning) {
 }
 mkdirSync("test-results", { recursive: true });
 const receipt = { index, count, ...shards[index - 1], results: [] };
-let next = 0;
-async function worker() {
-  while (next < receipt.commands.length) {
-    const command = receipt.commands[next++];
+async function worker(queue) {
+  for (const command of queue) {
     const [program, file, ...args] = command.split(" ");
     assert.equal(program, "node");
     assert.match(file, /^tests\/[\w-]+\.mjs$/);
@@ -146,4 +152,4 @@ async function worker() {
     if (result.status !== 0) process.exitCode = result.status ?? 1;
   }
 }
-await Promise.all(Array.from({ length: jobs }, worker));
+await Promise.all(receipt.lanes.map(worker));

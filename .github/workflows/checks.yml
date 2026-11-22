@@ -11,7 +11,7 @@ concurrency:
   group: game-checks-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  prepare:
+  verify:
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     steps:
@@ -34,6 +34,11 @@ jobs:
         run: bun scripts/ci-feedback.ts
       - name: Require committed output to match the build
         run: git diff --exit-code -- dist
+      - name: Require every check and enforce the full CI budget
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_BROWSER_SHARDS: 18
+        run: node scripts/ci-finish.mjs
 
   proofs:
     runs-on: ubuntu-24.04
@@ -162,32 +167,3 @@ jobs:
           DATABASE_URL: postgres://dailyo:dailyo-test@127.0.0.1:5432/dailyo_test
           TRAINROT_TEST_URL: http://127.0.0.1:4174
         run: node scripts/test-score-api.mjs
-
-  verify:
-    needs: [prepare, proofs, browser, api]
-    if: always()
-    runs-on: ubuntu-24.04
-    timeout-minutes: 1
-    steps:
-      - name: Require every correctness check
-        env:
-          PREPARE: ${{ needs.prepare.result }}
-          PROOFS: ${{ needs.proofs.result }}
-          BROWSER: ${{ needs.browser.result }}
-          API: ${{ needs.api.result }}
-        run: test "$PREPARE" = success && test "$PROOFS" = success && test "$BROWSER" = success && test "$API" = success
-      - name: Enforce full CI wall-time budget
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          node --input-type=module <<'JS'
-          const response = await fetch(`${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`, {
-            headers: {Authorization: `Bearer ${process.env.GH_TOKEN}`, Accept: 'application/vnd.github+json'}
-          });
-          if (!response.ok) throw new Error(`Timing API returned ${response.status}`);
-          const run = await response.json();
-          const elapsedMs = Date.now() - Date.parse(run.created_at);
-          console.log(JSON.stringify({run: run.html_url, elapsedMs, budgetMs: 60000}));
-          if (elapsedMs > 60000) throw new Error('Full CI exceeded one minute, including queue and setup');
-          JS
