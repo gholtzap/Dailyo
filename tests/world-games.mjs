@@ -301,7 +301,7 @@ try {
       await exhaustive
         .getByRole("button", { name: correct, exact: true })
         .click();
-      await exhaustive.locator("#next").click();
+      await exhaustive.locator("#next").press("Enter");
       await exhaustive.waitForFunction(
         (previous) =>
           document.querySelector(".flag")?.getAttribute("src") !== previous,

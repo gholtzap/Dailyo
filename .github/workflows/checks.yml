@@ -72,7 +72,18 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+      - id: node-runtime
+        name: Use the installed Node 24 runtime
+        run: |
+          for candidate in /opt/hostedtoolcache/node/24.*/x64/bin; do
+            if [[ -x "$candidate/node" ]]; then
+              echo "$candidate" >> "$GITHUB_PATH"
+              echo 'available=true' >> "$GITHUB_OUTPUT"
+              break
+            fi
+          done
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        if: steps.node-runtime.outputs.available != 'true'
         with:
           node-version: "24"
       - uses: actions/cache@v4
