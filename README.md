@@ -31,11 +31,11 @@ The dailyo and game names, logo artwork, and bundled third-party materials are o
 
 ## Run locally
 
-You need Node 24 and Python 3.
+You need Bun 1.4.5, Node 24, and Python 3.
 
 ```sh
-npm ci
-npm run dev
+bun install --frozen-lockfile
+bun run dev
 ```
 
 Open [localhost:4173](http://localhost:4173). The local build includes all twenty-one games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
@@ -216,9 +216,7 @@ The final `verify` check requires source, browser, database, and proof checks an
 fails when total CI wall time exceeds 60 seconds, including runner waiting.
 Two measured warm-cache runs completed in [59 seconds](https://github.com/gholtzap/Dailyo/actions/runs/44968559653)
 and [56 seconds](https://github.com/gholtzap/Dailyo/actions/runs/44968823813), compared
-with 5:38–8:59 for the five preceding Rush PRs. The final snapshot configuration
-has one measured run; cold-cache and p95 latency below one minute are not yet
-established. Measurement details are in `scripts/ci-benchmarks.json`.
+with 5:38–8:59 for the five preceding Rush PRs. These measurements do not establish cold-cache or p95 latency below one minute. Measurement details are in `scripts/ci-benchmarks.json`.
 
 This uses 18 standard browser runners, with two worker queues per runner. It uses
 more aggregate compute to reduce waiting. Standard runners are
