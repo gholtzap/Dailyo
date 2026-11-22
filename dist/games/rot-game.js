@@ -3,7 +3,7 @@ import { showGameProgress } from "./help.js";
 import { makeSet, newSession, phase, preparePuzzles, rankingPuzzle, restoreSession, roundCount, scoreAnswer, scoreSet, transition, } from "./rot-puzzles.js";
 import { dailyDate as today, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, rushSeed, startPractice, readRushDraft, saveRushDraft, } from "../daily/bridge.js";
 import { showRank } from "../daily/rank.js";
-import { searchCountries, exactCountryMatch } from "./country-search.js";
+import { searchCountries, exactCountryMatch, automaticCountryMatch, } from "./country-search.js";
 import { parseDifficulty, practiceSettings, practiceSlot, } from "./difficulty.js";
 const kind = document.body.dataset.game;
 const quiz = required("#quiz");
@@ -556,7 +556,7 @@ function drawTimeline(question, state, reviewing) {
     }
     return [heading, element("p", event[1], "rot-year-event"), list, choices];
 }
-function drawBorderMap(start, target, guesses) {
+function drawBorderMap(start, target, guesses, choose) {
     if (!borderGeometry)
         return null;
     const { paths, anchors } = borderGeometry;
@@ -588,6 +588,22 @@ function drawBorderMap(start, target, guesses) {
     }
     for (const [, path] of paths)
         context.stroke(path);
+    if (choose) {
+        map.classList.add("border-selectable");
+        map.setAttribute("role", "img");
+        map.setAttribute("aria-label", "Route map. Click a country to add it, or use Add a country below.");
+        map.onclick = (event) => {
+            const rect = map.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) * map.width) / rect.width;
+            const y = ((event.clientY - rect.top) * map.height) / rect.height;
+            // Hit-test the same transformed paths used for painting the map.
+            const hit = [...paths]
+                .reverse()
+                .find(([, path]) => context.isPointInPath(path, x, y, "evenodd"));
+            if (hit)
+                choose(hit[0]);
+        };
+    }
     panel.append(map);
     for (const id of new Set([start, target, ...guesses])) {
         const [x, y] = anchors[id];
@@ -596,6 +612,7 @@ function drawBorderMap(start, target, guesses) {
             ? data.graph.get(id).name
             : undefined;
         const marker = element("span", undefined, "border-marker");
+        marker.setAttribute("aria-hidden", "true");
         marker.style.left = `${((x - left) / width) * 100}%`;
         marker.style.top = `${((y - top) / height) * 100}%`;
         marker.classList.toggle("border-destination", !selected.has(id));
@@ -607,7 +624,8 @@ function drawBorderMap(start, target, guesses) {
         }
         panel.append(marker);
     }
-    panel.setAttribute("aria-hidden", "true");
+    if (!choose)
+        panel.setAttribute("aria-hidden", "true");
     return panel;
 }
 function drawBorders(question, state, reviewing) {
@@ -660,35 +678,55 @@ function drawBorders(question, state, reviewing) {
     choices.setAttribute("aria-label", "Matching countries");
     const feedback = element("p", undefined, "rot-feedback");
     feedback.setAttribute("role", "status");
-    const countries = [
+    feedback.id = "country-feedback";
+    input.setAttribute("aria-describedby", feedback.id);
+    const atlas = [
         ...data.graph.values(),
-    ]
+    ];
+    const countries = atlas
         .filter((country) => !selected.includes(country.id))
         .sort((a, b) => a.name.localeCompare(b.name));
     let matches = [];
     function add(country) {
         if (!update({ type: "add", country: country.id })) {
-            feedback.textContent = `${country.name} and ${name(last)} don’t share a land border in this game.`;
-            input.focus();
+            feedback.textContent = selected.includes(country.id)
+                ? `${country.name} is already in your route.`
+                : `${country.name} and ${name(last)} don’t share a land border in this game.`;
+            input.setAttribute("aria-invalid", "true");
+            input.focus({ preventScroll: true });
+            feedback.scrollIntoView({ block: "nearest" });
         }
         else if (phase(sessions[mode].state) === "guess")
             document.querySelector("#country-search").focus();
     }
-    input.oninput = () => {
+    let composing = false;
+    input.addEventListener("compositionstart", () => {
+        composing = true;
+    });
+    input.addEventListener("compositionend", () => {
+        composing = false;
+        search();
+    });
+    function search() {
         const query = input.value.trim();
         feedback.textContent = "";
+        input.removeAttribute("aria-invalid");
         matches = searchCountries(countries, query);
         choices.replaceChildren(...matches.map((country) => button(country.name, () => add(country), "choice")));
         if (query && !matches.length)
             choices.append(element("p", "No matches"));
-    };
+        const automatic = !composing && automaticCountryMatch(atlas, query);
+        if (automatic && !selected.includes(automatic.id))
+            add(automatic);
+    }
+    input.oninput = search;
     input.onkeydown = (event) => {
-        if (event.key !== "Enter")
+        if (event.key !== "Enter" || composing || event.isComposing)
             return;
+        event.preventDefault();
         const exactMatches = matches.filter((country) => exactCountryMatch(country, input.value));
         const exact = exactMatches.length === 1 ? exactMatches[0] : undefined;
         if (exact || matches.length === 1) {
-            event.preventDefault();
             add(exact ?? matches[0]);
         }
     };
@@ -701,12 +739,16 @@ function drawBorders(question, state, reviewing) {
     actions.append(button("Show shortest route", () => update({ type: "skip" })));
     return [
         heading,
-        drawBorderMap(start, target, state.draft),
+        drawBorderMap(start, target, state.draft, (id) => {
+            const country = atlas.find((country) => country.id === id);
+            if (country)
+                add(country);
+        }),
         chain(selected, "Your route"),
         label,
         input,
-        choices,
         feedback,
+        choices,
         actions,
     ];
 }
