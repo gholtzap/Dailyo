@@ -638,9 +638,9 @@ window.addEventListener(
       )
         return;
       if (event.data.open) {
-        holdAnswer("explicit");
+        holdAnswer("inspection");
         pauseRound();
-      }
+      } else releaseAnswer("inspection");
       updatePauseControl();
       if (run.phase === "paused") {
         visible!.inert = !helpOpen();
