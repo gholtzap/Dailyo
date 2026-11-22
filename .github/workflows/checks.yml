@@ -33,7 +33,13 @@ jobs:
           FORMAT_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
         run: bun scripts/ci-feedback.ts
       - name: Require committed output to match the build
-        run: git diff --exit-code -- dist
+        run: |
+          git diff --exit-code -- dist
+          untracked=$(git ls-files --others --exclude-standard -- dist)
+          if [[ -n "$untracked" ]]; then
+            printf '%s\n' "$untracked"
+            exit 1
+          fi
       - name: Require every check and enforce the full CI budget
         env:
           GH_TOKEN: ${{ github.token }}
