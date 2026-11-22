@@ -179,7 +179,6 @@ before starting another cycle. The current puzzle and cycle progress resume
 on reload. Map, timeline, and country-route results include a review of each
 completed question; opening a review does not change the saved score.
 
-
 Perception games: **countrot** (dot counting), **trackrot** (ball tracking),
 **anglerot** (angle estimation), **temporot** (rhythm), and **splitrot** (line
 proportions). Each has five seeded daily rounds, saved progress, unlimited
@@ -195,3 +194,30 @@ saved Daily results, hard Practice, sharing, Daily mix, Rush at
 `test-results/perception/`. Run `npm run lint:ui:perception` for the UI policy checks. These are original implementations of the five
 perception tasks described at https://perceptle.io/how-to-play/; no Perceptle
 code, artwork, or audio is used.
+
+### CI performance
+
+`bun test` runs source tests without compiling them first. `bun check` owns type
+checking; TypeScript is still used to emit browser and API JavaScript. `bun fmt`
+checks changed source/configuration files, leaving existing unformatted files and
+generated output alone. Bun 1.4.5 does not expose the documented native linter, so
+`bun lint` currently runs the pinned Oxlint dependency.
+
+CI builds the browser and backend once, then distributes that exact build to
+18 browser shards and the database tests. Shards use timings recorded from real
+runs. Expanded photo pools split by game and viewport; the other large suites
+split by viewport. Every original browser case and all 98 cities remain covered.
+The final `verify` check requires source, browser, database, and proof checks and
+fails when total CI wall time exceeds 60 seconds, including runner waiting.
+This is a target, not a claim that hosted measurements have reached it yet.
+
+`bun run ci:feedback origin/main` selects source tests through transitive imports;
+unknown configuration/resource changes use the full set. Browser runtime URLs
+fall back to full journeys. Authoritative CI still runs the full suite before
+merge: this personal repository cannot enable GitHub's native merge queue.
+`merge_group` is supported if the repository moves to an eligible account.
+
+Run `bun run hooks:install` to install the pre-push hook. It checks formatting,
+lint and types for the actual pushed range without rewriting files; the local
+budget is nine seconds. The optional production-NYC router suite still requires
+production data and is run explicitly with `bun run test:nyc`.

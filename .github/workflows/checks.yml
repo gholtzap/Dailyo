@@ -3,12 +3,49 @@ on:
   push:
     branches: [main]
   pull_request:
+  merge_group:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: game-checks-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          filter: blob:none
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.5
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: dependencies-${{ runner.os }}-${{ runner.arch }}-bun-1.4.5-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
+      - name: Lint, typecheck, build and source tests in parallel
+        env:
+          FORMAT_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+        run: bun scripts/ci-feedback.ts
+      - run: bun run build:api
+      - id: plan
+        run: echo "matrix=$(node scripts/ci-browser.mjs --plan)" >> "$GITHUB_OUTPUT"
+      - name: Package the single build and browser dependencies
+        run: tar -cf /tmp/browser-runtime.tar dist .test-build node_modules package.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: browser-runtime
+          path: /tmp/browser-runtime.tar
+          compression-level: 0
+          retention-days: 1
+
   proofs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -18,17 +55,62 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: '24'
+          node-version: "24"
       - uses: actions/cache@v4
         with:
           path: .cache
           key: proof-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('verification/toolchain.json') }}
-      - name: Verify Bend laws, compiler output, and rejected regressions
-        run: npm run verify
+      - run: npm run verify
 
-  journeys:
+  browser:
+    needs: prepare
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 3
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24"
+      - uses: actions/download-artifact@v4
+        with:
+          name: browser-runtime
+          path: /tmp
+      - run: tar -xf /tmp/browser-runtime.tar
+      - uses: actions/cache@v4
+        id: chromium
+        with:
+          path: ~/.cache/ms-playwright
+          key: chromium-shell-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+      - if: steps.chromium.outputs.cache-hit != 'true'
+        run: node node_modules/playwright/cli.js install --only-shell chromium
+      - name: Run the recorded-time shard
+        env:
+          TRAINROT_TEST_URL: http://127.0.0.1:4173
+        run: |
+          python3 -m http.server 4173 --protocol HTTP/1.1 --bind 127.0.0.1 --directory dist > /tmp/trainrot-server.log 2>&1 &
+          trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
+          for _attempt in 1 2 3 4 5; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 0.1
+          done
+          node scripts/ci-browser.mjs --shard=${{ matrix.shard.index }}/${{ matrix.shard.count }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-shard-${{ matrix.shard.index }}
+          path: test-results/ci-browser-*.json
+          retention-days: 7
+
+  api:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
     services:
       postgres:
         image: postgres:17-alpine
@@ -40,7 +122,7 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd pg_isready
-          --health-interval 5s
+          --health-interval 1s
           --health-timeout 5s
           --health-retries 10
     steps:
@@ -49,58 +131,37 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: '24'
-      - uses: oven-sh/setup-bun@v2
+          node-version: "24"
+      - uses: actions/download-artifact@v4
         with:
-          bun-version: 1.4.5
-      - run: bun install --frozen-lockfile
-      - name: Check types and build once in parallel
-        run: bun run --parallel --no-exit-on-error typecheck:ci build:ci
-      - run: bun run test:compiled
+          name: browser-runtime
+          path: /tmp
+      - run: tar -xf /tmp/browser-runtime.tar
       - run: node tests/world-ranking.mjs
-      - name: Verify score API with real Postgres
-        env:
+      - env:
           DATABASE_URL: postgres://dailyo:dailyo-test@127.0.0.1:5432/dailyo_test
           TRAINROT_TEST_URL: http://127.0.0.1:4174
         run: node scripts/test-score-api.mjs
-      - run: node node_modules/playwright/cli.js install --with-deps chromium
-      - name: Verify desktop and mobile journeys
-        run: |
-          python3 -m http.server 4173 --protocol HTTP/1.1 --bind 127.0.0.1 --directory dist > /tmp/trainrot-server.log 2>&1 &
-          for _attempt in 1 2 3 4 5; do
-            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
-            sleep 1
-          done
-          trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
-          mkdir -p test-results
-          pids=()
-          for shard in 1 2 3 4; do
-            TRAINROT_TEST_URL=http://127.0.0.1:4173 node scripts/ci-browser.mjs --shard="$shard/4" > "test-results/ci-browser-$shard.log" 2>&1 &
-            pids+=("$!")
-          done
-          result=0
-          for pid in "${pids[@]}"; do
-            wait "$pid" || result=1
-          done
-          cat test-results/ci-browser-*.log
-          exit "$result"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: browser-shards
-          path: |
-            test-results/ci-browser-*.json
-            test-results/ci-browser-*.log
-          retention-days: 7
 
   verify:
-    needs: [proofs, journeys]
+    needs: [prepare, proofs, browser, api]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 1
     steps:
-      - name: Require every check
+      - name: Require every correctness check
         env:
+          PREPARE: ${{ needs.prepare.result }}
           PROOFS: ${{ needs.proofs.result }}
-          JOURNEYS: ${{ needs.journeys.result }}
-        run: test "$PROOFS" = success && test "$JOURNEYS" = success
+          BROWSER: ${{ needs.browser.result }}
+          API: ${{ needs.api.result }}
+        run: test "$PREPARE" = success && test "$PROOFS" = success && test "$BROWSER" = success && test "$API" = success
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        if: always()
+        with:
+          persist-credentials: false
+      - name: Enforce full CI wall-time budget
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci-budget.mjs
