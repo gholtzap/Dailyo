@@ -18,7 +18,7 @@ const instructions: Record<string, string[]> = {
     "Hard practice asks you to tap halfway between the imagined beats.",
   ],
   splitrot: [
-    "Measure the requested percentage from the named endpoint. Tap the line or use the Split position slider.",
+    "Measure the requested percentage from the named endpoint. Drag the marker or tap the line.",
     "Hard practice extends beyond the line. 150% from the left is one and a half line lengths from the left endpoint.",
   ],
   skyrot: [

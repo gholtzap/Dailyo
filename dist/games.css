@@ -897,85 +897,44 @@
   min-height: var(--tempo-tap-min-height);
 }
 .split-field {
-  --split-field-height: 160px;
+  --split-field-height: 112px;
   position: relative;
   height: var(--split-field-height);
-  margin: var(--space-6) 0;
-  border: var(--stroke-1) solid var(--line);
-  cursor: crosshair;
+  margin: var(--space-4) 0;
+}
+.split-rail {
+  position: absolute;
+  inset: 0 var(--space-6);
 }
 .split-line {
   --split-line-height: 2px;
   position: absolute;
   left: 0;
   right: 0;
-  top: var(--space-20);
+  top: 50%;
   height: var(--split-line-height);
 }
-.split-line:before {
-  --split-line-width: 2px;
-  --split-line-height: 18px;
-  --split-line-paint: #b5b7bb;
+.split-line::before, .split-line::after {
   content: "";
   position: absolute;
   top: calc(var(--space-2) * -1);
-  width: var(--split-line-width);
-  height: var(--split-line-height);
-  background: var(--split-line-paint);
+  width: var(--stroke-2);
+  height: var(--space-4);
 }
-.split-line:after {
-  --split-line-width: 2px;
-  --split-line-height: 18px;
-  --split-line-paint: #b5b7bb;
-  content: "";
-  position: absolute;
-  top: calc(var(--space-2) * -1);
-  width: var(--split-line-width);
-  height: var(--split-line-height);
-  background: var(--split-line-paint);
-}
-.split-line:after {
-  right: 0;
-}
-.split-left {
-  --split-left-top: 104px;
-  position: absolute;
-  top: var(--split-left-top);
-  font-size: var(--font-size-12);
-  color: var(--muted);
-}
-.split-right {
-  --split-right-top: 104px;
-  position: absolute;
-  top: var(--split-right-top);
-  font-size: var(--font-size-12);
-  color: var(--muted);
-}
-.split-left {
-  left: var(--space-2);
-}
-.split-right {
-  right: var(--space-2);
-}
+.split-line::after { right: 0; }
 .split-marker {
   position: absolute;
-  top: var(--space-15);
+  top: calc(50% - var(--space-5));
   height: var(--control-size-compact);
   width: var(--space-1);
   transform: translateX(-50%);
 }
 .split-answer {
   height: var(--space-14);
-  top: var(--space-13);
+  top: calc(50% - var(--space-7));
 }
 .split-field[data-extended=true] .split-line {
   left: 33.3333%;
-  right: 33.3333%;
-}
-.split-field[data-extended=true] .split-left {
-  left: 33.3333%;
-}
-.split-field[data-extended=true] .split-right {
   right: 33.3333%;
 }
 #quiz .result>.primary {

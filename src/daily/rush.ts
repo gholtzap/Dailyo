@@ -29,6 +29,23 @@ const actions = $(".feed-actions"),
   retry = $("#rush-retry"),
   next = $("#rush-next");
 const pause = $("#rush-pause");
+const splitHelp = document.createElement("button");
+splitHelp.type = "button";
+splitHelp.id = "rush-split-help";
+splitHelp.className = "game-icon";
+splitHelp.textContent = "How to play";
+splitHelp.setAttribute("aria-haspopup", "dialog");
+splitHelp.hidden = true;
+actions.append(splitHelp);
+splitHelp.onclick = () => {
+  const doc = panel.querySelector<HTMLIFrameElement>(
+    "iframe[title]:not([hidden])",
+  )?.contentDocument;
+  const dialog = doc?.querySelector<HTMLDialogElement>("#help-dialog");
+  if (!dialog || dialog.open) return;
+  dialog.addEventListener("close", () => splitHelp.focus(), { once: true });
+  doc?.querySelector<HTMLButtonElement>("#help")?.click();
+};
 const pauseSurface = $("#rush-resume-panel");
 const resumeCard =
   pauseSurface.querySelector<HTMLElement>(".rush-resume-card")!;
@@ -266,6 +283,9 @@ let advance: {
   deadline: number;
 } | null = null;
 function updateReviewControl() {
+  splitHelp.hidden =
+    panel.querySelector<HTMLIFrameElement>("iframe[title]:not([hidden])")
+      ?.contentDocument?.body.dataset.game !== "splitrot";
   reviewButton.hidden =
     !lastAnswer ||
     review.state === "previous" ||
@@ -479,10 +499,11 @@ function makeRound(gameIndex: number, roundIndex: number) {
   const frame = document.createElement("iframe");
   frame.src = `${games[gameIndex].path}?rush=${roundIndex}&date=${date}&run=${runId}`;
   frame.className = "feed-loading";
+  frame.dataset.game = games[gameIndex].label;
   frame.inert = true;
   panel.append(frame);
   if (
-    !["countrot", "trackrot", "anglerot", "temporot", "splitrot"].includes(
+    !["countrot", "trackrot", "anglerot", "temporot"].includes(
       games[gameIndex].label,
     )
   )

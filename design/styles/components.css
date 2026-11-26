@@ -1128,19 +1128,6 @@ body:has(#app) .game-help-header h2 {
     height: var(--split-field-compact-height);
     margin-block: var(--space-2);
   }
-  [data-rush] .split-line {
-    top: 50%;
-  }
-  [data-rush] :is(.split-left,.split-right) {
-    top: auto;
-    bottom: var(--space-2);
-  }
-  [data-rush] .split-marker {
-    top: calc(50% - var(--space-5));
-  }
-  [data-rush] .split-answer {
-    top: calc(50% - var(--space-7));
-  }
   [data-rush] body[data-game=trackrot] .perception-field {
     --perception-field-compact-height: 36dvh;
     width: min(100%,calc(var(--perception-field-compact-height) * 12 / 7));
@@ -1186,3 +1173,45 @@ body:has(#app) .game-help-header h2 {
 }
 
 select:not([multiple]) { height: var(--control-size); }
+
+/* One tactile control on the reference line, with a native keyboard interface. */
+.split-control {
+  position: absolute;
+  inset-block: 0;
+  left: calc(var(--space-3) * -1);
+  width: calc(100% + var(--space-6));
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+  touch-action: pan-y;
+}
+.split-control::-webkit-slider-runnable-track { height: var(--control-size-large); background: transparent; }
+.split-control::-moz-range-track { height: var(--control-size-large); background: transparent; }
+.split-control::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: var(--space-6);
+  height: var(--control-size-large);
+  border: var(--stroke-3) solid var(--well);
+  border-radius: var(--radius-control-compact);
+  background: var(--accent);
+  box-shadow: 0 0 0 var(--stroke-2) var(--accent);
+}
+.split-control::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--space-6);
+  height: var(--control-size-large);
+  border: var(--stroke-3) solid var(--well);
+  border-radius: var(--radius-control-compact);
+  background: var(--accent);
+  box-shadow: 0 0 0 var(--stroke-2) var(--accent);
+}
+[data-rush] body[data-game=splitrot] .heading { display: none; }
+
+.split-control:focus-visible { outline: none; }
+.split-control:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 var(--stroke-2) var(--focus); }
+.split-control:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 var(--stroke-2) var(--focus); }

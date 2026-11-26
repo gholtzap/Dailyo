@@ -764,53 +764,26 @@ function drawRound() {
     const field = el("div", undefined, "split-field");
     field.setAttribute("role", "group");
     field.setAttribute("aria-label", "Reference line with selection");
-    const base = el("div", undefined, "split-line"),
-      left = el("span", "Left", "split-left"),
-      right = el("span", "Right", "split-right"),
-      marker = el("span", undefined, "split-marker");
+    const rail = el("div", undefined, "split-rail");
+    const base = el("div", undefined, "split-line");
     const coordinate = (value: number) => (q.hard ? (100 + value) / 3 : value);
-    const position = (guess: number) => {
-      marker.style.left = `${coordinate(guess)}%`;
-    };
-    field.append(base, left, right, marker);
+    rail.append(base);
+    field.append(rail);
     field.dataset.extended = String(q.hard);
-    position(draft);
     quiz.append(field);
-    if (reveal) {
-      const answer = el("span", undefined, "split-marker split-answer");
-      answer.style.left = `${coordinate((q.right ? 1 - q.target : q.target) * 100)}%`;
-      field.append(answer);
-    }
     if (phase === "answering") {
-      quiz.append(
-        slider(
-          "Split position",
-          q.hard ? -100 : 0,
-          q.hard ? 200 : 100,
-          draft,
-          (value) => {
-            draft = value;
-            position(value);
-          },
-        ),
-      );
-      field.style.touchAction = "none";
-      const pick = (e: PointerEvent) => {
-        const fraction =
-          (e.clientX - field.getBoundingClientRect().left) / field.clientWidth;
-        draft = q.hard
-          ? Math.max(-100, Math.min(200, (fraction * 3 - 1) * 100))
-          : Math.max(0, Math.min(100, fraction * 100));
-        position(draft);
-        quiz.querySelector<HTMLInputElement>("input")!.value = String(draft);
+      const input = el("input", undefined, "split-control");
+      input.id = "perception-input";
+      input.type = "range";
+      input.setAttribute("aria-label", "Split position");
+      input.min = q.hard ? "-100" : "0";
+      input.max = q.hard ? "200" : "100";
+      input.step = "0.1";
+      input.value = String(draft);
+      input.oninput = () => {
+        draft = Number(input.value);
       };
-      field.onpointerdown = (e) => {
-        field.setPointerCapture(e.pointerId);
-        pick(e);
-      };
-      field.onpointermove = (e) => {
-        if (field.hasPointerCapture(e.pointerId)) pick(e);
-      };
+      rail.append(input);
       quiz.append(
         button(
           "Check split",
@@ -818,6 +791,15 @@ function drawRound() {
           "primary",
         ),
       );
+    } else {
+      const marker = el("span", undefined, "split-marker");
+      marker.style.left = `${coordinate(draft)}%`;
+      rail.append(marker);
+      if (reveal) {
+        const answer = el("span", undefined, "split-marker split-answer");
+        answer.style.left = `${coordinate((q.right ? 1 - q.target : q.target) * 100)}%`;
+        rail.append(answer);
+      }
     }
   } else {
     if (phase === "showing")
