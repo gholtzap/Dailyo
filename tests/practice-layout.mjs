@@ -21,6 +21,7 @@ try {
       "borderrot",
     ]) {
       await p.goto(`${base}/${game}/`);
+      await p.locator("#quiz button").first().waitFor();
       await p.getByRole("button", { name: "Practice", exact: true }).click();
       await p.locator('#practice[aria-pressed="true"]').waitFor();
       assert.doesNotMatch(
@@ -50,6 +51,10 @@ try {
         );
       }
       if (game === "zoomrot") {
+        assert.ok(
+          (await p.locator("#practice-difficulty").boundingBox()).height >= 44,
+          "Native difficulty selectors retain a full touch target",
+        );
         await p.locator("#practice-difficulty").selectOption("hard");
         assert.match(
           await p.locator("#practice-difficulty-description").innerText(),
