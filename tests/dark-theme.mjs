@@ -91,7 +91,11 @@ try {
           const embedded = page.frameLocator(
             "iframe:not(.feed-loading):not([hidden])",
           );
-          await embedded.locator(".game-help button").waitFor();
+          await (
+            route.startsWith("/rush/")
+              ? page.getByRole("button", { name: "How to play", exact: true })
+              : embedded.locator(".game-help button")
+          ).waitFor();
           assert.deepEqual(
             await embedded.locator("body").evaluate((body) => ({
               scheme: getComputedStyle(document.documentElement).colorScheme,

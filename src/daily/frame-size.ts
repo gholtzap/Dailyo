@@ -1,8 +1,11 @@
+import { designValue } from "../design.js";
+
 // Keep the puzzle in the page's scroll flow instead of clipping it inside a
 // second viewport. Observe the content, not document.scrollHeight (which also
 // includes the iframe's current viewport and cannot shrink between states).
 export function sizeFeedFrame(frame: HTMLIFrameElement) {
   let content: ResizeObserver | undefined;
+  let dialogs: MutationObserver | undefined;
   let pending = 0;
   let wasVisible = false;
   const panel = frame.parentElement!;
@@ -22,10 +25,22 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
     const main = doc?.querySelector("main");
     if (!doc || !main) return;
     const style = getComputedStyle(main);
+    const dialog = doc.querySelector<HTMLDialogElement>("#help-dialog[open]");
+    const dialogStyle = dialog && getComputedStyle(dialog);
+    const dialogHeight =
+      dialog && dialogStyle
+        ? dialog.scrollHeight +
+          parseFloat(dialogStyle.borderTopWidth) +
+          parseFloat(dialogStyle.borderBottomWidth) +
+          Number.parseFloat(designValue("--space-8"))
+        : 0;
     const height = Math.ceil(
-      Math.max(main.scrollHeight, main.getBoundingClientRect().height) +
-        parseFloat(style.marginTop) +
-        parseFloat(style.marginBottom),
+      Math.max(
+        Math.max(main.scrollHeight, main.getBoundingClientRect().height) +
+          parseFloat(style.marginTop) +
+          parseFloat(style.marginBottom),
+        dialogHeight,
+      ),
     );
     if (height && frame.style.height !== `${height}px`) {
       frame.style.height = `${height}px`;
@@ -49,7 +64,18 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
   removal.observe(panel, { childList: true });
   function connect() {
     content?.disconnect();
-    const main = frame.contentDocument?.querySelector("main");
+    dialogs?.disconnect();
+    const doc = frame.contentDocument;
+    if (doc?.body) {
+      dialogs = new MutationObserver(schedule);
+      dialogs.observe(doc.body, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["open"],
+        childList: true,
+      });
+    }
+    const main = doc?.querySelector("main");
     if (main) {
       content = new ResizeObserver(schedule);
       content.observe(main);
@@ -59,6 +85,7 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
   function dispose() {
     cancelAnimationFrame(pending);
     content?.disconnect();
+    dialogs?.disconnect();
     attributes.disconnect();
     removal.disconnect();
     frame.removeEventListener("load", connect);

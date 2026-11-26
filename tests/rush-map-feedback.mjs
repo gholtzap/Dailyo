@@ -40,7 +40,7 @@ try {
           .waitFor();
         const outcome = await page.locator("#rush-status").innerText();
         const answerTitle = await frame.locator("#round-title").innerText();
-        await frame
+        await (game === "maprot" ? frame : page)
           .getByRole("button", {
             name: game === "maprot" ? "Enlarge map" : "How to play",
             exact: true,

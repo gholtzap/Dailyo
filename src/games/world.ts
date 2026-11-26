@@ -449,7 +449,11 @@ function draw() {
         : wrong
           ? `Selected ${wrong.name}. Correct answer: ${item.name}.`
           : `Correct answer: ${item.name}.`;
-    const status = make("span", outcome, "quiz-answer-status");
+    const status = make(
+      "span",
+      outcome,
+      "quiz-answer-status screen-reader-only",
+    );
     status.id = "answer-feedback";
     status.setAttribute("role", "status");
     choices.append(status);
