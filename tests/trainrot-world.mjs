@@ -226,6 +226,22 @@ try {
       new URL("/trainrot-world/not-a-city/", base).href,
     );
     assert.equal(unknown.status(), 404);
+    fs.mkdirSync("test-results/world", { recursive: true });
+    for (const width of [320, 390, 1440]) {
+      await page.setViewportSize({ width, height: 620 });
+      await page.goto(new URL("/trainrot-world/sources/#lille", base).href);
+      await page.locator("#lille").scrollIntoViewIfNeeded();
+      assert.equal(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+        true,
+        "Source URLs stay within the page",
+      );
+      await page.screenshot({
+        path: `test-results/world/sources-${width}.png`,
+      });
+    }
     await context.close();
     console.log(
       "Default NYC, city search, accented names, keyboard access, city isolation and unknown-city 404 passed.",

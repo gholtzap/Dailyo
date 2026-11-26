@@ -1168,6 +1168,7 @@ body[data-world-city]:not([data-world-city="nyc"]) .train-badge {
 .world-sources {
   --world-sources-max-width: 850px;
   max-width: var(--world-sources-max-width);
+  overflow-wrap: anywhere;
   padding: var(--space-6);
   margin: auto;
   line-height: var(--leading-1-6);
