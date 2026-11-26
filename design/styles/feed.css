@@ -738,3 +738,10 @@ body:has(.feed-actions[hidden]) .rush-controls {
   position: sticky; top: 0; z-index: var(--layer-navigation);
 }
 iframe[data-content-sized] { border-radius: inherit; }
+
+@media (max-width: breakpoint(mobile)) {
+  :root[data-daily-feed]:not([data-rush]) .prompt { min-height: 0; padding: var(--space-3); margin: var(--space-2) 0 var(--space-4); }
+  :root[data-daily-feed]:not([data-rush]) .flag { --flag-feed-height: 144px; height: var(--flag-feed-height); }
+  :root[data-daily-feed]:not([data-rush]) .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  :root[data-daily-feed]:not([data-rush]) .visual-viewport { --visual-viewport-feed-height: 160px; width: 100%; height: var(--visual-viewport-feed-height); aspect-ratio: auto; }
+}
