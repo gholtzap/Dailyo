@@ -1,4 +1,4 @@
-export const rushGames = [
+export const individualRushGames = [
     { label: "flagrot", path: "/flags/", seconds: [8, 6, 4] },
     { label: "langrot", path: "/languages/", seconds: [8, 6, 4] },
     { label: "trainrot", path: "/trainrot/", seconds: [35, 28, 21] },
@@ -19,4 +19,19 @@ export const rushGames = [
     { label: "temporot", path: "/temporot/", seconds: [24, 22, 20] },
     { label: "splitrot", path: "/splitrot/", seconds: [20, 15, 10] },
 ];
+// Mixed Rush favors quick recognition and short inputs over multi-step puzzles.
+export const rushGames = individualRushGames.filter((game) => [
+    "flagrot",
+    "langrot",
+    "Vocabulary",
+    "yearrot",
+    "skyrot",
+    "pricerot",
+    "skylinerot",
+    "zoomrot",
+    "countrot",
+    "trackrot",
+    "anglerot",
+    "splitrot",
+].includes(game.label));
 //# sourceMappingURL=rush-games.js.map

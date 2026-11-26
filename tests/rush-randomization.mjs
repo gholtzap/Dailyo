@@ -170,7 +170,21 @@ try {
 
 // Fresh mixed runs must shuffle actual visible games, not just the questions.
 const { rushGames } = await import("../dist/daily/rush-games.js");
-const expected = rushGames.map((g) => g.label).sort();
+const expected = [
+  "flagrot",
+  "langrot",
+  "Vocabulary",
+  "yearrot",
+  "skyrot",
+  "pricerot",
+  "skylinerot",
+  "zoomrot",
+  "countrot",
+  "trackrot",
+  "anglerot",
+  "splitrot",
+].sort();
+assert.deepEqual(rushGames.map((g) => g.label).sort(), expected);
 const mixedBrowser = await chromium.launch();
 const orderReceipts = [];
 try {
