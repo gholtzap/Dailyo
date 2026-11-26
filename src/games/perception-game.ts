@@ -403,6 +403,7 @@ function start() {
       begin = performance.now();
     const moving =
       q.hard && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const animated = game === "trackrot" || moving;
     const duration = game === "countrot" ? 1100 : 1300;
     const animate = () => {
       const elapsed = performance.now() - begin - pausedFor;
@@ -418,9 +419,12 @@ function start() {
             8,
           );
       else track(c, elapsed / 2400);
-      if (elapsed < duration) animation = requestAnimationFrame(animate);
+      if (animated && elapsed < duration)
+        animation = requestAnimationFrame(animate);
     };
-    animateRound = animate;
+    // Showing/static paints once. Showing/moving owns a frame loop; Pause
+    // cancels it and Resume re-arms it only while the stimulus can move.
+    animateRound = animated ? animate : undefined;
     animate();
     later(() => {
       if (transition("shown")) {
