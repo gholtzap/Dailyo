@@ -192,3 +192,16 @@ for (const entry of await fs.readdir("dist/rush", { withFileTypes: true })) {
     );
 }
 await visit("dist");
+
+// Legacy Rush links lead to their named game instead of a random mixed round.
+for (const slug of ["cluerot", "ladderrot"]) {
+  await fs.writeFile(
+    path.join("dist/rush", slug, "index.html"),
+    `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="color-scheme" content="dark">
+<meta name="theme-color" content="${themeColor}"><meta http-equiv="refresh" content="0;url=/${slug}/">
+<link rel="canonical" href="/${slug}/"><title>${gameName(slug)} | dailyo</title>
+<link rel="stylesheet" href="/design-system.css"><link rel="stylesheet" href="/components.css"></head>
+<body><a href="/${slug}/">${gameName(slug)}</a></body></html>`,
+  );
+}

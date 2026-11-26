@@ -42,7 +42,12 @@
       "regions": ["iad1"]
     }
   },
-  "crons": [{ "path": "/api/score-maintenance", "schedule": "0 10 * * *" }],
+  "crons": [
+    {
+      "path": "/api/score-maintenance",
+      "schedule": "0 10 * * *"
+    }
+  ],
   "git": {
     "deploymentEnabled": {
       "*": false,
@@ -51,9 +56,14 @@
   },
   "redirects": [
     {
-      "source": "/trainrot-world",
-      "destination": "/trainrot-world/nyc/",
-      "permanent": false
+      "source": "/rush/cluerot/:path*",
+      "destination": "/cluerot/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/ladderrot/:path*",
+      "destination": "/ladderrot/",
+      "permanent": true
     }
   ]
 }
