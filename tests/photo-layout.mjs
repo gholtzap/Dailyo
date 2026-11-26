@@ -22,8 +22,13 @@ try {
         );
       const box = await photo.evaluate((n) => ({
         width: n.clientWidth,
+        height: n.clientHeight,
         available: n.parentElement.clientWidth,
       }));
+      assert.ok(
+        box.height >= (width === 390 ? 140 : 300),
+        `${game}: photo retains useful height`,
+      );
       assert.ok(
         box.width >= box.available - 2,
         `${game}: photo fills its board`,
