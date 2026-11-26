@@ -111,7 +111,7 @@ for (const engine of process.argv.includes("--webkit")
       await page.bringToFront();
       await page.goto(`${base}/rush/${game.label.toLowerCase()}/`);
       const child = page.frameLocator(`iframe[title="${game.label}"]`);
-      await child
+      await (game.label === "splitrot" ? page : child)
         .getByRole("button", { name: "How to play", exact: true })
         .waitFor()
         .catch(async (error) => {
