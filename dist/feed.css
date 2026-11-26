@@ -728,3 +728,14 @@ body:has(.feed-actions[hidden]) .rush-controls {
 .daily-feed p {
   line-height: normal;
 }
+
+/* Long puzzles grow the page; the round clock stays visible while reading. */
+.daily-feed:has(iframe[data-content-sized][title]:not([hidden])) {
+  height: auto; min-height: var(--daily-feed-height);
+}
+.daily-feed:has(iframe[data-content-sized][title]:not([hidden])) > .feed-body { overflow: visible; }
+.daily-feed:has(iframe[data-content-sized][title]:not([hidden])) #feed-game { height: auto; overflow: visible; border-radius: inherit; }
+.rush-feed:has(iframe[data-content-sized][title]:not([hidden])) .feed-actions {
+  position: sticky; top: 0; z-index: var(--layer-navigation);
+}
+iframe[data-content-sized] { border-radius: inherit; }
