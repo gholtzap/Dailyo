@@ -2,23 +2,23 @@ import { rushRound } from "../daily/bridge.js";
 
 const instructions: Record<string, string[]> = {
   countrot: [
-    "Start the round and estimate how many dots flash on screen. Enter your count after they disappear.",
-    "Five rounds, each worth up to 100 points. Hard practice uses moving dots.",
+    "Estimate how many dots flash on screen. Enter your count after they disappear.",
+    "Hard practice uses moving dots.",
   ],
   trackrot: [
     "Watch the ball until it disappears. Tap the field or use the Landing position slider to predict where it reaches the floor.",
-    "Five rounds, each worth up to 100 points. Hard practice adds wall bounces.",
+    "Hard practice adds wall bounces.",
   ],
   anglerot: [
-    "Draw from the center to set the counterclockwise angle from the right-facing baseline. Clear lets you redraw. With the board focused, use arrow keys to adjust; Shift makes smaller steps.",
-    "Five rounds, each worth up to 100 points. Hard practice includes full turns: use Add turn or Remove turn. 450° means one turn plus 90°.",
+    "Draw from the center to set the counterclockwise angle from the right-facing baseline. With the board focused, use arrow keys to adjust; Shift makes smaller steps.",
+    "Hard practice includes full turns. 450° means one turn plus 90°.",
   ],
   temporot: [
     "Listen to four beats, then tap eight more using Tap or Space. Keep sound on.",
-    "Hard practice asks you to tap halfway between the imagined beats. Scores measure your timing against the reference schedule.",
+    "Hard practice asks you to tap halfway between the imagined beats.",
   ],
   splitrot: [
-    "Measure the requested percentage from the named endpoint. Tap the line or use the Split position slider, then check your answer.",
+    "Measure the requested percentage from the named endpoint. Tap the line or use the Split position slider.",
     "Hard practice extends beyond the line. 150% from the left is one and a half line lengths from the left endpoint.",
   ],
   skyrot: [
@@ -34,50 +34,37 @@ const instructions: Record<string, string[]> = {
     "Identify an everyday object from a close-up photograph. Wrong guesses reveal a wider view, or use Reveal a wider view for a hint.",
     "A correct answer earns 100, 65, or 35 points depending on the view and guesses used. Rush gives one guess per photo.",
   ],
-  orderrot: [
-    "Arrange the items from lowest to highest using the up and down buttons, then select Check order.",
-    "Each correct order earns 100 points. Daily and Practice use four items; Rush uses three.",
-  ],
+  orderrot: ["Order the items from lowest to highest."],
   train: [
     "Find the fastest subway route from A to B.",
     "Tap the trains you would take in order. You don’t need to choose transfer stations.",
-    "Select Check route to compare your time with the fastest route. You have six checks.",
+    "You have six checks.",
     "Times use scheduled train travel, four minutes per transfer, and predefined walking links. Other walks, initial waits, and live delays aren’t included.",
   ],
-  flags: [
-    "Choose the place represented by the flag.",
-    "Get one point for each correct answer across five daily questions.",
-  ],
-  languages: [
-    "Read the excerpt and choose the language it’s written in.",
-    "Get one point for each correct answer across five daily questions.",
-  ],
-  vocabulary: [
-    "Read the word and choose its meaning.",
-    "Get one point for each correct answer across five daily questions. An example sentence appears after each answer.",
-  ],
+  flags: ["Choose the place represented by the flag."],
+  languages: ["Read the excerpt and choose the language it’s written in."],
+  vocabulary: ["Read the word and choose its meaning."],
   maprot: [
-    "Pin the named city, then select Check pin. Enlarge and zoom the map for precision. Drag the map to pan or drag your pin to adjust it. Arrow keys move the pin; hold Shift for finer adjustment.",
+    "Pin the named city. Drag the map to pan or drag your pin to adjust it. Arrow keys move the pin; hold Shift for finer adjustment.",
     "Your score is the total distance you were off across five cities. Lower is better.",
   ],
   yearrot: [
     "Place the event before, between, or after the dated events on the timeline.",
-    "Get one point for each correct placement across five daily events.",
   ],
   borderrot: [
     "Search for and add countries that share a land border with the previous country.",
-    "Find a shortest route to earn a point. There are five routes in the daily game.",
+    "Find a shortest route to earn a point.",
   ],
   ladderrot: [
     "Change one letter at a time to get from the starting word to the target word. Each step must make a valid four-letter word.",
-    "Aim for the fewest moves. Undo the last word to explore another path. After finishing, review a shortest solution.",
+    "Aim for the fewest moves.",
   ],
   cluerot: [
-    "Guess the answer from the clues. Reveal another clue if you’re stuck.",
+    "Guess the answer from the clues.",
     "Aim to solve it with the fewest clues.",
   ],
   scalerot: [
-    "Enter your best estimate in the unit shown, then select Check estimate.",
+    "Estimate the quantity in the unit shown.",
     "Your score is the percentage your estimate was off. Lower is better.",
   ],
   swaprot: [
@@ -132,10 +119,7 @@ const steps =
     ? instructions[game]
     : game === "pricerot"
       ? rushRules[game]
-      : [
-          ...rushRules[game],
-          "Keep answering correctly before the clock runs out. A miss or timeout ends this game.",
-        ];
+      : [...rushRules[game], "A miss or timeout ends this game."];
 const anchor = document.querySelector<HTMLElement>(".map-panel, .heading")!;
 anchor.insertAdjacentHTML(
   "beforeend",
@@ -154,8 +138,7 @@ document.body.insertAdjacentHTML(
       <form method="dialog"><button type="submit">Close</button></form>
     </div>
     ${steps.map((step) => `<p>${step}</p>`).join("")}
-    ${["skyrot", "skylinerot", "zoomrot", "yearrot"].includes(game) ? '<p class="standalone-only">Practice offers Easy, Standard, and Hard, with separate progress for each level. Daily and Rush use Standard difficulty.</p>' : ""}
-    ${game === "pricerot" ? "" : '<p class="standalone-only">The daily game resets at midnight in New York. Use Practice to play more.</p>'}
+    ${game === "pricerot" ? "" : '<p class="standalone-only">The daily game resets at midnight in New York.</p>'}
   </dialog>
 `,
 );

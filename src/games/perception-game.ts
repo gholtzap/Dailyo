@@ -1,4 +1,5 @@
 import { designValue } from "../design.js";
+import { gameName } from "../game-names.js";
 import { angleBoard } from "./angle-board.js";
 import {
   dailyDate,
@@ -209,7 +210,7 @@ function transition(event: Event) {
   if (
     phase === "ready" &&
     !isRush &&
-    (game === "anglerot" || (mode === "practice" && game === "splitrot"))
+    (game === "anglerot" || game === "splitrot")
   ) {
     draft = game === "anglerot" ? 0 : 50;
     transition("start");
@@ -293,13 +294,6 @@ function switchMode(next: Mode) {
   mode = next;
   reset();
 }
-const instructions: Record<PerceptionGame, string> = {
-  countrot: "Estimate how many dots you see before they disappear.",
-  trackrot: "Watch the ball, then mark where it will land.",
-  anglerot: "Turn the line counterclockwise to the requested angle.",
-  temporot: "Listen to four beats, then keep the rhythm for eight taps.",
-  splitrot: "Mark the requested part of the line.",
-};
 function finish(guess: number | number[] | null) {
   if (checkDate() || !transition("answer")) return;
   stop();
@@ -570,12 +564,16 @@ function drawRound() {
     temporot: "Keep the beat",
     splitrot: "Split the line",
   };
-  const title = el("h2", titles[game]);
+  const title = el(
+    "h2",
+    game === "splitrot"
+      ? `${Math.round(q.target * 100)}% from ${q.right ? "right" : "left"}`
+      : titles[game],
+  );
   title.id = "question-title";
   title.tabIndex = -1;
   quiz.append(title);
   if (game === "trackrot" && (phase === "ready" || phase === "countdown")) {
-    if (phase === "ready" && isRush) return;
     const field = el("div", undefined, "perception-field track-cue");
     if (phase === "countdown") {
       const cue = el("span", String(countdown), "track-countdown");
@@ -586,8 +584,11 @@ function drawRound() {
     quiz.append(field);
     return;
   }
-  if (phase === "ready") {
-    quiz.append(el("p", instructions[game], "perception-note"));
+  const pausedStaticPreview =
+    isRush &&
+    (game === "anglerot" || game === "splitrot") &&
+    document.documentElement.hasAttribute("data-rush-paused");
+  if (phase === "ready" && !pausedStaticPreview) {
     if (q.hard)
       quiz.append(
         el(
@@ -605,9 +606,7 @@ function drawRound() {
         ),
       );
     if (game === "temporot")
-      quiz.append(
-        el("p", "Turn on sound. Use Tap or the Space key.", "perception-note"),
-      );
+      quiz.append(el("p", "Sound required", "perception-note"));
     if (automaticRush() && activation !== "manual")
       quiz.append(el("p", "Starting…", "perception-note"));
     else quiz.append(button("Start round", start, "primary"));
@@ -633,6 +632,7 @@ function drawRound() {
       input.required = true;
       input.inputMode = "numeric";
       label.htmlFor = input.id;
+      label.className = "screen-reader-only";
       const submit = el("button", "Check estimate", "primary");
       submit.type = "submit";
       form.onsubmit = (e) => {
@@ -761,13 +761,6 @@ function drawRound() {
       quiz.append(actions);
     }
   } else if (game === "splitrot") {
-    quiz.append(
-      el(
-        "p",
-        `Mark ${Math.round(q.target * 100)}% from the ${q.right ? "right" : "left"} endpoint.`,
-        "perception-target",
-      ),
-    );
     const field = el("div", undefined, "split-field");
     field.setAttribute("role", "group");
     field.setAttribute("aria-label", "Reference line with selection");
@@ -843,7 +836,7 @@ function drawRound() {
     const h = el(
       "h3",
       isRush
-        ? rushFeedback(feedback.points >= 70, true)
+        ? rushFeedback(feedback.points >= 70)
         : `${feedback.points} / 100 points`,
     );
     h.id = "perception-feedback";
@@ -856,14 +849,6 @@ function drawRound() {
     if (game === "anglerot" && isRush)
       box.append(
         el("span", `${feedback.points} / 100 points`, "screen-reader-only"),
-      );
-    if (isRush && feedback.guess !== null && game !== "anglerot")
-      box.append(
-        el(
-          "p",
-          `${feedback.points} / 100 · 70 needed to continue`,
-          "perception-note",
-        ),
       );
     quiz.append(box);
     if (!isRush)
@@ -900,7 +885,7 @@ function drawResults() {
   status.setAttribute("role", "status");
   result.append(
     button("Copy results", () => {
-      const text = `${game} ${mode === "daily" ? day : "Practice"}${hard && mode === "practice" ? " · Hard" : ""}\n${total} / 500 points\n${session.answers.map((a, i) => `${i + 1}. ${a.points}/100`).join("\n")}\n${location.origin}/${game}/`;
+      const text = `${gameName(game)} ${mode === "daily" ? day : "Practice"}${hard && mode === "practice" ? " · Hard" : ""}\n${total} / 500 points\n${session.answers.map((a, i) => `${i + 1}. ${a.points}/100`).join("\n")}\n${location.origin}/${game}/`;
       void navigator.clipboard
         .writeText(text)
         .then(() => (status.textContent = "Results copied."))
@@ -989,7 +974,7 @@ async function init() {
   if (!inFeed) {
     const settings = el("div", undefined, "perception-settings");
     settings.id = "perception-settings";
-    const label = el("label", "Practice variation"),
+    const label = el("label", "Difficulty"),
       select = el("select");
     select.id = "variation";
     label.htmlFor = select.id;
@@ -1068,11 +1053,11 @@ async function init() {
   if (isRush)
     new MutationObserver(() => {
       cancelAngle?.();
-      if (game === "trackrot") {
-        if (document.documentElement.hasAttribute("data-rush-paused"))
-          pausePlayback();
-        else resumePlayback();
-      }
+      if (document.documentElement.hasAttribute("data-rush-paused")) {
+        if (phase === "ready" && (game === "anglerot" || game === "splitrot"))
+          draw();
+        pausePlayback();
+      } else resumePlayback();
     }).observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["data-rush-paused"],

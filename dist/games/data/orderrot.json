@@ -4,7 +4,6 @@
     "name": "Planets by equatorial diameter",
     "unit": "km",
     "source": "https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "planet-width-0",
@@ -53,7 +52,6 @@
     "name": "Planets by distance from the Sun",
     "unit": "position from the Sun",
     "source": "https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "sun-order-0",
@@ -102,7 +100,6 @@
     "name": "Mixed lengths, shortest first",
     "unit": "meters",
     "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "length-0",
@@ -141,7 +138,6 @@
     "name": "Mixed weights, lightest first",
     "unit": "grams",
     "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "mass-0",
@@ -180,7 +176,6 @@
     "name": "Durations, shortest first",
     "unit": "seconds",
     "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "duration-0",
@@ -219,7 +214,6 @@
     "name": "Mixed volumes, smallest first",
     "unit": "milliliters",
     "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "volume-0",
@@ -258,7 +252,6 @@
     "name": "Areas, smallest first",
     "unit": "square meters",
     "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "area-0",
@@ -297,7 +290,6 @@
     "name": "Speeds, slowest first",
     "unit": "meters per second",
     "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "speed-0",
@@ -336,7 +328,6 @@
     "name": "SI prefixes, smallest multiplier first",
     "unit": "multiplier",
     "source": "https://www.nist.gov/pml/owm/metric-si/si-units",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "prefix-0",
@@ -380,7 +371,6 @@
     "name": "Binary storage sizes, smallest first",
     "unit": "bytes",
     "source": "https://www.nist.gov/pml/owm/metric-si/prefixes-binary-multiples",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "computer-0",
@@ -419,7 +409,6 @@
     "name": "Polygons by number of sides",
     "unit": "sides",
     "source": "https://mathworld.wolfram.com/Polygon.html",
-    "explanation": "Values are shown in a common unit after you answer.",
     "items": [
       {
         "id": "polygons-0",
@@ -463,7 +452,6 @@
     "name": "Fractions, lowest value first",
     "unit": "",
     "source": "https://mathworld.wolfram.com/Fraction.html",
-    "explanation": "Compare the fractions by dividing the numerator by the denominator.",
     "items": [
       {
         "id": "fractions-0",

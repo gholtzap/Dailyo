@@ -1,3 +1,4 @@
+import { gameName } from "../game-names.js";
 import type { JsonValue, Mode } from "../types.js";
 import { showGameProgress } from "./help.js";
 import {
@@ -43,9 +44,9 @@ import type {
   VisualAnswer,
 } from "./visual-puzzles.js";
 
-const gameName = document.body.dataset.game ?? "";
-if (!isVisualGame(gameName)) throw new Error("Unknown game");
-const game: VisualGame = gameName;
+const gameId = document.body.dataset.game ?? "";
+if (!isVisualGame(gameId)) throw new Error("Unknown game");
+const game: VisualGame = gameId;
 const quiz = document.querySelector<HTMLElement>("#quiz")!;
 const controls = [
   ...document.querySelectorAll<HTMLButtonElement>(".modes button"),
@@ -219,14 +220,12 @@ function source(item: VisualItem) {
     return details;
   }
   const details = el("details", undefined, "visual-source");
-  details.append(
-    el("summary", photoGame ? "Photo & answer source" : "Answer source"),
-  );
+  details.append(el("summary", "Source"));
   const link = el(
     "a",
     item.credit
       ? `${item.credit} · ${item.license ?? "Source"}`
-      : "View source",
+      : new URL(item.source).hostname.replace(/^www\./, ""),
   );
   link.href = item.source;
   link.target = "_blank";
@@ -246,8 +245,6 @@ function source(item: VisualItem) {
     license.rel = "noopener noreferrer";
     details.append(el("span", " · "), license);
   }
-  if (item.image)
-    details.append(el("p", "Image resized and cropped for gameplay."));
   return details;
 }
 function media(q: VisualQuestion, a: VisualAnswer, complete: boolean) {
@@ -304,18 +301,18 @@ function media(q: VisualQuestion, a: VisualAnswer, complete: boolean) {
   };
   viewport.append(image);
   figure.append(viewport);
-  if (
-    game !== "pricerot" &&
-    (complete || game !== "skylinerot" || levelDifficulty === "hard")
-  ) {
-    const caption = el(
-      "figcaption",
-      complete
-        ? q.item.name
-        : `View ${a.hint + 1} of 3 · ${isRush ? "One guess" : `${photoPoints(Math.max(a.hint, a.guesses.length))} points available`}`,
+  if (complete && photoGame) figure.append(el("figcaption", q.item.name));
+  else if (
+    photoGame &&
+    !isRush &&
+    (game !== "skylinerot" || levelDifficulty === "hard")
+  )
+    figure.append(
+      el(
+        "figcaption",
+        `View ${a.hint + 1} of 3 · ${photoPoints(Math.max(a.hint, a.guesses.length))} points available`,
+      ),
     );
-    figure.append(caption);
-  }
   return figure;
 }
 function formatOrderValue(value: number, unit?: string) {
@@ -386,18 +383,19 @@ function reveal(q: VisualQuestion, a: VisualAnswer, review = false) {
     const correct = el("div");
     const list = el("ol", undefined, "visual-solution");
     list.setAttribute("aria-label", "Correct order");
-    for (const item of [...q.tiles].sort((x, y) => x.value - y.value))
-      list.append(
-        el(
-          "li",
-          `${item.name} — ${formatOrderValue(item.value, q.item.unit)} ${q.item.unit ?? ""}`,
-        ),
-      );
+    for (const item of [...q.tiles].sort((x, y) => x.value - y.value)) {
+      const value = `${formatOrderValue(item.value, q.item.unit)}${q.item.unit ? ` ${q.item.unit}` : ""}`;
+      const numeric = item.name.match(/^([\d.,]+)\s+(.+)$/);
+      const sameValue =
+        numeric &&
+        Number(numeric[1].replaceAll(",", "")) === item.value &&
+        numeric[2] === q.item.unit;
+      list.append(el("li", sameValue ? item.name : `${item.name} — ${value}`));
+    }
     correct.append(el("h3", "Correct order"), list);
     comparison.append(correct);
     content.append(comparison);
   } else {
-    if (!review) content.append(el("p", `Answer: ${q.item.name}`));
     if (review) {
       const image = el("img", undefined, "review-photo");
       image.src = q.item.image!;
@@ -508,7 +506,7 @@ function drawQuestion() {
     const feedback = el(
       "p",
       a.guesses.length
-        ? `Try again. ${remaining} ${remaining === 1 ? "guess" : "guesses"} left.`
+        ? `${remaining} ${remaining === 1 ? "guess" : "guesses"} left.`
         : a.hint
           ? "3 guesses left."
           : "",
@@ -567,13 +565,8 @@ function drawQuestion() {
     quiz.append(form);
   } else {
     if (!draft.length) draft = q.tiles.map((x) => x.id);
-    quiz.append(
-      el(
-        "p",
-        `Arrange ${q.tiles.length} items from lowest to highest.`,
-        "visual-note",
-      ),
-    );
+    if (!/\bfirst\b/i.test(q.item.name))
+      quiz.append(el("p", "Lowest first", "visual-note"));
     const list = el("ol", undefined, "visual-order");
     for (const [index, id] of draft.entries()) {
       const tile = q.tiles.find((x) => x.id === id)!;
@@ -643,13 +636,6 @@ function drawResults() {
     )
     .join("");
   quiz.append(title);
-  if (game !== "pricerot")
-    quiz.append(
-      el(
-        "p",
-        `${mode === "daily" ? "Daily" : "Practice"} · ${s.questions.length} puzzles completed`,
-      ),
-    );
   const review = el("ol", undefined, "visual-recap");
   for (const [i, q] of s.questions.entries()) {
     const li = el("li"),
@@ -692,7 +678,7 @@ function drawResults() {
       actions.append(
         button("Copy results", () => {
           void (async () => {
-            const text = `${game} ${day}\n${score} / 500 points\n${dots}\nhttps://trainrot.vercel.app/${game}/`;
+            const text = `${gameName(game)} ${day}\n${score} / 500 points\n${dots}\nhttps://trainrot.vercel.app/${game}/`;
             try {
               await navigator.clipboard.writeText(text);
               status.textContent = "Copied results.";
@@ -810,8 +796,8 @@ async function start() {
   if (photoGame && !inFeed) {
     settings = practiceSettings(
       {
-        easy: "Wider views. A gentle place to start.",
-        standard: "Daily difficulty. Three guesses per photograph.",
+        easy: "Wider views.",
+        standard: "Daily difficulty.",
         hard: "Tighter details. More similar answer choices.",
       },
       (next) => {

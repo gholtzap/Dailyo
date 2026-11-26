@@ -41,6 +41,35 @@ new round. Daily mix uses the following host transitions:
 | Any      | Skip / undo / retry / date change | Existing action guards      | Load selected game; cancel timer      |
 | Any      | Message from old frame / old date | Never current               | Unchanged                             |
 
+## Rush pause presentation
+
+The existing Rush machine owns time and answer eligibility. Presentation follows
+that state; it does not create a second pause state or change the deadline.
+
+| State   | Event                           | Conditions                 | Presentation / effect                                                                         |
+| ------- | ------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------- |
+| Playing | Pause / background / Help       | Timed round still active   | Retain remaining time, make frame inert, freeze playback, show Resume inside the game surface |
+| Paused  | Help open                       | Native Help dialog visible | Hide Resume surface; leave Help operable                                                      |
+| Paused  | Help close                      | Same active frame          | Restore Resume surface and focus; keep time stopped                                           |
+| Paused  | Review prior answer             | Prior answer exists        | Hide Resume; inspect prior answer; Back restores the paused draft                             |
+| Paused  | Resume                          | Page visible, Help closed  | Remove surface, restore draft input and playback; retain countdown tick and remaining time    |
+| Paused  | Resize / repeated Pause         | Same active frame          | Reposition surface only; no new timers or answer                                              |
+| Any     | Stale child / unsupported event | Rejected by Rush machine   | No change                                                                                     |
+
+Spatial drafts (maps, ordering, sorting, Track, Angles and Split) stay visible
+behind Resume. Track preserves its actual phase: a vanished ball is never
+revealed by pausing. Count's dots and timed knowledge questions remain concealed
+while the clock is stopped. Rhythm suspends audio and its playback position.
+Reload retains the existing checkpoint and draft recovery contracts.
+
+## Static perception readiness
+
+| State     | Event        | Conditions                            | Next state / effect                                            |
+| --------- | ------------ | ------------------------------------- | -------------------------------------------------------------- |
+| Ready     | Reset / next | Unanswered standalone Angles or Split | Showing, then Answering; render the editable board immediately |
+| Answering | Start        | Already active                        | Unchanged; no duplicate round                                  |
+| Feedback  | Next         | Final round completed                 | Results                                                        |
+
 ## Failure cases
 
 Proofs must cover illegal edits, duplicate submissions, exhausted guesses,

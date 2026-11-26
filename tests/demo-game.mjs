@@ -1,3 +1,4 @@
+import { gameName } from "../dist/game-names.js";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -49,7 +50,7 @@ try {
         .press("Enter");
       await games.locator(`a[href="${path}"]`).press("Enter");
       await page.waitForURL((url) => url.pathname === path);
-      assert.equal(await page.title(), `${game} | dailyo`);
+      assert.equal(await page.title(), `${gameName(game)} | dailyo`);
       assert.equal(await page.locator(".site-more").getAttribute("open"), null);
     }
     await page.getByRole("group", { name: "Add a train" }).waitFor();

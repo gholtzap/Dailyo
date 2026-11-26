@@ -851,7 +851,7 @@ async function start() {
                 : "🟨";
           })
           .join("");
-        const text = `${world ? "trainrot world · " + world.city.name : "trainrot"} ${dailyDate}\n${outcome} · ${displayed.guesses?.length ?? 0}/${MAX_GUESSES} checks${history ? `\n${history}` : ""}\n${world ? `https://trainrot.vercel.app/trainrot-world/${citySlug}/` : "https://trainrot.vercel.app/trainrot/"}`;
+        const text = `${world ? "Subway · " + world.city.name : "Subway"} ${dailyDate}\n${outcome} · ${displayed.guesses?.length ?? 0}/${MAX_GUESSES} checks${history ? `\n${history}` : ""}\n${world ? `https://trainrot.vercel.app/trainrot-world/${citySlug}/` : "https://trainrot.vercel.app/trainrot/"}`;
         try {
           await navigator.clipboard.writeText(text);
           $("#copy-status").textContent = "Copied";

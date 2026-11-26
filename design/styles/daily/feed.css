@@ -40,10 +40,6 @@
   text-underline-offset: var(--size-3);
 }
 #feed-continue { width: min(100%, var(--size-320)); touch-action: pan-x; }
-.feed-swipe { display: none; }
-@media (pointer: coarse) {
-  .feed-swipe { display: block; padding-top: var(--space-2); text-align: center; color: var(--muted); }
-}
 #feed-results { list-style: none; padding: 0; margin: var(--space-4) 0 var(--space-6); }
 #feed-results li {
   display: flex;

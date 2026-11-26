@@ -310,3 +310,37 @@ body[data-game=yearrot] .rot-slot { min-height: var(--control-size-large); white
   .daily-feed > .feed-body, .rush-feed .feed-actions { width: calc(100% - var(--size-16)); }
   [data-daily-feed] .main { padding-inline: var(--space-3); }
 }
+/* Rush keeps secondary controls below the board and Resume beside the paused draft. */
+.rush-feed { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.rush-feed > .feed-body { position: relative; }
+.rush-controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  width: min(var(--layout-playfield), calc(100% - var(--control-size-large)));
+  margin-inline: auto; padding: var(--space-2) var(--space-6) max(var(--space-2), env(safe-area-inset-bottom));
+}
+.rush-controls > button { width: auto; }
+body:has(.feed-actions[hidden]) .rush-controls { display: none; }
+#rush-next { margin-left: auto; }
+.rush-controls #rush-next.rush-skip, .rush-controls #rush-review {
+  border: 0; background: transparent; color: var(--muted); padding: var(--space-2);
+  min-height: var(--control-size); box-shadow: none;
+}
+.rush-pause-control {
+  min-height: var(--control-size-compact); min-width: var(--size-56); padding: var(--space-2);
+  border: 0; background: transparent; color: var(--muted); border-radius: var(--radius-control-compact);
+}
+.rush-pause-control:hover { color: var(--ink); background: var(--well); }
+.rush-pause-surface {
+  position: absolute; z-index: var(--layer-map-label); display: grid; place-items: center;
+  border: var(--stroke-1) solid var(--line); border-radius: var(--radius-piece-large); background: var(--panel);
+}
+.rush-pause-surface[data-preview] { background: transparent; border: 0; }
+.rush-resume-card { display: grid; justify-items: center; gap: var(--space-4); padding: var(--space-6); border-radius: var(--radius-piece-large); }
+[data-preview] .rush-resume-card { background: var(--paper); }
+.rush-resume-card p { margin: 0; color: var(--muted); font-size: var(--font-size-14); }
+.rush-resume-card #rush-pause { width: var(--size-136); min-height: var(--control-size); }
+:root[data-rush-paused] :is(.perception-control, .angle-actions, #quiz > .primary, #quiz > .secondary) { opacity: var(--opacity-disabled); }
+@media (max-width: breakpoint(mobile)) {
+  .rush-controls { width: calc(100% - var(--size-24)); padding-inline: var(--space-4); }
+}
+[data-rush-phase=paused] .rush-track span { background: var(--muted); }

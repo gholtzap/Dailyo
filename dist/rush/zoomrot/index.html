@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0b1428">
-  <meta name="description" content="Race the clock in all sixteen dailyo games.">
-  <title>Rush | dailyo</title>
+  <meta name="description" content="Race the clock in dailyo games.">
+  <title>Close-up Rush | dailyo</title>
   <link rel="stylesheet" href="/design-system.css">
   <link rel="stylesheet" href="/games/world.css">
   <link rel="stylesheet" href="/site.css">
@@ -37,7 +37,7 @@
           <a aria-description="Ball tracking in Rush" href="/rush/trackrot/"><span>Track</span></a>
           <a aria-description="Angle estimation in Rush" href="/rush/anglerot/"><span>Angles</span></a>
           <a aria-description="Line proportions in Rush" href="/rush/splitrot/"><span>Split</span></a>
-          <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+
       </nav>
     </details>
   </header>
@@ -52,12 +52,14 @@
       <span id="rush-clock" role="timer" aria-label="Time left"></span>
     </div>
     <button class="secondary" id="rush-pause" type="button" hidden>Pause</button>
-    <button class="secondary" id="rush-review" type="button" hidden>Review answer</button>
-    <button class="secondary" id="rush-retry" type="button" hidden>Retry</button>
-    <button class="secondary rush-skip" id="rush-next" type="button">Skip game</button>
   </section>
   <main class="feed-body">
     <div id="feed-game"></div>
+    <section id="rush-resume-panel" class="rush-pause-surface" aria-label="Game paused" hidden>
+      <div class="rush-resume-card">
+        <p>Paused</p>
+      </div>
+    </section>
     <section class="main result" id="feed-recap" hidden>
       <div class="feed-recap-heading">
         <h2 tabindex="-1" aria-label="Rush recap">Rush complete</h2>
@@ -66,7 +68,7 @@
       <p id="rush-copy-status" role="status"></p>
       <textarea id="rush-copy-text" aria-label="Rush results to copy" rows="6" readonly hidden></textarea>
       <p id="rush-score"></p>
-      <p class="recap-streak">Best streak <span><span id="rush-best-streak">0</span></span></p>
+      <p class="recap-streak">Best streak <span><span aria-hidden="true">🔥</span> <span id="rush-best-streak">0</span></span></p>
       <details class="rush-breakdown"><summary>Review</summary>
         <p id="rush-personal-best"></p>
         <ul id="feed-results"></ul>
@@ -75,6 +77,11 @@
       <button class="primary" type="button" id="rush-replay">Play again</button>
     </section>
   </main>
+  <footer class="rush-controls" aria-label="Rush actions">
+    <button class="secondary" id="rush-review" type="button" hidden>Review answer</button>
+    <button class="secondary" id="rush-retry" type="button" hidden>Retry</button>
+    <button class="secondary rush-skip" id="rush-next" type="button">Skip game</button>
+  </footer>
 
   <script type="module" src="/daily/rush.js"></script>
 </body>

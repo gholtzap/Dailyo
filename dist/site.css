@@ -159,5 +159,6 @@ button:is(:hover, :focus-visible) + .game-tooltip,
 .game-help .game-icon:hover { background: var(--compat-train-choice-background); color: var(--ink); }
 .prompt { border: 0; border-radius: 0; background: transparent; padding: 0; }
 .prompt:has(.flag) { min-height: 0; }
-:root[data-rush-paused] body > :not(dialog) { visibility: hidden; }
+:root[data-rush-paused]:not([data-rush-preview]) #quiz { visibility: hidden; }
+:root[data-rush-paused] body[data-game=countrot] canvas { visibility: hidden; }
 :root[data-rush-paused] dialog:not(#help-dialog) { visibility: hidden; }

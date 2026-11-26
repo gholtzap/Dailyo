@@ -77,7 +77,7 @@ try {
 
     await page.goto(base);
     await page.getByRole("link", { name: "Rush", exact: true }).waitFor();
-    await status.filter({ hasText: "flagrot didn’t load." }).waitFor();
+    await status.filter({ hasText: "Flags didn’t load." }).waitFor();
     await inspect("error");
     await page.getByText("Games", { exact: true }).press("Enter");
     await page
@@ -162,7 +162,7 @@ try {
       true,
     );
     await page.getByRole("button", { name: "Resume", exact: true }).click();
-    await status.filter({ hasText: "flagrot · Round 2" }).waitFor();
+    await status.filter({ hasText: "Flags · Round 2" }).waitFor();
     // A controlled visibility event exercises backgrounding in headless Chromium.
     await page.evaluate(() => {
       Object.defineProperty(document, "hidden", {
@@ -207,7 +207,7 @@ try {
       await status.filter({ hasText: "Correct" }).waitFor();
       await page.clock.fastForward(200);
       await timer.filter({ hasText: `${seconds}s` }).waitFor();
-      assert.equal(await status.textContent(), `flagrot · Round ${round + 2}`);
+      assert.equal(await status.textContent(), `Flags · Round ${round + 2}`);
     }
     await flag
       .getByRole("group", { name: "Choose a place" })
@@ -307,7 +307,7 @@ try {
           await status.filter({ hasText: "Correct" }).waitFor();
           await page.clock.fastForward(200);
           await status
-            .filter({ hasText: `yearrot · Round ${round + 2}` })
+            .filter({ hasText: `Timeline · Round ${round + 2}` })
             .waitFor();
         }
       }
@@ -338,7 +338,7 @@ try {
       share,
       [
         `dailyo Rush · ${day}`,
-        "13 correct · 6 in yearrot",
+        "13 correct · 6 in Timeline",
         "",
         ...recapRows,
         "",
@@ -360,7 +360,7 @@ try {
       "Personal best · 13 correct",
     );
     await page.locator(".rush-breakdown > summary").click();
-    await page.getByRole("link", { name: "Play more langrot" }).click();
+    await page.getByRole("link", { name: "Play more Languages" }).click();
     await page
       .getByRole("button", { name: "Practice", exact: true, pressed: true })
       .waitFor();
@@ -412,10 +412,7 @@ try {
     await page.clock.fastForward(200);
     await timer.filter({ hasText: "20s" }).waitFor();
     await page.clock.fastForward(20100);
-    await scale
-      .locator(".rot-feedback")
-      .filter({ hasText: "Answer:" })
-      .waitFor();
+    await scale.locator(".estimate-comparison").waitFor();
     await page.clock.fastForward(2400);
     await page.locator(".rush-breakdown > summary").click();
     await page.locator("#feed-results li").waitFor();
@@ -441,7 +438,7 @@ try {
     const manual = page.getByRole("textbox", { name: "Rush results to copy" });
     assert.equal(
       await manual.inputValue(),
-      `dailyo Rush · scalerot · ${day}\n1 correct\n\nhttps://trainrot.vercel.app/rush/scalerot/?date=${day}`,
+      `dailyo Rush · Estimates · ${day}\n1 correct\n\nhttps://trainrot.vercel.app/rush/scalerot/?date=${day}`,
     );
     assert.ok(
       await manual.evaluate(

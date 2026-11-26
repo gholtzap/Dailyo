@@ -91,6 +91,26 @@ try {
           await child().locator(".track-countdown").waitFor();
           await page.clock.runFor(3000);
         }
+        if (game === "countrot" && round === 1) {
+          await child().locator("canvas").waitFor();
+          await page
+            .getByRole("button", { name: "Pause", exact: true })
+            .click();
+          assert.equal(
+            await child().locator("canvas").isVisible(),
+            false,
+            "Count never grants a longer look while paused",
+          );
+          await page.clock.runFor(5000);
+          assert.equal(
+            await child().locator("#dot-count").count(),
+            0,
+            "The stimulus deadline remains frozen",
+          );
+          await page
+            .getByRole("button", { name: "Resume", exact: true })
+            .click();
+        }
         if (game === "countrot" || game === "trackrot")
           await page.clock.runFor(1400);
         if (game === "countrot") {
@@ -167,7 +187,7 @@ try {
                   : game === "anglerot"
                     ? "Set the angle"
                     : game === "splitrot"
-                      ? "Split the line"
+                      ? /% from (left|right)/
                       : "Keep the beat",
             exact: true,
           })

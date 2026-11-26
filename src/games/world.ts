@@ -1,3 +1,4 @@
+import { gameName } from "../game-names.js";
 import type { Mode, QuizGame, QuizItem } from "../types.js";
 import { showGameProgress } from "./help.js";
 import {
@@ -272,7 +273,7 @@ function result() {
   );
   const review = make("section", undefined, "answer-review");
   review.setAttribute("aria-label", "Review answers");
-  review.append(make("h3", "Review answers"));
+
   for (const [index, item] of deck.entries()) {
     const details = make("details"),
       summary = make("summary");
@@ -323,7 +324,7 @@ function result() {
     copy.type = "button";
     copy.onclick = async () => {
       const text = [
-        `${kind} ${day}`,
+        `${gameName(kind)} ${day}`,
         `${score} out of 5`,
         s.answers
           .map((answer, i) => (answer === deck[i].id ? "🟩" : "⬛"))
@@ -367,7 +368,7 @@ function draw() {
       "p",
       mode === "daily"
         ? `Question ${s.index + 1} of 5`
-        : `Practice · ${s.total + (selected === null ? 1 : 0)}`,
+        : `Question ${s.total + (selected === null ? 1 : 0)}`,
     ),
     score = make(
       "p",
@@ -377,7 +378,8 @@ function draw() {
           ? `${s.answers.slice(0, s.index + (selected !== null ? 1 : 0)).filter((v, i) => v === dailyDeck()[i].id).length} correct`
           : `${s.correct} correct`,
     );
-  head.append(counter, score);
+  if (mode !== "daily") head.append(counter);
+  head.append(score);
   showGameProgress(rushRound === null ? head : undefined);
   const prompt = make("div", undefined, "prompt");
   prompt.id = "question-title";

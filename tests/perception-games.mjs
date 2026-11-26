@@ -1,3 +1,5 @@
+import { assertEditorialUI } from "./editorial-helpers.mjs";
+import { gameName } from "../dist/game-names.js";
 import { setAngle, drawAngle } from "./angle-helpers.mjs";
 import { ciWidths, ciShared } from "./ci-parts.mjs";
 import { rushSeed } from "./rush-helpers.mjs";
@@ -34,17 +36,7 @@ async function solve(page, game, q) {
   if (await start.count()) await start.press("Enter");
   else
     assert.ok(
-      game === "trackrot" ||
-        game === "anglerot" ||
-        (game === "splitrot" &&
-          (new URL(page.url()).searchParams.has("rush") ||
-            (await page
-              .getByRole("button", {
-                name: "Practice",
-                pressed: true,
-                exact: true,
-              })
-              .count()))),
+      game === "trackrot" || game === "anglerot" || game === "splitrot",
     );
   if (game === "trackrot" && (await page.locator(".track-countdown").count()))
     await page.clock.runFor(3000);
@@ -88,6 +80,13 @@ async function solve(page, game, q) {
   }
   await page.locator("#perception-feedback").waitFor();
   if (game === "temporot") await page.clock.resume();
+  if (new URL(page.url()).searchParams.has("rush")) {
+    assert.equal(
+      await page.locator("#perception-feedback").textContent(),
+      "Correct",
+    );
+    return;
+  }
   const points = Number(
     (await page.locator(".perception-feedback").textContent()).match(
       /(\d+) \/ 100/,
@@ -110,6 +109,7 @@ try {
     page.on("pageerror", (e) => errors.push(e.message));
     await page.clock.install({ time: new Date(`${day}T16:00:00Z`) });
     const inspect = async (game, state) => {
+      await assertEditorialUI(page);
       if (lint) {
         const report = await checkPage(page, policy);
         reports.push({ game, width, state, ...report });
@@ -124,9 +124,17 @@ try {
       if (game === "trackrot") await page.locator(".track-countdown").waitFor();
       else
         await page
-          .getByRole(game === "anglerot" ? "slider" : "button", {
-            name: game === "anglerot" ? "Draw angle" : "Start round",
-          })
+          .getByRole(
+            game === "anglerot" || game === "splitrot" ? "slider" : "button",
+            {
+              name:
+                game === "anglerot"
+                  ? "Draw angle"
+                  : game === "splitrot"
+                    ? "Split position"
+                    : "Start round",
+            },
+          )
           .waitFor();
       await inspect(game, "ready");
       if (game === "anglerot") {
@@ -205,7 +213,7 @@ try {
         .click();
       assert.match(
         await page.evaluate(() => navigator.clipboard.readText()),
-        new RegExp(`${game} ${day}`),
+        new RegExp(`${gameName(game)} ${day}`),
       );
       await page.reload();
       await page
@@ -214,7 +222,7 @@ try {
       await page
         .getByRole("button", { name: "Play practice", exact: true })
         .click();
-      await page.getByLabel("Practice variation").selectOption("hard");
+      await page.getByLabel("Difficulty").selectOption("hard");
       await inspect(game, "hard-ready");
       const seed = await page.evaluate(
         (game) =>
@@ -283,7 +291,7 @@ try {
       assert.match(
         await page
           .locator("#feed-results li")
-          .filter({ hasText: game })
+          .filter({ hasText: gameName(game) })
           .innerText(),
         /\d+ \/ 500 points/,
       );
@@ -336,8 +344,7 @@ try {
         await page.clock.install({ time: new Date(`${day}T16:00:00Z`) });
         await page.clock.pauseAt(new Date(`${day}T16:00:01Z`));
         await page.goto(`${base}/${game}/?practice=1`);
-        if (hard)
-          await page.getByLabel("Practice variation").selectOption("hard");
+        if (hard) await page.getByLabel("Difficulty").selectOption("hard");
         if (game === "trackrot") {
           await page.locator(".track-countdown").waitFor();
           await page.clock.runFor(3000);

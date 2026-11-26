@@ -497,3 +497,8 @@
   max-width: calc(100% - var(--size-16));
   white-space: normal;
 }
+
+.estimate-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; font-variant-numeric: tabular-nums; }
+.estimate-comparison dt { color: var(--muted); font-size: var(--font-size-12); }
+.estimate-comparison dd { margin: var(--space-1) 0 0; font-size: var(--font-size-18); overflow-wrap: anywhere; }
+.estimate-comparison .estimate-actual { font-size: var(--font-size-24); font-weight: var(--font-weight-medium); }
