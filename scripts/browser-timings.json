@@ -1,78 +1,78 @@
 {
-  "sourceSha": "b41ddf7bf51ae0ecb4b0de8de8bd2128de9db755",
-  "measurement": "GitHub Ubuntu 24.04, 18 runners with two worker lanes; run 45742406464 attempt 2, selected interaction workload. All correctness commands passed. Refresh measured command durations for shard balance; preserve the complete inventory and 60-second gate.",
+  "sourceSha": "0c1f0801149c93410fb2fed178e75e28a4160e1d",
+  "measurement": "GitHub Ubuntu 24.04, 18 runners and two worker lanes; run 45845078968. All correctness checks passed. Ball countdown/deadline coverage and current perception timings rebalance the complete inventory under the unchanged one-minute gate.",
   "durationsMs": {
     "node tests/puzzle-pools-browser.mjs": 113231.803143,
-    "node tests/second-playtest.mjs": 25085.087523,
-    "node tests/play-improvements.mjs": 16646.376747000002,
+    "node tests/second-playtest.mjs": 26238.22172,
+    "node tests/play-improvements.mjs": 16921.115161,
     "node tests/visual-games.mjs": 57193.72216600001,
-    "node tests/extra-games.mjs": 8777.414198999999,
-    "node tests/rot-games.mjs": 11395.764951999998,
+    "node tests/extra-games.mjs": 8437.989498,
+    "node tests/rot-games.mjs": 11366.166749,
     "node tests/daily-feed.mjs": 53041.882425,
-    "node tests/rush.mjs": 12699.089326,
+    "node tests/rush.mjs": 12952.460134,
     "node tests/world-games.mjs": 47413.77788099999,
-    "node tests/daily.mjs": 4518.851911999998,
-    "node tests/map-hint.mjs": 4088.428370999998,
-    "node tests/demo-game.mjs": 1970.0453190000007,
-    "node tests/map-labels.mjs": 4529.529351000001,
-    "node tests/map-gestures.mjs": 2233.998657,
-    "node tests/dark-theme.mjs": 2108.3128720000022,
-    "node tests/ui-polish.mjs final": 16047.281081,
-    "node tests/results-polish.mjs": 16765.914233,
+    "node tests/daily.mjs": 4541.985102000002,
+    "node tests/map-hint.mjs": 3992.474878000001,
+    "node tests/demo-game.mjs": 2245.428867999999,
+    "node tests/map-labels.mjs": 3397.512372000001,
+    "node tests/map-gestures.mjs": 2585.7636839999977,
+    "node tests/dark-theme.mjs": 4468.145829000001,
+    "node tests/ui-polish.mjs final": 15723.364473000001,
+    "node tests/results-polish.mjs": 18086.274111,
     "node tests/perception-games.mjs": 31099.10134600001,
-    "node tests/automatic-progression.mjs": 8124.342566000003,
-    "node tests/rush-randomization.mjs": 8512.518863000001,
+    "node tests/automatic-progression.mjs": 6951.997062000002,
+    "node tests/rush-randomization.mjs": 8094.046982,
     "node tests/trainrot-world.mjs": 376989.997857,
-    "node tests/interaction-polish.mjs": 2793.9099959999985,
-    "node tests/rush-feedback.mjs": 10991.24504,
-    "node tests/rush-decks.mjs": 1982.2430559999993,
-    "node tests/rush-streak.mjs": 3114.4840299999996,
-    "node tests/maprot-precision.mjs": 5119.428653000003,
-    "node tests/rush-recovery.mjs": 15252.490194,
-    "node tests/rush-autostart.mjs": 15146.651622000001,
-    "node tests/rush-review.mjs": 3296.3555080000006,
-    "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=skylinerot": 17220.765885,
-    "node tests/trainrot-world.mjs nyc dallas rennes rotterdam rome shanghai --ci-cities-only": 23322.997799,
-    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skylinerot": 15275.57133,
-    "node tests/trainrot-world.mjs portland paris valencia basel osaka --ci-cities-only": 20764.171435,
-    "node tests/perception-games.mjs --ci-shared": 11050.841314,
-    "node tests/trainrot-world.mjs pittsburgh newcastle madrid helsinki santiago --ci-cities-only": 18420.238526999998,
-    "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=zoomrot": 15333.949374,
-    "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=skyrot": 21986.277877,
-    "node tests/trainrot-world.mjs philadelphia ottawa stuttgart budapest adelaide istanbul --ci-cities-only": 22488.478875999997,
-    "node tests/trainrot-world.mjs chicago salt-lake-city hamburg brussels sydney mumbai --ci-cities-only": 23417.640827,
-    "node tests/visual-games.mjs --ci-shared": 1300.6267499999994,
-    "node tests/trainrot-world.mjs denver toulouse amsterdam milan beijing --ci-cities-only": 21409.547767,
-    "node tests/trainrot-world.mjs cleveland manchester hanover oslo kaohsiung --ci-cities-only": 17552.448356,
-    "node tests/daily-feed.mjs --ci-width=1440": 24888.894100999998,
-    "node tests/world-games.mjs --ci-shared": 24838.71453,
-    "node tests/trainrot-world.mjs washington-dc toronto munich antwerp melbourne mexico-city --ci-cities-only": 23343.40974,
-    "node tests/trainrot-world.mjs boston minneapolis berlin the-hague turin delhi --ci-cities-only": 24017.586781,
-    "node tests/trainrot-world.mjs sacramento marseille lisbon geneva hong-kong --ci-cities-only": 18728.171969,
-    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skyrot": 20587.566243999998,
-    "node tests/perception-games.mjs --ci-width=1440": 10672.743487,
-    "node tests/trainrot-world.mjs miami edmonton bonn copenhagen wellington --ci-cities-only": 19851.799163,
-    "node tests/visual-games.mjs --ci-width=390": 26415.982563,
-    "node tests/trainrot-world.mjs san-francisco montreal frankfurt vienna brisbane sao-paulo --ci-cities-only": 23995.618523,
-    "node tests/world-games.mjs --ci-width=390": 7768.687338000002,
-    "node tests/trainrot-world.mjs los-angeles vancouver nuremberg prague perth buenos-aires --ci-cities-only": 23875.928067,
-    "node tests/visual-games.mjs --ci-width=1280": 26440.995116000002,
-    "node tests/trainrot-world.mjs san-diego lyon bilbao bern seoul --ci-cities-only": 17627.217881,
-    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=zoomrot": 14978.173667,
-    "node tests/perception-games.mjs --ci-width=390": 10596.637472999999,
-    "node tests/trainrot-world.mjs san-jose lille porto lausanne singapore --ci-cities-only": 18943.722417,
-    "node tests/trainrot-world.mjs --ci-shared": 2038.4371680000004,
-    "node tests/trainrot-world.mjs atlanta calgary cologne warsaw auckland dubai --ci-cities-only": 22557.990522,
-    "node tests/trainrot-world.mjs seattle glasgow barcelona zurich tokyo --ci-cities-only": 18009.130597,
-    "node tests/trainrot-world.mjs baltimore london dusseldorf stockholm taipei --ci-cities-only": 21316.5592,
-    "node tests/world-games.mjs --ci-width=1440": 7900.263997000002,
-    "node tests/daily-feed.mjs --ci-width=390": 24692.325208,
-    "node tests/rush-map-feedback.mjs": 4864.779097000002,
-    "node tests/map-answer-review.mjs": 2922.2053940000005,
-    "node tests/border-country-input.mjs": 4685.150489,
-    "node tests/playroom.mjs": 8950.69184,
-    "node tests/puzzle-preloads.mjs": 8576.312003000001,
-    "node tests/ball-rounds.mjs": 8166.629167
+    "node tests/interaction-polish.mjs": 3389.590801999999,
+    "node tests/rush-feedback.mjs": 11009.759445,
+    "node tests/rush-decks.mjs": 2166.695713000001,
+    "node tests/rush-streak.mjs": 4325.347073000001,
+    "node tests/maprot-precision.mjs": 4670.342096,
+    "node tests/rush-recovery.mjs": 18914.939515000002,
+    "node tests/rush-autostart.mjs": 19412.70464,
+    "node tests/rush-review.mjs": 3317.3800870000014,
+    "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=skylinerot": 18672.575436,
+    "node tests/trainrot-world.mjs nyc dallas rennes rotterdam rome shanghai --ci-cities-only": 20451.240261,
+    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skylinerot": 17261.141843,
+    "node tests/trainrot-world.mjs portland paris valencia basel osaka --ci-cities-only": 17521.395849,
+    "node tests/perception-games.mjs --ci-shared": 14150.007096,
+    "node tests/trainrot-world.mjs pittsburgh newcastle madrid helsinki santiago --ci-cities-only": 18191.628187000002,
+    "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=zoomrot": 17909.294971,
+    "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=skyrot": 23245.647603,
+    "node tests/trainrot-world.mjs philadelphia ottawa stuttgart budapest adelaide istanbul --ci-cities-only": 21974.324913,
+    "node tests/trainrot-world.mjs chicago salt-lake-city hamburg brussels sydney mumbai --ci-cities-only": 21725.449019,
+    "node tests/visual-games.mjs --ci-shared": 1465.1988349999992,
+    "node tests/trainrot-world.mjs denver toulouse amsterdam milan beijing --ci-cities-only": 20592.257345,
+    "node tests/trainrot-world.mjs cleveland manchester hanover oslo kaohsiung --ci-cities-only": 20216.869464,
+    "node tests/daily-feed.mjs --ci-width=1440": 25772.985588,
+    "node tests/world-games.mjs --ci-shared": 25920.529891,
+    "node tests/trainrot-world.mjs washington-dc toronto munich antwerp melbourne mexico-city --ci-cities-only": 20363.304095000003,
+    "node tests/trainrot-world.mjs boston minneapolis berlin the-hague turin delhi --ci-cities-only": 24792.343344,
+    "node tests/trainrot-world.mjs sacramento marseille lisbon geneva hong-kong --ci-cities-only": 18566.183609,
+    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skyrot": 21735.227423,
+    "node tests/perception-games.mjs --ci-width=1440": 10760.606467000001,
+    "node tests/trainrot-world.mjs miami edmonton bonn copenhagen wellington --ci-cities-only": 19429.143550999997,
+    "node tests/visual-games.mjs --ci-width=390": 26978.611264,
+    "node tests/trainrot-world.mjs san-francisco montreal frankfurt vienna brisbane sao-paulo --ci-cities-only": 24411.411715,
+    "node tests/world-games.mjs --ci-width=390": 8182.548329000001,
+    "node tests/trainrot-world.mjs los-angeles vancouver nuremberg prague perth buenos-aires --ci-cities-only": 22479.712211000002,
+    "node tests/visual-games.mjs --ci-width=1280": 27027.271119,
+    "node tests/trainrot-world.mjs san-diego lyon bilbao bern seoul --ci-cities-only": 20193.983978999997,
+    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=zoomrot": 15633.222127,
+    "node tests/perception-games.mjs --ci-width=390": 10247.017219000001,
+    "node tests/trainrot-world.mjs san-jose lille porto lausanne singapore --ci-cities-only": 17713.489399000002,
+    "node tests/trainrot-world.mjs --ci-shared": 2279.6221540000006,
+    "node tests/trainrot-world.mjs atlanta calgary cologne warsaw auckland dubai --ci-cities-only": 20862.359881,
+    "node tests/trainrot-world.mjs seattle glasgow barcelona zurich tokyo --ci-cities-only": 17902.031804000002,
+    "node tests/trainrot-world.mjs baltimore london dusseldorf stockholm taipei --ci-cities-only": 19116.460752000003,
+    "node tests/world-games.mjs --ci-width=1440": 7514.382579000001,
+    "node tests/daily-feed.mjs --ci-width=390": 24398.025383,
+    "node tests/rush-map-feedback.mjs": 5985.201746999999,
+    "node tests/map-answer-review.mjs": 3770.2422450000013,
+    "node tests/border-country-input.mjs": 5792.151690000002,
+    "node tests/playroom.mjs": 8288.617106999998,
+    "node tests/puzzle-preloads.mjs": 4699.4985369999995,
+    "node tests/ball-rounds.mjs": 9702.845406
   },
   "additionalMeasurements": [
     {
@@ -896,6 +896,403 @@
           "command": "node tests/ball-rounds.mjs",
           "durationMs": 8166.629167,
           "status": 0
+        }
+      ]
+    },
+    {
+      "environment": "GitHub Ubuntu 24.04, 18 runners, two worker lanes; ball countdown/deadline workload",
+      "sourceSha": "0c1f0801149c93410fb2fed178e75e28a4160e1d",
+      "runUrl": "https://github.com/gholtzap/Dailyo/actions/runs/45845078968",
+      "measurements": [
+        {
+          "command": "node tests/rush.mjs",
+          "durationMs": 12952.460134,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=zoomrot",
+          "durationMs": 15633.222127,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rot-games.mjs",
+          "durationMs": 11366.166749,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/perception-games.mjs --ci-shared",
+          "durationMs": 14150.007096,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/results-polish.mjs",
+          "durationMs": 18086.274111,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=skylinerot",
+          "durationMs": 18672.575436,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-randomization.mjs",
+          "durationMs": 8094.046982,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/ball-rounds.mjs",
+          "durationMs": 9702.845406,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skylinerot",
+          "durationMs": 17261.141843,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=zoomrot",
+          "durationMs": 17909.294971,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/playroom.mjs",
+          "durationMs": 8288.617106999998,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/perception-games.mjs --ci-width=390",
+          "durationMs": 10247.017219000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/daily-feed.mjs --ci-width=1440",
+          "durationMs": 25772.985588,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/second-playtest.mjs",
+          "durationMs": 26238.22172,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-recovery.mjs",
+          "durationMs": 18914.939515000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-autostart.mjs",
+          "durationMs": 19412.70464,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/perception-games.mjs --ci-width=1440",
+          "durationMs": 10760.606467000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-feedback.mjs",
+          "durationMs": 11009.759445,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/ui-polish.mjs final",
+          "durationMs": 15723.364473000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/play-improvements.mjs",
+          "durationMs": 16921.115161,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/puzzle-preloads.mjs",
+          "durationMs": 4699.4985369999995,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/extra-games.mjs",
+          "durationMs": 8437.989498,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs atlanta calgary cologne warsaw auckland dubai --ci-cities-only",
+          "durationMs": 20862.359881,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs philadelphia ottawa stuttgart budapest adelaide istanbul --ci-cities-only",
+          "durationMs": 21974.324913,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/map-gestures.mjs",
+          "durationMs": 2585.7636839999977,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/interaction-polish.mjs",
+          "durationMs": 3389.590801999999,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/visual-games.mjs --ci-width=390",
+          "durationMs": 26978.611264,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/visual-games.mjs --ci-width=1280",
+          "durationMs": 27027.271119,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs san-jose lille porto lausanne singapore --ci-cities-only",
+          "durationMs": 17713.489399000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs sacramento marseille lisbon geneva hong-kong --ci-cities-only",
+          "durationMs": 18566.183609,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/border-country-input.mjs",
+          "durationMs": 5792.151690000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-map-feedback.mjs",
+          "durationMs": 5985.201746999999,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/visual-games.mjs --ci-shared",
+          "durationMs": 1465.1988349999992,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs miami edmonton bonn copenhagen wellington --ci-cities-only",
+          "durationMs": 19429.143550999997,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skyrot",
+          "durationMs": 21735.227423,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/map-labels.mjs",
+          "durationMs": 3397.512372000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/daily.mjs",
+          "durationMs": 4541.985102000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs chicago salt-lake-city hamburg brussels sydney mumbai --ci-cities-only",
+          "durationMs": 21725.449019,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs los-angeles vancouver nuremberg prague perth buenos-aires --ci-cities-only",
+          "durationMs": 22479.712211000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-decks.mjs",
+          "durationMs": 2166.695713000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs portland paris valencia basel osaka --ci-cities-only",
+          "durationMs": 17521.395849,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs baltimore london dusseldorf stockholm taipei --ci-cities-only",
+          "durationMs": 19116.460752000003,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/map-hint.mjs",
+          "durationMs": 3992.474878000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-review.mjs",
+          "durationMs": 3317.3800870000014,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs washington-dc toronto munich antwerp melbourne mexico-city --ci-cities-only",
+          "durationMs": 20363.304095000003,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs nyc dallas rennes rotterdam rome shanghai --ci-cities-only",
+          "durationMs": 20451.240261,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs --ci-shared",
+          "durationMs": 2279.6221540000006,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/dark-theme.mjs",
+          "durationMs": 4468.145829000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs san-francisco montreal frankfurt vienna brisbane sao-paulo --ci-cities-only",
+          "durationMs": 24411.411715,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs boston minneapolis berlin the-hague turin delhi --ci-cities-only",
+          "durationMs": 24792.343344,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/daily-feed.mjs --ci-width=390",
+          "durationMs": 24398.025383,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/world-games.mjs --ci-shared",
+          "durationMs": 25920.529891,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs seattle glasgow barcelona zurich tokyo --ci-cities-only",
+          "durationMs": 17902.031804000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs pittsburgh newcastle madrid helsinki santiago --ci-cities-only",
+          "durationMs": 18191.628187000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/maprot-precision.mjs",
+          "durationMs": 4670.342096,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/demo-game.mjs",
+          "durationMs": 2245.428867999999,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/world-games.mjs --ci-width=390",
+          "durationMs": 8182.548329000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs denver toulouse amsterdam milan beijing --ci-cities-only",
+          "durationMs": 20592.257345,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=skyrot",
+          "durationMs": 23245.647603,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/rush-streak.mjs",
+          "durationMs": 4325.347073000001,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/map-answer-review.mjs",
+          "durationMs": 3770.2422450000013,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs san-diego lyon bilbao bern seoul --ci-cities-only",
+          "durationMs": 20193.983978999997,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/trainrot-world.mjs cleveland manchester hanover oslo kaohsiung --ci-cities-only",
+          "durationMs": 20216.869464,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/automatic-progression.mjs",
+          "durationMs": 6951.997062000002,
+          "status": 0,
+          "signal": null
+        },
+        {
+          "command": "node tests/world-games.mjs --ci-width=1440",
+          "durationMs": 7514.382579000001,
+          "status": 0,
+          "signal": null
         }
       ]
     }
