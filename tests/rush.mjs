@@ -69,7 +69,7 @@ try {
       await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
     };
     const status = page.locator("#rush-status");
-    const timer = page.getByRole("timer");
+    const timer = page.locator("#rush-clock");
     const track = page.locator(".rush-track");
     const game = (name) => page.frameLocator(`iframe[title="${name}"]`);
     const loadJson = async (path) =>
@@ -82,7 +82,7 @@ try {
     await page.getByText("Games", { exact: true }).press("Enter");
     await page
       .getByRole("navigation", { name: "Games" })
-      .getByRole("link", { name: /^Vocabulary Word meanings$/ })
+      .getByRole("link", { name: /^Words$/ })
       .waitFor();
     await inspect("directory");
     for (const removed of ["ladderrot", "cluerot"])
@@ -97,7 +97,8 @@ try {
     const flags = await loadJson("/games/data/flags.json");
     const flagDeck = shuffle(flags, await rushSeed(page, "flags"));
     const flag = game("flagrot");
-    await timer.filter({ hasText: "Untimed" }).waitFor();
+    await status.filter({ hasText: "Round 1" }).waitFor();
+    assert.equal(await timer.isVisible(), false);
     assert.equal(
       await page
         .getByRole("button", { name: "Skip game", exact: true })
@@ -105,7 +106,7 @@ try {
       "secondary rush-skip",
     );
     await page.clock.fastForward(30000);
-    assert.equal(await timer.textContent(), "Untimed");
+    assert.equal(await timer.textContent(), "");
     assert.equal(await track.isVisible(), false);
     assert.equal(
       await flag
@@ -184,7 +185,7 @@ try {
     );
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     const full = await meter();
-    assert.ok(full.width > 30 && full.green > full.red);
+    assert.ok(full.width > 30 && full.red > full.green);
     await page.clock.fastForward(4000);
     const half = await meter();
     assert.equal(await timer.textContent(), "4s");
@@ -313,10 +314,7 @@ try {
     }
     for (let i = 0; i < 9; i++) await next.click();
     await page.getByRole("heading", { name: "Rush recap" }).waitFor();
-    assert.equal(
-      await page.locator("#rush-score").textContent(),
-      "13 correct · Best run: 6 in yearrot",
-    );
+    assert.equal(await page.locator("#rush-score").textContent(), "13 correct");
     assert.equal(
       await page.locator("#rush-personal-best").textContent(),
       "New best · 13 correct",
@@ -349,7 +347,8 @@ try {
     );
     await inspect("recap");
     await page.getByRole("button", { name: "Play again" }).click();
-    await timer.filter({ hasText: "Untimed" }).waitFor();
+    await status.filter({ hasText: "Round 1" }).waitFor();
+    assert.equal(await timer.isVisible(), false);
     for (let i = 0; i < 12; i++)
       await page
         .getByRole("button", { name: "Skip game", exact: true })
@@ -360,6 +359,7 @@ try {
       await page.locator("#rush-personal-best").textContent(),
       "Personal best · 13 correct",
     );
+    await page.locator(".rush-breakdown > summary").click();
     await page.getByRole("link", { name: "Play more langrot" }).click();
     await page
       .getByRole("button", { name: "Practice", exact: true, pressed: true })
@@ -367,7 +367,8 @@ try {
     await page.goto(base);
     await page.getByRole("heading", { name: "Rush recap" }).waitFor();
     await page.getByRole("button", { name: "Play again" }).click();
-    await timer.filter({ hasText: "Untimed" }).waitFor();
+    await status.filter({ hasText: "Round 1" }).waitFor();
+    assert.equal(await timer.isVisible(), false);
     await page.getByRole("link", { name: "Daily mix", exact: true }).click();
     await page.waitForURL("**/daily/");
     await page.getByRole("link", { name: "Daily mix", exact: true }).waitFor();
@@ -393,7 +394,8 @@ try {
       .click();
     await status.filter({ hasText: "Correct" }).waitFor();
     await page.goto(new URL(`/rush/scalerot/?date=${day}`, base).href);
-    await page.getByRole("timer").filter({ hasText: "Untimed" }).waitFor();
+    await status.filter({ hasText: "Round 1" }).waitFor();
+    assert.equal(await page.locator("#rush-clock").isVisible(), false);
     const scale = game("scalerot");
     const data = prepareExtra(
       "scalerot",
@@ -415,6 +417,7 @@ try {
       .filter({ hasText: "Answer:" })
       .waitFor();
     await page.clock.fastForward(2400);
+    await page.locator(".rush-breakdown > summary").click();
     await page.locator("#feed-results li").waitFor();
     assert.equal(await page.locator("#feed-results li").count(), 1);
     assert.equal(

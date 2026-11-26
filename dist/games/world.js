@@ -1,73 +1,133 @@
-import { showGameProgress } from './help.js';
-import { dailyDate as dateToday, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, startPractice, rushSeed } from '../daily/bridge.js';
-import { hash, shuffle, quizDeck, quizOptions, quizPuzzle } from '../daily/puzzles.js';
-import { showRank } from '../daily/rank.js';
+import { showGameProgress } from "./help.js";
+import { dailyDate as dateToday, inFeed, reportDaily, waitForFeedActivation, rushRound, reportRush, onRushTimeout, startPractice, rushSeed, } from "../daily/bridge.js";
+import { hash, shuffle, quizDeck, quizOptions, quizPuzzle, } from "../daily/puzzles.js";
+import { showRank } from "../daily/rank.js";
 const kind = document.body.dataset.game;
-const vocabulary = kind === 'vocabulary';
-const quiz = document.querySelector('#quiz');
-const controls = { daily: document.querySelector('#daily'), practice: document.querySelector('#practice') };
+const vocabulary = kind === "vocabulary";
+const quiz = document.querySelector("#quiz");
+const controls = {
+    daily: document.querySelector("#daily"),
+    practice: document.querySelector("#practice"),
+};
 const key = (part) => `trainrot:${kind}:v1:${part}`;
-const read = (key) => { try {
-    return JSON.parse(localStorage.getItem(key) ?? 'null');
-}
-catch {
-    return null;
-} };
-const write = (key, value) => { try {
-    localStorage.setItem(key, JSON.stringify(value));
-}
-catch { } };
+const read = (key) => {
+    try {
+        return JSON.parse(localStorage.getItem(key) ?? "null");
+    }
+    catch {
+        return null;
+    }
+};
+const write = (key, value) => {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+    catch { }
+};
 const randomSeed = () => `${Date.now()}:${Math.random()}`;
-const make = (tag, text, className) => { const el = document.createElement(tag); if (text !== undefined)
-    el.textContent = text; if (className)
-    el.className = className; return el; };
-const blank = () => ({ index: 0, answers: [], seed: '', total: 0, correct: 0, selected: null });
-const modeState = { daily: blank(), practice: blank() };
-let mode = 'daily', day = '', items = [];
+const make = (tag, text, className) => {
+    const el = document.createElement(tag);
+    if (text !== undefined)
+        el.textContent = text;
+    if (className)
+        el.className = className;
+    return el;
+};
+const blank = () => ({
+    index: 0,
+    answers: [],
+    seed: "",
+    total: 0,
+    correct: 0,
+    selected: null,
+});
+const modeState = {
+    daily: blank(),
+    practice: blank(),
+};
+let mode = "daily", day = "", items = [];
 function knownAnswer(id) {
-    if (typeof id !== 'string')
+    if (typeof id !== "string")
         return false;
     if (vocabulary && /:[1-3]$/.test(id))
         id = id.slice(0, -2);
-    return items.some(item => item.id === id);
+    return items.some((item) => item.id === id);
 }
-function dailyState(fallback) { const stored = read(key(`daily:${day}`)); if (stored && Number.isInteger(stored.index) && stored.index >= 0 && stored.index <= 5 && Array.isArray(stored.answers) && stored.answers.length >= stored.index && stored.answers.length <= Math.min(5, stored.index + 1) && stored.answers.every(knownAnswer) && (stored.index !== 5 || stored.answers.length === 5))
-    return stored; return fallback ?? blank(); }
-function practiceState() { const s = read(key('practice')); if (s && typeof s.seed === 'string' && s.seed.length < 100 && Number.isInteger(s.index) && s.index >= 0 && s.index < items.length && Number.isInteger(s.total) && s.total >= 0 && Number.isInteger(s.correct) && s.correct >= 0 && s.correct <= s.total && (s.selected === null || knownAnswer(s.selected)))
-    return s; return { ...blank(), seed: randomSeed() }; }
-function save() { write(key(mode === 'daily' ? `daily:${day}` : 'practice'), modeState[mode]); }
-function resetDay() { const today = dateToday(); if (day === today)
-    return false; day = today; modeState.daily = dailyState(); if (mode === 'daily')
-    draw(); return true; }
+function dailyState(fallback) {
+    const stored = read(key(`daily:${day}`));
+    if (stored &&
+        Number.isInteger(stored.index) &&
+        stored.index >= 0 &&
+        stored.index <= 5 &&
+        Array.isArray(stored.answers) &&
+        stored.answers.length >= stored.index &&
+        stored.answers.length <= Math.min(5, stored.index + 1) &&
+        stored.answers.every(knownAnswer) &&
+        (stored.index !== 5 || stored.answers.length === 5))
+        return stored;
+    return fallback ?? blank();
+}
+function practiceState() {
+    const s = read(key("practice"));
+    if (s &&
+        typeof s.seed === "string" &&
+        s.seed.length < 100 &&
+        Number.isInteger(s.index) &&
+        s.index >= 0 &&
+        s.index < items.length &&
+        Number.isInteger(s.total) &&
+        s.total >= 0 &&
+        Number.isInteger(s.correct) &&
+        s.correct >= 0 &&
+        s.correct <= s.total &&
+        (s.selected === null || knownAnswer(s.selected)))
+        return s;
+    return { ...blank(), seed: randomSeed() };
+}
+function save() {
+    write(key(mode === "daily" ? `daily:${day}` : "practice"), modeState[mode]);
+}
+function resetDay() {
+    const today = dateToday();
+    if (day === today)
+        return false;
+    day = today;
+    modeState.daily = dailyState();
+    if (mode === "daily")
+        draw();
+    return true;
+}
 function selectMode(next) {
     resetDay();
     if (next === mode)
         return;
     mode = next;
-    if (mode === 'daily')
+    if (mode === "daily")
         modeState.daily = dailyState(modeState.daily);
-    else if (!read(key('practice')))
+    else if (!read(key("practice")))
         save();
-    write(key('mode'), mode);
+    write(key("mode"), mode);
     draw();
 }
 function withCurrentProgress(action) {
-    if (mode !== 'daily')
+    if (mode !== "daily")
         return action();
     const current = modeState.daily, date = day;
     const update = () => {
-        if (mode !== 'daily' || day !== date || modeState.daily !== current)
+        if (mode !== "daily" || day !== date || modeState.daily !== current)
             return;
         if (resetDay()) {
-            document.querySelector('#question-title')?.focus();
+            document.querySelector("#question-title")?.focus();
             return;
         }
         const latest = dailyState(current);
-        if (latest.index !== current.index || latest.answers.length !== current.answers.length ||
+        if (latest.index !== current.index ||
+            latest.answers.length !== current.answers.length ||
             latest.answers.some((id, index) => id !== current.answers[index])) {
             modeState.daily = latest;
             draw();
-            (document.querySelector('.result h2') ?? document.querySelector('#question-title'))?.focus();
+            (document.querySelector(".result h2") ??
+                document.querySelector("#question-title"))?.focus();
             return;
         }
         action();
@@ -84,7 +144,19 @@ function dailyDeck() {
     }
     return deck;
 }
-function question() { const s = modeState[mode], seed = mode === 'daily' ? (rushRound === null ? `daily:${kind}:${day}` : rushSeed(kind)) : s.seed; return { item: (mode === 'daily' && rushRound === null ? dailyDeck() : shuffle(items, seed))[s.index], seed: `${seed}:${s.index}` }; }
+function question() {
+    const s = modeState[mode], seed = mode === "daily"
+        ? rushRound === null
+            ? `daily:${kind}:${day}`
+            : rushSeed(kind)
+        : s.seed;
+    return {
+        item: (mode === "daily" && rushRound === null
+            ? dailyDeck()
+            : shuffle(items, seed))[s.index],
+        seed: `${seed}:${s.index}`,
+    };
+}
 function choose(id, item) {
     const s = modeState[mode];
     if (rushRound !== null) {
@@ -92,10 +164,10 @@ function choose(id, item) {
             return;
         s.answers[s.index] = id;
         draw();
-        reportRush('answered', id === item.id);
+        reportRush("answered", id === item.id);
         return;
     }
-    if (mode === 'daily') {
+    if (mode === "daily") {
         if (s.index >= 5 || s.answers.length > s.index)
             return;
         s.answers.push(id);
@@ -110,11 +182,11 @@ function choose(id, item) {
     }
     save();
     draw();
-    document.querySelector('#next')?.focus();
+    document.querySelector("#next")?.focus();
 }
 function advance() {
     const s = modeState[mode];
-    if (mode === 'daily') {
+    if (mode === "daily") {
         if (s.index >= 5 || s.answers.length !== s.index + 1)
             return;
         s.index++;
@@ -134,15 +206,22 @@ function advance() {
     }
     save();
     draw();
-    (document.querySelector('#question-title') ?? document.querySelector('.result h2'))?.focus();
+    (document.querySelector("#question-title") ??
+        document.querySelector(".result h2"))?.focus();
 }
 function dailyProgress() {
-    const state = modeState.daily, deck = dailyDeck(), list = make('ol', undefined, 'daily-progress');
-    list.setAttribute('aria-label', 'Daily question progress');
+    const state = modeState.daily, deck = dailyDeck(), list = make("ol", undefined, "daily-progress");
+    list.setAttribute("aria-label", "Daily question progress");
     for (let i = 0; i < 5; i++) {
-        const status = i < state.answers.length ? (state.answers[i] === deck[i].id ? 'correct' : 'incorrect') : i === state.index ? 'current' : 'upcoming';
-        const dot = make('li', undefined, `progress-dot ${status}`);
-        dot.setAttribute('aria-label', `Question ${i + 1}: ${status}`);
+        const status = i < state.answers.length
+            ? state.answers[i] === deck[i].id
+                ? "correct"
+                : "incorrect"
+            : i === state.index
+                ? "current"
+                : "upcoming";
+        const dot = make("li", undefined, `progress-dot ${status}`);
+        dot.setAttribute("aria-label", `Question ${i + 1}: ${status}`);
         dot.textContent = String(i + 1);
         list.append(dot);
     }
@@ -151,180 +230,230 @@ function dailyProgress() {
 function result() {
     showGameProgress();
     const s = modeState.daily, deck = dailyDeck(), score = s.answers.filter((answer, i) => answer === deck[i].id).length;
-    const box = make('div', undefined, 'result'), title = make('h2', `${score} out of 5`);
+    const box = make("div", undefined, "result"), title = make("h2", `${score} out of 5`);
     title.tabIndex = -1;
     box.append(title, dailyProgress());
-    const rank = make('div', undefined, 'daily-rank');
+    const rank = make("div", undefined, "daily-rank");
     box.append(rank);
     showRank(rank, { game: kind, day, puzzle: quizPuzzle(deck), answers: s.answers }, score);
-    const review = make('section', undefined, 'answer-review');
-    review.setAttribute('aria-label', 'Review answers');
-    review.append(make('h3', 'Review answers'));
+    const review = make("section", undefined, "answer-review");
+    review.setAttribute("aria-label", "Review answers");
+    review.append(make("h3", "Review answers"));
     for (const [index, item] of deck.entries()) {
-        const details = make('details'), summary = make('summary');
+        const details = make("details"), summary = make("summary");
         const selected = s.answers[index], correct = selected === item.id;
-        summary.append(make('span', `${index + 1}. ${vocabulary ? item.id : item.name}`), make('span', correct ? 'Correct' : 'Missed'));
+        summary.append(make("span", `${index + 1}. ${vocabulary ? item.id : item.name}`), make("span", correct ? "Correct" : "Missed"));
         details.append(summary);
-        if (kind === 'flags') {
-            const image = make('img', undefined, 'review-flag');
+        if (kind === "flags") {
+            const image = make("img", undefined, "review-flag");
             image.src = `/games/flags/${encodeURIComponent(item.id)}.svg`;
             image.alt = `Flag of ${item.name}`;
             details.append(image);
         }
         else if (vocabulary)
-            details.append(make('p', `Answer: ${item.name}`));
+            details.append(make("p", `Answer: ${item.name}`));
         else {
-            const sample = make('p', item.samples[hash(`daily:${kind}:${day}:${index}:sample`) % item.samples.length], 'review-sample');
-            sample.dir = 'auto';
+            const sample = make("p", item.samples[hash(`daily:${kind}:${day}:${index}:sample`) % item.samples.length], "review-sample");
+            sample.dir = "auto";
             details.append(sample);
         }
         if (!correct) {
-            const guess = quizOptions(items, kind, item, `daily:${kind}:${day}:${index}`).find(option => option.id === selected);
+            const guess = quizOptions(items, kind, item, `daily:${kind}:${day}:${index}`).find((option) => option.id === selected);
             if (guess)
-                details.append(make('p', `Your answer: ${guess.name}`));
+                details.append(make("p", `Your answer: ${guess.name}`));
         }
         if (vocabulary && item.example)
-            details.append(make('p', item.example));
+            details.append(make("p", item.example));
         review.append(details);
     }
-    box.append(review, make('p', 'Next daily set at midnight in New York.'));
+    const reviewToggle = make("details", undefined, "result-review");
+    reviewToggle.append(make("summary", "Review answers"), review);
+    box.append(reviewToggle);
     if (!inFeed) {
-        const actions = make('div', undefined, 'result-actions'), status = make('p');
-        status.setAttribute('role', 'status');
-        const copy = make('button', 'Copy results', 'secondary');
-        copy.type = 'button';
+        const actions = make("div", undefined, "result-actions"), status = make("p");
+        status.setAttribute("role", "status");
+        const copy = make("button", "Copy results", "secondary");
+        copy.type = "button";
         copy.onclick = async () => {
-            const text = [`${kind} ${day}`, `${score} out of 5`, s.answers.map((answer, i) => answer === deck[i].id ? '🟩' : '⬛').join(''), `https://trainrot.vercel.app${location.pathname}`].join('\n');
+            const text = [
+                `${kind} ${day}`,
+                `${score} out of 5`,
+                s.answers
+                    .map((answer, i) => (answer === deck[i].id ? "🟩" : "⬛"))
+                    .join(""),
+                `https://trainrot.vercel.app${location.pathname}`,
+            ].join("\n");
             try {
                 await navigator.clipboard.writeText(text);
-                status.textContent = 'Copied results.';
+                status.textContent = "Copied results.";
             }
             catch {
-                const area = make('textarea', undefined, 'rot-copy');
+                const area = make("textarea", undefined, "rot-copy");
                 area.value = text;
                 area.readOnly = true;
-                area.setAttribute('aria-label', 'Results to copy');
+                area.setAttribute("aria-label", "Results to copy");
                 status.replaceChildren(area);
                 area.focus();
                 area.select();
             }
         };
-        const practice = make('button', 'Play practice', 'primary');
-        practice.type = 'button';
-        practice.onclick = () => selectMode('practice');
+        const practice = make("button", "Play practice", "primary");
+        practice.type = "button";
+        practice.onclick = () => selectMode("practice");
         actions.append(copy, practice);
         box.append(actions, status);
     }
     quiz.replaceChildren(box);
-    reportDaily('complete', title.textContent, day);
+    reportDaily("complete", title.textContent, day);
 }
 function draw() {
     for (const [id, button] of Object.entries(controls))
-        button.setAttribute('aria-pressed', String(id === mode));
+        button.setAttribute("aria-pressed", String(id === mode));
     const s = modeState[mode];
-    if (rushRound === null && mode === 'daily' && s.index === 5) {
+    if (rushRound === null && mode === "daily" && s.index === 5) {
         result();
         return;
     }
-    const { item, seed } = question(), selected = mode === 'daily' ? (s.answers[s.index] ?? null) : s.selected;
-    const head = make('div', undefined, 'round-head'), counter = make('p', mode === 'daily' ? `Question ${s.index + 1} of 5` : `Practice · ${s.total + (selected === null ? 1 : 0)}`), score = make('p', rushRound !== null ? '' : mode === 'daily' ? `${s.answers.slice(0, s.index + (selected !== null ? 1 : 0)).filter((v, i) => v === dailyDeck()[i].id).length} correct` : `${s.correct} correct`);
+    const { item, seed } = question(), selected = mode === "daily" ? (s.answers[s.index] ?? null) : s.selected;
+    const head = make("div", undefined, "round-head"), counter = make("p", mode === "daily"
+        ? `Question ${s.index + 1} of 5`
+        : `Practice · ${s.total + (selected === null ? 1 : 0)}`), score = make("p", rushRound !== null
+        ? ""
+        : mode === "daily"
+            ? `${s.answers.slice(0, s.index + (selected !== null ? 1 : 0)).filter((v, i) => v === dailyDeck()[i].id).length} correct`
+            : `${s.correct} correct`);
     head.append(counter, score);
     showGameProgress(rushRound === null ? head : undefined);
-    const prompt = make('div', undefined, 'prompt');
-    prompt.id = 'question-title';
+    const prompt = make("div", undefined, "prompt");
+    prompt.id = "question-title";
     prompt.tabIndex = -1;
-    if (kind === 'flags') {
-        const image = make('img', undefined, 'flag');
+    if (kind === "flags") {
+        const image = make("img", undefined, "flag");
         image.src = `/games/flags/${encodeURIComponent(item.id)}.svg`;
-        image.alt = 'Flag to identify';
-        image.onerror = () => { image.replaceWith(make('p', 'This flag could not be loaded.')); };
+        image.alt = "Flag to identify";
+        image.onerror = () => {
+            image.replaceWith(make("p", "This flag could not be loaded."));
+        };
         prompt.append(image);
     }
     else if (vocabulary) {
-        prompt.append(make('h2', item.id, 'vocabulary-word'));
+        prompt.append(make("h2", item.id, "vocabulary-word"));
     }
     else {
         const index = hash(`${seed}:sample`) % item.samples.length;
-        const text = make('p', item.samples[index], 'sample');
-        text.dir = 'auto';
+        const text = make("p", item.samples[index], "sample");
+        text.dir = "auto";
         prompt.append(text);
     }
-    const choices = make('div', undefined, 'choices');
-    choices.setAttribute('role', 'group');
-    choices.setAttribute('aria-label', kind === 'flags' ? 'Choose a place' : vocabulary ? 'Choose a definition' : 'Choose a language');
+    const choices = make("div", undefined, "choices");
+    choices.setAttribute("role", "group");
+    choices.setAttribute("aria-label", kind === "flags"
+        ? "Choose a place"
+        : vocabulary
+            ? "Choose a definition"
+            : "Choose a language");
     const options = quizOptions(items, kind, item, seed);
     for (const option of options) {
-        const button = make('button', option.name, 'choice');
-        button.type = 'button';
+        const button = make("button", option.name, "choice");
+        button.type = "button";
         button.disabled = selected !== null;
         const correct = selected !== null && option.id === item.id;
         const wrong = selected === option.id && !correct;
         if (correct || wrong) {
-            button.classList.add(correct ? 'correct' : 'wrong');
-            const mark = make('span', correct ? 'Correct' : 'Missed', 'choice-mark');
-            mark.setAttribute('aria-hidden', 'true');
+            button.classList.add(correct ? "correct" : "wrong");
+            const mark = make("span", correct ? "✓" : "×", "choice-mark");
+            mark.setAttribute("aria-hidden", "true");
             button.append(mark);
         }
-        button.onclick = () => rushRound === null ? withCurrentProgress(() => choose(option.id, item)) : choose(option.id, item);
+        button.onclick = () => rushRound === null
+            ? withCurrentProgress(() => choose(option.id, item))
+            : choose(option.id, item);
         choices.append(button);
     }
-    const next = make('button', mode === 'daily' && s.index === 4 ? 'See results' : 'Next', 'primary');
-    next.id = 'next';
-    next.type = 'button';
+    const next = make("button", mode === "daily" && s.index === 4 ? "See results" : "Next", "primary");
+    next.id = "next";
+    next.type = "button";
     next.hidden = selected === null;
     next.onclick = () => withCurrentProgress(advance);
     const content = [prompt, choices];
     if (selected !== null) {
-        const wrong = options.find(option => option.id === selected && selected !== item.id);
-        const outcome = selected === item.id ? 'Correct.' : wrong ? `Selected ${wrong.name}. Correct answer: ${item.name}.` : `Correct answer: ${item.name}.`;
-        const status = make('span', outcome, 'quiz-answer-status');
-        status.id = 'answer-feedback';
-        status.setAttribute('role', 'status');
+        const wrong = options.find((option) => option.id === selected && selected !== item.id);
+        const outcome = selected === item.id
+            ? "Correct."
+            : wrong
+                ? `Selected ${wrong.name}. Correct answer: ${item.name}.`
+                : `Correct answer: ${item.name}.`;
+        const status = make("span", outcome, "quiz-answer-status");
+        status.id = "answer-feedback";
+        status.setAttribute("role", "status");
         choices.append(status);
-        next.setAttribute('aria-describedby', status.id);
+        next.setAttribute("aria-describedby", status.id);
         if (vocabulary)
-            content.push(make('p', item.example, 'feedback example'));
+            content.push(make("p", item.example, "feedback example"));
     }
     if (rushRound !== null)
         quiz.replaceChildren(...content);
-    else if (mode === 'daily')
+    else if (mode === "daily")
         quiz.replaceChildren(dailyProgress(), ...content, next);
     else
         quiz.replaceChildren(...content, next);
-    reportDaily('playing', undefined, day);
+    reportDaily("playing", undefined, day);
 }
 async function start() {
     const response = await fetch(`/games/data/${kind}.json`);
     if (!response.ok)
-        throw new Error('Could not load game data');
+        throw new Error("Could not load game data");
     items = await response.json();
-    if (!Array.isArray(items) || items.length < 5 || items.some(x => !x || typeof x.id !== 'string' || typeof x.name !== 'string' || (kind === 'languages' && (!Array.isArray(x.samples) || !x.samples.length))))
-        throw new Error('Invalid game data');
-    if (vocabulary && (new Set(items.map(item => item.id)).size !== items.length || items.some(item => !/^[a-z]+$/.test(item.id) || !item.name.trim() || typeof item.example !== 'string' || !item.example.trim()
-        || !Array.isArray(item.distractors) || item.distractors.length !== 3
-        || item.distractors.some(option => typeof option !== 'string' || !option.trim())
-        || new Set([item.name, ...item.distractors]).size !== 4)))
-        throw new Error('Invalid vocabulary data');
+    if (!Array.isArray(items) ||
+        items.length < 5 ||
+        items.some((x) => !x ||
+            typeof x.id !== "string" ||
+            typeof x.name !== "string" ||
+            (kind === "languages" &&
+                (!Array.isArray(x.samples) || !x.samples.length))))
+        throw new Error("Invalid game data");
+    if (vocabulary &&
+        (new Set(items.map((item) => item.id)).size !== items.length ||
+            items.some((item) => !/^[a-z]+$/.test(item.id) ||
+                !item.name.trim() ||
+                typeof item.example !== "string" ||
+                !item.example.trim() ||
+                !Array.isArray(item.distractors) ||
+                item.distractors.length !== 3 ||
+                item.distractors.some((option) => typeof option !== "string" || !option.trim()) ||
+                new Set([item.name, ...item.distractors]).size !== 4)))
+        throw new Error("Invalid vocabulary data");
     await waitForFeedActivation();
     day = dateToday();
     if (rushRound !== null) {
         modeState.daily = { ...blank(), index: rushRound % items.length };
-        onRushTimeout(() => choose('', question().item));
+        onRushTimeout(() => choose("", question().item));
         draw();
-        await quiz.querySelector('img')?.decode();
-        reportRush('ready');
+        await quiz.querySelector("img")?.decode();
+        reportRush("ready");
         return;
     }
     modeState.daily = dailyState();
     modeState.practice = practiceState();
-    const saved = read(key('mode'));
-    mode = startPractice || (!inFeed && saved === 'practice') ? 'practice' : 'daily';
-    controls.daily.onclick = () => selectMode('daily');
-    controls.practice.onclick = () => selectMode('practice');
-    document.addEventListener('visibilitychange', () => { if (!document.hidden)
-        resetDay(); });
+    const saved = read(key("mode"));
+    mode =
+        startPractice || (!inFeed && saved === "practice") ? "practice" : "daily";
+    controls.daily.onclick = () => selectMode("daily");
+    controls.practice.onclick = () => selectMode("practice");
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden)
+            resetDay();
+    });
     setInterval(resetDay, 30000);
     draw();
 }
-start().catch(() => { reportRush('error'); reportDaily('error'); const message = make('p', 'The game could not load.'); const button = make('button', 'Reload game', 'primary'); button.type = 'button'; button.onclick = () => location.reload(); quiz.replaceChildren(message, button); });
+start().catch(() => {
+    reportRush("error");
+    reportDaily("error");
+    const message = make("p", "The game could not load.");
+    const button = make("button", "Reload game", "primary");
+    button.type = "button";
+    button.onclick = () => location.reload();
+    quiz.replaceChildren(message, button);
+});
 //# sourceMappingURL=world.js.map

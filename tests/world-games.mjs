@@ -68,9 +68,7 @@ try {
           if (route !== "/daily/") {
             assert.equal(await games.isVisible(), false);
             await menu.press("Enter");
-            await games
-              .getByRole("link", { name: /^Vocabulary Word meanings$/ })
-              .waitFor();
+            await games.getByRole("link", { name: /^Words$/ }).waitFor();
             await other.keyboard.press("Escape");
             assert.equal(await games.isVisible(), false);
             assert.equal(
@@ -81,9 +79,7 @@ try {
             );
           }
           await menu.click();
-          await other
-            .getByRole("link", { name: /^Vocabulary Word meanings$/ })
-            .click();
+          await other.getByRole("link", { name: /^Words$/ }).click();
           await other.locator(".vocabulary-word").waitFor();
           assert.equal(await other.title(), "Vocabulary | dailyo");
           assert.equal(
@@ -169,11 +165,11 @@ try {
         if (i % 2 !== 0) {
           assert.equal(
             await page.locator(".choice.correct .choice-mark").textContent(),
-            "Correct",
+            "✓",
           );
           assert.equal(
             await page.locator(".choice.wrong .choice-mark").textContent(),
-            "Missed",
+            "×",
           );
           assert.equal(
             await page.locator("#answer-feedback").textContent(),

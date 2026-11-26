@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { gameName } from "../dist/game-names.js";
 import { rushGames } from "../dist/daily/rush-games.js";
 
 const games = [
@@ -54,20 +55,19 @@ async function visit(directory) {
         )
         .map(
           ([name, slug, description]) =>
-            `<a aria-description="${description}${rush ? " in Rush" : " · Daily and Practice"}" href="${rush ? `/rush/${name.toLowerCase()}/` : `/${slug}/`}"><span>${name}</span> <small>${description}</small></a>`,
+            `<a aria-description="${description}${rush ? " in Rush" : " · Daily and Practice"}" href="${rush ? `/rush/${name.toLowerCase()}/` : `/${slug}/`}"><span>${gameName(name)}</span></a>`,
         )
         .join("\n          ");
       const header = `<header class="site-masthead${rush || daily ? " feed-header" : ""}${daily ? " daily-header" : ""}">
     <a class="site-brand" href="/">dailyo</a>
     <nav class="site-modes" aria-label="Play mode">
-      <a href="/daily/" aria-label="Daily mix"${daily ? ' aria-current="page"' : ""}>Daily mix</a>
+      <a href="/daily/" aria-label="Daily mix"${daily ? ' aria-current="page"' : ""}>Daily</a>
       <a href="/rush/"${rush ? ' aria-current="page"' : ""}>Rush</a>
     </nav>
     ${daily ? '<p id="feed-progress" role="status" tabindex="-1"></p>' : ""}
     <details class="site-more${rush || daily ? " feed-directory" : ""}">
       <summary>Games</summary>
       <nav class="site-more-links" aria-label="Games">
-          <p class="game-picker-context">${rush ? "Play in Rush" : "Daily & practice"}</p>
           ${links}
           <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
       </nav>
@@ -82,8 +82,32 @@ async function visit(directory) {
           "</head>",
           '  <script type="module" src="/site.js"></script>\n</head>',
         );
+      if (!html.includes('href="/playroom.css"'))
+        html = html.replace(
+          "</head>",
+          '<link rel="stylesheet" href="/playroom.css">\n</head>',
+        );
+      html = html
+        .replace(
+          /<meta name="color-scheme" content="dark">/g,
+          '<meta name="color-scheme" content="light">',
+        )
+        .replace(
+          /<meta name="theme-color" content="#1c1d1f">/g,
+          '<meta name="theme-color" content="#fff8ec">',
+        );
       await fs.writeFile(file, html.replace(/^[ \t]+$/gm, ""));
     }
   }
+}
+// Every Rush URL serves the same app shell, including in local static servers.
+const rushShell = await fs.readFile("dist/index.html", "utf8");
+await fs.writeFile("dist/rush/index.html", rushShell);
+for (const entry of await fs.readdir("dist/rush", { withFileTypes: true })) {
+  if (entry.isDirectory())
+    await fs.writeFile(
+      path.join("dist/rush", entry.name, "index.html"),
+      rushShell,
+    );
 }
 await visit("dist");

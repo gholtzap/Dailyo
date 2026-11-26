@@ -8,6 +8,7 @@ interface Round {
 }
 import { rushDate, shuffle } from "./puzzles.js";
 import { closeRushAudio } from "./rush-audio.js";
+import { gameName } from "../game-names.js";
 
 import { rushGames as rotation, individualRushGames } from "./rush-games.js";
 const slug = location.pathname.split("/")[2];
@@ -41,7 +42,14 @@ let index = 0,
 let streak = 0;
 function showStreak() {
   streakLabel.hidden = streak === 0;
-  streakLabel.textContent = streak ? `${streak} in a row` : "";
+  streakLabel.replaceChildren();
+  if (streak) {
+    const flame = document.createElement("span");
+    flame.textContent = "🔥";
+    flame.setAttribute("aria-hidden", "true");
+    streakLabel.append(flame, document.createTextNode(String(streak)));
+    streakLabel.setAttribute("aria-label", `Streak: ${streak}`);
+  } else streakLabel.removeAttribute("aria-label");
   streakLabel.classList.toggle(
     "rush-milestone",
     streak > 0 && streak % 5 === 0,
@@ -416,6 +424,7 @@ function openRound(
     showRecap();
     return;
   }
+  $("#rush-game-name").textContent = gameName(game.label);
   retry.hidden = true;
   next.removeAttribute("disabled");
   next.textContent = "Skip game";
@@ -448,6 +457,8 @@ function showError(generation = run.generation) {
   current?.frame.remove();
   current = null;
   status.textContent = `${games[index].label} didn’t load.`;
+  $("#rush-game-name").textContent =
+    `${gameName(games[index].label)} couldn’t load`;
   retry.hidden = false;
   retry.focus();
 }
@@ -488,7 +499,7 @@ function showRound() {
     updateClock();
     ticker = setInterval(updateClock, 100);
   } else {
-    clock.textContent = "Untimed";
+    clock.textContent = "";
   }
   pause.hidden = !Number.isFinite(run.deadline);
   if (document.hidden || (restoring && duration)) pauseRound();
@@ -594,17 +605,18 @@ function showRecap() {
   panel.hidden = true;
   actions.hidden = true;
   $("#feed-recap").hidden = false;
+  document.querySelector<HTMLDetailsElement>(".rush-breakdown")!.open = false;
   copyStatus.textContent = "";
   copyText.hidden = true;
-  const { total: sum, bestRun } = scoreSummary();
+  const { total: sum } = scoreSummary();
   showPersonalBest(sum);
-  $("#rush-score").textContent =
-    `${sum} correct${bestRun ? ` · Best run: ${bestRun}` : ""}`;
+  $("#rush-score").textContent = `${sum} correct`;
+  $("#rush-best-streak").textContent = String(Math.max(...scores));
   $("#feed-results").replaceChildren(
     ...games.map((game, i) => {
       const row = document.createElement("li");
       const score = document.createElement("span");
-      score.textContent = `${game.label} · ${scores[i]} correct`;
+      score.textContent = `${gameName(game.label)} · ${scores[i]} correct`;
       const link = document.createElement("a");
       link.href = `${game.path}?practice=1`;
       link.textContent = "Play more";
@@ -691,7 +703,12 @@ function shareText() {
   const score = `${total} correct${!selected && bestRun ? ` · ${bestRun}` : ""}`;
   const rows = selected
     ? []
-    : ["", ...games.map(({ label }, i) => `${label} · ${scores[i]} correct`)];
+    : [
+        "",
+        ...games.map(
+          ({ label }, i) => `${gameName(label)} · ${scores[i]} correct`,
+        ),
+      ];
   const path = selected ? `/rush/${slug}/` : "/rush/";
   return [
     `${title} · ${date}`,
@@ -769,6 +786,7 @@ function pauseRound() {
   }
   visible?.contentWindow?.postMessage("rush-pause", location.origin);
   status.textContent = `${games[index].label} · Paused`;
+  $("#rush-game-name").textContent = `${gameName(games[index].label)} · Paused`;
   next.setAttribute("disabled", "");
   checkpoint();
 }
@@ -783,6 +801,7 @@ function resumeRound() {
   visible?.contentWindow?.postMessage("rush-resume", location.origin);
   visible?.contentWindow?.postMessage("rush-activate", location.origin);
   status.textContent = `${games[index].label} · Round ${round + 1}`;
+  $("#rush-game-name").textContent = gameName(games[index].label);
   next.removeAttribute("disabled");
   updateClock();
   ticker = setInterval(updateClock, 100);

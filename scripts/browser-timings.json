@@ -69,7 +69,8 @@
     "node tests/daily-feed.mjs --ci-width=390": 29040.836107,
     "node tests/rush-map-feedback.mjs": 5940.270850000001,
     "node tests/map-answer-review.mjs": 4397.979847999999,
-    "node tests/border-country-input.mjs": 4372.2083550000025
+    "node tests/border-country-input.mjs": 4372.2083550000025,
+    "node tests/playroom.mjs": 10000
   },
   "additionalMeasurements": [
     {

@@ -70,7 +70,7 @@ try {
         .press("Enter");
       await page
         .getByRole("navigation", { name: "Games" })
-        .getByRole("link", { name: new RegExp(`^${game} `) })
+        .locator(`a[href="/${game}/"]`)
         .press("Enter");
       const heading = page.locator("#extra-title");
       await heading.waitFor();

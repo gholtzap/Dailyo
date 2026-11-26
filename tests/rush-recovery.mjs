@@ -26,7 +26,7 @@ try {
     await page.clock.install({ time: new Date("2026-11-20T16:00:00Z") });
     await page.clock.pauseAt(new Date("2026-11-20T16:00:01Z"));
     const status = page.locator("#rush-status"),
-      timer = page.getByRole("timer");
+      timer = page.locator("#rush-clock");
     const inspect = async (state) => {
       if (!lint) return;
       await page.clock.resume();
@@ -237,7 +237,7 @@ try {
     await status.filter({ hasText: "Round 1" }).waitFor();
     assert.equal(
       await timer.innerText(),
-      "Untimed",
+      "",
       "Invalid checkpoints must start a usable fresh run",
     );
     assert.deepEqual(errors, []);

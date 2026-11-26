@@ -3,46 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#1c1d1f">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#fff8ec">
   <meta name="description" content="Race the clock in all sixteen dailyo games.">
   <title>Rush | dailyo</title>
   <link rel="stylesheet" href="/games/world.css">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/daily/feed.css">
   <script type="module" src="/site.js"></script>
+<link rel="stylesheet" href="/playroom.css">
 </head>
 <body class="daily-feed rush-feed">
   <header class="site-masthead feed-header">
     <a class="site-brand" href="/">dailyo</a>
     <nav class="site-modes" aria-label="Play mode">
-      <a href="/daily/" aria-label="Daily mix">Daily mix</a>
+      <a href="/daily/" aria-label="Daily mix">Daily</a>
       <a href="/rush/" aria-current="page">Rush</a>
     </nav>
 
     <details class="site-more feed-directory">
       <summary>Games</summary>
       <nav class="site-more-links" aria-label="Games">
-          <p class="game-picker-context">Play in Rush</p>
-          <a aria-description="Flags in Rush" href="/rush/flagrot/"><span>flagrot</span> <small>Flags</small></a>
-          <a aria-description="Languages in Rush" href="/rush/langrot/"><span>langrot</span> <small>Languages</small></a>
-          <a aria-description="Word meanings in Rush" href="/rush/vocabulary/"><span>Vocabulary</span> <small>Word meanings</small></a>
-          <a aria-description="Timelines in Rush" href="/rush/yearrot/"><span>yearrot</span> <small>Timelines</small></a>
-          <a aria-description="Overhead cities in Rush" href="/rush/skyrot/"><span>skyrot</span> <small>Overhead cities</small></a>
-          <a aria-description="Prices in Rush" href="/rush/pricerot/"><span>pricerot</span> <small>Prices</small></a>
-          <a aria-description="Skylines in Rush" href="/rush/skylinerot/"><span>skylinerot</span> <small>Skylines</small></a>
-          <a aria-description="Close-up objects in Rush" href="/rush/zoomrot/"><span>zoomrot</span> <small>Close-up objects</small></a>
-          <a aria-description="Dot counting in Rush" href="/rush/countrot/"><span>countrot</span> <small>Dot counting</small></a>
-          <a aria-description="Ball tracking in Rush" href="/rush/trackrot/"><span>trackrot</span> <small>Ball tracking</small></a>
-          <a aria-description="Angle estimation in Rush" href="/rush/anglerot/"><span>anglerot</span> <small>Angle estimation</small></a>
-          <a aria-description="Line proportions in Rush" href="/rush/splitrot/"><span>splitrot</span> <small>Line proportions</small></a>
+          <a aria-description="Flags in Rush" href="/rush/flagrot/"><span>Flags</span></a>
+          <a aria-description="Languages in Rush" href="/rush/langrot/"><span>Languages</span></a>
+          <a aria-description="Word meanings in Rush" href="/rush/vocabulary/"><span>Words</span></a>
+          <a aria-description="Timelines in Rush" href="/rush/yearrot/"><span>Timeline</span></a>
+          <a aria-description="Overhead cities in Rush" href="/rush/skyrot/"><span>From above</span></a>
+          <a aria-description="Prices in Rush" href="/rush/pricerot/"><span>Prices</span></a>
+          <a aria-description="Skylines in Rush" href="/rush/skylinerot/"><span>Skylines</span></a>
+          <a aria-description="Close-up objects in Rush" href="/rush/zoomrot/"><span>Close-up</span></a>
+          <a aria-description="Dot counting in Rush" href="/rush/countrot/"><span>Count</span></a>
+          <a aria-description="Ball tracking in Rush" href="/rush/trackrot/"><span>Track</span></a>
+          <a aria-description="Angle estimation in Rush" href="/rush/anglerot/"><span>Angles</span></a>
+          <a aria-description="Line proportions in Rush" href="/rush/splitrot/"><span>Split</span></a>
           <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
       </nav>
     </details>
   </header>
   <section aria-label="Rush status" class="feed-actions" hidden>
     <div class="rush-progress">
-      <p id="rush-status" role="status" tabindex="-1"></p>
+      <span id="rush-game-name" class="rush-game-name"></span>
+      <p class="screen-reader-only" id="rush-status" role="status" tabindex="-1"></p>
       <span id="rush-streak" role="status" aria-live="polite" aria-atomic="true" hidden></span>
     </div>
     <div class="rush-time">
@@ -58,15 +59,18 @@
     <div id="feed-game"></div>
     <section class="main result" id="feed-recap" hidden>
       <div class="feed-recap-heading">
-        <h2 tabindex="-1">Rush recap</h2>
+        <h2 tabindex="-1" aria-label="Rush recap">Rush complete</h2>
         <button class="secondary" type="button" id="rush-copy">Copy results</button>
       </div>
       <p id="rush-copy-status" role="status"></p>
       <textarea id="rush-copy-text" aria-label="Rush results to copy" rows="6" readonly hidden></textarea>
       <p id="rush-score"></p>
-      <p id="rush-personal-best"></p>
-      <ul id="feed-results"></ul>
-      <button class="secondary" id="rush-review-recap" type="button" hidden>Review last answer</button>
+      <p class="recap-streak">Best streak <span><span aria-hidden="true">🔥</span> <span id="rush-best-streak">0</span></span></p>
+      <details class="rush-breakdown"><summary>Review</summary>
+        <p id="rush-personal-best"></p>
+        <ul id="feed-results"></ul>
+        <button class="secondary" id="rush-review-recap" type="button" hidden>Review last answer</button>
+      </details>
       <button class="primary" type="button" id="rush-replay">Play again</button>
     </section>
   </main>

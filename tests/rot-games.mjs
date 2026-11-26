@@ -304,7 +304,7 @@ try {
         .press("Enter");
       await page
         .getByRole("navigation", { name: "Games" })
-        .getByRole("link", { name: new RegExp(`^${kind} `) })
+        .locator(`a[href="/${kind}/"]`)
         .press("Enter");
       await page.waitForURL((url) => url.pathname === `/${kind}/`);
       assert.equal(await page.title(), `${kind} | dailyo`);

@@ -215,7 +215,9 @@ try {
         {
           url: currentPage.url(),
           text: await currentPage.locator("body").innerText(),
-          storage: await currentPage.evaluate(() => ({ ...localStorage })),
+          storage: await currentPage
+            .evaluate(() => ({ ...localStorage }))
+            .catch(() => null),
         },
         null,
         2,
