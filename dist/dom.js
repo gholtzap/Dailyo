@@ -1,16 +1,1 @@
-export function element(tag, text, className) {
-    const node = document.createElement(tag);
-    if (text !== undefined)
-        node.textContent = text;
-    if (className)
-        node.className = className;
-    return node;
-}
-export function required(selector) {
-    const node = document.querySelector(selector);
-    if (!node)
-        throw new Error(`Missing required element: ${selector}`);
-    return node;
-}
-export function recordValue(record, key) { return record[key]; }
-//# sourceMappingURL=dom.js.map
+export function element(t,e,r){const n=document.createElement(t);if(e!==void 0)n.textContent=e;if(r)n.className=r;return n}export function required(t){const e=document.querySelector(t);if(!e)throw Error(`Missing required element: ${t}`);return e}export function recordValue(t,e){return t[e]}

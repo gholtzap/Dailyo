@@ -1,15 +1,1 @@
-export const maybe = (value) => value === undefined ? { $: 'None' } : { $: 'Some', value };
-export const optional = (value) => value.$ === 'Some' ? value.value : undefined;
-export function list(values) {
-    let result = { $: 'Nil' };
-    for (let index = values.length - 1; index >= 0; index--)
-        result = { $: 'Con', head: values[index], tail: result };
-    return result;
-}
-export function array(values) {
-    const result = [];
-    for (let node = values; node.$ === 'Con'; node = node.tail)
-        result.push(node.head);
-    return result;
-}
-//# sourceMappingURL=representation.js.map
+export const maybe=(e)=>e===void 0?{$:"None"}:{$:"Some",value:e},optional=(e)=>e.$==="Some"?e.value:void 0;export function list(e){let n={$:"Nil"};for(let t=e.length-1;t>=0;t--)n={$:"Con",head:e[t],tail:n};return n}export function array(e){const n=[];for(let t=e;t.$==="Con";t=t.tail)n.push(t.head);return n}

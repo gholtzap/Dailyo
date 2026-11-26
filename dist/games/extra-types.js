@@ -1,4 +1,1 @@
-export function isExtraGame(value) {
-    return ['ladderrot', 'cluerot', 'scalerot', 'swaprot'].includes(value);
-}
-//# sourceMappingURL=extra-types.js.map
+export function isExtraGame(t){return["ladderrot","cluerot","scalerot","swaprot"].includes(t)}

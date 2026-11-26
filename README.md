@@ -52,7 +52,7 @@ All browser application source lives in `src/`. The scores API is `api/daily-sco
 
 `npm run dev` watches the TypeScript browser source and serves the compiled site on port 4173 (`PORT` can override it). Reload the browser after a change.
 
-`npm run typecheck` checks the browser and API together with strict TypeScript settings. `npm run build` typechecks, compiles the browser modules, stages the transit data, and verifies the release. The Vercel function compiles the API TypeScript independently.
+`npm run typecheck` checks the browser and API together with strict TypeScript settings. `npm run build` typechecks, emits minified browser modules with Bun, stages the transit data, and verifies the release. Module URLs and exports stay stable; linked source maps remain available locally. The Vercel function compiles the API TypeScript independently.
 
 ## Verified lifecycle rules
 
