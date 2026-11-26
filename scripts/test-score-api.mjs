@@ -35,13 +35,24 @@ try {
     "Start with an empty disposable scores database",
   );
   owned = true;
-  for (const test of ["score-protection", "train-ranking", "score-hardening"]) {
+  for (const test of [
+    "score-protection",
+    "train-ranking",
+    "extra-ranking",
+    "score-hardening",
+  ]) {
     const servers = [];
+    const clockArgs =
+      test === "score-hardening" ? [] : ["--import", "./tests/score-clock.mjs"];
+    const ports =
+      test === "score-hardening"
+        ? [Number(base.port), Number(base.port) + 1]
+        : [Number(base.port)];
     try {
-      for (const port of [Number(base.port), Number(base.port) + 1]) {
+      for (const port of ports) {
         const server = spawn(
           process.execPath,
-          ["scripts/test-score-server.mjs"],
+          [...clockArgs, "scripts/test-score-server.mjs"],
           {
             env: { ...env, PORT: String(port) },
             stdio: ["ignore", "pipe", "inherit"],
@@ -67,10 +78,14 @@ try {
           });
         });
       }
-      const child = spawn(process.execPath, [`tests/${test}.mjs`], {
-        env,
-        stdio: "inherit",
-      });
+      const child = spawn(
+        process.execPath,
+        [...clockArgs, `tests/${test}.mjs`],
+        {
+          env,
+          stdio: "inherit",
+        },
+      );
       const [code] = await once(child, "exit");
       assert.equal(code, 0, `${test} failed`);
     } finally {

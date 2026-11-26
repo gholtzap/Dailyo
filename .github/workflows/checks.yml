@@ -187,6 +187,13 @@ jobs:
       - run: node scripts/stage-data.mjs
       - run: bun run build:api
       - run: node tests/world-ranking.mjs
+      - uses: actions/cache@v4
+        id: api-chromium
+        with:
+          path: ~/.cache/ms-playwright
+          key: chromium-shell-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+      - if: steps.api-chromium.outputs.cache-hit != 'true'
+        run: node node_modules/playwright/cli.js install --only-shell chromium
       - env:
           DATABASE_URL: postgres://dailyo:dailyo-test@127.0.0.1:5432/dailyo_test
           TRAINROT_TEST_URL: http://127.0.0.1:4174
