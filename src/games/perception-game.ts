@@ -963,6 +963,17 @@ async function init() {
     if (event.data === "rush-pause") pausePlayback();
     if (event.data === "rush-resume") resumePlayback();
   });
+  // The host marks suspension before posting its playback message. Cancel the
+  // gesture at that boundary, even if resume arrives before message delivery.
+  if (isRush)
+    new MutationObserver(() => cancelAngle?.()).observe(
+      document.documentElement,
+      {
+        attributes: true,
+        attributeFilter: ["data-rush-paused"],
+      },
+    );
+  window.addEventListener("blur", () => cancelAngle?.());
   window.addEventListener("pagehide", stop);
   window.addEventListener("pageshow", () => checkDate());
   setInterval(() => checkDate(), 30000);

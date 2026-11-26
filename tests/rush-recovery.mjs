@@ -204,6 +204,7 @@ try {
     await angle
       .getByRole("button", { name: "Check angle", exact: true })
       .click();
+    await status.filter({ hasText: "Correct" }).waitFor();
     await page.clock.runFor(200);
     await status.filter({ hasText: "Round 2" }).waitFor();
     await angle.getByRole("slider").waitFor();
