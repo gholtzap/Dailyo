@@ -745,22 +745,22 @@ iframe[data-content-sized] { border-radius: inherit; }
 }
 
 /* Keep Rush controls available while the map fills the remaining screen. */
-.daily-feed:has(iframe.feed-map-expanded) {
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) {
   position: fixed;
   inset: 0;
   height: var(--daily-feed-height);
   min-height: 0;
   grid-template-rows: auto minmax(0, 1fr);
 }
-.daily-feed:has(iframe.feed-map-expanded) > :is(.site-masthead, .rush-controls) { display: none; }
-.daily-feed:not(.rush-feed):has(iframe.feed-map-expanded) { grid-template-rows: minmax(0, 1fr); }
-.daily-feed:not(.rush-feed):has(iframe.feed-map-expanded) > .feed-actions { display: none; }
-.daily-feed:has(iframe.feed-map-expanded) > .feed-actions {
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) > :is(.site-masthead, .rush-controls) { display: none; }
+.daily-feed:not(.rush-feed):has(iframe.feed-map-expanded[title]:not([hidden])) { grid-template-rows: minmax(0, 1fr); }
+.daily-feed:not(.rush-feed):has(iframe.feed-map-expanded[title]:not([hidden])) > .feed-actions { display: none; }
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) > .feed-actions {
   width: 100%;
   margin: 0;
   border-radius: 0;
 }
-.daily-feed:has(iframe.feed-map-expanded) > .feed-body {
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) > .feed-body {
   position: relative;
   width: 100%;
   height: 100%;
@@ -768,7 +768,7 @@ iframe[data-content-sized] { border-radius: inherit; }
   border: 0;
   border-radius: 0;
 }
-.daily-feed:has(iframe.feed-map-expanded) #feed-game { position: static; }
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) #feed-game { position: static; }
 #feed-game iframe.feed-map-expanded {
   position: absolute;
   inset: 0;
@@ -778,4 +778,4 @@ iframe[data-content-sized] { border-radius: inherit; }
   z-index: var(--layer-map-label);
   border-radius: 0;
 }
-body:has(iframe.feed-map-expanded) { overflow: hidden; }
+body:has(iframe.feed-map-expanded[title]:not([hidden])) { overflow: hidden; }
