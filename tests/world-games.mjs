@@ -42,6 +42,23 @@ try {
         page.locator(".choice").first().waitFor(),
         other.locator(".choice").first().waitFor(),
       ]);
+      const puzzleEngines = await page.evaluate(() =>
+        performance
+          .getEntriesByType("resource")
+          .map((entry) => new URL(entry.name).pathname)
+          .filter((path) =>
+            [
+              "/games/extra-puzzles.js",
+              "/games/rot-puzzles.js",
+              "/games/pool-version.js",
+            ].includes(path),
+          ),
+      );
+      assert.deepEqual(
+        puzzleEngines,
+        [],
+        "Quiz startup must not download other games' puzzle engines",
+      );
       if (kind === "vocabulary") {
         for (const route of ["/daily/", "/flags/", "/languages/"]) {
           await other.goto(base + route);
