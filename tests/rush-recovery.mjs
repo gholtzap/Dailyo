@@ -205,8 +205,20 @@ try {
       .getByRole("button", { name: "Check angle", exact: true })
       .click();
     await status.filter({ hasText: "Correct" }).waitFor();
-    await page.clock.runFor(200);
+    await page.clock.runFor(2999);
+    assert.match(
+      await status.textContent(),
+      /Correct/,
+      "Angle feedback stays visible for three seconds",
+    );
+    assert.equal(await angle.locator(".angle-feedback").isVisible(), true);
+    await page.clock.runFor(1);
     await status.filter({ hasText: "Round 2" }).waitFor();
+    assert.equal(
+      await timer.textContent(),
+      "20s",
+      "Review time does not consume the next angle round clock",
+    );
     await angle.getByRole("slider").waitFor();
     await setAngle(angle, 42.5);
     const boardBox = await angle.getByRole("slider").boundingBox();

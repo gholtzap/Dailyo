@@ -570,12 +570,13 @@ function showFinish(effect: RushEffect) {
       : "Next game";
   next.className = "primary rush-continue";
   status.focus({ preventScroll: true });
-  // Brief feedback, then continue automatically to the next puzzle or game.
+  // Feedback + elapsed delay -> next round; Angles allows time to inspect the gap.
+  // Next advances immediately; held feedback keeps its existing cancellation rules.
   advance = {
     generation: run.generation,
     index: nextIndex,
     round: nextRound,
-    remaining: correct ? 180 : 2400,
+    remaining: games[index].label === "anglerot" ? 3000 : correct ? 180 : 2400,
     deadline: 0,
   };
   scheduleAdvance();

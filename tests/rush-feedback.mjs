@@ -66,9 +66,29 @@ try {
         .locator("#rush-status")
         .filter({ hasText: correct ? "Correct" : "Missed" })
         .waitFor();
+      if (game === "anglerot") {
+        await page.clock.runFor(2999);
+        assert.match(
+          await page.locator("#rush-status").textContent(),
+          correct ? /Correct/ : /Missed/,
+        );
+        assert.equal(
+          await child().locator(".angle-feedback").isVisible(),
+          true,
+          "Both angle outcomes allow time to inspect the gap",
+        );
+      }
       await page
         .getByRole("button", { name: "Keep answer", exact: true })
         .click();
+      if (game === "anglerot") {
+        await page.clock.runFor(10000);
+        assert.equal(
+          await child().locator(".angle-feedback").isVisible(),
+          true,
+          "Keep answer holds the angle result beyond the automatic delay",
+        );
+      }
       await child()
         .getByRole("heading", {
           name: `${correct ? "Within" : "Outside"} Rush tolerance`,
