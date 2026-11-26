@@ -10,7 +10,7 @@ const output = "test-results/split-layout";
 const policy = JSON.parse(await fs.readFile("ui-policy.json", "utf8"));
 await fs.mkdir(output, { recursive: true });
 const reports = [];
-for (const engine of [chromium, webkit]) {
+for (const engine of [process.argv.includes("--webkit") ? webkit : chromium]) {
   const browser = await engine.launch();
   try {
     for (const viewport of [
@@ -209,7 +209,10 @@ for (const engine of [chromium, webkit]) {
     await browser.close();
   }
 }
-await fs.writeFile(`${output}/report.json`, JSON.stringify(reports, null, 2));
+await fs.writeFile(
+  `${output}/${process.argv.includes("--webkit") ? "webkit" : "chromium"}-report.json`,
+  JSON.stringify(reports, null, 2),
+);
 assert.ok(
   reports.every((r) => r.findings.every((f) => f.status === "unresolved")),
   "Confirmed UI policy issues: see report.json",
