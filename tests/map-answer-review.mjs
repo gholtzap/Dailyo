@@ -22,17 +22,6 @@ try {
       isMobile: viewport.width === 390,
       colorScheme: "dark",
     });
-    await page.route("**/games/data/border-map.json", (route) =>
-      route.fulfill({
-        json: {
-          ...borders,
-          paths: [
-            ["fixture", "M120,-50.498986L121,-50.498986Z"],
-            ...borders.paths,
-          ],
-        },
-      }),
-    );
     await page.route("**/games/data/maprot.json", (route) =>
       route.fulfill({
         json: {
@@ -77,10 +66,24 @@ try {
       "Map navigation cannot change the submitted guess",
     );
     assert.ok((await f.locator(".rot-country-outline").count()) > 100);
-    assert.match(
-      await f.locator(".rot-country-outline").first().getAttribute("d"),
-      /^M120,-45\.0000/,
-      "Country borders must be reprojected to the city map latitude grid",
+    const firstPoint = (path) =>
+      path
+        .match(/^M(-?[\d.]+),(-?[\d.]+)/)
+        .slice(1)
+        .map(Number);
+    const [longitude, mercatorY] = firstPoint(borders.paths[0][1]);
+    const latitudeY = Number(
+      (
+        (Math.atan(Math.sinh((mercatorY * Math.PI) / 180)) * 180) /
+        Math.PI
+      ).toFixed(4),
+    );
+    assert.deepEqual(
+      firstPoint(
+        await f.locator(".rot-country-outline").first().getAttribute("d"),
+      ),
+      [longitude, latitudeY],
+      "Prepared borders must use the city map latitude grid",
     );
     await f
       .locator(".rot-city-label")
