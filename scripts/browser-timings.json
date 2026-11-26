@@ -15,7 +15,6 @@
     "node tests/map-hint.mjs": 4367.829666999998,
     "node tests/demo-game.mjs": 2680.7423339999987,
     "node tests/map-labels.mjs": 2253.2777700000006,
-    "node tests/map-framing.mjs": 2001.2602909999987,
     "node tests/map-gestures.mjs": 2581.7902950000025,
     "node tests/dark-theme.mjs": 2844.503073,
     "node tests/ui-polish.mjs final": 17360.749252999998,

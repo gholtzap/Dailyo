@@ -90,7 +90,7 @@ npm run build
 npx playwright install chromium
 ```
 
-With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Use `npm run lint:ui:feed` for the Daily Feed. Reports go in `test-results/`. `npm run test:migration:browser` checks that every compiled game loads and that Daily Feed and Rush advance to their recaps on mobile and desktop.
+With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Use `npm run lint:ui:feed` for the Daily Feed. Reports go in `test-results/`. Daily Feed and Rush browser suites cover game loading, progression, restoration, and recaps.
 
 `npm run data:demo` creates the fictional stations, line geometry, and puzzles in `dist/data/`. Local builds, local dev, and GitHub CI generate this dataset. The build independently checks all shortest routes before adding the license and notices to the static site output.
 
@@ -99,6 +99,8 @@ With the local server running in another terminal, run `npm run test:e2e` for de
 `python3 scripts/build-atlas-data.py land.geojson places.geojson countryInfo.txt` rebuilds the map and border data from local Natural Earth 110m land and populated-place GeoJSON files and the GeoNames country information extract. See the [data sources](THIRD_PARTY_NOTICES.md).
 
 `python3 scripts/build-border-map.py ne_50m_admin_0_map_units.geojson` rebuilds Borderrot’s country outlines and label positions from Natural Earth 50m map units.
+
+To optimize newly fetched photo decks, run `uv run --with pillow==13.0.0 python scripts/optimize-visual-assets.py`. Photos larger than 500 KB become WebP at quality 85, with width capped at 1000 pixels and their aspect ratios and crop positions preserved. The shipped files need no image tools at build time. Original files are backed up in `.cache/visual-originals/` locally.
 
 ## Transit data tools
 

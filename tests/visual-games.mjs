@@ -295,7 +295,7 @@ try {
       .getByRole("heading", { name: "Rush recap", exact: true })
       .waitFor();
     assert.equal(await page.locator("#rush-score").textContent(), "0 correct");
-    await page.route("**/games/media/skyrot-*.jpg", (route) =>
+    await page.route("**/games/media/skyrot-*", (route) =>
       route.fulfill({ status: 503 }),
     );
     await page.goto(`${base}/skyrot/`);

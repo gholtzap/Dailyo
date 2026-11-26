@@ -51,7 +51,9 @@ try {
         if (!seeds.has(q.item.id)) seeds.set(q.item.id, seed);
       }
       for (const difficulty of ["standard", "hard"])
-        for (const row of rows.slice(old)) {
+        for (const row of rows.filter(
+          (row, index) => index >= old || row.image.endsWith(".webp"),
+        )) {
           const seed = seeds.get(row.id);
           assert.ok(seed);
           await page.evaluate(
@@ -82,7 +84,7 @@ try {
             ),
           );
           assert.equal(await page.locator(".visual-choice").count(), 4);
-          if (row === rows[old]) {
+          if (row === rows[old] || row.image.endsWith(".webp")) {
             if (ui)
               reports.push({
                 game,
@@ -92,8 +94,10 @@ try {
                 ...(await checkPage(page, policy)),
               });
             await page.screenshot({
-              path: new URL(`${game}-${difficulty}-${viewport.width}.png`, out)
-                .pathname,
+              path: new URL(
+                `${game}-${row.id}-${difficulty}-${viewport.width}.png`,
+                out,
+              ).pathname,
               fullPage: true,
             });
           }
@@ -111,7 +115,7 @@ try {
             await page.locator(".visual-source a").first().getAttribute("href"),
             row.source,
           );
-          if (row === rows[old] && ui)
+          if ((row === rows[old] || row.image.endsWith(".webp")) && ui)
             reports.push({
               game,
               difficulty,
