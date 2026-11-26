@@ -568,7 +568,6 @@ function drawRound() {
   title.tabIndex = -1;
   quiz.append(title);
   if (game === "trackrot" && (phase === "ready" || phase === "countdown")) {
-    if (phase === "ready" && isRush) return;
     const field = el("div", undefined, "perception-field track-cue");
     if (phase === "countdown") {
       const cue = el("span", String(countdown), "track-countdown");
@@ -579,7 +578,11 @@ function drawRound() {
     quiz.append(field);
     return;
   }
-  if (phase === "ready") {
+  const pausedStaticPreview =
+    isRush &&
+    (game === "anglerot" || game === "splitrot") &&
+    document.documentElement.hasAttribute("data-rush-paused");
+  if (phase === "ready" && !pausedStaticPreview) {
     if (q.hard)
       quiz.append(
         el(
@@ -1044,11 +1047,11 @@ async function init() {
   if (isRush)
     new MutationObserver(() => {
       cancelAngle?.();
-      if (game === "trackrot") {
-        if (document.documentElement.hasAttribute("data-rush-paused"))
-          pausePlayback();
-        else resumePlayback();
-      }
+      if (document.documentElement.hasAttribute("data-rush-paused")) {
+        if (phase === "ready" && (game === "anglerot" || game === "splitrot"))
+          draw();
+        pausePlayback();
+      } else resumePlayback();
     }).observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["data-rush-paused"],
