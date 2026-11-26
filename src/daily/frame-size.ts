@@ -27,8 +27,11 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
         parseFloat(style.marginTop) +
         parseFloat(style.marginBottom),
     );
-    if (height && frame.style.height !== `${height}px`)
+    if (height && frame.style.height !== `${height}px`) {
       frame.style.height = `${height}px`;
+      // Viewport-dependent content can change overflow without resizing main.
+      schedule();
+    }
     if (!wasVisible) window.scrollTo({ top: 0, behavior: "instant" });
     wasVisible = true;
   };
