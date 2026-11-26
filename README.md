@@ -125,11 +125,52 @@ stable, randomly generated secret of at least 32 characters. Rotating it
 invalidates signed browser identities. Use a separate database for testing.
 
 The score API limits request size and rejects cross-origin browser submissions.
-It limits short bursts per network on each running function instance and uses
-Postgres to cap how many new
-ranking identities a network can create per hour. The database stores a keyed,
-hourly network identifier for this limit. Existing browsers can still submit
-after the new-identity limit is reached. Local game saves work independently.
+It limits short bursts per network on each running function instance, rejects
+untracked networks when that local limiter reaches capacity, and atomically caps
+validly shaped submissions at 120 per network per minute across all instances in
+Postgres. A database failure returns 503 rather than bypassing the shared limit.
+It also uses Postgres to cap how many new
+ranking identities a network can create per hour. The database stores keyed
+network identifiers for these limits. Existing browsers can still submit after
+the new-identity limit is reached. Local game saves work independently.
+
+Ranking responses are cached in Postgres for 15 seconds per browser, game, day,
+and puzzle. Concurrent refreshes lock the same score row, so repeated submissions
+keep the original score without repeating inserts or ranking scans while cached.
+Comparisons can lag new finishers by up to 15 seconds. Every submission still
+passes input validation and the shared request limit.
+
+| Current state            | Event and rule                             | Result                                                   |
+| ------------------------ | ------------------------------------------ | -------------------------------------------------------- |
+| Request budget available | Atomic shared counter below 120            | Consume one slot; validate and grade the result          |
+| Request budget exhausted | Another submission in the same minute      | Return 429 with Retry-After                              |
+| No score                 | Valid finish                               | Insert the first score and cache its ranking             |
+| Fresh ranking            | Repeat finish from the same signed browser | Return the cached first-score ranking                    |
+| Expired ranking          | Valid repeat finish                        | Lock the score row, recompute once, cache for 15 seconds |
+| Database unavailable     | Limit, score, or refresh fails             | Return 503; local saves remain available                 |
+
+Apply `scripts/daily-scores.sql` before deploying API changes; it is an additive,
+repeatable migration for existing databases. Set Production `CRON_SECRET` to a
+random secret of at least 32 characters. Vercel calls `/api/score-maintenance`
+daily at 10:00 UTC with its Bearer secret. The authenticated job keeps today and
+the previous 89 New York calendar dates, deletes older scores and their cached
+rankings, and removes expired request/admission counters. Repeating cleanup is
+safe. Missing or incorrect authorization cannot trigger deletion.
+
+The firewall configuration in `scripts/score-firewall-rule.json` is applied to
+the linked Vercel project separately from deployment. Its rule
+**Limit daily score submissions** matches only
+`POST /api/daily-score`, counts by IP, and returns 429 above 240 requests per
+60 seconds per region. The database's 120-request limit remains shared across
+regions and groups IPv6 addresses by /64. The firewall catches malformed traffic
+before function execution; it does not replace the shared application limit.
+
+For real Postgres checks, build the browser and API, then run
+`DATABASE_URL=postgres://... node scripts/test-score-api.mjs` against an empty
+disposable loopback database. Two independent API processes exercise concurrent
+rate limiting, cache reuse/expiry/isolation, first-score preservation, database
+failure, and authenticated retention boundaries. A repeatable result receipt is
+written to `test-results/score-hardening/receipt.json`.
 
 To check the request limits and cookie migration, run
 `node tests/score-protection.mjs` with `TRAINROT_TEST_URL` set to a loopback
