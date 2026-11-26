@@ -134,7 +134,7 @@ input::placeholder { color: var(--muted); }
 .rush-progress { flex: 1; flex-direction: row; align-items: center; gap: 16px; min-width: 0; }
 .rush-game-name { color: var(--ink); font-size: 18px; font-weight: 500; }
 #rush-streak { display: inline-flex; gap: 4px; align-items: center; color: var(--ink); font-size: 16px; font-weight: 500; margin-left: auto; }
-.rush-time:not([data-timed]) { display: none; }
+.rush-time:not([data-timed]):has(#rush-clock:empty) { display: none; }
 .rush-feed .rush-time[data-timed] { max-width: none; flex: 1 1 100%; order: 5; gap: 12px; }
 .rush-track { background: #e7dac7; height: 6px; }
 .rush-track span { background: var(--accent); }
