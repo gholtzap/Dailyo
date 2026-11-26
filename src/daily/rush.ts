@@ -9,9 +9,11 @@ interface Round {
 import { rushDate, shuffle } from "./puzzles.js";
 import { closeRushAudio } from "./rush-audio.js";
 
-import { rushGames as rotation } from "./rush-games.js";
+import { rushGames as rotation, individualRushGames } from "./rush-games.js";
 const slug = location.pathname.split("/")[2];
-const selected = rotation.find((game) => game.label.toLowerCase() === slug);
+const selected = individualRushGames.find(
+  (game) => game.label.toLowerCase() === slug,
+);
 let games = selected ? [selected] : [...rotation];
 const date = rushDate(new URLSearchParams(location.search).get("date"));
 const bestKey = `dailyo:rush:best:${selected ? slug : "all"}`;

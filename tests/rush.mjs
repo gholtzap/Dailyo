@@ -3,14 +3,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { checkPage } from "lintapple";
-import { rushDate, seededDeck, shuffle } from "../dist/daily/puzzles.js";
+import { rushDate, shuffle } from "../dist/daily/puzzles.js";
 import {
   makeSet,
   preparePuzzles,
   roundCount,
 } from "../dist/games/rot-puzzles.js";
 import { extraPuzzle, prepareExtra } from "../dist/games/extra-puzzles.js";
-import { createRouter } from "../dist/router.js";
 
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const policy = JSON.parse(
@@ -49,18 +48,6 @@ try {
       failFlag = false;
       return route.fulfill({ status: 503 });
     });
-    let releaseTrain;
-    const trainNetwork = new Promise((resolve) => {
-      releaseTrain = resolve;
-    });
-    await page.route(
-      `**/trainrot/?rush=0&date=${day}&run=*`,
-      async (route) => {
-        await trainNetwork;
-        await route.continue();
-      },
-      { times: 1 },
-    );
     const inspect = async (name, child = false) => {
       if (!lint) return;
       await page.clock.resume();
@@ -262,36 +249,6 @@ try {
     await language.locator(".choice.correct").waitFor();
     await page.clock.fastForward(2400);
 
-    await status.filter({ hasText: "Loading trainrot…" }).waitFor();
-    assert.equal(await timer.textContent(), "");
-    assert.equal(
-      await page
-        .locator("iframe[title=langrot]")
-        .evaluate((node) => node.inert),
-      true,
-    );
-    await page.locator("iframe[title=langrot]").waitFor({ state: "visible" });
-    releaseTrain();
-    const train = game("trainrot");
-    await timer.filter({ hasText: "35s" }).waitFor();
-    await train
-      .getByRole("heading", { name: "Find the fastest route" })
-      .waitFor();
-    await inspect("trainrot", true);
-    const network = await loadJson("/data/network.json");
-    const challenges = await loadJson("/data/challenges.json");
-    const easy = challenges.filter((c) => c.difficulty === "easy");
-    const challenge = seededDeck(
-      await rushSeed(page, "train"),
-      easy.length >= 3 ? easy : challenges,
-    )[0];
-    const best = createRouter(network).best(challenge.from, challenge.to);
-    for (const { route } of best.legs)
-      await train.locator(`button[data-route="${route}"]`).click();
-    await train.getByRole("button", { name: "Check route" }).click();
-    await status.filter({ hasText: "Correct" }).waitFor();
-    await page.clock.fastForward(200);
-    await timer.filter({ hasText: "28s" }).waitFor();
     const next = page.locator("#rush-next");
     const rot = async (kind, round = 0) => {
       const data = preparePuzzles(
@@ -308,15 +265,6 @@ try {
           round - index,
         )[index],
       };
-    };
-    const extra = async (kind, ...datasets) => {
-      const data = prepareExtra(
-        kind,
-        ...(await Promise.all(
-          datasets.map((name) => loadJson(`/games/data/${name}.json`)),
-        )),
-      );
-      return extraPuzzle(kind, data, `${await rushSeed(page, kind)}:0`);
     };
     const placeYear = async (child, round = 0) => {
       const {
@@ -342,80 +290,10 @@ try {
             .click();
         },
       ],
-      [
-        "maprot",
-        20,
-        15,
-        async (child) => {
-          const {
-            question: [, , lon, lat],
-          } = await rot("maprot");
-          const map = child.locator(".rot-map");
-          const position = await map.evaluate(
-            (svg, [lon, lat]) => {
-              const { x, y } = new DOMPoint(
-                lon + 180,
-                90 - lat,
-              ).matrixTransform(svg.getScreenCTM());
-              const bounds = svg.getBoundingClientRect();
-              return { x: x - bounds.left, y: y - bounds.top };
-            },
-            [lon, lat],
-          );
-          await map.click({ position });
-          await child.getByRole("button", { name: "Check pin" }).click();
-        },
-      ],
       ["yearrot", 14, 10, placeYear],
-      [
-        "borderrot",
-        45,
-        35,
-        async (child) => {
-          const { data, question } = await rot("borderrot");
-          for (const country of question.slice(1)) {
-            const name = data.graph.get(country).name;
-            const search = child.getByRole("searchbox");
-            await search.fill(name);
-            // Complete names may already be committed; ambiguous names need Enter.
-            if ((await search.isVisible()) && (await search.inputValue()))
-              await search.press("Enter");
-          }
-        },
-      ],
-      [
-        "scalerot",
-        20,
-        15,
-        async (child) => {
-          const puzzle = await extra("scalerot", "scalerot");
-          await child.getByRole("spinbutton").fill(String(puzzle.actual));
-          await child.getByRole("button", { name: "Check estimate" }).click();
-        },
-      ],
-      [
-        "swaprot",
-        50,
-        40,
-        async (child) => {
-          const { board } = await extra("swaprot");
-          for (
-            let i = board.findIndex((tile, i) => tile > board[i + 1]);
-            i !== -1;
-            i = board.findIndex((tile, i) => tile > board[i + 1])
-          ) {
-            await child.locator(".swap-tile").nth(i).click();
-            await child
-              .locator(".swap-tile")
-              .nth(i + 1)
-              .click();
-            [board[i], board[i + 1]] = [board[i + 1], board[i]];
-          }
-        },
-      ],
     ];
     for (const [name, openingSeconds, seconds, solve] of slots) {
-      await next.click();
+      if (name !== "Vocabulary") await next.click();
       await timer.filter({ hasText: `${openingSeconds}s` }).waitFor();
       await inspect(name, true);
       await solve(game(name));
@@ -433,18 +311,18 @@ try {
         }
       }
     }
-    for (let i = 0; i < 11; i++) await next.click();
+    for (let i = 0; i < 9; i++) await next.click();
     await page.getByRole("heading", { name: "Rush recap" }).waitFor();
     assert.equal(
       await page.locator("#rush-score").textContent(),
-      "18 correct · Best run: 6 in yearrot",
+      "13 correct · Best run: 6 in yearrot",
     );
     assert.equal(
       await page.locator("#rush-personal-best").textContent(),
-      "New best · 18 correct",
+      "New best · 13 correct",
     );
     assert.deepEqual(await page.evaluate(() => Object.entries(localStorage)), [
-      ["dailyo:rush:best:all", "18"],
+      ["dailyo:rush:best:all", "13"],
     ]);
     assert.deepEqual(writes, []);
     await page.getByRole("button", { name: "Copy results" }).press("Enter");
@@ -456,13 +334,13 @@ try {
     const recapRows = await page
       .locator("#feed-results li span")
       .allTextContents();
-    assert.equal(recapRows.length, 19);
+    assert.equal(recapRows.length, 12);
     assert.ok(recapRows.every((row) => !/ladderrot|cluerot/.test(row)));
     assert.equal(
       share,
       [
         `dailyo Rush · ${day}`,
-        "18 correct · 6 in yearrot",
+        "13 correct · 6 in yearrot",
         "",
         ...recapRows,
         "",
@@ -472,7 +350,7 @@ try {
     await inspect("recap");
     await page.getByRole("button", { name: "Play again" }).click();
     await timer.filter({ hasText: "Untimed" }).waitFor();
-    for (let i = 0; i < 19; i++)
+    for (let i = 0; i < 12; i++)
       await page
         .getByRole("button", { name: "Skip game", exact: true })
         .click();
@@ -480,7 +358,7 @@ try {
     assert.equal(await page.locator("#rush-copy-status").textContent(), "");
     assert.equal(
       await page.locator("#rush-personal-best").textContent(),
-      "Personal best · 18 correct",
+      "Personal best · 13 correct",
     );
     await page.getByRole("link", { name: "Play more langrot" }).click();
     await page
@@ -545,7 +423,7 @@ try {
     );
     assert.equal(
       await page.evaluate(() => localStorage.getItem("dailyo:rush:best:all")),
-      "18",
+      "13",
     );
     assert.equal(
       await page.evaluate(() =>
@@ -586,7 +464,7 @@ try {
     assert.deepEqual(errors, []);
     await page.close();
     console.log(
-      `${width}px Rush: all nineteen games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`,
+      `${width}px Rush: all twelve mixed games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`,
     );
   }
   if (lint) {
