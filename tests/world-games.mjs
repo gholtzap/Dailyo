@@ -30,6 +30,10 @@ try {
         other = await otherCtx.newPage();
       const errors = [];
       page.on("pageerror", (e) => errors.push(e.message));
+      const requests = [];
+      page.on("request", (request) =>
+        requests.push(new URL(request.url()).pathname),
+      );
       await Promise.all([
         page.clock.install({ time: new Date("2026-11-14T16:00:00Z") }),
         other.clock.install({ time: new Date("2026-11-14T16:00:00Z") }),
@@ -42,6 +46,18 @@ try {
         page.locator(".choice").first().waitFor(),
         other.locator(".choice").first().waitFor(),
       ]);
+      const puzzleEngines = requests.filter((path) =>
+        [
+          "/games/extra-puzzles.js",
+          "/games/rot-puzzles.js",
+          "/games/pool-version.js",
+        ].includes(path),
+      );
+      assert.deepEqual(
+        puzzleEngines,
+        [],
+        "Quiz startup must not download other games' puzzle engines",
+      );
       if (kind === "vocabulary") {
         for (const route of ["/daily/", "/flags/", "/languages/"]) {
           await other.goto(base + route);
