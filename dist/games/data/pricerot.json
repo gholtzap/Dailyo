@@ -5,13 +5,14 @@
     "size": "1 banana",
     "cents": 23,
     "source": "https://www.traderjoes.com/home/products/pdp/bananas-048053",
-    "image": "/games/media/price-banana.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-banana-957dbe5fce22.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20701/48053.png"
   },
   {
     "id": "penne",
@@ -19,13 +20,14 @@
     "size": "1 lb (454 g)",
     "cents": 99,
     "source": "https://www.traderjoes.com/home/products/pdp/italian-penne-rigate-009299",
-    "image": "/games/media/price-penne.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-penne-e156d19b9db4.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20901/09299.png"
   },
   {
     "id": "peanut-butter",
@@ -33,13 +35,14 @@
     "size": "16 oz (454 g)",
     "cents": 249,
     "source": "https://www.traderjoes.com/home/products/pdp/creamy-peanut-butter-unsalted-001487",
-    "image": "/games/media/price-peanut-butter.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-peanut-butter-40e6342cd5d6.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20903/01487.png"
   },
   {
     "id": "orange-chicken",
@@ -47,13 +50,14 @@
     "size": "22 oz (624 g)",
     "cents": 549,
     "source": "https://www.traderjoes.com/home/products/pdp/066563",
-    "image": "/games/media/price-orange-chicken.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-orange-chicken-746d92c77469.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20602/66563.png"
   },
   {
     "id": "vanilla-oats",
@@ -61,13 +65,14 @@
     "size": "5.5 oz (156 g)",
     "cents": 199,
     "source": "https://www.traderjoes.com/home/products/pdp/vanilla-overnight-oats-061902",
-    "image": "/games/media/price-vanilla-oats.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-vanilla-oats-9703aa375145.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20503/61902.png"
   },
   {
     "id": "organic-oats",
@@ -75,13 +80,14 @@
     "size": "18 oz (510 g)",
     "cents": 299,
     "source": "https://www.traderjoes.com/home/products/pdp/oven-toasted-old-fashioned-organic-oats-004856",
-    "image": "/games/media/price-organic-oats.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-organic-oats-a0473b385262.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20907/04856.png"
   },
   {
     "id": "ancient-oats",
@@ -89,13 +95,14 @@
     "size": "24 oz (680 g)",
     "cents": 499,
     "source": "https://www.traderjoes.com/home/products/pdp/gluten-free-organic-rolled-oats-with-ancient-grains-and-seeds-072073",
-    "image": "/games/media/price-ancient-oats.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-ancient-oats-0333a304326e.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20907/72073.png"
   },
   {
     "id": "steel-oats",
@@ -103,13 +110,14 @@
     "size": "16 oz (454 g), 2 servings",
     "cents": 229,
     "source": "https://www.traderjoes.com/home/products/pdp/steel-cut-oatmeal-083177",
-    "image": "/games/media/price-steel-oats.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-steel-oats-04972b3cd205.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20602/83177.png"
   },
   {
     "id": "orange-morsels",
@@ -117,13 +125,14 @@
     "size": "9.25 oz (262 g)",
     "cents": 399,
     "source": "https://www.traderjoes.com/home/products/pdp/chicken-less-mandarin-orange-morsels-097897",
-    "image": "/games/media/price-orange-morsels.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-orange-morsels-ab1f1835d311.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m20602/97897.png"
   },
   {
     "id": "choc-passport",
@@ -131,13 +140,14 @@
     "size": "12.8 oz (363 g)",
     "cents": 1299,
     "source": "https://www.traderjoes.com/home/products/pdp/chocolate-passport-094062",
-    "image": "/games/media/price-choc-passport.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-choc-passport-d37f5718f28b.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m21002/94062.png"
   },
   {
     "id": "dark-chocolate",
@@ -145,13 +155,14 @@
     "size": "8.11 oz (230 g)",
     "cents": 899,
     "source": "https://www.traderjoes.com/home/products/pdp/dark-chocolate-collection-098906",
-    "image": "/games/media/price-dark-chocolate.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-dark-chocolate-46b87ab5f6d2.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price and product photography: Trader Joe’s",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.traderjoes.com/content/dam/trjo/products/m21002/98906.png"
   },
   {
     "id": "belgian-chocolate",
@@ -159,12 +170,14 @@
     "size": "4.76 oz (135 g)",
     "cents": 699,
     "source": "https://www.traderjoes.com/home/products/pdp/assorted-belgian-chocolates-083568",
-    "image": "/games/media/price-belgian-chocolate.svg",
-    "retailer": "Trader Joe\u2019s",
+    "image": "/games/media/price-belgian-chocolate-9f7eeb6dc2f6.webp",
+    "retailer": "Trader Joe’s",
     "currency": "USD",
     "captured": "2026-11-17",
-    "credit": "Price: Trader Joe\u2019s public product catalog; illustration: dailyo",
-    "license": "Original illustration",
-    "explanation": "Recorded catalog price, before tax. Prices and availability can change."
+    "credit": "Price: Trader Joe’s; Product photography: Trader Joe’s, courtesy of Martha Stewart",
+    "license": "Product photography © Trader Joe’s; used for product identification",
+    "explanation": "Recorded catalog price, before tax. Prices and availability can change.",
+    "imageSource": "https://www.marthastewart.com/thmb/7QAEZXO2FX24h-6G566FvDTcxBc=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(319x0:321x2):format(webp)/408-8f3ecd59bd4c4b3a9ff4d6487b79ff04.png",
+    "imageSourcePage": "https://www.marthastewart.com/trader-joes-may-finds-2026-11963714"
   }
 ]

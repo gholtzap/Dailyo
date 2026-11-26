@@ -183,7 +183,7 @@ To exercise all seven games against an empty test database, set
 ## Visual and everyday games
 
 - **skyrot** identifies cities from overhead NASA photography. Daily and Practice reveal wider views after misses; Rush gives one guess.
-- **pricerot** estimates recorded US supermarket prices before tax, with the exact package size, retailer, currency, and snapshot date displayed. Images are original product illustrations. Rush accepts estimates within 20%.
+- **pricerot** estimates recorded US supermarket prices before tax, with the exact package size, retailer, currency, and snapshot date displayed. Images are locally bundled photographs of the exact products. Items without sourced product photographs are excluded from Daily, Practice, and Rush. Rush accepts estimates within 20%.
 - **skylinerot** identifies cities from skyline photos.
 - **zoomrot** identifies everyday objects from cropped photos, revealing more after misses.
 - **orderrot** arranges four items from lowest to highest across facts, measurements, and chronology. Results show your submitted order beside the correct order. Rush uses three.
@@ -276,3 +276,7 @@ Run `bun run hooks:install` to install the pre-push hook. It checks formatting,
 lint and types for the actual pushed range without rewriting files; the local
 budget is nine seconds. The optional production-NYC router suite still requires
 production data and is run explicitly with `bun run test:nyc`.
+
+To refresh the existing grocery photos without changing price snapshots, run `uv run --with curl_cffi --with pillow python scripts/fetch-product-images.py`. It matches exact retailer SKUs, verifies downloaded images, and bundles optimized, content-addressed WebP files. `scripts/product-image-fallbacks.json` records the credited alternate source for the catalog’s broken Belgian-chocolate photo.
+
+With the site running, `node tests/product-images.mjs` verifies every shipped grocery image against its bundled bytes, exercises Daily, Practice, Rush and broken-image recovery, and checks mobile and desktop UI policy. Set `TRAINROT_TEST_URL` to run the same checks against a deployment. Reports go to `test-results/product-images/`.
