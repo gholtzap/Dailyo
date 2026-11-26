@@ -195,10 +195,49 @@ try {
 
     const angle = await enter("anglerot");
     await angle.getByRole("slider").waitFor();
-    await setAngle(angle,42.5);
+    await setAngle(
+      angle,
+      Number(
+        (await angle.locator(".angle-target").textContent()).replace("°", ""),
+      ),
+    );
+    await angle
+      .getByRole("button", { name: "Check angle", exact: true })
+      .click();
+    await page.clock.runFor(200);
+    await status.filter({ hasText: "Round 2" }).waitFor();
+    await angle.getByRole("slider").waitFor();
+    await setAngle(angle, 42.5);
+    const boardBox = await angle.getByRole("slider").boundingBox();
+    await page.mouse.move(
+      boardBox.x + boardBox.width / 2,
+      boardBox.y + boardBox.height / 2,
+    );
+    await page.mouse.down();
+    await page.mouse.move(
+      boardBox.x + boardBox.width * 0.7,
+      boardBox.y + boardBox.height * 0.7,
+    );
+    await page
+      .getByRole("button", { name: "Pause", exact: true })
+      .press("Enter");
+    await page
+      .getByRole("button", { name: "Resume", exact: true })
+      .press("Enter");
+    await page.mouse.up();
+    assert.equal(
+      await angle.getByRole("slider").getAttribute("aria-valuenow"),
+      "42.5",
+      "A paused redraw cannot commit after resume",
+    );
+
     await page.reload();
-    await status.filter({ hasText: "Round 1" }).waitFor();
-    assert.equal(await angle.getByRole("slider").getAttribute("aria-valuenow"), "42.5");
+    await status.filter({ hasText: "Paused" }).waitFor();
+    await page.getByRole("button", { name: "Resume", exact: true }).click();
+    assert.equal(
+      await angle.getByRole("slider").getAttribute("aria-valuenow"),
+      "42.5",
+    );
 
     await seedMixedRun(page, "2026-11-20");
     await page.goto(base);

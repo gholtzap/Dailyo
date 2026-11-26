@@ -605,6 +605,11 @@ https://trainrot.vercel.app/daily/`;
     await page
       .getByRole("button", { name: "See recap", exact: true })
       .waitFor();
+    assert.equal(
+      await page.getByRole("heading", { name: "Daily recap" }).isVisible(),
+      false,
+    );
+    await page.getByRole("button", { name: "See recap", exact: true }).click();
     await page.getByRole("heading", { name: "Daily recap" }).waitFor();
     assert.equal(await replay.isVisible(), false);
     assert.equal(await rows.filter({ hasText: "Skipped" }).count(), 0);

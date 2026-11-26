@@ -48,6 +48,20 @@ try {
         i === 4,
       );
       if (i === 4) {
+        await page.emulateMedia({ reducedMotion: "no-preference" });
+        assert.equal(
+          await page
+            .locator("#rush-streak")
+            .evaluate((n) => getComputedStyle(n).animationName),
+          "rush-streak",
+        );
+        await page.emulateMedia({ reducedMotion: "reduce" });
+        assert.equal(
+          await page
+            .locator("#rush-streak")
+            .evaluate((n) => getComputedStyle(n).animationName),
+          "none",
+        );
         await page.getByRole("button", { name: "Keep answer" }).click();
         await page.clock.resume();
         reports.push({

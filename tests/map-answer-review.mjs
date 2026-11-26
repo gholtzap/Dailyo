@@ -1,3 +1,4 @@
+import { distanceKm } from "../dist/games/rot-puzzles.js";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -55,6 +56,28 @@ try {
     await f
       .getByRole("button", { name: "Zoom in", exact: true })
       .waitFor({ timeout: 2000 });
+    const contours = await map
+      .locator(".rot-distance-ring")
+      .evaluateAll((nodes) =>
+        nodes.map((n) => ({
+          distance: Number(n.getAttribute("data-distance-km")),
+          path: n.getAttribute("d"),
+        })),
+      );
+    assert.equal(contours.length, 3);
+    for (const contour of contours) {
+      const points = [...contour.path.matchAll(/[ML](-?[\d.]+),(-?[\d.]+)/g)];
+      for (const point of points.filter((_, i) => i % 60 === 0))
+        assert.ok(
+          Math.abs(
+            distanceKm(
+              [121.47, 31.23],
+              [Number(point[1]) - 180, 90 - Number(point[2])],
+            ) - contour.distance,
+          ) < 2,
+          "Each contour must represent a constant geographic distance, rather than circles in map coordinates",
+        );
+    }
     const before = await map.getAttribute("viewBox"),
       feedback = await f.locator(".rot-feedback").innerText();
     await f.getByRole("button", { name: "Zoom in", exact: true }).click();
