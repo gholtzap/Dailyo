@@ -7,11 +7,13 @@ import { randomBytes } from "node:crypto";
 const database = new URL(process.env.DATABASE_URL ?? "");
 if (!["127.0.0.1", "localhost", "[::1]"].includes(database.hostname))
   throw new Error("A loopback test database is required");
-process.env.DAILY_SCORE_SECRET = randomBytes(32).toString("hex");
+process.env.DAILY_SCORE_SECRET ??= randomBytes(32).toString("hex");
 mkdirSync(".test-build/dist/games", { recursive: true });
 cpSync("dist/data", ".test-build/dist/data", { recursive: true });
 cpSync("dist/games/data", ".test-build/dist/games/data", { recursive: true });
 const { default: handler } = await import("../.test-build/api/daily-score.js");
+const { default: maintenance } =
+  await import("../.test-build/api/score-maintenance.js");
 const mime = {
   ".html": "text/html",
   ".js": "text/javascript",
@@ -24,6 +26,10 @@ const mime = {
 const root = resolve("dist");
 const server = createServer((req, res) => {
   const path = new URL(req.url, "http://127.0.0.1").pathname;
+  if (path === "/api/score-maintenance") {
+    void maintenance(req, res);
+    return;
+  }
   if (path === "/api/daily-score") {
     void handler(req, res);
     return;
