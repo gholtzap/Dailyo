@@ -74,7 +74,7 @@ export function createMap(
         fill: "var(--map-land)",
       }),
     );
-  for (const feature of boroughs.features) {
+  for (const feature of city && city.slug !== "nyc" ? [] : boroughs.features) {
     land.append(
       el("path", {
         d: feature.geometry.coordinates
@@ -92,6 +92,30 @@ export function createMap(
         "fill-rule": "evenodd",
       }),
     );
+  }
+  if (city && city.slug !== "nyc") {
+    // Frozen rail geometry gives every city continuous context without revealing
+    // line identities. Partial source polygons otherwise end in rectangular gaps.
+    const alignments = el("g", {
+      class: "map-network-context",
+      "aria-hidden": "true",
+    });
+    const drawn = new Set<string>();
+    for (const pattern of network.patterns) {
+      const d = path(pattern.geometry);
+      if (!d || drawn.has(d)) continue;
+      drawn.add(d);
+      alignments.append(
+        el("path", {
+          d,
+          fill: "none",
+          stroke: "var(--map-shore)",
+          "stroke-width": 1,
+          "vector-effect": "non-scaling-stroke",
+        }),
+      );
+    }
+    land.append(alignments);
   }
   svg.append(land);
   if (!network.metadata.mapName && (!city || city.slug === "nyc")) {
