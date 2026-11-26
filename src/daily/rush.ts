@@ -481,7 +481,8 @@ function makeRound(gameIndex: number, roundIndex: number) {
   frame.className = "feed-loading";
   frame.inert = true;
   panel.append(frame);
-  if (games[gameIndex].label === "yearrot") sizeFeedFrame(frame);
+  if (["yearrot", "trainrot"].includes(games[gameIndex].label))
+    sizeFeedFrame(frame);
   return { frame, ready: false };
 }
 

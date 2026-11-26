@@ -287,9 +287,6 @@
   width: min(100%, var(--feed-body-width));
   margin-inline: auto;
 }
-.rush-feed:has(iframe[title="trainrot"]) .feed-body {
-  width: 100%;
-}
 @media (max-width: breakpoint(compact)) {
   .rush-feed .feed-actions {
     padding: var(--space-2) var(--space-4);
