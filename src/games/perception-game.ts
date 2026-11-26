@@ -1032,7 +1032,8 @@ async function init() {
       else if (
         isRush &&
         window.frameElement?.hasAttribute("title") &&
-        !document.documentElement.hasAttribute("data-rush-paused")
+        !document.documentElement.hasAttribute("data-rush-paused") &&
+        !document.querySelector("#help-dialog[open]")
       ) {
         resumePlayback();
         if (phase === "ready") activateRush();

@@ -77,6 +77,9 @@ try {
     await child
       .getByRole("button", { name: "How to play", exact: true })
       .click();
+    await child
+      .locator("body")
+      .evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
     await page.clock.runFor(5000);
     assert.equal(
       await child.locator(".track-countdown").textContent(),
