@@ -313,9 +313,8 @@
   right: var(--border-map-label-right);
 }
 .practice-settings {
-  margin: calc(var(--space-2) * -1) 0 var(--space-6);
-  padding: 0 0 var(--space-5);
-  border-bottom: var(--stroke-1) solid var(--line);
+  margin: 0 0 var(--space-4);
+  padding: 0;
 }
 .practice-settings-row {
   display: flex;
@@ -1264,3 +1263,28 @@ body[data-game=yearrot] .rot-year-choices {
   }
 }
 
+
+@media (max-width: breakpoint(mobile)) {
+  body:has(#practice[aria-pressed="true"]) .prompt {
+    min-height: 0;
+    margin: var(--space-2) 0 var(--space-4);
+    padding: var(--space-3);
+  }
+  body:has(#practice[aria-pressed="true"]) .visual-viewport {
+    --visual-viewport-practice-height: 160px;
+    height: var(--visual-viewport-practice-height);
+    aspect-ratio: auto;
+  }
+  body:has(#practice[aria-pressed="true"]) .angle-board {
+    --angle-board-practice-width: 200px;
+    width: min(100%, var(--angle-board-practice-width));
+    margin: var(--space-2) auto;
+  }
+}
+
+body:has(#practice[aria-pressed="true"]) .perception-settings {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}

@@ -1315,7 +1315,7 @@ async function start() {
     settings = practiceSettings(
       {
         easy: "Broad eras.",
-        standard: "Daily difficulty.",
+        standard: "",
         hard: "Nearby events.",
       },
       (next) => {
