@@ -34,7 +34,7 @@
     "test:e2e:perception": "node tests/perception-games.mjs",
     "lint:ui:perception": "node tests/perception-games.mjs --ui",
     "typecheck:ci": "bun check --no-script",
-    "build:ci": "bun run verify:artifacts && tsc --noCheck -p tsconfig.browser.json && node scripts/stage-verified.mjs dist && node scripts/stage-data.mjs && node scripts/build-map-geometry.mjs && node scripts/build-world-pages.mjs && node scripts/render-navigation.mjs && node scripts/validate-release.mjs && node scripts/validate-world.mjs && bun run postbuild",
+    "build:ci": "bun run verify:artifacts && node scripts/build-browser.mjs && node scripts/stage-verified.mjs dist && node scripts/stage-data.mjs && node scripts/build-map-geometry.mjs && node scripts/build-world-pages.mjs && node scripts/render-navigation.mjs && node scripts/validate-release.mjs && node scripts/validate-world.mjs && bun run postbuild",
     "test:compiled": "bun run test:unit",
     "test:unit": "bun test ./tests/router.test.mjs ./tests/score-protection.test.ts ./tests/visual-api.test.ts ./tests/verified-boundary.test.ts ./tests/play-improvements.test.ts ./tests/ci-browser.test.ts ./tests/ci-plan.test.ts",
     "lint": "oxlint src api lib scripts tests",
