@@ -36,12 +36,14 @@ def label_stations(network):
             if len(group)<2:continue
             # Different platforms can have identical names and services. Name
             # their position rather than inventing an official platform number.
-            if len(group)!=2:raise ValueError('Ambiguous station group: '+name)
+            if len(group)>3:
+                for station in group:station['label']+=f" · {station['lat']:.5f}, {station['lon']:.5f}"
+                continue
             lon_span=max(s['lon'] for s in group)-min(s['lon'] for s in group)
             lat_span=max(s['lat'] for s in group)-min(s['lat'] for s in group)
             axis='lon' if lon_span*math.cos(math.radians(group[0]['lat']))>lat_span else 'lat'
             ordered=sorted(group,key=lambda station:station[axis])
-            sides=['west stop','east stop'] if axis=='lon' else ['south stop','north stop']
+            sides=(['west stop','central stop','east stop'] if axis=='lon' else ['south stop','central stop','north stop']) if len(group)==3 else (['west stop','east stop'] if axis=='lon' else ['south stop','north stop'])
             for station,side in zip(ordered,sides):station['label']+=' · '+side
     labels=[station['label'] for station in network['stations'].values()]
     if len(labels)!=len(set(labels)):raise ValueError('Station labels remain ambiguous')
