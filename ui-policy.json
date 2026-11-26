@@ -1,5 +1,12 @@
 {
-  "fonts": ["-apple-system", "BlinkMacSystemFont", "SF Pro Text", "SF Pro Display", "Segoe UI", "sans-serif"],
+  "fonts": [
+    "-apple-system",
+    "BlinkMacSystemFont",
+    "SF Pro Text",
+    "SF Pro Display",
+    "Segoe UI",
+    "sans-serif"
+  ],
   "fontSizes": [12, 13, 14, 16, 18, 24],
   "typeRules": [
     { "selector": "h1", "sizes": [24] },
@@ -11,7 +18,10 @@
   "minControlGap": 8,
   "minControlInset": 8,
   "minLayoutGap": 8,
-  "viewports": [{ "width": 390, "height": 844 }, { "width": 1440, "height": 1000 }],
-  "colorSchemes": ["dark"],
+  "viewports": [
+    { "width": 390, "height": 844 },
+    { "width": 1440, "height": 1000 }
+  ],
+  "colorSchemes": ["light"],
   "exceptions": []
 }

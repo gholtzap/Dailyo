@@ -89,7 +89,7 @@ try {
         exact: true,
       });
       await dailyLink.waitFor();
-      assert.equal(await dailyLink.textContent(), "Daily mix");
+      assert.equal(await dailyLink.textContent(), "Daily");
       if (route === "/daily/")
         assert.equal(await dailyLink.getAttribute("aria-current"), "page");
       if (route === "/zoomrot/")
@@ -114,17 +114,9 @@ try {
       await menu
         .getByRole("link", { name: "GitHub repository", exact: true })
         .waitFor();
-      assert.equal(
-        await menu.locator(".game-picker-context").textContent(),
-        route === "/" ? "Play in Rush" : "Daily & practice",
-      );
-      const vocabulary = menu.getByRole("link", {
-        name: /^Vocabulary Word meanings$/,
-      });
-      assert.equal(
-        await vocabulary.locator("small").textContent(),
-        "Word meanings",
-      );
+      assert.equal(await menu.locator(".game-picker-context").count(), 0);
+      const vocabulary = menu.getByRole("link", { name: "Words", exact: true });
+      assert.equal(await vocabulary.locator("small").count(), 0);
       assert.equal(
         await vocabulary.getAttribute("href"),
         route === "/" ? "/rush/vocabulary/" : "/vocabulary/",

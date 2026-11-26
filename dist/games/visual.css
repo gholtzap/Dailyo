@@ -1,5 +1,5 @@
 .visual-figure { margin: 0 0 16px; }
-.visual-viewport { position: relative; aspect-ratio: 16 / 10; overflow: hidden; display: grid; place-items: center; background: #202124; border: 1px solid var(--line); border-radius: 8px; }
+.visual-viewport { position: relative; aspect-ratio: 16 / 10; overflow: hidden; display: grid; place-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
 .visual-viewport img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 .visual-viewport[data-kind=pricerot] { aspect-ratio: 16 / 8; background: #e9e4d9; }
 .visual-viewport[data-kind=pricerot] img { object-fit: contain; }

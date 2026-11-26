@@ -1,3 +1,4 @@
+import { gameName } from "../dist/game-names.js";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -211,7 +212,7 @@ try {
       "Every eligible game exactly once",
     );
     assert.notDeepEqual(
-      order,
+      order.map(gameName),
       rushGames.map((g) => g.label),
       "A fresh run is shuffled",
     );
@@ -240,7 +241,7 @@ try {
       (await page.locator("#feed-results li span").allTextContents()).map(
         (s) => s.split(" · ")[0],
       ),
-      order,
+      order.map(gameName),
     );
     await page.getByRole("button", { name: "Play again", exact: true }).click();
     await ready();

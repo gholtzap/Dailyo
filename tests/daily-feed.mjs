@@ -112,15 +112,13 @@ try {
     const bounds = await nav.boundingBox();
     assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= width);
     await inspect("directory");
-    await nav
-      .getByRole("link", { name: /^trainrot Subway routes$/ })
-      .press("Enter");
+    await nav.getByRole("link", { name: /^Subway$/ }).press("Enter");
     await page.waitForURL((url) => url.pathname === "/trainrot/");
     await page.locator("[data-route]").first().waitFor();
     await page.getByRole("button", { name: "Practice", exact: true }).click();
     const home = page.getByRole("link", { name: "Daily mix", exact: true });
     assert.equal(await home.getAttribute("href"), "/daily/");
-    assert.equal(await home.innerText(), "Daily mix");
+    assert.equal(await home.innerText(), "Daily");
     const flagData = await page.request.get(
       new URL("/games/data/flags.json", base).href,
     );

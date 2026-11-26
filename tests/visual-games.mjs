@@ -156,7 +156,7 @@ try {
         .locator("#rush-status")
         .filter({ hasText: `${game} · Round 1` })
         .waitFor();
-      assert.equal(await page.locator("#rush-clock").textContent(), "Untimed");
+      assert.equal(await page.locator("#rush-clock").textContent(), "");
       const frame = page.frameLocator(
         "iframe:not(.feed-loading):not([hidden])",
       );
