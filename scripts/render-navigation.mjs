@@ -26,6 +26,40 @@ const games = [
   ["temporot", "temporot", "Rhythm"],
   ["splitrot", "splitrot", "Line proportions"],
 ];
+// Match each game's startup fetches so the HTML parser can start them early.
+const puzzleData = Object.fromEntries(
+  [
+    "flags",
+    "languages",
+    "vocabulary",
+    "yearrot",
+    "cluerot",
+    "scalerot",
+    "skyrot",
+    "pricerot",
+    "skylinerot",
+    "zoomrot",
+    "orderrot",
+  ].map((game) => [game, [`/games/data/${game}.json`]]),
+);
+puzzleData.maprot = [
+  "/games/data/maprot.json",
+  "/games/data/map-geometry.json",
+];
+puzzleData.borderrot = [
+  "/games/data/borderrot.json",
+  "/games/data/border-map.json",
+];
+puzzleData.ladderrot = [
+  "/games/data/ladderrot.json",
+  "/games/data/ladder-words.json",
+];
+puzzleData.trainrot = [
+  "/data/network.json",
+  "/data/boroughs.json",
+  "/data/challenges.json",
+];
+
 async function visit(directory) {
   for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
     const file = path.join(directory, entry.name);
@@ -95,6 +129,30 @@ async function visit(directory) {
         .replace(
           /<meta name="theme-color" content="#1c1d1f">/g,
           '<meta name="theme-color" content="#fff8ec">',
+        );
+      // Rebuild these hints on every run, including when a generated city page
+      // starts from the Trainrot template. Rush hosts preload their child pages.
+      html = html.replace(/\s*<link data-puzzle-preload[^>]*>/g, "");
+      const city = html.match(/data-world-city="([a-z-]+)"/)?.[1];
+      let datasets = current ? (puzzleData[current[1]] ?? []) : [];
+      if (city && route !== "/trainrot-world/") {
+        const root = city === "nyc" ? "/data" : `/world-data/${city}`;
+        datasets = [
+          "/world-data/cities.json",
+          ...["network", "boroughs", "challenges"].map(
+            (name) => `${root}/${name}.json`,
+          ),
+        ];
+      }
+      if (datasets.length)
+        html = html.replace(
+          "</head>",
+          datasets
+            .map(
+              (href) =>
+                `  <link data-puzzle-preload rel="preload" as="fetch" href="${href}" crossorigin>`,
+            )
+            .join("\n") + "\n</head>",
         );
       await fs.writeFile(file, html.replace(/^[ \t]+$/gm, ""));
     }
