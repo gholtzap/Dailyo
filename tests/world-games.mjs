@@ -1,3 +1,4 @@
+import { assertEditorialUI } from "./editorial-helpers.mjs";
 import { ciWidths, ciShared } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -81,7 +82,7 @@ try {
           await menu.click();
           await other.getByRole("link", { name: /^Words$/ }).click();
           await other.locator(".vocabulary-word").waitFor();
-          assert.equal(await other.title(), "Vocabulary | dailyo");
+          assert.equal(await other.title(), "Words | dailyo");
           assert.equal(
             await other.locator(".site-more").getAttribute("open"),
             null,
@@ -105,6 +106,7 @@ try {
           ? vocabulary.find((x) => x.id === text).name
           : languages.find((x) => x.samples.includes(text)).name;
       };
+      await assertEditorialUI(page);
       const dots = page.locator(".daily-progress .progress-dot");
       const prompts = [];
       for (let i = 0; i < 5; i++) {
@@ -234,10 +236,7 @@ try {
       await page.evaluate(() =>
         document.dispatchEvent(new Event("visibilitychange")),
       );
-      assert.match(
-        await page.locator(".round-head").innerText(),
-        /Question 1 of 5/,
-      );
+      assert.match(await page.locator(".round-head").innerText(), /0 correct/);
       assert.equal(
         await dots.nth(0).getAttribute("aria-label"),
         "Question 1: current",
@@ -351,7 +350,7 @@ try {
       );
       assert.match(
         await midnight.locator(".round-head").innerText(),
-        /Question 1 of 5/,
+        /0 correct/,
       );
       assert.equal(await midnight.locator("#answer-feedback").count(), 0);
       await midnight.close();

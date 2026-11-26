@@ -1,3 +1,4 @@
+import { assertEditorialUI } from "./editorial-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -15,6 +16,7 @@ const browser = await chromium.launch(),
   reports = [];
 await fs.mkdir(output, { recursive: true });
 async function inspect(page, name) {
+  await assertEditorialUI(page);
   await page.clock.resume();
   reports.push({ name, ...(await checkPage(page, policy)) });
   const frames = page.locator("iframe[title]:not([hidden])");

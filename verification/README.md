@@ -41,6 +41,14 @@ new round. Daily mix uses the following host transitions:
 | Any      | Skip / undo / retry / date change | Existing action guards      | Load selected game; cancel timer      |
 | Any      | Message from old frame / old date | Never current               | Unchanged                             |
 
+## Static perception readiness
+
+| State     | Event        | Conditions                            | Next state / effect                                            |
+| --------- | ------------ | ------------------------------------- | -------------------------------------------------------------- |
+| Ready     | Reset / next | Unanswered standalone Angles or Split | Showing, then Answering; render the editable board immediately |
+| Answering | Start        | Already active                        | Unchanged; no duplicate round                                  |
+| Feedback  | Next         | Final round completed                 | Results                                                        |
+
 ## Failure cases
 
 Proofs must cover illegal edits, duplicate submissions, exhausted guesses,

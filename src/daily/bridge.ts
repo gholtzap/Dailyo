@@ -101,14 +101,8 @@ export function reportRush(phase: RushMessage["phase"], correct?: boolean) {
 }
 
 let rushExpired = false;
-export function rushFeedback(correct: boolean, tolerance = false) {
-  return rushExpired
-    ? "Time’s up"
-    : tolerance
-      ? `${correct ? "Within" : "Outside"} Rush tolerance`
-      : correct
-        ? "Correct"
-        : "Missed";
+export function rushFeedback(correct: boolean) {
+  return rushExpired ? "Time’s up" : correct ? "Correct" : "Missed";
 }
 
 export function onRushActivation(activate: () => void) {

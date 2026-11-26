@@ -1,3 +1,4 @@
+import { gameName } from "../game-names.js";
 import { required } from "../dom.js";
 import type { DailyMessage } from "../types.js";
 import { dailyDate } from "./bridge.js";
@@ -44,7 +45,8 @@ const recapDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
 });
-const recapColumn = Math.max(...games.map(({ label }) => label.length)) + 3;
+const recapColumn =
+  Math.max(...games.map(({ label }) => gameName(label).length)) + 3;
 let day = dailyDate(),
   skipped = readSkips(),
   results = new Map<string, string>();
@@ -135,7 +137,7 @@ function showGame(position: number) {
       const li = document.createElement("li");
       const name = document.createElement("span"),
         status = document.createElement("span");
-      name.textContent = label;
+      name.textContent = gameName(label);
       status.textContent = results.get(id) ?? "Skipped";
       li.append(name, status);
       return li;
@@ -149,7 +151,7 @@ function showGame(position: number) {
     return;
   }
   progress.textContent = `${index + 1} of ${games.length}`;
-  message(`Loading ${game.label}…`);
+  message(`Loading ${gameName(game.label)}…`);
   if (preload?.position === position) {
     frame = preload.frame;
     preload = null;
@@ -173,7 +175,7 @@ function showError() {
   phase = "error";
   frame?.remove();
   frame = null;
-  message(`${games[index].label} didn’t load.`, "alert");
+  message(`${gameName(games[index].label)} didn’t load.`, "alert");
   renderActions();
   if (focusOnReady) retry.focus();
   focusOnReady = false;
@@ -276,7 +278,7 @@ function recapText() {
     const outcome = solved
       ? "Completed"
       : result.replace(/^(\d+) out of (\d+)$/, "$1/$2");
-    return label.padEnd(recapColumn) + outcome;
+    return gameName(label).padEnd(recapColumn) + outcome;
   });
   return [
     `dailyo | ${recapDate.format(new Date(`${day}T00:00:00Z`))}`,
@@ -317,7 +319,7 @@ continueArea.addEventListener("pointerup", (event) => {
   const up = touchStart.y - event.clientY,
     horizontal = Math.abs(touchStart.x - event.clientX);
   touchStart = null;
-  if (up > 48 && up > horizontal * 1.5) next.click();
+  if (up > 32 && up > horizontal * 1.5) next.click();
 });
 continueArea.addEventListener("pointercancel", () => {
   touchStart = null;

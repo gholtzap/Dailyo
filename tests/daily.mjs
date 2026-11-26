@@ -74,7 +74,7 @@ try {
       .getByRole("button", { name: "Copy results", exact: true })
       .click();
     const text = await page.evaluate(() => navigator.clipboard.readText());
-    assert.match(text, /trainrot.*\d{4}-\d{2}-\d{2}/i);
+    assert.match(text, /Subway.*\d{4}-\d{2}-\d{2}/i);
     assert.doesNotMatch(text, /[⬛🟨🟩]/u);
     await page.evaluate(() =>
       Object.defineProperty(navigator, "clipboard", {

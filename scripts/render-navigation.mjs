@@ -103,13 +103,33 @@ async function visit(directory) {
       <summary>Games</summary>
       <nav class="site-more-links" aria-label="Games">
           ${links}
-          <a class="repository-link" href="https://github.com/gholtzap/Dailyo" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+          ${rush ? "" : '<a href="/trainrot-world/nyc/"><span>Subway cities</span></a>'}
       </nav>
     </details>
   </header>`;
       html = html.replace(
         /<header class="site-masthead[\s\S]*?<\/header>(?:\s*<h1 class="screen-reader-only">.*?<\/h1>)?/,
         header,
+      );
+      if (current) {
+        const name = gameName(current[0]);
+        html = html.replace(
+          /<title>.*?<\/title>/,
+          `<title>${name} | dailyo</title>`,
+        );
+        html = html.replace(/(class="game-title">)[^<]*(<)/, `$1${name}$2`);
+      } else if (rush) {
+        const selected = games.find(
+          ([name]) => route === `/rush/${name.toLowerCase()}/`,
+        );
+        html = html.replace(
+          /<title>.*?<\/title>/,
+          `<title>${selected ? `${gameName(selected[0])} Rush` : "Rush"} | dailyo</title>`,
+        );
+      }
+      html = html.replace(
+        /\s*<a class="world-discover[^"]*"[\s\S]*?<\/a>/g,
+        "",
       );
       if (!html.includes('src="/site.js"'))
         html = html.replace(

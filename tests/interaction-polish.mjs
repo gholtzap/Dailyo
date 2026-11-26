@@ -86,10 +86,18 @@ try {
     for (const game of ["anglerot", "splitrot"]) {
       await page.goto(`${base}/${game}/`);
       await page
-        .getByRole(game === "anglerot" ? "slider" : "button", {
-          name: game === "anglerot" ? "Draw angle" : "Start round",
-          exact: true,
-        })
+        .getByRole(
+          game === "anglerot" || game === "splitrot" ? "slider" : "button",
+          {
+            name:
+              game === "anglerot"
+                ? "Draw angle"
+                : game === "splitrot"
+                  ? "Split position"
+                  : "Start round",
+            exact: true,
+          },
+        )
         .waitFor();
       await page.getByRole("button", { name: "Practice", exact: true }).click();
       await page.getByRole("slider").waitFor();
@@ -118,30 +126,54 @@ try {
       );
       await page.reload();
       await page
-        .getByRole(game === "anglerot" ? "slider" : "button", {
-          name: game === "anglerot" ? "Draw angle" : "Start round",
-          exact: true,
-        })
+        .getByRole(
+          game === "anglerot" || game === "splitrot" ? "slider" : "button",
+          {
+            name:
+              game === "anglerot"
+                ? "Draw angle"
+                : game === "splitrot"
+                  ? "Split position"
+                  : "Start round",
+            exact: true,
+          },
+        )
         .waitFor();
       await page.getByRole("button", { name: "Practice", exact: true }).click();
       await page.getByRole("slider").waitFor();
-      await page.getByLabel("Practice variation").selectOption("hard");
+      await page.getByLabel("Difficulty").selectOption("hard");
       await page.getByRole("slider").waitFor();
       await page.getByRole("button", { name: "Daily", exact: true }).click();
       await page
-        .getByRole(game === "anglerot" ? "slider" : "button", {
-          name: game === "anglerot" ? "Draw angle" : "Start round",
-          exact: true,
-        })
+        .getByRole(
+          game === "anglerot" || game === "splitrot" ? "slider" : "button",
+          {
+            name:
+              game === "anglerot"
+                ? "Draw angle"
+                : game === "splitrot"
+                  ? "Split position"
+                  : "Start round",
+            exact: true,
+          },
+        )
         .waitFor();
     }
     for (const game of ["countrot", "temporot"]) {
       await page.goto(`${base}/${game}/?practice=1`);
       await page
-        .getByRole(game === "anglerot" ? "slider" : "button", {
-          name: game === "anglerot" ? "Draw angle" : "Start round",
-          exact: true,
-        })
+        .getByRole(
+          game === "anglerot" || game === "splitrot" ? "slider" : "button",
+          {
+            name:
+              game === "anglerot"
+                ? "Draw angle"
+                : game === "splitrot"
+                  ? "Split position"
+                  : "Start round",
+            exact: true,
+          },
+        )
         .waitFor();
       assert.equal(
         await page.getByRole("slider").count(),

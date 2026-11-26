@@ -1,3 +1,5 @@
+import { assertEditorialUI } from "./editorial-helpers.mjs";
+import { gameName } from "../dist/game-names.js";
 import { ciWidths, ciShared } from "./ci-parts.mjs";
 import { rushSeed } from "./rush-helpers.mjs";
 import assert from "node:assert/strict";
@@ -74,7 +76,18 @@ try {
     await page.clock.setFixedTime(new Date(`${day}T16:00:00Z`));
     for (const game of visualGames) {
       await page.goto(`${base}/${game}/`);
-      await page.locator("#question-title").waitFor();
+      try {
+        await page.locator("#question-title").waitFor();
+      } catch (error) {
+        console.error({
+          game,
+          width,
+          errors,
+          body: await page.locator("body").innerText(),
+        });
+        throw error;
+      }
+      await assertEditorialUI(page);
       assert.equal(
         await page.locator(`.site-more a[href="/${game}/"]`).count(),
         0,
@@ -107,7 +120,18 @@ try {
         if (index === 0) {
           // Reload a completed round: the next unanswered daily round is restored.
           await page.reload();
-          await page.locator("#question-title").waitFor();
+          try {
+            await page.locator("#question-title").waitFor();
+          } catch (error) {
+            console.error({
+              game,
+              width,
+              errors,
+              body: await page.locator("body").innerText(),
+            });
+            throw error;
+          }
+          await assertEditorialUI(page);
         } else
           await page
             .getByRole("button", {
@@ -119,12 +143,13 @@ try {
       await page
         .getByRole("heading", { name: "500 / 500 points", exact: true })
         .waitFor();
+      await assertEditorialUI(page);
       await page
         .getByRole("button", { name: "Copy results", exact: true })
         .click();
       assert.match(
         await page.evaluate(() => navigator.clipboard.readText()),
-        new RegExp(`${game} ${day}`),
+        new RegExp(`${gameName(game)} ${day}`),
       );
       await page.reload();
       await page
@@ -152,7 +177,7 @@ try {
       await page.goto(`${base}/rush/${game}/?date=${day}`);
       await page
         .locator("#rush-status")
-        .filter({ hasText: `${game} · Round 1` })
+        .filter({ hasText: `${gameName(game)} · Round 1` })
         .waitFor();
       assert.equal(await page.locator("#rush-clock").textContent(), "");
       const frame = page.frameLocator(
@@ -165,7 +190,7 @@ try {
       );
       await page
         .locator("#rush-status")
-        .filter({ hasText: `${game} · Round 2` })
+        .filter({ hasText: `${gameName(game)} · Round 2` })
         .waitFor();
       assert.match(await page.locator("#rush-clock").textContent(), /s$/);
       await page.clock.fastForward(60000);
@@ -221,7 +246,7 @@ try {
           .locator("#feed-results li")
           .nth(11 + i)
           .textContent(),
-        new RegExp(`${game}.*500 / 500 points`),
+        new RegExp(`${gameName(game)}.*500 / 500 points`),
       );
     assert.deepEqual(errors, []);
     await context.close();
@@ -272,7 +297,7 @@ try {
     await page.goto(`${base}/rush/skyrot/?date=${day}`);
     await page
       .locator("#rush-status")
-      .filter({ hasText: "skyrot · Round 1" })
+      .filter({ hasText: "From above · Round 1" })
       .waitFor();
     const rushQ = visualSet(
       "skyrot",

@@ -91,12 +91,7 @@ try {
       }
       await child()
         .getByRole("heading", {
-          name:
-            game === "pricerot"
-              ? correct
-                ? "Correct"
-                : "Missed"
-              : `${correct ? "Within" : "Outside"} Rush tolerance`,
+          name: correct ? "Correct" : "Missed",
           exact: true,
         })
         .waitFor();

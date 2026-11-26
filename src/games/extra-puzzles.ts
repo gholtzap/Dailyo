@@ -119,7 +119,7 @@ export function prepareExtra(
             row.slice(0, 3).every(nonempty) &&
             Number.isFinite(row[3]) &&
             row[3] !== 0 &&
-            nonempty(row[4]),
+            typeof row[4] === "string",
         );
   if (!valid) throw new Error("Invalid puzzle data");
   if (game === "cluerot") return { game, rows: raw as ClueRow[] };

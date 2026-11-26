@@ -1,3 +1,5 @@
+import { assertEditorialUI } from "./editorial-helpers.mjs";
+import { gameName } from "../dist/game-names.js";
 import fs from "node:fs/promises";
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
@@ -104,7 +106,7 @@ async function answerYear(page, { event, timeline }, index) {
     .press("Enter");
   assert.match(
     await page.locator(".rot-feedback").innerText(),
-    index === 0 ? /Correct year/ : /Correct placement/,
+    index === 0 ? /Missed/ : /Correct/,
   );
   const years = (await page.locator(".rot-event time").allTextContents()).map(
     Number,
@@ -304,10 +306,11 @@ try {
         .locator(`a[href="/${kind}/"]`)
         .press("Enter");
       await page.waitForURL((url) => url.pathname === `/${kind}/`);
-      assert.equal(await page.title(), `${kind} | dailyo`);
+      assert.equal(await page.title(), `${gameName(kind)} | dailyo`);
       assert.equal(await page.locator(".site-more").getAttribute("open"), null);
       await page.locator("#round-title").waitFor();
       async function inspect(state) {
+        await assertEditorialUI(page);
         assert.ok(
           await page.evaluate(
             () => document.documentElement.scrollWidth <= innerWidth,
@@ -360,7 +363,7 @@ try {
         .getByRole("button", { name: "Copy results", exact: true })
         .click();
       const copied = await page.evaluate(() => navigator.clipboard.readText());
-      assert.ok(copied.includes(`${kind} ${day}`));
+      assert.ok(copied.includes(`${gameName(kind)} ${day}`));
       assert.ok(copied.includes(summary));
       assert.ok(copied.includes(`https://trainrot.vercel.app/${kind}/`));
       const clue =
