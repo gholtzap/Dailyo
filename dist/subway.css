@@ -1468,3 +1468,9 @@ body[data-world-city]:not([data-world-city="nyc"]) .train-choice {
 .map-hint p {
   line-height: var(--leading-1-5);
 }
+
+[data-rush] #app > .map-panel {
+  --map-panel-rush-height: 220px;
+  height: var(--map-panel-rush-height);
+  min-height: var(--map-panel-rush-height);
+}
