@@ -68,6 +68,13 @@ jobs:
         with:
           path: .cache
           key: proof-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('verification/toolchain.json') }}
+      # Bend keys its compiled Lean kernel by the pinned Lean version and kernel
+      # source hash. Cache the checker binary, never a proof result.
+      - uses: actions/cache@v4
+        if: steps.proof-inputs.outputs.reuse != 'true'
+        with:
+          path: ~/.bend/bendtt
+          key: bendtt-kernel-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('verification/toolchain.json') }}
       - if: steps.proof-inputs.outputs.reuse != 'true'
         run: npm run verify
       - run: node scripts/verify.mjs --check
