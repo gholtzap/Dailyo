@@ -742,3 +742,15 @@ iframe[data-content-sized] { border-radius: inherit; }
   :root[data-daily-feed]:not([data-rush]) .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
   :root[data-daily-feed]:not([data-rush]) .visual-viewport { --visual-viewport-feed-height: 160px; width: 100%; height: var(--visual-viewport-feed-height); aspect-ratio: auto; }
 }
+
+#feed-game iframe.feed-map-expanded {
+  --feed-map-expanded-height: 100dvh;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  min-height: var(--feed-map-expanded-height);
+  max-height: var(--feed-map-expanded-height);
+  z-index: calc(var(--layer-navigation) + 1);
+  border-radius: 0;
+}
+body:has(iframe.feed-map-expanded) { overflow: hidden; }
