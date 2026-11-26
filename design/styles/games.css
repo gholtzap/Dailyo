@@ -1107,7 +1107,8 @@
   color: var(--success-ink);
 }
 [data-rush] .visual-viewport {
-  --visual-viewport-max-height: 40dvh;
+  width: 100%;
+  --visual-viewport-max-height: 360px;
   max-height: var(--visual-viewport-max-height);
 }
 .main:has(.angle-playfield) {
