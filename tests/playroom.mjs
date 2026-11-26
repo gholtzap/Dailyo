@@ -63,6 +63,12 @@ try {
     const deck = shuffle(flags, await rushSeed(page, "flags"));
     const child = () => page.frameLocator('iframe[title="flagrot"]');
     await child().locator(".choice").first().waitFor();
+    assert.equal(
+      await page
+        .locator(".site-modes a[aria-current]")
+        .evaluate((n) => getComputedStyle(n).backgroundColor),
+      "rgba(0, 0, 0, 0)",
+    );
     await inspect(page, `${width}-opening`);
     await child()
       .getByRole("button", { name: deck[0].name, exact: true })
@@ -85,6 +91,31 @@ try {
     assert.equal(
       await child().locator("html").getAttribute("data-rush-paused"),
       "",
+    );
+    const resume = page.getByRole("button", { name: "Resume", exact: true });
+    assert.equal(
+      await resume.evaluate((n) => n.closest("#rush-resume-panel") !== null),
+      true,
+    );
+    assert.equal(await page.locator("#rush-game-name").textContent(), "Flags");
+    assert.equal(
+      await child().locator("#quiz").isVisible(),
+      false,
+      "Timed knowledge questions stay concealed",
+    );
+    assert.equal(
+      await child().locator(".heading").isVisible(),
+      true,
+      "The game shell remains visible while paused",
+    );
+    const pausedTimer = await page
+      .locator(".rush-track > span")
+      .evaluate((n) => getComputedStyle(n).backgroundColor);
+    assert.equal(pausedTimer, "rgb(154, 157, 162)");
+    const card = await page.locator("#rush-resume-panel").boundingBox();
+    const action = await resume.boundingBox();
+    assert.ok(
+      action.y >= card.y && action.y + action.height <= card.y + card.height,
     );
     await inspect(page, `${width}-paused`);
     await page.getByRole("button", { name: "Resume", exact: true }).click();

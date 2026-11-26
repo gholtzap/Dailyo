@@ -28,6 +28,60 @@ const actions = $(".feed-actions"),
   retry = $("#rush-retry"),
   next = $("#rush-next");
 const pause = $("#rush-pause");
+const pauseSurface = $("#rush-resume-panel");
+const resumeCard =
+  pauseSurface.querySelector<HTMLElement>(".rush-resume-card")!;
+// Keep spatial drafts visible. Knowledge questions remain masked while their clock is stopped.
+const previewGames = new Set([
+  "trainrot",
+  "maprot",
+  "borderrot",
+  "swaprot",
+  "orderrot",
+  "trackrot",
+  "anglerot",
+  "splitrot",
+]);
+function positionPauseSurface() {
+  if (pauseSurface.hidden || !visible?.contentDocument) return;
+  const board = [
+    ".perception-field",
+    ".angle-board",
+    ".split-field",
+    ".rot-map",
+    ".map-panel",
+    ".swap-board",
+    ".visual-order",
+    "#quiz",
+  ]
+    .map((selector) =>
+      visible!.contentDocument!.querySelector<Element>(selector),
+    )
+    .find((element) => element !== null);
+  if (!board) return;
+  const rect = board.getBoundingClientRect();
+  const frame = visible.getBoundingClientRect();
+  const area = pauseSurface.parentElement!;
+  const bounds = area.getBoundingClientRect();
+  const preview = pauseSurface.hasAttribute("data-preview");
+  // A short tile rack stays unobstructed; larger boards carry Resume in place.
+  const below = preview && rect.height < 160;
+  const height = Math.min(
+    below ? 136 : Math.max(preview ? 160 : 240, rect.height),
+    480,
+    Math.max(160, area.clientHeight - 32),
+  );
+  const top =
+    frame.top -
+    bounds.top +
+    area.scrollTop +
+    (below ? rect.bottom + 16 : rect.top);
+  pauseSurface.style.left = `${frame.left - bounds.left + rect.left}px`;
+  pauseSurface.style.top = `${Math.max(area.scrollTop + 8, Math.min(top, area.scrollTop + area.clientHeight - height - 8))}px`;
+  pauseSurface.style.width = `${rect.width}px`;
+  pauseSurface.style.height = `${height}px`;
+}
+let pauseLayout: ResizeObserver | undefined;
 const reviewButton = $("#rush-review"),
   recapReview = $("#rush-review-recap");
 const streakLabel = $("#rush-streak");
@@ -152,7 +206,22 @@ function updatePauseControl() {
     helpOpen() ||
     !["playing", "paused"].includes(run.phase) ||
     (run.phase === "playing" && !Number.isFinite(run.deadline));
-  pause.textContent = run.phase === "paused" ? "Resume" : "Pause";
+  const paused = run.phase === "paused" && review.state !== "previous";
+  pause.textContent = paused ? "Resume" : "Pause";
+  pause.className = paused ? "primary" : "rush-pause-control";
+  (paused ? resumeCard : actions).append(pause);
+  pauseSurface.hidden = !paused || helpOpen();
+  document.body.dataset.rushPhase = paused ? "paused" : run.phase;
+  pauseSurface.toggleAttribute(
+    "data-preview",
+    previewGames.has(games[index]?.label),
+  );
+  pauseLayout?.disconnect();
+  if (!pauseSurface.hidden && visible?.contentDocument) {
+    positionPauseSurface();
+    pauseLayout = new ResizeObserver(positionPauseSurface);
+    pauseLayout.observe(visible.contentDocument.body);
+  }
 }
 let current: Round | null | undefined,
   visible: HTMLIFrameElement | null = null;
@@ -337,6 +406,7 @@ function openReview() {
   streakLabel.hidden = true;
   status.textContent = `${lastAnswer.label} · ${lastAnswer.outcome}`;
   pause.hidden = true;
+  pauseSurface.hidden = true;
   next.removeAttribute("disabled");
   next.textContent = from === "recap" ? "Back to recap" : "Back to puzzle";
   next.className = "primary rush-continue";
@@ -494,6 +564,10 @@ function showRound() {
   } else visible?.remove();
   visible = frame;
   frame.inert = false;
+  frame.contentDocument?.documentElement.toggleAttribute(
+    "data-rush-preview",
+    previewGames.has(game.label),
+  );
   if (frame.contentDocument) watchAnswer(frame.contentDocument);
   updateReviewControl();
   status.textContent = `${gameName(game.label)} · Round ${round + 1}`;
@@ -840,8 +914,9 @@ function pauseRound() {
   }
   visible?.contentWindow?.postMessage("rush-pause", location.origin);
   status.textContent = `${gameName(games[index].label)} · Paused`;
-  $("#rush-game-name").textContent = `${gameName(games[index].label)} · Paused`;
+  $("#rush-game-name").textContent = gameName(games[index].label);
   next.setAttribute("disabled", "");
+  if (!helpOpen()) pause.focus({ preventScroll: true });
   checkpoint();
 }
 function resumeRound() {
@@ -867,6 +942,7 @@ function resumeRound() {
     ?.focus({ preventScroll: true });
   checkpoint();
 }
+window.addEventListener("resize", positionPauseSurface);
 pause.onclick = () => {
   if (run.phase === "paused") resumeRound();
   else pauseRound();

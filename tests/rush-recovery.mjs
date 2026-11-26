@@ -252,6 +252,17 @@ try {
       "42.5",
     );
 
+    // A paused restoration with no answer draft still shows the static board.
+    await page.evaluate(() => sessionStorage.removeItem("dailyo:rush:draft"));
+    await page.reload();
+    await status.filter({ hasText: "Paused" }).waitFor();
+    await angle.locator(".angle-board").waitFor();
+    assert.equal(await page.locator("#rush-resume-panel").isVisible(), true);
+    assert.equal(
+      await angle.getByText("Starting…", { exact: true }).count(),
+      0,
+    );
+
     await seedMixedRun(page, "2026-11-20");
     await page.goto(base);
     await status.filter({ hasText: "Round 1" }).waitFor();

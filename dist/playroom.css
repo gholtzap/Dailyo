@@ -35,11 +35,13 @@ button, input, select, textarea { accent-color: var(--accent); }
 }
 .site-masthead {
   background: var(--paper); border-bottom: 1px solid var(--line);
-  min-height: 64px; gap: 16px; padding: 8px 24px;
+  min-height: 56px; gap: 16px; padding: 4px 24px;
 }
 .site-brand { font-size: 18px; letter-spacing: -.5px; }
 .site-modes a { color: var(--muted); min-height: 44px; }
-.site-modes a[aria-current] { background: var(--accent); color: #211c19; }
+.site-modes a { position: relative; background: transparent; }
+.site-modes a[aria-current] { background: transparent; color: var(--ink); }
+.site-modes a[aria-current]::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px; background: var(--ink); }
 .site-modes a:hover:not([aria-current]), .site-more summary:hover,
 .site-more[open] summary, .site-masthead .site-more-links a:hover {
   background: var(--panel); color: var(--ink);
@@ -126,21 +128,40 @@ input::placeholder { color: var(--muted); }
 .park-place { color: #b8d0b0; }
 .water-place { color: #b4bdc6; }
 .feed-actions { background: var(--paper); }
+.rush-feed { grid-template-rows: auto auto minmax(0, 1fr) auto; }
 .rush-feed .feed-actions {
-  width: min(100%, 680px); padding: 24px 24px 8px; min-height: 64px;
+  width: min(100%, 680px); padding: 8px 24px; min-height: 0;
   border: 0; gap: 8px 16px; flex-wrap: wrap;
 }
-.rush-feed .feed-body { width: min(100%, 680px); }
-.rush-progress { flex: 1; flex-direction: row; align-items: center; gap: 16px; min-width: 0; }
-.rush-game-name { color: var(--ink); font-size: 18px; font-weight: 500; }
-#rush-streak { display: inline-flex; gap: 4px; align-items: center; color: var(--ink); font-size: 16px; font-weight: 500; margin-left: auto; }
+.rush-feed .feed-body { position: relative; width: min(100%, 680px); }
+.rush-progress { flex: 1; flex-direction: row; align-items: center; gap: 16px; min-width: 0; min-height: 40px; }
+.rush-game-name { color: var(--ink); font-size: 16px; font-weight: 500; }
+#rush-streak { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; font-weight: 500; margin-left: auto; white-space: nowrap; }
+#rush-streak > span { font-size: 16px; line-height: 1; }
+.rush-pause-control { min-height: 40px; min-width: 56px; padding: 8px; border: 0; background: transparent; color: var(--muted); border-radius: 6px; }
+.rush-pause-control:hover { color: var(--ink); background: var(--panel); }
 .rush-time:not([data-timed]):has(#rush-clock:empty) { display: none; }
-.rush-feed .rush-time[data-timed] { max-width: none; flex: 1 1 100%; order: 5; gap: 12px; }
-.rush-track { background: #383b40; height: 6px; }
+.rush-feed .rush-time[data-timed] { max-width: none; flex: 1 1 100%; order: 5; gap: 16px; }
+.rush-track { background: #383b40; height: 4px; }
 .rush-track span { background: var(--accent); }
-#rush-clock { font-size: 14px; color: var(--ink); }
-#rush-next.rush-skip { color: var(--muted); background: var(--paper); }
+#rush-clock { font-size: 13px; color: var(--muted); }
+[data-rush-phase=paused] .rush-track span { background: #9a9da2; }
+.rush-controls { width: min(100%, 680px); margin-inline: auto; padding: 8px 24px max(8px, env(safe-area-inset-bottom)); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.rush-controls > button { width: auto; }
+body:has(.feed-actions[hidden]) .rush-controls { display: none; }
+#rush-next { margin-left: auto; }
+#rush-next.rush-skip { color: var(--muted); background: transparent; border: 0; padding: 8px; min-height: 44px; }
 #rush-next.rush-skip:hover { color: var(--ink); }
+.rush-controls #rush-review { border: 0; color: var(--muted); padding: 8px; min-height: 44px; }
+.rush-pause-surface { position: absolute; z-index: 2; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.rush-pause-surface[data-preview] { background: transparent; border: 0; }
+.rush-resume-card { display: grid; justify-items: center; gap: 16px; padding: 24px; border-radius: 12px; }
+[data-preview] .rush-resume-card { background: var(--paper); }
+.rush-resume-card p { margin: 0; color: var(--muted); font-size: 14px; }
+.rush-resume-card #rush-pause { width: 136px; min-height: 44px; border: 1px solid var(--accent); border-radius: 10px; }
+.rush-resume-card #rush-pause:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+/* Disabled drafts remain recognizable without competing with Resume. */
+:root[data-rush-paused] :is(.perception-control, .angle-actions, #quiz > .primary, #quiz > .secondary) { opacity: .45; }
 [data-rush] .main { padding: 16px 24px 24px; max-width: 680px; }
 [data-rush] .heading { min-height: 0; margin-bottom: 8px; }
 [data-rush] .heading .game-help { position: static; margin-left: auto; }
@@ -153,7 +174,8 @@ input::placeholder { color: var(--muted); }
 .rush-feed #feed-recap h2 { font-size: 24px; margin-bottom: 24px; }
 #rush-score { font-size: 24px; font-weight: 500; color: var(--accent); margin: 0 0 32px; }
 .recap-streak { display: grid; justify-content: center; gap: 8px; }
-.recap-streak > span { font-size: 24px; color: var(--ink); }
+.recap-streak > span { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 24px; color: var(--ink); }
+.recap-streak > span > [aria-hidden] { font-size: 16px; line-height: 1; }
 #rush-replay { width: 100%; margin-top: 24px; }
 .rush-breakdown { margin-top: 16px; text-align: left; }
 #rush-copy { width: 100%; margin-top: 12px; }
@@ -170,13 +192,15 @@ input::placeholder { color: var(--muted); }
   .choice, .primary, .primary-button { transition: transform 80ms; }
 }
 @media (max-width: 700px) {
-  .site-masthead { padding: 8px 16px; gap: 8px; }
+  .site-masthead { padding: 4px 16px; gap: 8px; }
   .site-modes { gap: 4px; }
   .site-modes a { padding: 8px; }
   .main { padding: 24px 16px; }
   .flag { height: 200px; }
   .choice { min-height: 72px; padding: 12px; }
-  .rush-feed .feed-actions { padding: 16px 16px 0; gap: 8px; }
+  .rush-feed .feed-actions { padding: 8px 16px; gap: 8px 16px; }
+  .rush-controls { padding-inline: 16px; }
+  .site-modes a[aria-current]::after { left: 8px; right: 8px; }
   [data-rush] .main { padding: 8px 16px 24px; }
   [data-rush] .prompt { margin-top: 16px; }
   .rush-feed .rush-time[data-timed] { order: 5; }

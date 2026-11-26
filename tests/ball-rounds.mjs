@@ -106,6 +106,12 @@ try {
     await page.getByRole("button", { name: "Pause", exact: true }).click();
     await page.clock.runFor(5000);
     assert.equal(await child.locator(".track-countdown").textContent(), "2");
+    assert.equal(
+      await child.locator(".perception-field").isVisible(),
+      true,
+      "Pause keeps the frozen playfield visible",
+    );
+    assert.equal(await page.locator("#rush-resume-panel").isVisible(), true);
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     await page.clock.runFor(3300);
     await child.getByRole("slider").waitFor();
@@ -121,6 +127,27 @@ try {
     await child.getByRole("slider").fill("42.5");
     await page.reload();
     await status.filter({ hasText: "Paused" }).waitFor();
+    assert.equal(await child.locator("canvas").isVisible(), true);
+    assert.equal(await child.getByRole("slider").isVisible(), true);
+    assert.equal(await child.getByRole("slider").inputValue(), "42.5");
+    const pausedBoard = await child.locator("canvas").boundingBox();
+    const resumeButton = await page
+      .getByRole("button", { name: "Resume", exact: true })
+      .boundingBox();
+    assert.ok(
+      Math.abs(
+        resumeButton.y +
+          resumeButton.height / 2 -
+          pausedBoard.y -
+          pausedBoard.height / 2,
+      ) < 32,
+      "Resume stays centered on the actual game board",
+    );
+    assert.equal(
+      await page.locator("iframe[title=trackrot]").evaluate((n) => n.inert),
+      true,
+      "Visible paused drafts cannot be edited",
+    );
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     assert.equal(await child.getByRole("slider").inputValue(), "42.5");
     const remaining = await page.evaluate(
