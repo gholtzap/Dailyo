@@ -2,7 +2,7 @@
   {
     "id": "new-york",
     "name": "New York City",
-    "image": "/games/media/skyrot-new-york.jpg",
+    "image": "/games/media/skyrot-new-york.webp",
     "source": "https://commons.wikimedia.org/wiki/File:ISS-40_New_York_City.jpg",
     "credit": "NASA",
     "license": "Public domain",
@@ -62,7 +62,7 @@
   {
     "id": "london",
     "name": "London",
-    "image": "/games/media/skyrot-london.jpg",
+    "image": "/games/media/skyrot-london.webp",
     "source": "https://commons.wikimedia.org/wiki/File:PIA04301.jpg",
     "credit": "NASA/GSFC/METI/ERSDAC/JAROS and U.S./Japan ASTER Science Team",
     "license": "Public domain",
@@ -230,7 +230,7 @@
   {
     "id": "las-vegas",
     "name": "Las Vegas",
-    "image": "/games/media/skyrot-las-vegas.jpg",
+    "image": "/games/media/skyrot-las-vegas.webp",
     "source": "https://commons.wikimedia.org/wiki/File:ISS-40_Las_Vegas_Strip_and_McCarran_International_Airport.jpg",
     "credit": "NASA",
     "license": "Public domain",
@@ -252,7 +252,7 @@
   {
     "id": "seattle",
     "name": "Seattle",
-    "image": "/games/media/skyrot-seattle.jpg",
+    "image": "/games/media/skyrot-seattle.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Seattle_WA,_USA_from_space.JPG",
     "credit": "NASA",
     "license": "Public domain",
@@ -318,7 +318,7 @@
   {
     "id": "mexico-city",
     "name": "Mexico City",
-    "image": "/games/media/skyrot-mexico-city.jpg",
+    "image": "/games/media/skyrot-mexico-city.webp",
     "source": "https://commons.wikimedia.org/wiki/File:ISS-46_Mexico_City,_Mexico.jpg",
     "credit": "NASA/Tim Kopra",
     "license": "Public domain",
@@ -340,7 +340,7 @@
   {
     "id": "buenos-aires",
     "name": "Buenos Aires",
-    "image": "/games/media/skyrot-buenos-aires.jpg",
+    "image": "/games/media/skyrot-buenos-aires.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Buenos_Aires,_Argentina.jpg",
     "credit": "NASA ISS023-E-39845",
     "license": "Public domain",
@@ -450,7 +450,7 @@
   {
     "id": "athens",
     "name": "Athens",
-    "image": "/games/media/skyrot-athens.jpg",
+    "image": "/games/media/skyrot-athens.webp",
     "source": "https://commons.wikimedia.org/wiki/File:ISS-44_Athens,_Greece.jpg",
     "credit": "NASA/Scott Kelly",
     "license": "Public domain",
@@ -648,7 +648,7 @@
   {
     "id": "seoul",
     "name": "Seoul",
-    "image": "/games/media/skyrot-seoul.jpg",
+    "image": "/games/media/skyrot-seoul.webp",
     "source": "https://commons.wikimedia.org/wiki/File:ISS-62_Seoul,_South_Korea_at_night.jpg",
     "credit": "NASA",
     "license": "Public domain",
