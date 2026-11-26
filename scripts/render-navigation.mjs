@@ -123,12 +123,12 @@ async function visit(directory) {
         );
       html = html
         .replace(
-          /<meta name="color-scheme" content="dark">/g,
-          '<meta name="color-scheme" content="light">',
+          /<meta name="color-scheme" content="[^"]*">/g,
+          '<meta name="color-scheme" content="dark">',
         )
         .replace(
-          /<meta name="theme-color" content="#1c1d1f">/g,
-          '<meta name="theme-color" content="#fff8ec">',
+          /<meta name="theme-color" content="[^"]*">/g,
+          '<meta name="theme-color" content="#141516">',
         );
       // Rebuild these hints on every run, including when a generated city page
       // starts from the Trainrot template. Rush hosts preload their child pages.

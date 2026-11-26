@@ -319,7 +319,7 @@ function ball(
   x: number,
   y: number,
   r = 10,
-  color = "#302d29",
+  color = "#eeeef0",
 ) {
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -342,14 +342,14 @@ function track(c: HTMLCanvasElement, t: number, reveal = false) {
       line(ctx, a.x, a.y, b.x, b.y, "#7d8088", 2);
     }
     ctx.setLineDash([]);
-    ball(ctx, 40 + q.target * 880, 500, 12, "#2a7443");
+    ball(ctx, 40 + q.target * 880, 500, 12, "#86d6a0");
   }
   if (t < 0.55) {
     const p = position(t);
     ball(ctx, p.x, p.y);
   }
   if (phase !== "showing") {
-    line(ctx, 40 + draft * 8.8, 478, 40 + draft * 8.8, 524, "#c5422d", 5);
+    line(ctx, 40 + draft * 8.8, 478, 40 + draft * 8.8, 524, "#f39b85", 5);
   }
 }
 function slider(
