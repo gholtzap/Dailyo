@@ -223,6 +223,19 @@ try {
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     assert.equal(await child.locator(".rot-map-dialog").isVisible(), true);
     await child.getByRole("button", { name: "Close", exact: true }).click();
+    await child
+      .getByRole("button", { name: "Enlarge map", exact: true })
+      .click();
+    // Exercise the trusted host timeout message while the timed map is enlarged.
+    await page
+      .locator('iframe[title="maprot"]')
+      .evaluate((frame) =>
+        frame.contentWindow.postMessage("rush-timeout", location.origin),
+      );
+    await child.locator(".rot-reviewing").waitFor();
+    await page.waitForFunction(
+      () => !document.querySelector("iframe.feed-map-expanded"),
+    );
     assert.deepEqual(errors, []);
     await page.close();
     console.log(
