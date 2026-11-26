@@ -31,8 +31,8 @@ export function createMap(
   const labelSide = Number.parseFloat(designValue("--space-10"));
   const labelFar = Number.parseFloat(designValue("--space-20"));
   const labelReserve = Number.parseFloat(designValue("--space-8"));
-  const labelMinimum = Number.parseFloat(designValue("--size-72"));
-  const labelMaximum = Number.parseFloat(designValue("--size-240"));
+  const labelMinimum = Number.parseFloat(designValue("--map-label-min-width"));
+  const labelMaximum = Number.parseFloat(designValue("--map-label-max-width"));
   const city = network.metadata.city;
   const mapName = city?.name ?? network.metadata.mapName ?? "New York City";
   const project = ([lon, lat]: Coordinate): Coordinate =>
@@ -82,7 +82,7 @@ export function createMap(
           .join(""),
         fill:
           feature.properties?.kind === "water"
-            ? "var(--map-water)"
+            ? "var(--well)"
             : feature.properties?.kind === "park"
               ? "var(--map-park)"
               : "var(--map-land)",
@@ -297,7 +297,7 @@ export function createMap(
     circle.className = "map-marker-badge";
     circle.textContent = badge;
     circle.style.background = color;
-    circle.style.color = "var(--color-canvas)";
+    circle.style.color = "var(--paper)";
     const name = document.createElement("span");
     name.className = "map-marker-name";
     name.textContent = title;
@@ -319,13 +319,13 @@ export function createMap(
       network.stations[challenge.from],
       "A",
       challenge.fromTitle,
-      "var(--map-origin)",
+      "var(--accent)",
     );
     marker(
       network.stations[challenge.to],
       "B",
       challenge.toTitle,
-      "var(--yellow)",
+      "var(--focus)",
     );
     fit(challenge);
     svg.setAttribute(
@@ -347,7 +347,7 @@ export function createMap(
         el("path", {
           d: path(points),
           fill: "none",
-          stroke: "var(--map-route-halo)",
+          stroke: "var(--well)",
           "stroke-width": 8,
           "stroke-linecap": "round",
           "stroke-linejoin": "round",
@@ -378,7 +378,7 @@ export function createMap(
             cx: x,
             cy: y,
             r: 4,
-            fill: "var(--map-route-halo)",
+            fill: "var(--well)",
             stroke: color,
             "stroke-width": 2,
             "vector-effect": "non-scaling-stroke",

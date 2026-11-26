@@ -159,8 +159,8 @@ async function start() {
       .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
       .map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
     return rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722 > 0.179
-      ? "var(--color-route-dark-text)"
-      : "var(--color-route-light-text)";
+      ? "var(--route-ink-dark)"
+      : "var(--route-ink-light)";
   };
   const shuttleSuffix: Record<string, string | undefined> = {
     GS: "42",

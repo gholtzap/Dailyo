@@ -27,8 +27,8 @@ import {
 import type { PerceptionGame, PerceptionPuzzle } from "./perception-puzzles.js";
 import { acquireRushAudio } from "../daily/rush-audio.js";
 const trackPaint = {
-  path: designValue("--color-track-path"),
-  answer: designValue("--green"),
+  path: designValue("--track-path"),
+  answer: designValue("--success"),
   ball: designValue("--accent"),
 };
 const name = document.body.dataset.game!;

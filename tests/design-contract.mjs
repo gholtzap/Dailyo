@@ -19,13 +19,12 @@ const run = (...args) =>
     { encoding: "utf8" },
   );
 const tokens = {
-  color: { "color-canvas": "#0b1428", "color-text": "#f3f7ff" },
+  color: { paper: "#0b1428", ink: "#f3f7ff" },
   font: {
     "font-sans": "sans-serif",
     "font-size-13": "13px",
     "font-weight-regular": "400",
   },
-  semantic: { ink: "var(--color-text)", paper: "var(--color-canvas)" },
   breakpoint: { "breakpoint-mobile": "700px" },
   space: { "space-2": "8px" },
 };
@@ -41,17 +40,24 @@ try {
     ),
   );
   await write("design/tokens.json", JSON.stringify(tokens));
-  await write("design/styles/test.css", good);
+  await fs.symlink(
+    new URL("../node_modules", import.meta.url).pathname,
+    path.join(directory, "node_modules"),
+    "dir",
+  );
+  for (const name of ["games", "subway", "feed"])
+    await write(`design/styles/${name}.css`, "");
+  await write("design/styles/components.css", good);
   await write("src/test.ts", "export {};\n");
-  await write("dist/test.css", "");
+  await write("dist/components.css", "");
   await write(
     "dist/index.html",
-    '<!doctype html><html><head><meta name="theme-color" content="#ffffff"><link rel="stylesheet" href="/test.css"></head><body></body></html>',
+    '<!doctype html><html><head><meta name="theme-color" content="#ffffff"><link rel="stylesheet" href="/components.css"></head><body></body></html>',
   );
   let result = run();
   assert.equal(result.status, 0, result.stderr);
   assert.match(
-    await fs.readFile(path.join(directory, "dist/test.css"), "utf8"),
+    await fs.readFile(path.join(directory, "dist/components.css"), "utf8"),
     /max-width:700px/,
   );
   assert.match(
@@ -91,12 +97,12 @@ try {
       "@media(max-width:breakpoint(missing)){.x{display:block}}",
     ],
     ["raw radius", ".x { border-radius: 37%; }"],
-    [
-      "shadow outside recipe",
-      ".x { box-shadow: 0 0 var(--space-2) var(--ink); }",
-    ],
+    ["raw named font", ".x { font-family: Arial; }"],
+    ["raw named type size", ".x { font-size: small; }"],
+    ["malformed CSS", ".x { padding: var(--space-2);"],
+    ["nested fallback bypass", ".x { padding: var(--space-2, 17px); }"],
   ]) {
-    await write("design/styles/test.css", css);
+    await write("design/styles/components.css", css);
     result = run();
     assert.equal(
       result.status,
@@ -105,9 +111,32 @@ try {
     );
     receipt.push(`rejected ${name}`);
   }
-  await write("design/styles/test.css", good);
+  await write(
+    "design/styles/components.css",
+    '.example { --example-width: 320px; width: var(--example-width); content: "17px; #ff0000"; box-shadow: 0 0 var(--space-2) var(--ink); }',
+  );
+  assert.equal(
+    run().status,
+    0,
+    "Named component geometry and token-built recipes must be extensible",
+  );
+  await write("design/styles/components.css", good);
+  await write("design/styles/games.css", ".example { color: var(--ink); }");
+  assert.equal(run().status, 1, "Game styles must not repaint shared controls");
+  await write(
+    "design/styles/games.css",
+    ".settings input { color: var(--ink); }",
+  );
+  assert.equal(
+    run().status,
+    1,
+    "Native fields share the same appearance owner",
+  );
+  await write("design/styles/games.css", "");
   for (const source of [
     'ctx.fillStyle = "#ff0000";',
+    'ctx.fillStyle = "red";',
+    'node.style.color = "red";',
     'node.style.padding = "17px";',
     'node.style.setProperty("--random", value);',
   ]) {
@@ -123,12 +152,12 @@ try {
     "design/tokens.json",
     JSON.stringify({
       ...tokens,
-      semantic: { ink: "var(--paper)", paper: "var(--ink)" },
+      color: { ink: "var(--paper)", paper: "var(--ink)" },
     }),
   );
   assert.equal(run().status, 1, "Cyclic token references must be rejected");
   await write("design/tokens.json", JSON.stringify(tokens));
-  await write("dist/test.css", "/* drift */");
+  await write("dist/components.css", "/* drift */");
   assert.equal(
     run("--check").status,
     1,
@@ -140,7 +169,7 @@ try {
   await fs.rm(path.join(directory, "dist/rogue.css"));
   await write(
     "dist/index.html",
-    '<link rel="stylesheet" href="/test.css"><div style="padding:17px"></div>',
+    '<link rel="stylesheet" href="/components.css"><div style="padding:17px"></div>',
   );
   assert.equal(run().status, 1, "Inline HTML styles must be rejected");
   receipt.push(

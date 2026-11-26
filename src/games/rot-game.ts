@@ -842,10 +842,10 @@ function drawBorderMap(
   const scale = map.width / width;
   context.setTransform(scale, 0, 0, scale, -left * scale, -top * scale);
   const paint = {
-    border: designValue("--color-map-country-border"),
-    selected: designValue("--color-map-country-selected"),
-    target: designValue("--color-map-country-target"),
-    country: designValue("--color-map-country"),
+    border: designValue("--map-country-border"),
+    selected: designValue("--map-country-selected"),
+    target: designValue("--map-country-target"),
+    country: designValue("--map-country"),
   };
   context.strokeStyle = paint.border;
   context.lineWidth = 2.4 / scale;

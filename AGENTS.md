@@ -15,7 +15,7 @@
 
 ## Design system contract
 
-- Read `design/README.md` before changing presentation. `design/tokens.json` owns design values; `design/styles/` owns authored CSS. The CSS in `dist/` is generated.
-- Reuse the shared components and states in `design/styles/playroom.css`. Add a named token or shared variant explicitly when the system needs to grow. Do not invent feature-local colours, spacing, typography, radii, shadows, or motion values.
+- Read `design/README.md` before changing presentation. `design/tokens.json` owns shared design values; component-specific recipes and geometry stay at their named component owner in `design/styles/`. The CSS in `dist/` is generated.
+- Reuse the shared components and states in `design/styles/components.css`. Add a named token or shared variant explicitly when the system needs to grow. Do not invent feature-local colours, spacing, typography, radii, shadows, or motion values.
 - Canvas paints must use `designValue()` from `src/design.ts`. Game coordinates and transit route colours remain data.
 - Run `bun run design:build` after design changes and `bun run design:check` before completion. Do not bypass the checker or hide a one-off value behind a meaningless token.

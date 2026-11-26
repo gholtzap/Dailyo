@@ -58,6 +58,9 @@
     "lintapple": "^0.1.24",
     "oxlint": "^1.94.0",
     "playwright": "1.63.0",
+    "postcss": "^8.5.33",
+    "postcss-selector-parser": "^7.2.1",
+    "postcss-value-parser": "^4.2.0",
     "typescript": "^7.0.2"
   },
   "license": "PolyForm-Noncommercial-1.0.0",

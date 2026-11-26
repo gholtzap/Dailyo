@@ -5,7 +5,7 @@ import { rushGames } from "../dist/daily/rush-games.js";
 
 const themeColor = JSON.parse(
   await fs.readFile(new URL("../design/tokens.json", import.meta.url), "utf8"),
-).color["color-canvas"];
+).color.paper;
 
 const games = [
   ["trainrot", "trainrot", "Subway routes"],
@@ -140,11 +140,10 @@ async function visit(directory) {
           "</head>",
           '  <script type="module" src="/site.js"></script>\n</head>',
         );
-      if (!html.includes('href="/playroom.css"'))
-        html = html.replace(
-          "</head>",
-          '<link rel="stylesheet" href="/playroom.css">\n</head>',
-        );
+      html = html.replace(
+        "</head>",
+        '<link rel="stylesheet" href="/playroom.css">\n</head>',
+      );
       html = html
         .replace(
           /<meta name="color-scheme" content="[^"]*">/g,

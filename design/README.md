@@ -1,96 +1,74 @@
 # Dailyo design system
 
-The app uses the approved Block Party direction: dark navy boards, recessed
-playfields, coloured answer pieces, and quiet navigation. Dark mode is a product
-requirement, regardless of the device's colour preference.
+The approved Block Party UI stays dark under both system colour preferences.
 
-## Ownership
+## Owners
 
-- `tokens.json` owns design values: colours, type, spacing, radii, strokes,
-  layout measures, effects, shadows, motion and breakpoints.
-- `scopes.json` declares recipes that must resolve on a component, such as coloured
-  piece shadows.
-- `styles/playroom.css` owns shared component presentation and interaction states.
-- The other files in `styles/` own the existing game layouts and content-specific
-  presentation. Their public stylesheet URLs and cascade order are preserved.
-- `../src/design.ts` lets canvas renderers read the same CSS tokens. It reads the
-  element's computed style so embedded games can inherit their host surfaces.
-- `../dist/*.css` and `../src/design-token-names.ts` are generated outputs.
+| File                    | Owns                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------- |
+| `tokens.json`           | Shared semantic colours, type, spacing, radii, motion and layout limits          |
+| `styles/components.css` | Shared controls, navigation, boards, help and results; their states and variants |
+| `styles/games.css`      | Puzzle layout and game geometry                                                  |
+| `styles/subway.css`     | Rail maps, route editing and city navigation                                     |
+| `styles/feed.css`       | Daily/Rush hosting, clocks and progression layout                                |
 
-Edit the authored files, then run `bun run design:build`. `bun run design:check`
-rejects bypasses and stale generated output. The normal build and lint commands
-include these checks.
+Each value has the smallest useful scope. Reuse shared tokens for ordinary text,
+controls, surfaces and spacing. A game's own geometry belongs with that game;
+it does not become a global `size-136` token. Piece colours, optical offsets and
+component effects are named private properties declared on their owning component.
+There is no second compatibility palette or separate scope configuration.
 
-## Choosing values
+## Use and extend
 
-Use a semantic role before choosing a colour. `--paper`, `--panel` and `--well`
-are the page, board and recessed playfield. `--ink` and `--muted` are the text
-hierarchy. Accent, focus, success and error have separate roles. The four piece
-colours identify answer positions; correct and missed states override them.
-Map route colours supplied by transit datasets remain data, rather than theme
-tokens. Never convert route identity into the four answer colours.
+1. Reuse an existing component or variant. Primary/secondary actions retain the
+   existing `.primary`/`.primary-button` and `.secondary`/`.secondary-button` aliases.
+2. Use `--space-2` (8px) between related items, `--space-4` (16px) between groups
+   and `--space-6` (24px) between sections. Type uses SF Pro, regular/medium, and
+   the 12/13/14/16/18/24px scale.
+3. Add a shared token only for a decision that belongs across components. For a
+   component-specific decision, declare a descriptive private property at its
+   owner and reference it from the rule. Its name must identify that component:
 
-Use the four-pixel spacing scale: `--space-2` (8px) between related items,
-`--space-4` (16px) between groups, and `--space-6` (24px) between sections.
-Use `size` and `layout` measures for control sizes and puzzle geometry, rather
-than treating those values as spacing. Existing optical details such as the
-action's top/bottom padding and subway connector offsets have named measures.
-New ordinary spacing must use the spacing scale.
+   ```css
+   .angle-board {
+     --angle-board-max-width: 480px;
+     width: min(100%, var(--angle-board-max-width));
+     background: var(--well);
+   }
+   ```
 
-The `compatibility` group preserves exact historical colours still referenced by
-older game rules. It prevents this infrastructure change from repainting the UI.
-Use the Block Party semantic roles for new work; update the shared component
-owner when retiring a compatibility value.
+4. Put a shared control's base, interaction states and variants together in
+   `components.css`. Game files may arrange controls but cannot repaint them.
+   Ownership is derived from the shared component selectors, so introducing a
+   component does not require another registry entry.
+5. Run `bun run design:build`, `bun run design:check`, and the affected browser/UI
+   checks. Inspect mobile, desktop, keyboard, feedback and recovery states.
 
-Type uses SF Pro, regular or medium, with six sizes: 12, 13, 14, 16, 18 and 24px.
-13px is the base. Use the named radius, shadow and motion recipes. Keep animation
-under the existing reduced-motion media queries. Named `breakpoint(mobile)`
-references are expanded during the build because CSS variables do not work in
-media-query conditions.
+Native CSS resolves recipes on the component. In particular, answer faces and
+lips are selected through `--answer-face` and `--answer-lip` on the pieces; their
+shadow is defined there too. Values never resolve prematurely at the root.
 
-Relative layout (`100%`, fractions, aspect ratios, `auto`, zero), game coordinates,
-answers, scores and data-derived positions are not theme values. Literal design
-colours and absolute CSS measures belong in tokens. Runtime CSS properties are
-limited to the registered component properties in the checker.
+`src/design.ts` exposes `designValue()` for canvas paint and the small set of
+shared measurements needed by layout code. Its token names are generated as
+TypeScript declarations. Game coordinates, answers, aspect ratios, content-based
+`ch` measures and data-derived positions remain game data. Transit route colours
+remain network data. Runtime custom properties are limited to `--route-color`
+and `--rush-remaining`.
 
-## Shared components
+## Build and enforcement
 
-Use the existing class contracts instead of introducing a second button or board.
-These are plain CSS and DOM components; the app does not require a UI framework.
+PostCSS parses declarations and media queries; value and selector parsers handle
+references and ownership. Checks reject raw design values outside named
+component definitions, unknown references, cycles, game-level repainting of
+shared controls, extra stylesheets, inline HTML styles and stale generated output.
+Comments and strings are not treated as CSS declarations.
 
-| Component          | Contract                                                    | States                                                  |
-| ------------------ | ----------------------------------------------------------- | ------------------------------------------------------- |
-| Primary action     | `.primary`, `.primary-button`                               | hover, focus, pressed, disabled                         |
-| Secondary action   | `.secondary`, `.secondary-button`                           | hover, focus, disabled                                  |
-| Answer piece       | `.choice`                                                   | default, hover, pressed, `.correct`, `.wrong`, disabled |
-| Sort piece         | `.swap-tile` inside `.swap-board`                           | hover, pressed, `[aria-pressed=true]`                   |
-| Board and question | `.main`, `.prompt`, `.visual-viewport`, `.perception-field` | standalone and embedded                                 |
-| Progress           | `.daily-progress`, `.progress-dot`                          | `.current`, `.correct`, `.incorrect`                    |
-| Navigation         | `.site-masthead`, `.site-modes`, `.site-more`               | current route, expanded, focus                          |
-| Help               | `.game-help-dialog`, `.game-help-header`                    | native dialog, backdrop, return focus                   |
-| Results            | `.result`, `.result-actions`, `.answer-review`              | completion, review, replay                              |
-| Rush               | `.feed-actions`, `.rush-track`, `.streak-block`             | untimed, timed, paused, feedback, recap                 |
+The build emits shared tokens, shared components and one layout stylesheet per
+page family. `dist/*.css` and `src/design-token-names.d.ts` are generated. Edit
+only their authored owners. `breakpoint(mobile)` is expanded from the shared
+breakpoint table because CSS variables cannot be used in media-query conditions.
 
-Answer pieces set `--piece` and `--lip` locally. Their `--shadow-answer` recipe
-is scoped to the piece in `scopes.json`, where its selected lip colour is
-available. A shadow defined on the root would resolve too early and lose the
-orange/violet/teal lips.
-Other contextual properties are `--reward-accent`, `--route-color` and the
-data-derived `--rush-remaining`. Embedded games may select `--paper` and `--panel`
-from the existing surface tokens.
-
-## Changing the system
-
-1. Reuse an existing component and role.
-2. If the behavior is new, add a shared state or variant at its owner.
-3. If a value is missing, explicitly add a meaningfully named token to
-   `tokens.json`. Explain its purpose and relationship to the existing scale in
-   the change. Do not add a token merely to disguise a one-off value.
-4. Rebuild, run the design contract checks, and inspect the affected game states
-   on mobile and desktop. Check keyboard operation, zoom and reduced motion.
-5. Run the existing Lintapple and dark-default regressions. Record actual
-   findings; a passing token check does not establish visual quality.
-
-Do not add feature-local stylesheets, inline style blocks, arbitrary utility
-values or literal canvas paints. Update this contract when a new component or
-runtime custom property is introduced.
+`bun run test:design` exercises the real CLI, including rejected bypasses and
+successful component extensions. `bun run test:design:e2e` proves CSS and canvas
+consume the same tokens. The existing Playroom and dark-theme suites protect
+interaction and dark defaults. A token check is not a visual or editorial review.

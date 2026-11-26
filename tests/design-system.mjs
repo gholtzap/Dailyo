@@ -27,17 +27,17 @@ try {
           return {
             background: style.backgroundColor,
             shadow: style.boxShadow,
-            lip: style.getPropertyValue("--lip").trim(),
+            lip: style.getPropertyValue("--answer-lip").trim(),
           };
         });
         const tokenSheet = document
           .querySelector('link[rel="stylesheet"]')
           ?.getAttribute("href");
         const root = document.documentElement;
-        const normal = designValue("--color-primary");
-        root.style.setProperty("--color-primary", "#ff00ff");
+        const normal = designValue("--action");
+        root.style.setProperty("--action", "#ff00ff");
         const override = getComputedStyle(choices[0]).backgroundColor;
-        root.style.removeProperty("--color-primary");
+        root.style.removeProperty("--action");
         root.style.setProperty("--accent", "#ff00ff");
         const { canvas } = angleBoard({
           target: 45,
@@ -62,7 +62,7 @@ try {
       });
       assert.equal(result.tokenSheet, "/design-system.css");
       assert.equal(result.scheme, "dark");
-      assert.equal(result.normal, tokens.color["color-primary"]);
+      assert.equal(result.normal, tokens.color.action);
       assert.equal(
         new Set(result.styles.map((style) => style.background)).size,
         4,

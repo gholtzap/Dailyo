@@ -27,13 +27,13 @@ export function angleBoard(options: {
   let gesture: Gesture = { state: "idle" };
   const ctx = canvas.getContext("2d")!;
   const accent = designValue("--accent");
-  const success = designValue("--green");
-  const shore = designValue("--color-map-shore");
+  const success = designValue("--success");
+  const shore = designValue("--map-shore");
   const muted = designValue("--muted");
-  const gapPaint = designValue("--color-angle-gap");
-  const selectionPaint = designValue("--color-accent-halo");
-  const handleBorder = designValue("--color-angle-handle-border");
-  const hub = designValue("--color-ball");
+  const gapPaint = designValue("--angle-gap");
+  const selectionPaint = designValue("--angle-preview");
+  const handleBorder = designValue("--angle-handle-border");
+  const hub = designValue("--ball-ink");
   const radians = (a: number) => (-a * Math.PI) / 180;
   function refresh() {
     const value =
