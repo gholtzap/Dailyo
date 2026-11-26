@@ -91,14 +91,23 @@ try {
       }
       await child()
         .getByRole("heading", {
-          name: `${correct ? "Within" : "Outside"} Rush tolerance`,
+          name:
+            game === "pricerot"
+              ? correct
+                ? "Correct"
+                : "Missed"
+              : `${correct ? "Within" : "Outside"} Rush tolerance`,
           exact: true,
         })
         .waitFor();
       if (game === "pricerot") {
-        assert.match(
-          await child().locator(".visual-reveal").innerText(),
-          new RegExp(`Recorded price: \\$10.00.*${correct ? "20" : "31"}% off`),
+        assert.equal(
+          await child().locator(".price-actual").textContent(),
+          "$10.00",
+        );
+        assert.equal(
+          await child().locator(".price-error").textContent(),
+          `${correct ? "20" : "31"}% high`,
         );
         assert.doesNotMatch(
           await child().locator(".visual-reveal").innerText(),

@@ -197,14 +197,30 @@ const money = (cents: number) =>
     cents / 100,
   );
 function source(item: VisualItem) {
+  if (game === "pricerot") {
+    const details = el("details", undefined, "visual-source");
+    const link = el("a", item.retailer);
+    link.href = item.source;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    const date = el("time", item.captured);
+    date.dateTime = item.captured!;
+    date.title = "Price recorded";
+    details.append(el("summary", "Source"), link, el("span", " · "), date);
+    if (item.imageSource?.startsWith("https://")) {
+      const photo = el("a", "Product photo");
+      photo.href = item.imageSourcePage ?? item.imageSource;
+      photo.target = "_blank";
+      photo.rel = "noopener noreferrer";
+      details.append(el("br"), photo);
+      if (item.imageSourcePage && item.credit)
+        details.append(el("p", item.credit.replace(/^Price: [^;]+; /, "")));
+    }
+    return details;
+  }
   const details = el("details", undefined, "visual-source");
   details.append(
-    el(
-      "summary",
-      photoGame || game === "pricerot"
-        ? "Photo & answer source"
-        : "Answer source",
-    ),
+    el("summary", photoGame ? "Photo & answer source" : "Answer source"),
   );
   const link = el(
     "a",
@@ -230,7 +246,7 @@ function source(item: VisualItem) {
     license.rel = "noopener noreferrer";
     details.append(el("span", " · "), license);
   }
-  if (item.image && game !== "pricerot")
+  if (item.image)
     details.append(el("p", "Image resized and cropped for gameplay."));
   return details;
 }
@@ -318,7 +334,7 @@ function reveal(q: VisualQuestion, a: VisualAnswer, review = false) {
     const feedback = el(
       "h3",
       isRush
-        ? rushFeedback(rushCorrect(game, q, a), game === "pricerot")
+        ? rushFeedback(rushCorrect(game, q, a))
         : a.skipped
           ? "Answer revealed"
           : `${points} / 100 points`,
@@ -331,12 +347,30 @@ function reveal(q: VisualQuestion, a: VisualAnswer, review = false) {
     content.append(status);
   }
   if (game === "pricerot") {
-    content.append(
-      el(
-        "p",
-        `Recorded price: ${money(q.item.cents!)}${a.price === null ? "" : ` · Your guess: ${money(a.price)} · ${Math.round(priceError(a.price, q.item.cents!) * 100)}% off`}`,
-      ),
+    const comparison = el("dl", undefined, "price-comparison");
+    const actual = el("div");
+    actual.append(
+      el("dt", "Price"),
+      el("dd", money(q.item.cents!), "price-actual"),
     );
+    comparison.append(actual);
+    if (a.price !== null) {
+      const guess = el("div");
+      const error = Math.round(priceError(a.price, q.item.cents!) * 100);
+      guess.append(
+        el("dt", "Your guess"),
+        el("dd", money(a.price)),
+        el(
+          "dd",
+          a.price === q.item.cents
+            ? "Exact"
+            : `${error}% ${a.price < q.item.cents! ? "low" : "high"}`,
+          "price-error",
+        ),
+      );
+      comparison.append(guess);
+    }
+    content.append(comparison);
   } else if (game === "orderrot") {
     const comparison = el("div", undefined, "visual-order-comparison");
     if (a.order.length) {
@@ -384,7 +418,8 @@ function reveal(q: VisualQuestion, a: VisualAnswer, review = false) {
       );
     }
   }
-  if (q.item.explanation) content.append(el("p", q.item.explanation));
+  if (game !== "pricerot" && q.item.explanation)
+    content.append(el("p", q.item.explanation));
   content.append(source(q.item));
   return content;
 }
@@ -421,16 +456,7 @@ function drawQuestion() {
   }
   if (game === "pricerot")
     quiz.append(
-      el(
-        "p",
-        `${q.item.size} · ${q.item.retailer} · United States · USD`,
-        "visual-price-label",
-      ),
-      el(
-        "p",
-        `Recorded ${q.item.captured}. Guess the listed price before tax. ${isRush ? "Within 20% counts as correct." : "Closer guesses earn more points."}`,
-        "visual-note",
-      ),
+      el("p", `${q.item.size} · ${q.item.retailer}`, "visual-price-label"),
     );
   if (complete) {
     quiz.append(reveal(q, a));
@@ -512,7 +538,7 @@ function drawQuestion() {
     }
   } else if (game === "pricerot") {
     const form = el("form", undefined, "extra-form");
-    const label = el("label", "Your price in US dollars");
+    const label = el("label", "Your guess");
     label.htmlFor = "price-input";
     const input = el("input", undefined, "country-search");
     input.type = "number";
@@ -526,7 +552,11 @@ function drawQuestion() {
     input.autocomplete = "off";
     const submit = el("button", "Check price", "primary");
     submit.type = "submit";
-    form.append(label, input, submit);
+    const field = el("div", undefined, "price-input");
+    const currency = el("span", "$", "price-currency");
+    currency.setAttribute("aria-hidden", "true");
+    field.append(currency, input);
+    form.append(label, field, submit);
     form.onsubmit = (event) => {
       event.preventDefault();
       const price = Math.round(input.valueAsNumber * 100);
@@ -611,13 +641,14 @@ function drawResults() {
           : "⬛",
     )
     .join("");
-  quiz.append(
-    title,
-    el(
-      "p",
-      `${mode === "daily" ? "Daily" : "Practice"} · ${s.questions.length} puzzles completed`,
-    ),
-  );
+  quiz.append(title);
+  if (game !== "pricerot")
+    quiz.append(
+      el(
+        "p",
+        `${mode === "daily" ? "Daily" : "Practice"} · ${s.questions.length} puzzles completed`,
+      ),
+    );
   const review = el("ol", undefined, "visual-recap");
   for (const [i, q] of s.questions.entries()) {
     const li = el("li"),

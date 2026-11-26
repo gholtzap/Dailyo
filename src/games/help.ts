@@ -25,10 +25,7 @@ const instructions: Record<string, string[]> = {
     "Identify the city from an overhead photograph. Each missed guess reveals a wider view. You have three guesses per photo.",
     "A correct answer earns 100, 65, or 35 points depending on the view and guesses used. Rush gives one guess per photo.",
   ],
-  pricerot: [
-    "Guess the listed US supermarket price in dollars, before tax. Check the exact package size, retailer, and recorded date.",
-    "Five products per set. Your score rewards accuracy; within 20% counts as correct in Rush. Product images are original illustrations.",
-  ],
+  pricerot: ["Prices are in US dollars, before tax."],
   skylinerot: [
     "Choose the city shown in the skyline photograph. You have up to three guesses.",
     "First guesses earn 100 points, second guesses 65, third guesses 35. Rush gives one guess per photo.",
@@ -133,10 +130,12 @@ const rushRules: Record<string, string[]> = {
 const steps =
   rushRound === null
     ? instructions[game]
-    : [
-        ...rushRules[game],
-        "Keep answering correctly before the clock runs out. A miss or timeout ends this game.",
-      ];
+    : game === "pricerot"
+      ? rushRules[game]
+      : [
+          ...rushRules[game],
+          "Keep answering correctly before the clock runs out. A miss or timeout ends this game.",
+        ];
 const anchor = document.querySelector<HTMLElement>(".map-panel, .heading")!;
 anchor.insertAdjacentHTML(
   "beforeend",
@@ -156,7 +155,7 @@ document.body.insertAdjacentHTML(
     </div>
     ${steps.map((step) => `<p>${step}</p>`).join("")}
     ${["skyrot", "skylinerot", "zoomrot", "yearrot"].includes(game) ? '<p class="standalone-only">Practice offers Easy, Standard, and Hard, with separate progress for each level. Daily and Rush use Standard difficulty.</p>' : ""}
-    <p class="standalone-only">The daily game resets at midnight in New York. Use Practice to play more.</p>
+    ${game === "pricerot" ? "" : '<p class="standalone-only">The daily game resets at midnight in New York. Use Practice to play more.</p>'}
   </dialog>
 `,
 );

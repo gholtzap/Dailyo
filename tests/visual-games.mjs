@@ -29,9 +29,7 @@ const data = Object.fromEntries(
 );
 async function solve(surface, game, q) {
   if (game === "pricerot") {
-    await surface
-      .getByLabel("Your price in US dollars")
-      .fill(String(q.item.cents / 100));
+    await surface.getByLabel("Your guess").fill(String(q.item.cents / 100));
     await surface
       .getByRole("button", { name: "Check price", exact: true })
       .click();

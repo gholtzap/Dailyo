@@ -43,21 +43,35 @@ try {
     await page.route("**/api/daily-score", (route) =>
       route.fulfill({ status: 404 }),
     );
-    const inspect = async (state) => {
+    const inspect = async (state, surface = page) => {
+      const text = await surface.locator("body").innerText();
+      assert.doesNotMatch(
+        text,
+        /original (product )?illustration|product illustration|United States · USD|Guess the listed|Closer guesses|Within 20% counts|Your price in US dollars|Recorded price:|Recorded catalog price|Prices and availability|Rush tolerance|puzzles completed|Check the exact package|Five products per set|Your score rewards accuracy/i,
+      );
       assert.equal(
         await page.evaluate(
           () => document.documentElement.scrollWidth > innerWidth,
         ),
         false,
       );
+      const checked =
+        surface === page
+          ? page
+          : await (
+              await page
+                .locator("iframe:not(.feed-loading):not([hidden])")
+                .elementHandle()
+            ).contentFrame();
       reports.push({
         width: viewport.width,
         state,
-        ...(await checkPage(page, policy)),
+        text,
+        ...(await checkPage(checked, policy)),
       });
     };
     const ready = async (surface) => {
-      await surface.getByLabel("Your price in US dollars").waitFor();
+      await surface.getByLabel("Your guess").waitFor();
       assert.ok(
         await surface.locator("#quiz img").evaluate(async (img) => {
           await img.decode();
@@ -89,15 +103,24 @@ try {
       decoded.every((image) => Math.min(image.width, image.height) >= 100),
     );
     await inspect("daily");
+    assert.equal(
+      await page.locator(".visual-note, .visual-figure figcaption").count(),
+      0,
+    );
+    assert.equal(await page.locator(".price-currency").textContent(), "$");
+    await page
+      .getByRole("button", { name: "How to play", exact: true })
+      .click();
+    await inspect("help");
+    assert.match(await page.getByRole("dialog").innerText(), /before tax/);
+    await page.keyboard.press("Escape");
     await page.screenshot({ path: `${directory}/${viewport.width}-daily.png` });
     for (let index = 0; index < 5; index++) {
       await ready(page);
       const src = await page.locator("#quiz img").getAttribute("src");
       const row = rows.find((row) => row.image === src);
       assert.ok(row);
-      await page
-        .getByLabel("Your price in US dollars")
-        .fill(String(row.cents / 100));
+      await page.getByLabel("Your guess").fill(String(row.cents / 100));
       await page
         .getByRole("button", { name: "Check price", exact: true })
         .click();
@@ -105,7 +128,31 @@ try {
         .locator("#visual-feedback")
         .filter({ hasText: "100 / 100 points" })
         .waitFor();
-      if (index === 0) await inspect("answer");
+      assert.equal(
+        await page.locator(".price-actual").textContent(),
+        `$${(row.cents / 100).toFixed(2)}`,
+      );
+      assert.equal(await page.locator(".price-error").textContent(), "Exact");
+      if (index === 0) {
+        await inspect("answer");
+        await page.screenshot({
+          path: `${directory}/${viewport.width}-answer.png`,
+        });
+        assert.doesNotMatch(
+          await page.locator("body").innerText(),
+          /2026-11-17/,
+        );
+        await page.locator(".visual-source summary").click();
+        await inspect("source");
+        assert.equal(
+          await page.locator(".visual-source time").getAttribute("datetime"),
+          row.captured,
+        );
+        assert.equal(
+          await page.locator(".visual-source a").first().getAttribute("href"),
+          row.source,
+        );
+      }
       await page
         .getByRole("button", {
           name: index === 4 ? "See results" : "Next",
@@ -118,13 +165,46 @@ try {
       .waitFor();
     await inspect("results");
     await page
+      .locator(".visual-recap > li > details > summary")
+      .first()
+      .click();
+    await inspect("review");
+    await page.screenshot({
+      path: `${directory}/${viewport.width}-review.png`,
+    });
+    await page
       .getByRole("button", { name: "Play practice", exact: true })
       .click();
     await ready(page);
     await inspect("practice");
+    await page.getByLabel("Your guess").fill("0");
+    await page.getByLabel("Your guess").press("Enter");
+    await inspect("practice-answer");
+    assert.equal(await page.locator(".price-error").textContent(), "100% low");
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Show answer", exact: true })
+      .click();
+    await inspect("revealed");
+    assert.equal(await page.locator(".price-comparison > div").count(), 1);
     await page.goto(`${base}/rush/pricerot/`);
     const frame = page.frameLocator("iframe:not(.feed-loading):not([hidden])");
     await ready(frame);
+    await inspect("rush-prompt", frame);
+    await frame
+      .getByRole("button", { name: "How to play", exact: true })
+      .click();
+    assert.match(await frame.getByRole("dialog").innerText(), /within 20%/i);
+    await inspect("rush-help", frame);
+    await frame.getByRole("button", { name: "Close", exact: true }).click();
+    await frame.getByLabel("Your guess").fill("1000");
+    await frame.getByLabel("Your guess").press("Enter");
+    await page
+      .getByRole("button", { name: "Keep answer", exact: true })
+      .click();
+    await frame.getByRole("heading", { name: "Missed", exact: true }).waitFor();
+    await inspect("rush-answer", frame);
+    assert.match(await frame.locator(".price-error").textContent(), /% high/);
     assert.ok(rows.some((row) => row.image === undefined) === false);
     await page.goto(`${base}/pricerot/`);
     await ready(page);
