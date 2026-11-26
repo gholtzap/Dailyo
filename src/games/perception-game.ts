@@ -304,7 +304,9 @@ function finish(guess: number | number[] | null) {
   const format = (n: number, digits = 1) => Number(n.toFixed(digits));
   const detail =
     guess === null
-      ? "Round skipped"
+      ? isRush
+        ? ""
+        : "Round skipped"
       : game === "countrot"
         ? `${q.target} dots · Your estimate: ${guess}`
         : game === "trackrot"
@@ -823,11 +825,12 @@ function drawRound() {
     );
     h.id = "perception-feedback";
     h.tabIndex = -1;
-    if (game === "anglerot") {
+    if (game === "anglerot" && !(isRush && feedback.guess === null)) {
       h.className = "screen-reader-only";
       box.classList.add("angle-feedback");
     }
-    box.append(h, el("p", feedback.detail));
+    box.append(h);
+    if (feedback.detail) box.append(el("p", feedback.detail));
     if (game === "anglerot" && isRush)
       box.append(
         el("span", `${feedback.points} / 100 points`, "screen-reader-only"),

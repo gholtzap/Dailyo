@@ -110,6 +110,21 @@ try {
       });
       await child.getByRole("button", { name: "Close", exact: true }).click();
       await fit(page);
+      if (["flagrot", "langrot", "Vocabulary"].includes(game.label)) {
+        await child.locator(".choice").first().click();
+        await page
+          .getByRole("button", { name: "Keep answer", exact: true })
+          .click();
+        assert.equal(
+          await child.locator("#answer-feedback").isVisible(),
+          false,
+          "The answer announcement must not reserve an empty grid row",
+        );
+        await fit(page);
+        await page.screenshot({
+          path: `${output}/${viewport.width}-${game.label}-feedback.png`,
+        });
+      }
       // Recover a saved second-round fixture to exercise the shared timed header and Pause.
       await page.addInitScript(
         ({ game }) =>
