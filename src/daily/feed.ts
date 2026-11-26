@@ -1,3 +1,4 @@
+import { sizeFeedFrame } from "./frame-size.js";
 import { gameName } from "../game-names.js";
 import { required } from "../dom.js";
 import type { DailyMessage } from "../types.js";
@@ -164,6 +165,7 @@ function showGame(position: number) {
     frame.title = game.label;
     gamePanel.append(frame);
   }
+  sizeFeedFrame(frame);
   timeout = setTimeout(showError, 12000);
 }
 function showError() {

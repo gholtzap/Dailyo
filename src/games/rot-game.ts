@@ -533,6 +533,7 @@ function drawMap(
     renderView();
   });
   const enlarge = button("Enlarge map", () => {
+    window.frameElement?.classList.add("feed-map-expanded");
     dialog.append(editor);
     enlarge.hidden = true;
     dialog.showModal();
@@ -540,6 +541,7 @@ function drawMap(
     map.focus();
   });
   dialog.addEventListener("close", () => {
+    window.frameElement?.classList.remove("feed-map-expanded");
     if (!inline.isConnected) return;
     inline.append(editor);
     enlarge.hidden = false;
@@ -1313,7 +1315,7 @@ async function start() {
     settings = practiceSettings(
       {
         easy: "Broad eras.",
-        standard: "Daily difficulty.",
+        standard: "",
         hard: "Nearby events.",
       },
       (next) => {

@@ -1,3 +1,4 @@
+import { sizeFeedFrame } from "./frame-size.js";
 import { RushMachine } from "../verified/rush-state.js";
 import type { RushEffect } from "../verified/rush.mjs";
 import { required } from "../dom.js";
@@ -480,6 +481,12 @@ function makeRound(gameIndex: number, roundIndex: number) {
   frame.className = "feed-loading";
   frame.inert = true;
   panel.append(frame);
+  if (
+    !["countrot", "trackrot", "anglerot", "temporot", "splitrot"].includes(
+      games[gameIndex].label,
+    )
+  )
+    sizeFeedFrame(frame);
   return { frame, ready: false };
 }
 

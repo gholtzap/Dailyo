@@ -797,7 +797,7 @@ async function start() {
     settings = practiceSettings(
       {
         easy: "Wider views.",
-        standard: "Daily difficulty.",
+        standard: "",
         hard: "Tighter details. More similar answer choices.",
       },
       (next) => {
