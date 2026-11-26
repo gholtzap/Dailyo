@@ -277,6 +277,17 @@ lint and types for the actual pushed range without rewriting files; the local
 budget is nine seconds. The optional production-NYC router suite still requires
 production data and is run explicitly with `bun run test:nyc`.
 
-To refresh the existing grocery photos without changing price snapshots, run `uv run --with curl_cffi --with pillow python scripts/fetch-product-images.py`. It matches exact retailer SKUs, verifies downloaded images, and bundles optimized, content-addressed WebP files. `scripts/product-image-fallbacks.json` records the credited alternate source for the catalog’s broken Belgian-chocolate photo.
+To import the full grocery catalog, run `uv run --with curl_cffi==0.17.0 --with pillow==13.0.0 python scripts/fetch-product-images.py`. The importer reads the frozen official records in `scripts/product-catalog-snapshot.json`, preserves existing product IDs and price snapshots, and appends distinct food and beverage products with positive USD prices, exact package sizes, and decoded product photos. It bundles optimized, content-addressed WebP files and records every exclusion in `scripts/product-catalog-report.json`. The catalog is replaced only after at least 2,000 products are verified. `--refresh-catalog` takes a new official snapshot before adding newly discovered products. `scripts/product-image-fallbacks.json` records credited alternate photo sources. Normal builds use the bundled files and do not contact the retailer.
+
+The original 12 products remain the pool for Daily puzzles issued through 2026-11-26, preserving saved results and ranking replays. Daily puzzles from 2026-11-27 onward, Practice, and new Rush runs use the expanded catalog.
 
 With the site running, `node tests/product-images.mjs` verifies every shipped grocery image against its bundled bytes, exercises Daily, Practice, Rush and broken-image recovery, and checks mobile and desktop UI policy. Set `TRAINROT_TEST_URL` to run the same checks against a deployment. Reports go to `test-results/product-images/`.
+
+Product image downloads use sequential attempts with these transitions. A failed import leaves the playable catalog unchanged; verified files are cached for the next run.
+
+| State      | Event                                          | Next state                              |
+| ---------- | ---------------------------------------------- | --------------------------------------- |
+| Requesting | Successful response or confirmed missing photo | Complete                                |
+| Requesting | Network/HTTP failure, attempts remain          | Backoff                                 |
+| Backoff    | Bounded delay expires                          | Requesting with the next attempt number |
+| Requesting | Third attempt fails                            | Failed; abort publication               |

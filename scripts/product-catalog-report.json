@@ -1,0 +1,1491 @@
+{
+  "captured": "2026-11-26",
+  "totalSourceProducts": 2623,
+  "retained": 12,
+  "added": 2316,
+  "playable": 2328,
+  "retainedOutsideSnapshot": ["083568"],
+  "imageBytes": 176021804,
+  "excluded": [
+    {
+      "sku": "001911",
+      "name": "Pop-Up Sponges",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "006223",
+      "name": "Sour Cream",
+      "reason": "missing or inconsistent positive USD price"
+    },
+    {
+      "sku": "016574",
+      "name": "Ground Turkey",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "018382",
+      "name": "Medium Red Poinsettia",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "023526",
+      "name": "Pine Cone Wreath",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "028950",
+      "name": "Shiitake Mushrooms",
+      "reason": "duplicate product photograph"
+    },
+    {
+      "sku": "029649",
+      "name": "Tea Tree Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "032603",
+      "name": "Organic Baby Spinach",
+      "reason": "missing or inconsistent positive USD price"
+    },
+    {
+      "sku": "034633",
+      "name": "Holiday Centerpiece Wreath",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "036745",
+      "name": "Organic Strawberries 2 Lb",
+      "reason": "duplicate product photograph"
+    },
+    {
+      "sku": "041580",
+      "name": "Peonies - 5 Stems",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "042371",
+      "name": "Trader Joe's Spiced Cider",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "044191",
+      "name": "Slim Size Paper Towels",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "047002",
+      "name": "Orange Pumpkin",
+      "reason": "missing or inconsistent positive USD price"
+    },
+    {
+      "sku": "047025",
+      "name": "Glittered Poinsettia in Tin",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "048065",
+      "name": "Almond Ginger Scent Oatmeal Exfoliant Bar",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "049473",
+      "name": "Moisturizing Cream Shave",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "050130",
+      "name": "Coconut Body Butter",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "050352",
+      "name": "Small Phalaenopsis Orchid in Ceramic",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "050408",
+      "name": "Premium Calla Lily",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "051150",
+      "name": "Nourish Antioxidant Facial Serum",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "051425",
+      "name": "Ultra Moisturizing Hand Cream Trio",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "051467",
+      "name": "Pumpkin Body Butter",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "051476",
+      "name": "Homestyle Salsa Especial Mild",
+      "reason": "missing or inconsistent positive USD price"
+    },
+    {
+      "sku": "053709",
+      "name": "Gluten Free Stuffing Mix",
+      "reason": "official photo not found"
+    },
+    {
+      "sku": "054571",
+      "name": "Ultra Moisturizing Hand Cream",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "055352",
+      "name": "Body Butter Trio",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "055600",
+      "name": "Mum Fleurettes",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "055946",
+      "name": "Phalaenopsis Orchid, Assorted Colors",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "056705",
+      "name": "Tulips 20 Stem Bunch",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "056879",
+      "name": "Mango Tangerine Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "057561",
+      "name": "Cedar Balsam Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "057812",
+      "name": "GHOSTS & BATS",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058033",
+      "name": "Seasonal Bouquet, Medium",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058191",
+      "name": "Cranberry & Herb Supplement Drops",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058192",
+      "name": "Honey Lemon Cough Drops",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058231",
+      "name": "Waxed Amaryllis Bulb",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058260",
+      "name": "Grump Tree",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058308",
+      "name": "Petite Bouquet",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058328",
+      "name": "Liquid Dish Soap Lavender Tea Tree Scent",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058329",
+      "name": "Liquid Dish Soap Citrus Scent",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "058635",
+      "name": "Mini Asst Succulents in Terra Cotta",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "060385",
+      "name": "Grapefruit Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "060873",
+      "name": "Lemongrass Coconut Body Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "061048",
+      "name": "Vanilla Pumpkin Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "061136",
+      "name": "Hyaluronic Moisture Boost Serum",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "061298",
+      "name": "Eight Candles",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "061447",
+      "name": "Shea Butter & Coconut Oil Hair Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "061579",
+      "name": "Rich Hydrating Face Sheet Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "061798",
+      "name": "Rose Oil Ultra Moisturizing Hand Cream",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "061905",
+      "name": "Rose Water Facial Toner",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "062039",
+      "name": "Grain Free Dog Treats with Peanut Butter & Banana",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "062535",
+      "name": "Dozen Red Roses",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "062676",
+      "name": "Hydrangea 3-stem",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "063227",
+      "name": "Advent Calendar for Dogs",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "063389",
+      "name": "Apple Cider Foaming Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "063395",
+      "name": "All Natural Frenched, Bone-In, Center-Cut Pork Loin Chops",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "063427",
+      "name": "Honeycrisp Apple Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "063493",
+      "name": "Organic Charles Shaw Pinot Grigio ",
+      "reason": "official photo not found"
+    },
+    {
+      "sku": "064459",
+      "name": "Ultra Hydrating Gel Moisturizer",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "064656",
+      "name": "Shea Butter & Coconut Oil Hair Serum",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "064791",
+      "name": "Felted Wool Trivets, Holiday edition",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "065131",
+      "name": "Premium Jumbo Orchid in Ceramic",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "065167",
+      "name": "Supreme Hydrating Eye Cream",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "065312",
+      "name": "Super Lemon Room Spritz",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "065319",
+      "name": "Organic Roasted Seaweed with Sea Salt",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "065400",
+      "name": "Multi-Purpose Cleaner Cedarwood & Sage",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "065404",
+      "name": "Liquid Laundry Detergent Free & Clear",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "065405",
+      "name": "Liquid Laundry Detergent Lavender Scent",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066005",
+      "name": "Hydrangea in Self Hydrating Pot",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066033",
+      "name": "Advent Calendar for Cats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066115",
+      "name": "Peony Tulips Bunch",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066220",
+      "name": "12 Days of Beauty - A Curated Collection",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066262",
+      "name": "Shredded Pizza Seasoned Toscano Cheese",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066320",
+      "name": "Peppermint Foaming Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066766",
+      "name": "Holiday Scented Candle Trio",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "066998",
+      "name": "Reusable Lavender Dryer Bags",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067303",
+      "name": "Hand & Body Cream with Moroccan Argan Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067312",
+      "name": "Mini Succulent Skulls",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067424",
+      "name": "Seasonal Bouquet",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067425",
+      "name": "Seasonal Bouquet, Large",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067501",
+      "name": "Watermelon Overnight Face Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067614",
+      "name": "Watermelon Facial Mist",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067837",
+      "name": "Holiday Swag with Bow",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "067891",
+      "name": "Dry Shampoo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "068390",
+      "name": "Mini Felted Wool Garland, 6 ft",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "068620",
+      "name": "Zinc Oxide Mineral Sunscreen Spray SPF 30",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "068640",
+      "name": "Felted Wool Trivet",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "068654",
+      "name": "Marula Facial Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "069638",
+      "name": "Premium Monstera",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "070407",
+      "name": "Jumbo Mum Balls",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "070458",
+      "name": "Fall Premium Jumbo Mixed Bouquet",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "070912",
+      "name": "Lavender Hand Sanitizer Spray",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "071211",
+      "name": "Brazil Nut Body Butter",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "072149",
+      "name": "Pumpkin Maple Bacon Stuffies Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "072228",
+      "name": "Retinol Night Serum",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "072313",
+      "name": "Rawhide Free Peanut Butter Flavor Dog Treat",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "072876",
+      "name": "Birthday Greeting Cards",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "073568",
+      "name": "Daily Facial Sunscreen SPF 40",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "073731",
+      "name": "Dotty Micro Poms Bunch",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "073761",
+      "name": "Tricolor Jumbo Patio Mums",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074194",
+      "name": "Hydrolyzed Collagen Powder",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074344",
+      "name": "Freeze-Dried Just Chicken for Pets",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074463",
+      "name": "Lemongrass Moisturizing Shampoo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074464",
+      "name": "Lemongrass Moisturizing Conditioner",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074630",
+      "name": "Olive Wood Spatula",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074714",
+      "name": "Felted Wool Wreath",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074726",
+      "name": "Point Reyes Toma Truffle Artisan Cheese",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074814",
+      "name": "Brazil Nut Body Scrub",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074944",
+      "name": "Grande Succulent Skulls",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074955",
+      "name": "Peach Mango Scented Foaming Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "074956",
+      "name": "Here, Kitty Kitty! Cat Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075091",
+      "name": "Reusable Sponge Cloths",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075232",
+      "name": "Crackling Red Fruits in the Forest Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075348",
+      "name": "Sea Breeze Castile Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075425",
+      "name": "Waffle Weave Cotton Kitchen Towels",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075434",
+      "name": "Crab Paws",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075508",
+      "name": "Unscented Deodorant",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075649",
+      "name": "Scented Candle Trio - Spring Edition",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075664",
+      "name": "Woodlands Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075726",
+      "name": "Felted Ilex Berries",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075750",
+      "name": "Hair Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075916",
+      "name": "Large Reusable Insulated Bag, Pink/Yellow",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "075979",
+      "name": "GIR® Baking Mat",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076028",
+      "name": "Nothing But Sweet Potato Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076047",
+      "name": "Brazil Nut Body Wash",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076117",
+      "name": "Peppermint Multi-Purpose Castile Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076120",
+      "name": "Organic Fruit & Vegetable Wash",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076244",
+      "name": "Lavender Reusable Insulated Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076247",
+      "name": "Large Reusable Insulated Bag, Teal",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076248",
+      "name": "Large Insulated Bag, Yellow",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076249",
+      "name": "Emerald Insulated Reusable Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076372",
+      "name": "Guava Ultra Moisturizing Hand Cream",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076407",
+      "name": "Waterless Amaryllis",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076471",
+      "name": "Hydrating Biocellulose Face Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076477",
+      "name": "Jumbo Mixed Bouquet",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076625",
+      "name": "Red Currant Scented Foaming Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076648",
+      "name": "Holiday Peanut Butter Flavored Deocrated Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076652",
+      "name": "Pink Salt Bath & Body Kit",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076659",
+      "name": "Here, Kitty Kitty Cat Toy",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076662",
+      "name": "Handcrafted Felted Wool Pinecone",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076663",
+      "name": "Handcrafted Felted Wool Pumpkin",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076664",
+      "name": "Handcrafted Felted Wool Holiday Trivet",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076669",
+      "name": "Gift Bag for All Seasons",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076689",
+      "name": "Halloween Decorated Peanut Butter Flavor Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076747",
+      "name": "Mini Canvas Tote Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076763",
+      "name": "Beef & Sweet Potato Recipe Stuffies Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076795",
+      "name": "Medium Poinsettia Assorted Colors",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076818",
+      "name": "Peppermint Fluoride Free Toothpaste",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076820",
+      "name": "Sensitivity + Whitening Peppermint Fluoride Toothpaste",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076859",
+      "name": "Shimmering Candy Cane Body Butter",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076863",
+      "name": "Chicken & Bone Broth Recipe Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076921",
+      "name": "Vanilla Lip Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "076964",
+      "name": "Scented Candle Tin Trio",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "077173",
+      "name": "Handcrafted Felted Oval Wool Trivet For Fall",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "077578",
+      "name": "Brain Cacti in Ceramic Skull",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "077729",
+      "name": "Kimbap",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "077804",
+      "name": "Orgain® Vanilla Bean Organic Protein Boost Powder",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "077808",
+      "name": "Orgain® Creamy Chocolate Fudge Organic Protein Boost Powder",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078041",
+      "name": "Brazil Nut Body Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078145",
+      "name": "Laundry Detergent Sheets Free & Clear",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078276",
+      "name": "Stand-Up Collapsable Grocery Tote",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078337",
+      "name": "Mini Insulated Tote Bag - Teal, Magenta",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078381",
+      "name": "Chocolate Berry Lip Mask Duo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078515",
+      "name": "Strawberries 2 Lb",
+      "reason": "duplicate product photograph"
+    },
+    {
+      "sku": "078756",
+      "name": "Spicy Tempura Seaweed Snack",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "078784",
+      "name": "Orange & Spice Scented Candle & Room Spritz",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078804",
+      "name": "Halloween Felted Wool Garland",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078806",
+      "name": "Autumn Felted Wool Garland",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078917",
+      "name": "Red & Emerald Mini Insulated Bags",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078936",
+      "name": "Cacay Oil Body Butter",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "078957",
+      "name": "Daffodils Big Bunch",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079260",
+      "name": "Leave in Conditioner",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079261",
+      "name": "Pumpkin Ultra Moisturizing Hand Cream",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079263",
+      "name": "Candy Cane Body Scrub",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079301",
+      "name": "Harvest Brunch Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079323",
+      "name": "Bully Chewers",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079363",
+      "name": "Vanilla Pumpkin Scented Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079370",
+      "name": "Lip Butter Balm Duo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079371",
+      "name": "Body Wash & Serum Duo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079518",
+      "name": "Freeze-Dried Just Salmon with Skin for Pets",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079528",
+      "name": "Mocha Latte Pretzels",
+      "reason": "official photo not found"
+    },
+    {
+      "sku": "079538",
+      "name": "Dusty Blue Large Insulated Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079542",
+      "name": "Olive Green Large Reusable Insulated Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079679",
+      "name": "Okonomiyaki Japanese Vegetable Pancake",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "079710",
+      "name": "Little Leaf Farms Baby Crispy Green Leaf",
+      "reason": "missing or inconsistent positive USD price"
+    },
+    {
+      "sku": "079712",
+      "name": "White Phalaenopsis Orchid in Ceramic",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079727",
+      "name": "Crispy Chicken Chips Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079775",
+      "name": "Cedar Balsam Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "079890",
+      "name": "Vegetable Root Chips",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "079986",
+      "name": "Mini Pastel Canvas Tote Bags",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080244",
+      "name": "Mini Insulated Bag, Lavender and Pink",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080331",
+      "name": "Organic Strawberries 1 Lb",
+      "reason": "duplicate product photograph"
+    },
+    {
+      "sku": "080359",
+      "name": "Night Cream",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080452",
+      "name": "Sunscreen Lip Balm SPF 30",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080524",
+      "name": "Canned Corn Dog Toy with Squeaker",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080617",
+      "name": "Ultra Rich Body Butter",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080786",
+      "name": "Watermelon Lip Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080885",
+      "name": "Daily Facial Mineral Sunscreen SPF 40",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080886",
+      "name": "Invisible Gel Body Sunscreen SPF 40",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080887",
+      "name": "Peony Scented Bath Fizzer",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "080933",
+      "name": "Big Bunch Chrysanthemum",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081022",
+      "name": "Eucalyptus",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081037",
+      "name": "Comfort Food Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081108",
+      "name": "Jelly Bean Flavored Lip Duo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081212",
+      "name": "Berry Glow Body Set",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081213",
+      "name": "Fresh Blooms Ultra Moisturizing Hand Cream",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081214",
+      "name": "Freeze-Dried Beef Meatballs for Dogs",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081341",
+      "name": "Easy Bouquet Wrap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081415",
+      "name": "Trick-or-Treat Mini Canvas Totes",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081544",
+      "name": "Garden Party Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081672",
+      "name": "Maple and Sweet Potato Flavored Sandwich Cookies for Dogs",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081675",
+      "name": "Honey Hydration Face Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081699",
+      "name": "Advent Calendar for Cats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081700",
+      "name": "Advent Calendar for Dogs",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081833",
+      "name": "Mini Insulated Totes Peach & Blue",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081834",
+      "name": "Candy Cane Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081835",
+      "name": "Cedar Balsam Scented Large Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "081865",
+      "name": "Turkish Inspired Stuffed Eggplant",
+      "reason": "missing or inconsistent positive USD price"
+    },
+    {
+      "sku": "081936",
+      "name": "Cinnamon Roll Flavored Lip Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082056",
+      "name": "Bergamot & Vetiver Scented Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082057",
+      "name": "Bergamot & Vetiver Scented Multi-Purpose Cleaner",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082058",
+      "name": "Bergamot & Vetiver Scented Room Spritz",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082069",
+      "name": "Hand Serum & Cream Duo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082239",
+      "name": "Halloween Joe-Joe's Cookies",
+      "reason": "official photo not found"
+    },
+    {
+      "sku": "082350",
+      "name": "Fall Scented Candle Trio",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082352",
+      "name": "Canvas Micro Tote with Grocery Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082360",
+      "name": "Korean Bugak Sticky Rice and Seaweed Crisps",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "082494",
+      "name": "Cedar Balsam Scented Room Spritz",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082568",
+      "name": "Candle of the Month Set",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082583",
+      "name": "Marula Oil Cream Cleanser",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082641",
+      "name": "Bow Wow and Meow Haworthia Garden",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082658",
+      "name": "Organic Spicy Korean BBQ Seaweed Snack",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "082749",
+      "name": "Patio Potato Chips",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "082840",
+      "name": "Dewy Skin Serum",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082842",
+      "name": "Bonding Shampoo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082843",
+      "name": "Bonding Conditioner",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "082987",
+      "name": "Mini Can Foliage",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083041",
+      "name": "Just Sardines Cat and Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083163",
+      "name": "Clementine Scented Foaming Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083173",
+      "name": "Razor Clams",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "083212",
+      "name": "Rose Oil Body Scrub",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083521",
+      "name": "Tropical Flavored Lip Butter Balm Duo",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083610",
+      "name": "Red & black Reusable Insulated Tote Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083690",
+      "name": "Ultra Rich Body Wash Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083750",
+      "name": "Vitamin C Serum",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083850",
+      "name": "Panama Rum",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "083866",
+      "name": "Lavender Canvas Tote Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "083970",
+      "name": "Creatine Hydrochloride Capsules",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084007",
+      "name": "Refreshing Citrus Body Wash",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084083",
+      "name": "Foaming Dish Soap Lemon Yuzu Scent",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084105",
+      "name": "Shimmer Oil Sunscreen",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084293",
+      "name": "Cypress and Bergamot Scented Whole Body Deodorant Spray",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084295",
+      "name": "Limoncello Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084311",
+      "name": "Island Oasis Scented Hair Oil",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084312",
+      "name": "Striped Mini Canvas Tote Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084313",
+      "name": "Sweetheart Bath Fizzer",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084503",
+      "name": "Mini Insulated Tote Summer Collection",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084504",
+      "name": "Reusable Insulated Bag Lime Green",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084646",
+      "name": "Neroli Blossom Scented Hand Soap",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084647",
+      "name": "Neroli Blossom Scented Multi-Purpose Cleaner",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084651",
+      "name": "Neroli Blossom Scented Room Spritz",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084751",
+      "name": "Sardine Tin Dog Toy",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084765",
+      "name": "Sardine Cat Toy",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084941",
+      "name": "Turducken Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084962",
+      "name": "Tangerine Large Reusable Insulated Bag",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "084999",
+      "name": "Candy Jar Flavored Lip Butter Balm Set",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085001",
+      "name": "Espresso & Cream Flavored Lip Mask",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085142",
+      "name": "Brianiac Water Root Plant",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085224",
+      "name": "Milky Hydrating Bi-Phase Face Mist",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085239",
+      "name": "Amber Scented Hand Sanitizer Spray",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085342",
+      "name": "Cookie Butter Scented Bath Fizzer",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085343",
+      "name": "Caramel Creme Scented Body Butter",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085360",
+      "name": "Spicy Pork Kimbap",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "085369",
+      "name": "Bare Bones Succulent Garden",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085477",
+      "name": "Beach Day Scented Candle",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "085583",
+      "name": "Spiced Apple Scented Body Scrub",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "090397",
+      "name": "Extra Lean Ground Beef 96% Lean / 4% Fat",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "092026",
+      "name": "Small Red Poinsettia",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "092197",
+      "name": "Holiday Greens Bunch",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "093114",
+      "name": "Medium Phalaenopsis Orchid in Ceramic",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "093196",
+      "name": "Potted Multi-Bloom Hydrangea",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "093909",
+      "name": "Cinnamon Broom",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "094105",
+      "name": "Large Red Poinsettia",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "095003",
+      "name": "Sunscreen Spray SPF 50+",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "095347",
+      "name": "Organic White Corn Tortilla Chips",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "095577",
+      "name": "Organic Pomegranate",
+      "reason": "duplicate product photograph"
+    },
+    {
+      "sku": "096347",
+      "name": "Halloween Joe-Joe's Cookies",
+      "reason": "duplicate product name and package size"
+    },
+    {
+      "sku": "096632",
+      "name": "Cinnamon Whisk",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "097581",
+      "name": "Pumpkin Recipe Dog Treats",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "097990",
+      "name": "Dozen Red Roses",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "097991",
+      "name": "Dozen Roses Assorted Colors",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "098726",
+      "name": "Assorted Mum Plants",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "099131",
+      "name": "Super Soft Bath Tissue",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "174810",
+      "name": "Campanology Peach Ale",
+      "reason": "outside food and beverages"
+    },
+    {
+      "sku": "183079",
+      "name": "Winter Ride Double Bock",
+      "reason": "duplicate product name and package size"
+    }
+  ]
+}

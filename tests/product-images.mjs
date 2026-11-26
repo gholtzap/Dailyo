@@ -10,6 +10,19 @@ const policy = JSON.parse(
 );
 const browser = await chromium.launch();
 const reports = [];
+const assets = [];
+const decodes = [];
+async function eachLimit(items, limit, callback) {
+  let next = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, async () => {
+      while (next < items.length) {
+        const index = next++;
+        await callback(items[index], index);
+      }
+    }),
+  );
+}
 const directory =
   process.env.PRODUCT_IMAGE_REPORT_DIR ?? "test-results/product-images";
 await fs.mkdir(directory, { recursive: true });
@@ -17,8 +30,20 @@ try {
   const response = await fetch(`${base}/games/data/pricerot.json`);
   assert.equal(response.status, 200);
   const rows = await response.json();
-  assert.equal(rows.length, 12);
-  for (const row of rows) {
+  assert.ok(rows.length >= 2000, `Only ${rows.length} grocery products`);
+  const bundledRows = JSON.parse(
+    await fs.readFile(
+      new URL("../dist/games/data/pricerot.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  assert.deepEqual(
+    rows,
+    bundledRows,
+    "The live catalog must match the verified release",
+  );
+  assert.equal(new Set(rows.map((row) => row.id)).size, rows.length);
+  await eachLimit(rows, 4, async (row, index) => {
     assert.match(row.image, /^\/games\/media\/price-[\w-]+\.webp$/);
     assert.match(row.imageSource, /^https:\/\//);
     const response = await fetch(new URL(row.image, base));
@@ -35,7 +60,14 @@ try {
     );
     assert.equal(bytes.toString("ascii", 0, 4), "RIFF");
     assert.equal(bytes.toString("ascii", 8, 12), "WEBP");
-  }
+    assets.push({
+      id: row.id,
+      bytes: bytes.length,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+    });
+    if ((index + 1) % 250 === 0)
+      console.log(`Verified ${index + 1}/${rows.length} live image files`);
+  });
   for (const viewport of policy.viewports) {
     const page = await browser.newPage({ viewport, colorScheme: "light" });
     const errors = [];
@@ -82,23 +114,29 @@ try {
     await page.goto(`${base}/pricerot/`);
     await ready(page);
     // Decode every shipped photograph in a real browser, not only today's five.
-    const decoded = await page.evaluate(
-      async (rows) =>
-        Promise.all(
-          rows.map(async (row) => {
+    const decoded = await page.evaluate(async (rows) => {
+      const results = [];
+      let next = 0;
+      await Promise.all(
+        Array.from({ length: 4 }, async () => {
+          while (next < rows.length) {
+            const row = rows[next++];
             const image = new Image();
             image.src = row.image;
             await image.decode();
-            return {
+            results.push({
               id: row.id,
               width: image.naturalWidth,
               height: image.naturalHeight,
-            };
-          }),
-        ),
-      rows,
-    );
-    assert.equal(decoded.length, 12);
+            });
+            image.removeAttribute("src");
+          }
+        }),
+      );
+      return results;
+    }, rows);
+    assert.equal(decoded.length, rows.length);
+    decodes.push({ width: viewport.width, images: decoded });
     assert.ok(
       decoded.every((image) => Math.min(image.width, image.height) >= 100),
     );
@@ -229,13 +267,22 @@ try {
     assert.deepEqual(errors, []);
     await page.close();
     console.log(
-      `${viewport.width}px: all 12 photos decode; Daily, answers, results, Practice, Rush, failed-image hiding and recovery passed`,
+      `${viewport.width}px: all ${rows.length} photos decode; Daily, answers, results, Practice, Rush, failed-image hiding and recovery passed`,
     );
   }
 } finally {
   await fs.writeFile(
     `${directory}/report.json`,
-    JSON.stringify({ base, reports }, null, 2),
+    JSON.stringify(
+      {
+        base,
+        assets: assets.sort((a, b) => a.id.localeCompare(b.id)),
+        decodes,
+        reports,
+      },
+      null,
+      2,
+    ),
   );
   await browser.close();
 }

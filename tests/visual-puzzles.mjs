@@ -141,3 +141,5 @@ for (const game of visualGames) {
 console.log(
   "Five visual games: assets, determinism, replay validation, scoring, and Rush thresholds passed.",
 );
+
+await import("./product-catalog.mjs");

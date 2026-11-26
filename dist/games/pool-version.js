@@ -1,1 +1,1 @@
-const s={ladderrot:29,skyrot:12,skylinerot:12,zoomrot:11};export function releasedPool(t,e,n){const r=/^(?:rush:[a-z]+:)?(\d{4}-\d{2}-\d{2})(?::\d+)?$/.exec(n)?.[1],o=s[t];return o&&r&&r<="2026-11-18"?e.slice(0,o):e}
+const s={ladderrot:29,skyrot:12,skylinerot:12,zoomrot:11,pricerot:12};export function releasedPool(o,r,n){const t=/^(?:rush:[a-z]+:)?(\d{4}-\d{2}-\d{2})(?::\d+)?$/.exec(n)?.[1],e=s[o];return e&&t&&t<=(o==="pricerot"?"2026-11-26":"2026-11-18")?r.slice(0,e):r}
