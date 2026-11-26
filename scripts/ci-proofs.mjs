@@ -12,7 +12,11 @@ if (base && /^[a-f0-9]{40}$/.test(base)) {
       "verification",
       "src/verified",
       "scripts/verify.mjs",
+      "scripts/ci-proofs.mjs",
+      ".github/workflows/checks.yml",
       "scripts/check-proof-failures.mjs",
+      // Markdown explains the rules but is never read by the verifier.
+      ":(exclude,glob)verification/**/*.md",
     ];
     const changed = execFileSync(
       "git",

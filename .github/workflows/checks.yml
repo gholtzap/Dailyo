@@ -206,21 +206,26 @@ jobs:
   api:
     runs-on: ubuntu-24.04
     timeout-minutes: 3
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: dailyo
-          POSTGRES_PASSWORD: dailyo-test
-          POSTGRES_DB: dailyo_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 1s
-          --health-timeout 5s
-          --health-retries 10
     steps:
+      - name: Start PostgreSQL alongside runner setup
+        run: |
+          rm -f "$RUNNER_TEMP/dailyo-postgres.exit"
+          (
+            trap 'echo $? > "$RUNNER_TEMP/dailyo-postgres.exit"' EXIT
+            docker run --detach --name dailyo-ci-postgres \
+              --publish 127.0.0.1:5432:5432 \
+              --env POSTGRES_USER=dailyo \
+              --env POSTGRES_PASSWORD=dailyo-test \
+              --env POSTGRES_DB=dailyo_test postgres:17-alpine
+            for _attempt in {1..300}; do
+              if docker exec dailyo-ci-postgres pg_isready -h 127.0.0.1 -U dailyo -d dailyo_test; then
+                exit 0
+              fi
+              sleep 0.1
+            done
+            echo 'PostgreSQL did not become healthy.' >&2
+            exit 1
+          ) > "$RUNNER_TEMP/dailyo-postgres.log" 2>&1 &
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
@@ -245,7 +250,25 @@ jobs:
           key: chromium-shell-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
       - if: steps.api-chromium.outputs.cache-hit != 'true'
         run: node node_modules/playwright/cli.js install --only-shell chromium
+      - name: Require healthy PostgreSQL
+        run: |
+          for _attempt in {1..600}; do
+            if [[ -f "$RUNNER_TEMP/dailyo-postgres.exit" ]]; then
+              cat "$RUNNER_TEMP/dailyo-postgres.log"
+              exit "$(cat "$RUNNER_TEMP/dailyo-postgres.exit")"
+            fi
+            sleep 0.1
+          done
+          cat "$RUNNER_TEMP/dailyo-postgres.log" 2>/dev/null || true
+          echo 'PostgreSQL startup did not finish.' >&2
+          exit 1
       - env:
           DATABASE_URL: postgres://dailyo:dailyo-test@127.0.0.1:5432/dailyo_test
           TRAINROT_TEST_URL: http://127.0.0.1:4174
         run: node scripts/test-score-api.mjs
+      - name: Remove PostgreSQL
+        if: always()
+        run: |
+          if docker container inspect dailyo-ci-postgres > /dev/null 2>&1; then
+            docker rm --force dailyo-ci-postgres
+          fi

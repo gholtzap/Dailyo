@@ -69,12 +69,38 @@ async function probe(expected) {
 try {
   git("init", "-b", "main");
   mkdirSync(join(root, "scripts"));
+  mkdirSync(join(root, "verification/nested"), { recursive: true });
+  writeFileSync(join(root, "verification/README.md"), "documentation");
+  writeFileSync(join(root, "verification/nested/README.md"), "documentation");
+  writeFileSync(join(root, "verification/train.bend"), "proof");
+  writeFileSync(join(root, "verification/toolchain.json"), "{}");
+  writeFileSync(join(root, "scripts/ci-proofs.mjs"), "reuse checker");
   writeFileSync(join(root, "LAWS.bend"), "base");
   writeFileSync(join(root, "scripts/verify.mjs"), "base");
   git("add", ".");
   git("commit", "-m", "base");
   baseline = git("rev-parse", "HEAD");
   await probe(true);
+  for (const file of [
+    "verification/README.md",
+    "verification/nested/README.md",
+  ]) {
+    git("reset", "--hard", baseline);
+    writeFileSync(join(root, file), "updated documentation");
+    git("commit", "-am", "documentation only");
+    await probe(true);
+  }
+  for (const file of [
+    "verification/train.bend",
+    "verification/toolchain.json",
+    "scripts/ci-proofs.mjs",
+  ]) {
+    git("reset", "--hard", baseline);
+    writeFileSync(join(root, file), "changed executable input");
+    git("commit", "-am", "proof input changed");
+    await probe(false);
+  }
+  git("reset", "--hard", baseline);
   healthy = false;
   await probe(false);
   healthy = true;
