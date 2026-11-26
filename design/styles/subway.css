@@ -355,6 +355,9 @@
   transform: translateY(-50%);
   display: block;
   width: max-content;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  min-width: 0;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--space-1);
   font-size: var(--font-size-13);
