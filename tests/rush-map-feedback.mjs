@@ -70,16 +70,14 @@ try {
                     window.addEventListener("message", listener);
                   }),
               )
-            : frame
-                .locator("dialog[open]")
-                .evaluate(
-                  (dialog) =>
-                    new Promise((resolve) =>
-                      dialog.addEventListener("close", () => resolve(), {
-                        once: true,
-                      }),
-                    ),
-                );
+            : frame.locator("dialog[open]").evaluate(
+                (dialog) =>
+                  new Promise((resolve) =>
+                    dialog.addEventListener("close", () => resolve(), {
+                      once: true,
+                    }),
+                  ),
+              );
         await frame.getByRole("button", { name: "Close", exact: true }).click();
         await closed;
         assert.equal(await page.locator("#rush-clock").innerText(), "");

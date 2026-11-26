@@ -34,24 +34,16 @@ const instructions: Record<string, string[]> = {
     "Identify an everyday object from a close-up photograph. Wrong guesses reveal a wider view, or use Reveal a wider view for a hint.",
     "A correct answer earns 100, 65, or 35 points depending on the view and guesses used. Rush gives one guess per photo.",
   ],
-  orderrot: [
-    "Order the items from lowest to highest.",
-  ],
+  orderrot: ["Order the items from lowest to highest."],
   train: [
     "Find the fastest subway route from A to B.",
     "Tap the trains you would take in order. You don’t need to choose transfer stations.",
     "You have six checks.",
     "Times use scheduled train travel, four minutes per transfer, and predefined walking links. Other walks, initial waits, and live delays aren’t included.",
   ],
-  flags: [
-    "Choose the place represented by the flag.",
-  ],
-  languages: [
-    "Read the excerpt and choose the language it’s written in.",
-  ],
-  vocabulary: [
-    "Read the word and choose its meaning.",
-  ],
+  flags: ["Choose the place represented by the flag."],
+  languages: ["Read the excerpt and choose the language it’s written in."],
+  vocabulary: ["Read the word and choose its meaning."],
   maprot: [
     "Pin the named city. Drag the map to pan or drag your pin to adjust it. Arrow keys move the pin; hold Shift for finer adjustment.",
     "Your score is the total distance you were off across five cities. Lower is better.",
@@ -127,10 +119,7 @@ const steps =
     ? instructions[game]
     : game === "pricerot"
       ? rushRules[game]
-      : [
-          ...rushRules[game],
-          "A miss or timeout ends this game.",
-        ];
+      : [...rushRules[game], "A miss or timeout ends this game."];
 const anchor = document.querySelector<HTMLElement>(".map-panel, .heading")!;
 anchor.insertAdjacentHTML(
   "beforeend",
