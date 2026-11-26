@@ -101,10 +101,14 @@ jobs:
           rm -f "$RUNNER_TEMP/trainrot-source.exit"
           (
             trap 'echo $? > "$RUNNER_TEMP/trainrot-source.exit"' EXIT
-            curl --fail --silent --show-error --location \
-              --header "Authorization: Bearer $GH_TOKEN" \
-              "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/tarball/$GITHUB_SHA" \
-              | tar -xz --strip-components=1
+            git init --quiet
+            git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+            source_auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')
+            GIT_TERMINAL_PROMPT=0 git -c gc.auto=0 \
+              -c "http.extraheader=AUTHORIZATION: basic $source_auth" \
+              fetch --no-tags --depth=1 origin "$GITHUB_SHA"
+            git checkout --quiet --force --detach FETCH_HEAD
+            test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
             cmp --silent bun.lock "$RUNNER_TEMP/trainrot-source-bun.lock"
           ) > "$RUNNER_TEMP/trainrot-source.log" 2>&1 &
       - id: node-runtime
