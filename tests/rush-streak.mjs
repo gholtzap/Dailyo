@@ -39,7 +39,7 @@ try {
         .waitFor();
       assert.equal(
         await page.locator("#rush-streak").textContent(),
-        `🔥${i + 1}`,
+        `Streak ${i + 1}`,
       );
       assert.equal(
         await page
@@ -78,7 +78,7 @@ try {
     }
     await page.reload();
     await page.locator("#rush-status").filter({ hasText: "Paused" }).waitFor();
-    assert.equal(await page.locator("#rush-streak").textContent(), "🔥5");
+    assert.equal(await page.locator("#rush-streak").textContent(), "Streak 5");
     assert.equal(
       await page
         .locator("#rush-streak")

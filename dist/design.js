@@ -1,0 +1,1 @@
+export function designValue(e,t=document.documentElement){const n=getComputedStyle(t).getPropertyValue(e).trim();if(!n)throw Error(`Missing design token ${e}`);return n}

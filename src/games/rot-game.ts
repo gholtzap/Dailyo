@@ -1,3 +1,4 @@
+import { designValue } from "../design.js";
 import type { Mode, RotGame, Coordinate } from "../types.js";
 import type {
   RotData,
@@ -488,8 +489,9 @@ function drawMap(
         const label = element("span", city, "rot-city-label");
         labels.append(label);
         const size = label.getBoundingClientRect();
-        label.style.left = `${Math.max(8, Math.min(surfaceBox.width - size.width - 8, point.x + 8))}px`;
-        label.style.top = `${Math.max(8, Math.min(surfaceBox.height - size.height - 8, point.y - size.height - 8))}px`;
+        const inset = Number.parseFloat(designValue("--space-2"));
+        label.style.left = `${Math.max(inset, Math.min(surfaceBox.width - size.width - inset, point.x + inset))}px`;
+        label.style.top = `${Math.max(inset, Math.min(surfaceBox.height - size.height - inset, point.y - size.height - inset))}px`;
       }
     }
     zoomIn.disabled = zoom >= maxZoom;
@@ -842,14 +844,20 @@ function drawBorderMap(
   const context = map.getContext("2d")!;
   const scale = map.width / width;
   context.setTransform(scale, 0, 0, scale, -left * scale, -top * scale);
-  context.strokeStyle = "#18222b";
+  const paint = {
+    border: designValue("--color-map-country-border"),
+    selected: designValue("--color-map-country-selected"),
+    target: designValue("--color-map-country-target"),
+    country: designValue("--color-map-country"),
+  };
+  context.strokeStyle = paint.border;
   context.lineWidth = 2.4 / scale;
   for (const [id, path] of paths) {
     context.fillStyle = selected.has(id)
-      ? "#39735c"
+      ? paint.selected
       : id === target
-        ? "#735d36"
-        : "#354551";
+        ? paint.target
+        : paint.country;
     context.fill(path, "evenodd");
   }
   for (const [, path] of paths) context.stroke(path);

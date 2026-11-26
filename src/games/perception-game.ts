@@ -1,3 +1,4 @@
+import { designValue } from "../design.js";
 import { angleBoard } from "./angle-board.js";
 import {
   dailyDate,
@@ -24,6 +25,11 @@ import {
 } from "./perception-puzzles.js";
 import type { PerceptionGame, PerceptionPuzzle } from "./perception-puzzles.js";
 import { acquireRushAudio } from "../daily/rush-audio.js";
+const trackPaint = {
+  path: designValue("--color-track-path"),
+  answer: designValue("--green"),
+  ball: designValue("--accent"),
+};
 const name = document.body.dataset.game!;
 if (!perceptionGames.includes(name as PerceptionGame))
   throw new Error("Unknown perception game");
@@ -359,7 +365,7 @@ function ball(
   x: number,
   y: number,
   r = 10,
-  color = "#eeeef0",
+  color = trackPaint.ball,
 ) {
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -369,7 +375,7 @@ function ball(
 function track(c: HTMLCanvasElement, t: number, reveal = false) {
   const ctx = c.getContext("2d")!;
   ctx.clearRect(0, 0, 960, 560);
-  line(ctx, 40, 500, 920, 500, "#7d8088");
+  line(ctx, 40, 500, 920, 500, trackPaint.path);
   const position = (progress: number) => ({
     x: 40 + reflect(q.start + q.velocity * progress) * 880,
     y: 80 + 420 * progress - 200 * Math.sin(Math.PI * progress),
@@ -379,17 +385,17 @@ function track(c: HTMLCanvasElement, t: number, reveal = false) {
     for (let p = 0; p < 1; p += 0.01) {
       const a = position(p),
         b = position(Math.min(1, p + 0.01));
-      line(ctx, a.x, a.y, b.x, b.y, "#7d8088", 2);
+      line(ctx, a.x, a.y, b.x, b.y, trackPaint.path, 2);
     }
     ctx.setLineDash([]);
-    ball(ctx, 40 + q.target * 880, 500, 12, "#86d6a0");
+    ball(ctx, 40 + q.target * 880, 500, 12, trackPaint.answer);
   }
   if (t < 0.55) {
     const p = position(t);
     ball(ctx, p.x, p.y);
   }
   if (phase !== "showing") {
-    line(ctx, 40 + draft * 8.8, 478, 40 + draft * 8.8, 524, "#f39b85", 5);
+    line(ctx, 40 + draft * 8.8, 478, 40 + draft * 8.8, 524, trackPaint.ball, 5);
   }
 }
 function slider(

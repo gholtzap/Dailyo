@@ -52,6 +52,7 @@ try {
     await inspect("held");
     await page.getByRole("button", { name: "Next", exact: true }).click();
     await status.filter({ hasText: "Round 2" }).waitFor();
+    assert.equal(await page.locator("#rush-round").textContent(), "Round 2");
     await child().getByRole("spinbutton").fill("123");
     await page.clock.fastForward(2000);
     const remaining = await page.getByRole("timer").innerText();
@@ -62,6 +63,7 @@ try {
       .frameLocator('iframe[title="Previous answer"]')
       .getByText(q.explanation, { exact: true })
       .waitFor();
+    assert.equal(await page.locator("#rush-round").textContent(), "Round 1");
     await page.clock.fastForward(20000);
     assert.equal(await page.locator("#rush-clock").innerText(), remaining);
     assert.equal(await page.locator(".rush-time").isVisible(), false);
@@ -85,6 +87,7 @@ try {
     assert.equal(await child().getByRole("spinbutton").inputValue(), "123");
     assert.equal(await page.getByRole("timer").innerText(), remaining);
     await status.filter({ hasText: "Round 2" }).waitFor();
+    assert.equal(await page.locator("#rush-round").textContent(), "Round 2");
     await page.getByRole("button", { name: "Pause", exact: true }).click();
     await page
       .getByRole("button", { name: "Review answer", exact: true })

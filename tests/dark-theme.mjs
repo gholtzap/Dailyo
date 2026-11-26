@@ -19,7 +19,7 @@ try {
       await page.locator("#reveal").waitFor();
       assert.equal(
         await page.locator("meta[name=theme-color]").getAttribute("content"),
-        "#141516",
+        "#0b1428",
       );
       const actual = await page.evaluate(() => ({
         scheme: getComputedStyle(document.documentElement).colorScheme,
@@ -31,9 +31,9 @@ try {
       }));
       assert.deepEqual(actual, {
         scheme: "dark",
-        background: "rgb(20, 21, 22)",
-        land: "rgb(41, 43, 46)",
-        water: "rgb(21, 25, 29)",
+        background: "rgb(11, 20, 40)",
+        land: "rgb(35, 60, 97)",
+        water: "rgb(13, 27, 52)",
       });
       const helpButton = page.getByRole("button", {
         name: "How to play",
@@ -44,7 +44,7 @@ try {
       await helpDialog.waitFor();
       assert.equal(
         await helpDialog.evaluate((n) => getComputedStyle(n).backgroundColor),
-        "rgb(20, 21, 22)",
+        "rgb(20, 36, 66)",
       );
       await helpDialog
         .getByRole("button", { name: "Close", exact: true })
@@ -83,10 +83,24 @@ try {
         }));
         assert.deepEqual(
           theme,
-          { scheme: "dark", background: "rgb(20, 21, 22)" },
+          { scheme: "dark", background: "rgb(11, 20, 40)" },
           `${route} stays dark with ${colorScheme} system preference`,
         );
         reports.push({ width, systemPreference: colorScheme, route, ...theme });
+        if (route === "/daily/" || route.startsWith("/rush/")) {
+          const embedded = page.frameLocator(
+            "iframe:not(.feed-loading):not([hidden])",
+          );
+          await embedded.locator(".game-help button").waitFor();
+          assert.deepEqual(
+            await embedded.locator("body").evaluate((body) => ({
+              scheme: getComputedStyle(document.documentElement).colorScheme,
+              background: getComputedStyle(body).backgroundColor,
+            })),
+            { scheme: "dark", background: "rgb(20, 36, 66)" },
+            `${route} embedded game stays dark with ${colorScheme} system preference`,
+          );
+        }
       }
 
       await page.close();

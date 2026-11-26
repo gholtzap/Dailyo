@@ -1,3 +1,4 @@
+import { designValue } from "./design.js";
 import type {
   Coordinate,
   Network,
@@ -25,6 +26,13 @@ export function createMap(
   boroughs: Boroughs,
   network: Network,
 ) {
+  const inset = Number.parseFloat(designValue("--space-2"));
+  const labelCenter = Number.parseFloat(designValue("--space-4"));
+  const labelSide = Number.parseFloat(designValue("--space-10"));
+  const labelFar = Number.parseFloat(designValue("--space-20"));
+  const labelReserve = Number.parseFloat(designValue("--space-8"));
+  const labelMinimum = Number.parseFloat(designValue("--size-72"));
+  const labelMaximum = Number.parseFloat(designValue("--size-240"));
   const city = network.metadata.city;
   const mapName = city?.name ?? network.metadata.mapName ?? "New York City";
   const project = ([lon, lat]: Coordinate): Coordinate =>
@@ -162,15 +170,15 @@ export function createMap(
       .filter((n) => n.getClientRects().length)
       .map((n) => n.getBoundingClientRect());
     const overlaps = (a: DOMRect, b: DOMRect) =>
-      a.left < b.right + 8 &&
-      a.right > b.left - 8 &&
-      a.top < b.bottom + 8 &&
-      a.bottom > b.top - 8;
+      a.left < b.right + inset &&
+      a.right > b.left - inset &&
+      a.top < b.bottom + inset &&
+      a.bottom > b.top - inset;
     const fits = (box: DOMRect) =>
-      box.left >= rect.left + 8 &&
-      box.right <= rect.right - 8 &&
-      box.top >= rect.top + 8 &&
-      box.bottom <= rect.bottom - 8;
+      box.left >= rect.left + inset &&
+      box.right <= rect.right - inset &&
+      box.top >= rect.top + inset &&
+      box.bottom <= rect.bottom - inset;
     const occupied = [...obstructions];
     // Position the anchors first; names must clear both station badges.
     for (const { node, point } of markers) {
@@ -194,26 +202,30 @@ export function createMap(
         ...sides.map((side) => ({ side, offset: 0 })),
         { side: "above", offset: 0 },
         { side: "below", offset: 0 },
-        ...[-40, 40, -80, 80].flatMap((offset) =>
+        ...[-labelSide, labelSide, -labelFar, labelFar].flatMap((offset) =>
           sides.map((side) => ({ side, offset })),
         ),
       ];
       for (const { side, offset } of placements) {
         const horizontal = side === "left" || side === "right";
         const available = horizontal
-          ? (side === "left" ? x : rect.width - x) - 32
-          : rect.width - 16;
-        if (available < 72) continue;
-        name.style.maxWidth = Math.min(240, available) + "px";
+          ? (side === "left" ? x : rect.width - x) - labelReserve
+          : rect.width - labelCenter;
+        if (available < labelMinimum) continue;
+        name.style.maxWidth = Math.min(labelMaximum, available) + "px";
         name.style.right = "auto";
         name.style.left =
-          side === "left" ? "-8px" : side === "right" ? "40px" : "16px";
+          side === "left"
+            ? -inset + "px"
+            : side === "right"
+              ? labelSide + "px"
+              : labelCenter + "px";
         name.style.top =
           side === "above"
-            ? "-8px"
+            ? -inset + "px"
             : side === "below"
-              ? "40px"
-              : 16 + offset + "px";
+              ? labelSide + "px"
+              : labelCenter + offset + "px";
         name.style.transform =
           side === "left"
             ? "translate(-100%,-50%)"
@@ -285,7 +297,7 @@ export function createMap(
     circle.className = "map-marker-badge";
     circle.textContent = badge;
     circle.style.background = color;
-    circle.style.color = badge === "A" ? "#fff8ec" : "#302d29";
+    circle.style.color = "var(--color-canvas)";
     const name = document.createElement("span");
     name.className = "map-marker-name";
     name.textContent = title;
@@ -309,7 +321,12 @@ export function createMap(
       challenge.fromTitle,
       "var(--map-origin)",
     );
-    marker(network.stations[challenge.to], "B", challenge.toTitle, "#aeb3bb");
+    marker(
+      network.stations[challenge.to],
+      "B",
+      challenge.toTitle,
+      "var(--yellow)",
+    );
     fit(challenge);
     svg.setAttribute(
       "aria-label",

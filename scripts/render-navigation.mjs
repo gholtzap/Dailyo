@@ -3,6 +3,10 @@ import path from "node:path";
 import { gameName } from "../dist/game-names.js";
 import { rushGames } from "../dist/daily/rush-games.js";
 
+const themeColor = JSON.parse(
+  await fs.readFile(new URL("../design/tokens.json", import.meta.url), "utf8"),
+).color["color-canvas"];
+
 const games = [
   ["trainrot", "trainrot", "Subway routes"],
   ["flagrot", "flags", "Flags"],
@@ -128,7 +132,7 @@ async function visit(directory) {
         )
         .replace(
           /<meta name="theme-color" content="[^"]*">/g,
-          '<meta name="theme-color" content="#141516">',
+          `<meta name="theme-color" content="${themeColor}">`,
         );
       // Rebuild these hints on every run, including when a generated city page
       // starts from the Trainrot template. Rush hosts preload their child pages.

@@ -31,6 +31,9 @@ const pause = $("#rush-pause");
 const reviewButton = $("#rush-review"),
   recapReview = $("#rush-review-recap");
 const streakLabel = $("#rush-streak");
+const roundLabel = document.createElement("span");
+roundLabel.id = "rush-round";
+$("#rush-game-name").after(roundLabel);
 const scores = games.map(() => 0);
 const copyStatus = $("#rush-copy-status"),
   copyText = $("#rush-copy-text");
@@ -44,10 +47,15 @@ function showStreak(celebrate = false) {
   streakLabel.hidden = streak === 0;
   streakLabel.replaceChildren();
   if (streak) {
-    const flame = document.createElement("span");
-    flame.textContent = "🔥";
-    flame.setAttribute("aria-hidden", "true");
-    streakLabel.append(flame, document.createTextNode(String(streak)));
+    const blocks = document.createElement("span");
+    blocks.className = "streak-blocks";
+    blocks.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < Math.min(streak, 10); i++) {
+      const block = document.createElement("span");
+      block.className = "streak-block";
+      blocks.append(block);
+    }
+    streakLabel.append(document.createTextNode(`Streak ${streak}`), blocks);
     streakLabel.setAttribute("aria-label", `Streak: ${streak}`);
   } else streakLabel.removeAttribute("aria-label");
   streakLabel.classList.toggle(
@@ -175,6 +183,8 @@ let review: ReviewState = { state: "closed" };
 const heldPointers = new Set<number>();
 let lastAnswer: {
   frame: HTMLIFrameElement;
+  game: string;
+  round: number;
   label: string;
   outcome: string;
 } | null = null;
@@ -335,6 +345,8 @@ function openReview() {
   panel.parentElement!.scrollTop = 0;
   timeDisplay.hidden = true;
   streakLabel.hidden = true;
+  $("#rush-game-name").textContent = gameName(lastAnswer.game);
+  roundLabel.textContent = `Round ${lastAnswer.round}`;
   status.textContent = `${lastAnswer.label} · ${lastAnswer.outcome}`;
   pause.hidden = true;
   next.removeAttribute("disabled");
@@ -364,6 +376,8 @@ function closeReview() {
     recapReview.focus();
   } else {
     if (visible) visible.hidden = false;
+    $("#rush-game-name").textContent = gameName(games[index].label);
+    roundLabel.textContent = `Round ${round + 1}`;
     next.textContent = "Skip game";
     next.className = "secondary rush-skip";
     next.onclick = skipGame;
@@ -428,6 +442,7 @@ function openRound(
     return;
   }
   $("#rush-game-name").textContent = gameName(game.label);
+  roundLabel.textContent = `Round ${round + 1}`;
   retry.hidden = true;
   next.removeAttribute("disabled");
   next.textContent = "Skip game";
@@ -589,6 +604,8 @@ function showFinish(effect: RushEffect) {
   lastAnswer = visible
     ? {
         frame: visible,
+        game: games[index].label,
+        round: round + 1,
         label: `${games[index].label} · Round ${round + 1}`,
         outcome: expired ? "Time’s up" : correct ? "Correct" : "Missed",
       }

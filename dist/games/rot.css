@@ -1,11 +1,12 @@
+/* Generated from design/styles/games/rot.css. Run bun run design:build. */
 .rot-main {
-  max-width: 760px;
+  max-width: var(--size-760);
 }
 .rot-main h2 {
-  margin: 0 0 12px;
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 1.2;
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-24);
+  font-weight:var(--font-weight-medium);
+  line-height:var(--leading-1-2);
   overflow-wrap: anywhere;
 }
 .rot-counter {
@@ -13,37 +14,37 @@
   color: var(--muted);
 }
 .rot-feedback {
-  margin: 16px 0;
+  margin: var(--space-4) 0;
   color: var(--ink);
-  line-height: 1.5;
+  line-height:var(--leading-1-5);
   background: var(--paper);
 }
 .rot-feedback p {
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-2);
 }
 .rot-actions {
   display: flex;
   align-items: stretch;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 .rot-actions button {
   width: auto;
-  flex: 1 1 144px;
+  flex: 1 1 var(--size-144);
 }
 .rot-actions .secondary {
   margin: 0;
 }
 .rot-actions .primary:disabled {
-  opacity: 0.5;
+  opacity:var(--opacity-muted);
   cursor: default;
 }
 .rot-map {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #e3e9e4;
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--compat-rot-map-background);
   display: block;
   touch-action: pan-y;
 }
@@ -58,42 +59,42 @@
 .rot-map-tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
 }
 .rot-map-tools button {
   width: auto;
-  min-height: 44px;
+  min-height: var(--control-size);
   margin: 0;
 }
 .rot-map-dialog {
-  width: min(1000px, calc(100% - 32px));
+  width: min(var(--size-1000), calc(100% - var(--size-32)));
   max-width: none;
-  max-height: calc(100dvh - 32px);
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  max-height: calc(var(--viewport-100dvh) - var(--size-32));
+  padding: var(--space-4);
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-control);
   background: var(--paper);
   color: var(--ink);
 }
 .rot-map-dialog::backdrop {
-  background: rgb(0 0 0 / 0.75);
+  background: var(--compat-map-backdrop);
 }
 .rot-map-dialog-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 .rot-map-dialog-heading h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--font-size-18);
 }
 .rot-map-dialog-heading button {
   width: auto;
   margin: 0;
-  min-height: 44px;
+  min-height: var(--control-size);
 }
 .rot-map-dialog :is(h2, .rot-coordinate) {
   background: var(--paper);
@@ -102,7 +103,7 @@
   background: var(--panel);
 }
 .rot-map-dialog :is(.rot-picking, .rot-reviewing) {
-  height: clamp(240px, 55dvh, 560px);
+  height: clamp(var(--size-240), var(--viewport-55dvh), var(--size-560));
   aspect-ratio: auto;
 }
 :is(.rot-picking, .rot-reviewing) :is(.rot-land, .rot-pin) {
@@ -110,23 +111,23 @@
 }
 .rot-map:focus-visible,
 .country-search:focus-visible {
-  outline: 2px solid #e4e5e7;
-  outline-offset: 3px;
+  outline: var(--stroke-2) solid var(--compat-base-outline-color);
+  outline-offset: var(--stroke-3);
 }
 .rot-land {
-  fill: #d9dfd2;
-  stroke: #819295;
-  stroke-width: 0.33;
+  fill: var(--compat-rot-land-fill);
+  stroke: var(--compat-rot-land-stroke);
+  stroke-width:var(--map-stroke-0-33);
 }
 .rot-pin {
-  stroke: #e3e9e4;
-  stroke-width: 1;
+  stroke: var(--compat-rot-map-background);
+  stroke-width:var(--map-stroke-1);
 }
 .rot-pin.guess {
   fill: var(--accent);
 }
 .rot-pin.answer {
-  fill: #2a7443;
+  fill: var(--compat-split-answer-background);
 }
 .rot-zoomed .rot-land,
 .rot-zoomed .rot-pin,
@@ -134,98 +135,98 @@
   vector-effect: non-scaling-stroke;
 }
 .rot-zoomed .rot-land {
-  stroke-width: 0.7;
+  stroke-width:var(--map-stroke-0-7);
 }
 .rot-zoomed .rot-pin.guess {
   fill: none;
   stroke: var(--accent);
-  stroke-width: 2;
+  stroke-width:var(--map-stroke-2);
 }
 .rot-connector {
-  stroke: #71685f;
-  stroke-width: 2;
+  stroke: var(--compat-rot-connector-stroke);
+  stroke-width:var(--map-stroke-2);
   stroke-dasharray: 1 5;
   stroke-linecap: round;
 }
 .rot-coordinate {
-  margin: 8px 0 0;
-  min-height: 24px;
-  line-height: 1.5;
+  margin: var(--space-2) 0 0;
+  min-height: var(--size-24);
+  line-height:var(--leading-1-5);
   color: var(--muted);
 }
 .rot-timeline {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   padding: 0;
   list-style: none;
   margin: 0;
 }
 .rot-event {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: var(--size-56) minmax(0, 1fr);
+  gap: var(--space-2);
   align-items: start;
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
   background: var(--panel);
-  border-radius: 6px;
-  line-height: 1.5;
+  border-radius: var(--radius-control-compact);
+  line-height:var(--leading-1-5);
 }
 .rot-event time {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 .rot-event.highlight {
-  border: 1px solid #83c896;
-  background: #d0edb4;
+  border: var(--stroke-1) solid var(--compat-choice-correct-border-color);
+  background: var(--compat-rot-event-highlight-background);
 }
 .rot-year-event {
-  margin: 0 0 16px;
-  font-size: 18px;
-  line-height: 1.4;
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-18);
+  line-height:var(--leading-1-4);
 }
 .rot-year-choices {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 16px;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 .rot-slot {
   width: 100%;
-  min-height: 40px;
-  padding: 8px 16px;
-  font-size: 13px;
+  min-height: var(--control-size-compact);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-13);
 }
 .rot-chain {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-2);
   list-style: none;
   padding: 0;
   margin: 0;
 }
 .rot-chain li {
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-control-compact);
   background: var(--panel);
-  line-height: 1.4;
+  line-height:var(--leading-1-4);
 }
 .rot-search-label {
   display: block;
-  margin: 16px 0 8px;
+  margin: var(--space-4) 0 var(--space-2);
 }
 .country-search {
   width: 100%;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid #62666d;
-  border-radius: 6px;
+  min-height: var(--control-size);
+  padding: var(--space-2) var(--space-3);
+  border: var(--stroke-1) solid var(--compat-secondary-button-border-color);
+  border-radius: var(--radius-control-compact);
   background: var(--panel);
   color: var(--ink);
   font: inherit;
 }
 .rot-choices {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 .rot-choices p {
   color: var(--muted);
@@ -234,19 +235,19 @@
 .rot-copy {
   display: block;
   width: 100%;
-  min-height: 100px;
-  margin-top: 8px;
+  min-height: var(--size-100);
+  margin-top: var(--space-2);
 }
 
 .extra-metric {
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
   color: var(--muted);
   background: var(--paper);
 }
 .extra-form {
   display: grid;
-  gap: 8px;
-  margin-top: 16px;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 .extra-form label {
   color: var(--ink);
@@ -256,48 +257,48 @@
   text-align: center;
 }
 .ladder-chain li {
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-event);
 }
 .clue-list {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   margin: 0;
-  padding-left: 24px;
+  padding-left: var(--space-6);
 }
 .clue-list li {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   background: var(--panel);
-  border-radius: 6px;
-  line-height: 1.5;
+  border-radius: var(--radius-control-compact);
+  line-height:var(--leading-1-5);
 }
 .swap-board {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--space-2);
 }
 .swap-board .swap-tile {
-  min-height: 44px;
-  padding: 4px;
-  font-size: 14px;
+  min-height: var(--control-size);
+  padding: var(--space-1);
+  font-size: var(--font-size-14);
 }
 .swap-board .swap-tile[aria-pressed="true"] {
-  background: #d0edb4;
-  border-color: #83c896;
+  background: var(--compat-rot-event-highlight-background);
+  border-color: var(--compat-choice-correct-border-color);
 }
 
 .border-map {
   position: relative;
   contain: paint;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 .border-marker {
   pointer-events: none;
   position: absolute;
-  width: 8px;
-  height: 8px;
-  border: 1px solid #e3e9e4;
-  border-radius: 50%;
-  background: #b0e6c6;
+  width: var(--size-8);
+  height: var(--size-8);
+  border: var(--stroke-1) solid var(--compat-rot-map-background);
+  border-radius: var(--radius-round);
+  background: var(--compat-border-marker-background);
   transform: translate(-50%, -50%);
 }
 .border-selectable {
@@ -308,90 +309,90 @@
 }
 .border-map-label {
   position: absolute;
-  z-index: 1;
+  z-index:var(--layer-base);
   top: 50%;
-  left: 11px;
+  left: var(--map-control-offset);
   transform: translateY(-50%);
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   width: max-content;
-  max-width: 108px;
+  max-width: var(--size-108);
   overflow-wrap: anywhere;
-  border: 1px solid #527568;
-  border-radius: 5px;
-  color: #1d552f;
-  background: #e1eed3;
-  font-size: 12px;
+  border: var(--stroke-1) solid var(--compat-border-map-label-border);
+  border-radius: var(--radius-badge);
+  color: var(--compat-border-map-label-color);
+  background: var(--compat-border-map-label-background);
+  font-size: var(--font-size-12);
 }
 .border-label-left .border-map-label {
   left: auto;
-  right: 11px;
+  right: var(--map-control-offset);
 }
 
 /* Practice settings stay quiet beside the puzzle, with a clear keyboard focus. */
 .practice-settings {
-  margin: -8px 0 24px;
-  padding: 0 0 20px;
-  border-bottom: 1px solid var(--line);
+  margin: calc(var(--space-2) * -1) 0 var(--space-6);
+  padding: 0 0 var(--space-5);
+  border-bottom: var(--stroke-1) solid var(--line);
 }
 .practice-settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-4);
 }
 .practice-settings label {
   color: var(--ink);
-  font-weight: 500;
+  font-weight:var(--font-weight-medium);
 }
 .practice-settings select {
-  min-width: 136px;
-  min-height: 44px;
-  padding: 8px 32px 8px 12px;
-  border: 1px solid #62666d;
-  border-radius: 6px;
+  min-width: var(--size-136);
+  min-height: var(--control-size);
+  padding: var(--space-2) var(--space-8) var(--space-2) var(--space-3);
+  border: var(--stroke-1) solid var(--compat-secondary-button-border-color);
+  border-radius: var(--radius-control-compact);
   background: var(--panel);
   color: var(--ink);
   font: inherit;
 }
 .practice-settings select:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
+  outline: var(--stroke-2) solid var(--ink);
+  outline-offset: var(--stroke-3);
 }
 .practice-settings p {
-  margin: 10px 0 0;
+  margin: var(--size-10) 0 0;
   color: var(--muted);
-  line-height: 1.5;
+  line-height:var(--leading-1-5);
 }
 .solution-label {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--font-size-13);
+  font-weight:var(--font-weight-medium);
   color: var(--muted);
-  margin: 24px 0 12px;
+  margin: var(--space-6) 0 var(--space-3);
 }
 .solution-review {
-  margin: 24px 0;
-  border-block: 1px solid var(--line);
+  margin: var(--space-6) 0;
+  border-block: var(--stroke-1) solid var(--line);
 }
 .solution-review summary {
-  min-height: 48px;
-  padding: 16px 0;
+  min-height: var(--control-size-large);
+  padding: var(--space-4) 0;
   cursor: pointer;
 }
 .solution-review summary:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
+  outline: var(--stroke-2) solid var(--ink);
+  outline-offset: var(--stroke-3);
 }
 .solution-review .ladder-chain {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 
 .rot-review {
-  margin: 24px 0;
+  margin: var(--space-6) 0;
 }
 .rot-review > h3 {
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0 0 8px;
+  font-size: var(--font-size-14);
+  font-weight:var(--font-weight-medium);
+  margin: 0 0 var(--space-2);
 }
 .rot-recap {
   list-style: none;
@@ -399,23 +400,23 @@
   margin: 0;
 }
 .rot-recap > li {
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--stroke-1) solid var(--line);
 }
 .rot-recap summary {
   cursor: pointer;
-  min-height: 48px;
-  padding: 16px 8px;
+  min-height: var(--control-size-large);
+  padding: var(--space-4) var(--space-2);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 16px;
+  gap: var(--space-4);
   align-items: baseline;
 }
 .rot-recap summary::marker {
   content: "";
 }
 .rot-recap summary:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 4px;
+  outline: var(--stroke-2) solid var(--ink);
+  outline-offset: var(--stroke-4);
 }
 .rot-recap summary > span:first-child {
   overflow-wrap: anywhere;
@@ -431,17 +432,17 @@
 .rot-recap details:not([open]) > summary > span:first-child {
   text-decoration: underline;
   text-decoration-color: var(--line);
-  text-underline-offset: 4px;
+  text-underline-offset: var(--size-4);
 }
 .rot-recap-detail {
-  padding: 8px 8px 16px;
+  padding: var(--space-2) var(--space-2) var(--space-4);
 }
 
 .rot-actions .reveal-answer {
   flex: 0 1 auto;
   width: auto;
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: var(--control-size);
+  padding: var(--space-2) var(--space-3);
   border: 0;
   background: transparent;
   color: var(--muted);
@@ -453,7 +454,7 @@
 }
 
 .solution-label {
-  font-size: 14px;
+  font-size: var(--font-size-14);
 }
 
 .rot-map.rot-picking {
@@ -464,8 +465,8 @@
 }
 .rot-country-outline {
   fill: none;
-  stroke: #819295;
-  stroke-width: 0.5;
+  stroke: var(--compat-rot-land-stroke);
+  stroke-width:var(--map-stroke-0-5);
   vector-effect: non-scaling-stroke;
 }
 .rot-map-surface {
@@ -480,20 +481,20 @@
 .rot-country-label,
 .rot-city-label {
   position: absolute;
-  font-size: 12px;
-  line-height: 1.2;
-  background: #e3e9e4;
-  padding: 1px 3px;
-  border-radius: 2px;
+  font-size: var(--font-size-12);
+  line-height:var(--leading-1-2);
+  background: var(--compat-rot-map-background);
+  padding: var(--size-1) var(--size-3);
+  border-radius: var(--radius-xs);
   white-space: nowrap;
 }
 .rot-country-label {
-  color: #4f6258;
+  color: var(--compat-rot-country-label-color);
   transform: translate(-50%, -50%);
 }
 .rot-city-label {
-  color: #302d29;
-  font-weight: 500;
-  max-width: calc(100% - 16px);
+  color: var(--compat-rot-city-label-color);
+  font-weight:var(--font-weight-medium);
+  max-width: calc(100% - var(--size-16));
   white-space: normal;
 }

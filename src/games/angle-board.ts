@@ -1,3 +1,4 @@
+import { designValue } from "../design.js";
 // The board owns an in-flight gesture; the game owns the committed answer.
 export function angleBoard(options: {
   target: number;
@@ -25,12 +26,20 @@ export function angleBoard(options: {
     | { state: "drawing"; id: number; preview: number | null };
   let gesture: Gesture = { state: "idle" };
   const ctx = canvas.getContext("2d")!;
+  const accent = designValue("--accent");
+  const success = designValue("--green");
+  const shore = designValue("--color-map-shore");
+  const muted = designValue("--muted");
+  const gapPaint = designValue("--color-angle-gap");
+  const selectionPaint = designValue("--color-accent-halo");
+  const handleBorder = designValue("--color-angle-handle-border");
+  const hub = designValue("--color-ball");
   const radians = (a: number) => (-a * Math.PI) / 180;
   function refresh() {
     const value =
       gesture.state === "drawing" ? gesture.preview : options.value();
     ctx.clearRect(0, 0, 960, 960);
-    ctx.strokeStyle = "#74777d";
+    ctx.strokeStyle = shore;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(480, 480, 400, 0, Math.PI * 2);
@@ -47,11 +56,19 @@ export function angleBoard(options: {
       );
       ctx.stroke();
     };
-    ray(0, "#9a9da2", 3);
+    if (!options.reveal && value !== null) {
+      ctx.fillStyle = selectionPaint;
+      ctx.beginPath();
+      ctx.moveTo(480, 480);
+      ctx.arc(480, 480, 320, 0, radians(Math.min(value, 360)), true);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ray(0, muted, 3);
     if (options.reveal && value !== null) {
       const raw = options.target - value;
       const gap = options.max > 360 ? raw : ((raw + 540) % 360) - 180;
-      ctx.fillStyle = "#f39b8526";
+      ctx.fillStyle = gapPaint;
       ctx.beginPath();
       ctx.moveTo(480, 480);
       ctx.arc(
@@ -65,9 +82,25 @@ export function angleBoard(options: {
       ctx.closePath();
       ctx.fill();
     }
-    if (value !== null) ray(value, "#f39b85", 7);
-    if (options.reveal) ray(options.target, "#86d6a0", 5);
-    ctx.fillStyle = "#eeeef0";
+    if (value !== null) {
+      ray(value, accent, 10);
+      const a = radians(value);
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(
+        480 + 400 * Math.cos(a),
+        480 + 400 * Math.sin(a),
+        20,
+        0,
+        Math.PI * 2,
+      );
+      ctx.fill();
+      ctx.strokeStyle = handleBorder;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+    if (options.reveal) ray(options.target, success, 7);
+    ctx.fillStyle = hub;
     ctx.beginPath();
     ctx.arc(480, 480, 12, 0, Math.PI * 2);
     ctx.fill();

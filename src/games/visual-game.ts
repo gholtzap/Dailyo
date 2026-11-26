@@ -304,14 +304,15 @@ function media(q: VisualQuestion, a: VisualAnswer, complete: boolean) {
   };
   viewport.append(image);
   figure.append(viewport);
-  if (game !== "pricerot") {
+  if (
+    game !== "pricerot" &&
+    (complete || game !== "skylinerot" || levelDifficulty === "hard")
+  ) {
     const caption = el(
       "figcaption",
       complete
         ? q.item.name
-        : game === "skylinerot" && levelDifficulty !== "hard"
-          ? "Look for the buildings, waterfront, and surrounding landscape."
-          : `View ${a.hint + 1} of 3 · ${isRush ? "One guess" : `${photoPoints(Math.max(a.hint, a.guesses.length))} points available`}`,
+        : `View ${a.hint + 1} of 3 · ${isRush ? "One guess" : `${photoPoints(Math.max(a.hint, a.guesses.length))} points available`}`,
     );
     figure.append(caption);
   }
