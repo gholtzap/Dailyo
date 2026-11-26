@@ -115,10 +115,21 @@ try {
         await page
           .getByRole("button", { name: "Keep answer", exact: true })
           .click();
-        assert.equal(
-          await child.locator("#answer-feedback").isVisible(),
-          false,
-          "The answer announcement must not reserve an empty grid row",
+        const announcement = await child
+          .locator("#answer-feedback")
+          .evaluate((n) => {
+            const r = n.getBoundingClientRect();
+            return {
+              position: getComputedStyle(n).position,
+              width: r.width,
+              height: r.height,
+            };
+          });
+        assert.ok(
+          announcement.position === "absolute" &&
+            announcement.width <= 1 &&
+            announcement.height <= 1,
+          "The accessible announcement must not reserve an empty grid row",
         );
         await fit(page);
         await page.screenshot({
