@@ -1269,7 +1269,7 @@ body[data-game=yearrot] .rot-year-choices {
     padding: var(--space-3);
   }
   body:has(#practice[aria-pressed="true"]) .visual-viewport {
-    --visual-viewport-practice-height: 160px;
+    --visual-viewport-practice-height: 128px;
     height: var(--visual-viewport-practice-height);
     aspect-ratio: auto;
   }

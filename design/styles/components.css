@@ -1176,3 +1176,11 @@ body:has(#app) .game-help-header h2 {
     max-height: var(--visual-viewport-mobile-price-height);
   }
 }
+
+@media (max-width: breakpoint(mobile)) {
+  body:has(#practice[aria-pressed="true"]) .choice {
+    min-height: var(--space-14);
+    padding: var(--space-3) var(--space-2);
+    font-size: var(--font-size-13);
+  }
+}
