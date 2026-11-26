@@ -45,6 +45,7 @@ const task=args[0]==='test'?'tests':args[0]==='check'?'typecheck':args[1]==='bui
       encoding: "utf8",
       env: {
         ...process.env,
+        FORMAT_BASE: "",
         PATH: path.join(fixture, "bin") + path.delimiter + process.env.PATH,
         DAILYO_TEST_FAIL: failure,
       },
