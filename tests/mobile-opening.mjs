@@ -30,9 +30,24 @@ for (const engine of process.argv.includes("--webkit")
         crypto.randomUUID = () => "00000000-0000-4000-8000-000000000031";
       });
       console.log(engine.name(), viewport);
+      page.on("pageerror", (error) => console.error(error));
+      page.on("requestfailed", (request) =>
+        console.error(request.url(), request.failure()),
+      );
+      await page.bringToFront();
       await page.goto(`${base}/rush/yearrot/`);
       const child = page.frameLocator('iframe[title="yearrot"]');
-      await child.locator(".rot-slot").first().waitFor();
+      await child
+        .locator(".rot-slot")
+        .first()
+        .waitFor()
+        .catch(async (error) => {
+          console.error(await page.locator("body").innerText());
+          await page.screenshot({
+            path: `${output}/failure-${engine.name()}-${viewport.width}-${viewport.height}.png`,
+          });
+          throw error;
+        });
       assert.equal(
         await child.locator(".rot-year-event").innerText(),
         "The Curiosity rover lands on Mars",
@@ -89,11 +104,21 @@ for (const engine of process.argv.includes("--webkit")
         colorScheme: "light",
         reducedMotion: "reduce",
       });
+      page.on("pageerror", (error) => console.error(error));
+      page.on("requestfailed", (request) =>
+        console.error(request.url(), request.failure()),
+      );
+      await page.bringToFront();
       await page.goto(`${base}/rush/${game.label.toLowerCase()}/`);
       const child = page.frameLocator(`iframe[title="${game.label}"]`);
       await child
         .getByRole("button", { name: "How to play", exact: true })
-        .waitFor();
+        .waitFor()
+        .catch(async (error) => {
+          console.error(await page.locator("body").innerText());
+          console.error(page.frames().map((frame) => frame.url()));
+          throw error;
+        });
       await child.locator("#quiz button").first().waitFor();
       const hidden = await child.locator("body").evaluate(() =>
         [...document.querySelectorAll("#quiz button, .game-help button")]
@@ -114,6 +139,23 @@ for (const engine of process.argv.includes("--webkit")
         [],
         `${engine.name()} ${game.label}: opening controls clipped`,
       );
+      const layout = await child.locator("body").evaluate(() => {
+        const image = document.querySelector(".visual-viewport");
+        const field = document.querySelector(".split-field");
+        return {
+          imageFits:
+            !image || image.clientWidth >= image.parentElement.clientWidth - 2,
+          splitLabelsFit:
+            !field ||
+            [...field.querySelectorAll(".split-left,.split-right")].every(
+              (n) =>
+                n.getBoundingClientRect().bottom <=
+                field.getBoundingClientRect().bottom,
+            ),
+        };
+      });
+      assert.ok(layout.imageFits, "Use the available width for image puzzles");
+      assert.ok(layout.splitLabelsFit, "Keep split labels inside the field");
       await page.screenshot({
         path: `${output}/${engine.name()}-${game.label}.png`,
       });

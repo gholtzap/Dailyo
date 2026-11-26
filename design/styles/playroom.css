@@ -351,13 +351,15 @@ body:has(.feed-actions[hidden]) .rush-controls { display: none; }
   [data-rush] .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
   [data-rush] .choice { min-height: var(--size-56); padding: var(--space-3) var(--space-2) var(--space-4); font-size: var(--font-size-13); }
   [data-rush] #quiz > h2 { font-size: var(--font-size-18); }
-  [data-rush] .visual-viewport { max-height: var(--viewport-26dvh); }
+  [data-rush] .visual-viewport { width: 100%; max-height: var(--viewport-36dvh); }
+  [data-rush] .visual-viewport[data-kind=pricerot] { max-height: var(--viewport-26dvh); }
   [data-rush] .visual-price-label + .extra-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
   [data-rush] .visual-price-label + .extra-form label { grid-column: 1 / -1; }
   [data-rush] .visual-price-label + .extra-form input { min-width: 0; }
   [data-rush] .rot-actions:empty { display: none; }
   [data-rush] .split-field { height: var(--size-96); margin-block: var(--space-2); }
   [data-rush] .split-line { top: 50%; }
+  [data-rush] :is(.split-left, .split-right) { top: auto; bottom: var(--space-2); }
   [data-rush] .split-marker { top: calc(50% - var(--space-5)); }
   [data-rush] .split-answer { top: calc(50% - var(--space-7)); }
   [data-rush] body[data-game=trackrot] .perception-field { width: min(100%, calc(var(--viewport-36dvh) * 12 / 7)); margin: var(--space-2) auto; }
