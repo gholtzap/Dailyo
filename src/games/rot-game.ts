@@ -415,7 +415,10 @@ function drawMap(
           const copy = geography.cloneNode(true) as SVGElement;
           copy.setAttribute("transform", `translate(${shift} 0)`);
           copy.setAttribute("data-map-wrap", String(shift));
-          map.insertBefore(copy, map.querySelector(".rot-connector, .rot-pin"));
+          map.insertBefore(
+            copy,
+            map.querySelector(".rot-distance-rings, .rot-connector, .rot-pin"),
+          );
         }
       }
     if (pin)
