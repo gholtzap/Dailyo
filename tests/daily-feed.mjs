@@ -586,9 +586,10 @@ https://trainrot.vercel.app/daily/`;
     ]) {
       const child = frame(name);
       for (let round = 0; round < 5; round++) {
-        await child
-          .getByRole("button", { name: "Start round", exact: true })
-          .click();
+        if (name !== "anglerot")
+          await child
+            .getByRole("button", { name: "Start round", exact: true })
+            .click();
         await child
           .getByRole("button", { name: "Skip round", exact: true })
           .click();

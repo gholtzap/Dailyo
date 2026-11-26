@@ -135,8 +135,8 @@
 .rush-progress { display: flex; flex-direction: column; gap: 4px; }
 #rush-streak { font-size: 12px; color: #92d6aa; font-weight: 500; }
 @media (prefers-reduced-motion: no-preference) {
-  #rush-streak.rush-milestone { animation: rush-streak 240ms ease-out; }
-  @keyframes rush-streak { from { transform: scale(1.04); } to { transform: scale(1); } }
+  #rush-streak.rush-milestone { animation: rush-streak 420ms ease-out; }
+  @keyframes rush-streak { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 #c5422d00; } 35% { transform: scale(1.2); box-shadow: 0 0 0 8px #c5422d22; } }
 }
 #rush-clock { min-width: 3ch; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rush-time { display: flex; align-items: center; gap: 8px; }

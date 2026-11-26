@@ -1,3 +1,4 @@
+import { setAngle } from "./angle-helpers.mjs";
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
@@ -21,7 +22,7 @@ try{
   else{
    const q=perceptionPuzzle('anglerot',await rushSeed(page,'anglerot'),0);
    if(await child().getByRole('button',{name:'Start round',exact:true}).count())await child().getByRole('button',{name:'Start round',exact:true}).click();
-   await child().getByRole('slider').fill(String((q.target+guess)%360));await child().getByRole('button',{name:'Check angle'}).click();
+   await setAngle(child(), (q.target+guess)%360);await child().getByRole('button',{name:'Check angle'}).click();
   }
   await page.locator('#rush-status').filter({hasText:correct?'Correct':'Missed'}).waitFor();
   await page.getByRole('button',{name:'Keep answer',exact:true}).click();
@@ -29,14 +30,14 @@ try{
   if(game==='pricerot'){
    assert.match(await child().locator('.visual-reveal').innerText(),new RegExp(`Recorded price: \\$10.00.*${correct?'20':'31'}% off`));
    assert.doesNotMatch(await child().locator('.visual-reveal').innerText(),/\/ 100 points/);
-  }else assert.match(await child().locator('.perception-feedback').innerText(),new RegExp(`${correct?70:69} / 100 · 70 needed to continue`));
+  }else assert.match(await child().locator('.perception-feedback').innerText(),new RegExp(`${guess}° off`));
   await page.clock.resume();reports.push({width,game,guess,correct,...await checkPage(page,policy)});
   await page.screenshot({path:`test-results/rush-improvements/feedback-${game}-${correct}-${width}.png`});
   await page.clock.pauseAt(await page.evaluate(()=>Date.now()+100));
   if(correct){
    await page.getByRole('button',{name:'Next',exact:true}).click();await page.locator('#rush-status').filter({hasText:'Round 2'}).waitFor();
    if(game==='pricerot')await child().getByRole('spinbutton').fill('10');
-   else{const q=perceptionPuzzle('anglerot',await rushSeed(page,'anglerot'),1);await child().getByRole('slider').fill(String(q.target));}
+   else{const q=perceptionPuzzle('anglerot',await rushSeed(page,'anglerot'),1);await setAngle(child(),q.target);}
    await page.clock.runFor(game==='pricerot'?17999:19999);
    // Model a correct answer message crossing the host deadline before its next ticker.
    await page.evaluate(()=>{const now=performance.now.bind(performance);Object.defineProperty(performance,'now',{value:()=>now()+1000});});

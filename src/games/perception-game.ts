@@ -1,3 +1,4 @@
+import { angleBoard } from "./angle-board.js";
 import {
   dailyDate,
   inFeed,
@@ -49,6 +50,7 @@ interface Answer {
 interface Session {
   seed: string;
   answers: Answer[];
+  draft?: number | null;
 }
 let day = dailyDate(),
   mode: Mode = startPractice ? "practice" : "daily",
@@ -67,6 +69,7 @@ let timerCallback: (() => void) | undefined,
 let playback:
   { state: "running" } | { state: "paused"; since: number; remaining: number } =
   { state: "running" };
+let cancelAngle: (() => void) | undefined;
 let draft = 50,
   taps: number[] = [],
   beatStart = 0,
@@ -105,6 +108,7 @@ const button = (text: string, action: () => void, kind = "secondary") => {
 const key = () =>
   `dailyo:${game}:v1:${mode === "daily" ? day : `practice:${hard ? "hard" : "standard"}`}`;
 function stop() {
+  cancelAngle?.();
   clearTimeout(timer);
   timerCallback = undefined;
   animateRound = undefined;
@@ -128,6 +132,7 @@ function later(callback: () => void, delay: number) {
   }, delay);
 }
 function pausePlayback() {
+  cancelAngle?.();
   if (playback.state === "paused") return;
   playback = {
     state: "paused",
@@ -159,8 +164,7 @@ function transition(event: Event) {
   if (
     phase === "ready" &&
     !isRush &&
-    mode === "practice" &&
-    (game === "anglerot" || game === "splitrot")
+    (game === "anglerot" || (mode === "practice" && game === "splitrot"))
   ) {
     draft = game === "anglerot" ? 0 : 50;
     transition("start");
@@ -212,6 +216,14 @@ function load() {
       )
     )
       session = saved;
+    if (
+      session.draft !== null &&
+      (typeof session.draft !== "number" ||
+        !Number.isFinite(session.draft) ||
+        session.draft < 0 ||
+        session.draft > (hard ? 1080 : 360))
+    )
+      delete session.draft;
   } catch {}
 }
 const count = () => (isRush ? 1 : 5);
@@ -259,11 +271,12 @@ function finish(guess: number | number[] | null) {
         : game === "trackrot"
           ? `${format(grade.error * 100)}% of the field off`
           : game === "anglerot"
-            ? `${format(grade.error)}° off · Target: ${q.target}°`
+            ? `${format(grade.error)}° off`
             : game === "temporot"
               ? `${Math.round(grade.error)} ms average timing error`
               : `${format(grade.error * 100)} percentage points off`;
   feedback = { ...grade, detail, guess };
+  delete session.draft;
   session.answers.push(feedback);
   save();
   draw();
@@ -338,29 +351,6 @@ function track(c: HTMLCanvasElement, t: number, reveal = false) {
   if (phase !== "showing") {
     line(ctx, 40 + draft * 8.8, 478, 40 + draft * 8.8, 524, "#c5422d", 5);
   }
-}
-function angle(c: HTMLCanvasElement, reveal = false) {
-  const ctx = c.getContext("2d")!;
-  ctx.clearRect(0, 0, 960, 560);
-  ctx.strokeStyle = "#62666d";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(480, 280, 200, 0, Math.PI * 2);
-  ctx.stroke();
-  line(ctx, 480, 280, 680, 280, "#7d8088", 3);
-  const ray = (a: number, color: string) =>
-    line(
-      ctx,
-      480,
-      280,
-      480 + 200 * Math.cos((a * Math.PI) / 180),
-      280 - 200 * Math.sin((a * Math.PI) / 180),
-      color,
-      5,
-    );
-  if (reveal) ray(q.target, "#2a7443");
-  ray(draft, "#c5422d");
-  ball(ctx, 480, 280, 7);
 }
 function slider(
   label: string,
@@ -641,24 +631,62 @@ function drawRound() {
       );
     }
   } else if (game === "anglerot") {
-    quiz.append(
-      el("p", `Target: ${q.target}° counterclockwise`, "perception-target"),
+    title.textContent = `${q.target}°`;
+    title.classList.add("angle-target");
+    const value = () =>
+      reveal
+        ? typeof feedback?.guess === "number"
+          ? feedback.guess
+          : null
+        : (session.draft ?? null);
+    const clear = button("Clear", () => change(null));
+    const check = button(
+      "Check angle",
+      () => {
+        const guess = value();
+        if (guess !== null) finish(guess);
+      },
+      "primary",
     );
-    const c = canvas();
-    quiz.append(c);
-    angle(c, reveal);
-    if (phase === "answering") {
-      const turns = el("p", q.hard ? "Full turns: 0" : "", "perception-note");
-      quiz.append(
-        slider("Rotate line", 0, q.hard ? 1080 : 360, draft, (value) => {
-          draft = value;
-          angle(c);
-          if (q.hard)
-            turns.textContent = `Full turns: ${Math.floor(value / 360)}`;
-        }),
-      );
-      if (q.hard) quiz.append(turns);
-      quiz.append(button("Check angle", () => finish(draft), "primary"));
+    const turns = el("span", undefined, "angle-turns");
+    const change = (next: number | null) => {
+      if (phase !== "answering" || playback.state === "paused") return;
+      session.draft = next;
+      save();
+      board.refresh();
+      check.disabled = next === null;
+      clear.disabled = next === null;
+      turns.textContent = `${Math.floor((next ?? 0) / 360)} full turns`;
+    };
+    const board = angleBoard({
+      target: q.target,
+      value,
+      change,
+      editable: () => phase === "answering" && playback.state === "running",
+      reveal,
+      max: q.hard ? 1080 : 360,
+    });
+    cancelAngle = board.cancel;
+    quiz.append(board.canvas);
+    if (!reveal) {
+      const actions = el("div", undefined, "angle-actions");
+      clear.disabled = check.disabled = value() === null;
+      if (q.hard) {
+        turns.textContent = `${Math.floor((value() ?? 0) / 360)} full turns`;
+        const turnControls = el("div", undefined, "angle-turn-controls");
+        turnControls.append(
+          button("Remove turn", () =>
+            change(Math.max(0, (value() ?? 0) - 360)),
+          ),
+          turns,
+          button("Add turn", () =>
+            change(Math.min(1080, (value() ?? 0) + 360)),
+          ),
+        );
+        actions.append(turnControls);
+      }
+      actions.append(clear, check);
+      quiz.append(actions);
     }
   } else if (game === "splitrot") {
     quiz.append(
@@ -748,8 +776,16 @@ function drawRound() {
     );
     h.id = "perception-feedback";
     h.tabIndex = -1;
+    if (game === "anglerot") {
+      h.className = "screen-reader-only";
+      box.classList.add("angle-feedback");
+    }
     box.append(h, el("p", feedback.detail));
-    if (isRush && feedback.guess !== null)
+    if (game === "anglerot" && isRush)
+      box.append(
+        el("span", `${feedback.points} / 100 points`, "screen-reader-only"),
+      );
+    if (isRush && feedback.guess !== null && game !== "anglerot")
       box.append(
         el(
           "p",
@@ -824,7 +860,10 @@ function drawResults() {
   reportDaily("complete", `${total} / 500 points`, day);
 }
 function draw() {
+  cancelAngle?.();
+  cancelAngle = undefined;
   quiz.replaceChildren();
+  quiz.classList.toggle("angle-playfield", game === "anglerot");
   for (const control of document.querySelectorAll<HTMLButtonElement>(
     ".modes button",
   ))
@@ -845,23 +884,26 @@ async function init() {
   if (isRush) {
     const saved = readRushDraft<{
       phase: Phase;
-      draft: number;
+      draft: number | null;
       count?: string;
     }>();
     if (
       saved?.phase === "answering" &&
-      Number.isFinite(saved.draft) &&
-      saved.draft >= 0 &&
-      saved.draft <= (game === "anglerot" ? 360 : 100) &&
+      ((game === "anglerot" && saved.draft === null) ||
+        (typeof saved.draft === "number" &&
+          Number.isFinite(saved.draft) &&
+          saved.draft >= 0 &&
+          saved.draft <= (game === "anglerot" ? 360 : 100))) &&
       game !== "temporot"
     ) {
       transition("start");
       transition("shown");
-      draft = saved.draft;
+      if (game === "anglerot") session.draft = saved.draft;
+      else draft = saved.draft!;
     }
     saveRushDraft(() => ({
       phase,
-      draft,
+      draft: game === "anglerot" ? (session.draft ?? null) : draft,
       count: quiz.querySelector<HTMLInputElement>("#dot-count")?.value,
     }));
   }

@@ -35,10 +35,11 @@ const copyStatus=$('#feed-copy-status'),copyText=$('#feed-copy-text');
 const recapDate=new Intl.DateTimeFormat('en-US',{timeZone:'UTC',year:'numeric',month:'short',day:'numeric'});
 const recapColumn=Math.max(...games.map(({label})=>label.length))+3;
 let day=dailyDate(),skipped=readSkips(),results=new Map<string, string>();
-let index=-1,phase='loading',focusOnReady=false;
+type Phase='loading'|'playing'|'complete'|'error'|'recap';
+// Loading restores completed games; a newly completed game waits for Next.
+let index=-1,phase:Phase='loading',focusOnReady=false;
 let frame: HTMLIFrameElement | null = null, preload: {position: number; frame: HTMLIFrameElement} | null = null;
 let timeout: ReturnType<typeof setTimeout> | undefined, lastSkip: number | undefined;
-let advanceTimeout: ReturnType<typeof setTimeout> | undefined;
 
 function skipKey(){return `dailyo:daily-feed:skipped:${day}`;}
 function readSkips(){
@@ -83,7 +84,6 @@ function preloadNext(){
 }
 function showGame(position: number){
   clearTimeout(timeout);
-  clearTimeout(advanceTimeout);
   frame?.remove();
   index=position;
   phase='loading';
@@ -133,7 +133,6 @@ function showGame(position: number){
 }
 function showError(){
   clearTimeout(timeout);
-  clearTimeout(advanceTimeout);
   if(phase==='loading'&&skipped.has(games[index].id)){showGame(index+1);return;}
   phase='error';
   frame?.remove();
@@ -178,17 +177,9 @@ window.addEventListener('message',(event: MessageEvent<DailyMessage>)=>{
     focusOnReady=false;
     preloadNext();
   }
-  const previous=phase;
   phase=reported;
   renderActions();
-  if(phase==='complete'&&previous!=='complete'){
-    const completedFrame=frame,completedDay=day,completedIndex=index;
-    advanceTimeout=setTimeout(()=>{
-      if(changeDay()||phase!=='complete'||frame!==completedFrame||day!==completedDay||index!==completedIndex)return;
-      focusOnReady=true;
-      showGame(index+1);
-    },2400);
-  }else if(phase!=='complete')clearTimeout(advanceTimeout);
+
 });
 skip.onclick=()=>{
   if(changeDay()||!['playing','error'].includes(phase))return;

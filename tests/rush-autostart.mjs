@@ -1,3 +1,4 @@
+import { setAngle } from "./angle-helpers.mjs";
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
@@ -37,7 +38,7 @@ try{
    if(game==='countrot'||game==='trackrot')await page.clock.runFor(1400);
    if(game==='countrot'){await child().getByRole('spinbutton').fill(String(q.target));await child().getByRole('button',{name:'Check estimate'}).click();}
    if(game==='trackrot'){await child().getByRole('slider').fill(String(Number((q.target*100).toFixed(1))));await child().getByRole('button',{name:'Check landing'}).click();}
-   if(game==='anglerot'){await child().getByRole('slider').fill(String(q.target));await child().getByRole('button',{name:'Check angle'}).click();}
+   if(game==='anglerot'){await setAngle(child(),q.target);await child().getByRole('button',{name:'Check angle'}).click();}
    if(game==='splitrot'){await child().getByRole('slider').fill(String(Number(((q.right?1-q.target:q.target)*100).toFixed(1))));await child().getByRole('button',{name:'Check split'}).click();}
    if(game==='temporot'){
     const enable=child().getByRole('button',{name:'Enable sound'});

@@ -89,7 +89,7 @@ async function checkMapResult(map, maxWidth) {
 async function answerYear(page, { event, timeline }, index) {
   assert.equal(
     await page.locator("#round-title").innerText(),
-    "When did this happen?",
+    event[1],
   );
   assert.equal(await page.locator(".rot-year-event").innerText(), event[1]);
   const clues = page.getByRole("list", { name: "Timeline" });

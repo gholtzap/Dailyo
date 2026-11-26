@@ -41,6 +41,12 @@ try {
         await page.locator("#rush-streak").textContent(),
         `🔥${i + 1}`,
       );
+      assert.equal(
+        await page
+          .locator("#rush-streak")
+          .evaluate((n) => n.classList.contains("rush-milestone")),
+        i === 4,
+      );
       if (i === 4) {
         await page.getByRole("button", { name: "Keep answer" }).click();
         await page.clock.resume();
@@ -59,6 +65,19 @@ try {
     await page.reload();
     await page.locator("#rush-status").filter({ hasText: "Paused" }).waitFor();
     assert.equal(await page.locator("#rush-streak").textContent(), "🔥5");
+    assert.equal(
+      await page
+        .locator("#rush-streak")
+        .evaluate((n) => n.classList.contains("rush-milestone")),
+      false,
+      "Restoring a streak is not a new milestone",
+    );
+    assert.equal(
+      await page
+        .locator("#rush-streak")
+        .evaluate((n) => getComputedStyle(n).animationName),
+      "none",
+    );
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     await page
       .frameLocator('iframe[title="Vocabulary"]')

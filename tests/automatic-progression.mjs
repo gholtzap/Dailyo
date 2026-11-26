@@ -28,12 +28,14 @@ try{
     await train.locator('#show-answer').click();
     await page.locator('#feed-next').waitFor();
     await inspect('daily-feedback');
-    await page.clock.fastForward(2400);
+    await page.clock.fastForward(10000);
+    assert.equal(await page.locator('#feed-progress').textContent(),'1 of 21');
+    await page.locator('#feed-next').click();
     await page.frameLocator('iframe[title="flagrot"]').locator('.choice').first().waitFor();
     assert.equal(await page.locator('#feed-progress').textContent(),'2 of 21');
     await inspect('daily-advanced');
 
-    // Manual continuation must cancel its pending automatic transition.
+    // Reload skips completed games; each newly completed game waits for Next.
     await page.goto(`${base}/daily/`);
     await page.frameLocator('iframe[title="flagrot"]').locator('.choice').first().waitFor();
     // Complete the five questions through the actual game controls.
@@ -87,7 +89,7 @@ try{
     await inspect('nyc-planning');
     assert.deepEqual(errors,[]);
     await page.close();
-    console.log(`${viewport.width}px: automatic Daily/Rush advancement, manual cancellation, hidden train maps, and result reset passed`);
+    console.log(`${viewport.width}px: manual Daily and automatic Rush advancement, hidden train maps, and result reset passed`);
   }
 }finally{
   await browser.close();

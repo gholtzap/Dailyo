@@ -1,3 +1,4 @@
+import { setAngle } from "./angle-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -194,10 +195,10 @@ try {
 
     const angle = await enter("anglerot");
     await angle.getByRole("slider").waitFor();
-    await angle.getByRole("slider").fill("42.5");
+    await setAngle(angle,42.5);
     await page.reload();
     await status.filter({ hasText: "Round 1" }).waitFor();
-    assert.equal(await angle.getByRole("slider").inputValue(), "42.5");
+    assert.equal(await angle.getByRole("slider").getAttribute("aria-valuenow"), "42.5");
 
     await seedMixedRun(page, "2026-11-20");
     await page.goto(base);
