@@ -101,7 +101,15 @@ try {
   );
   assert.equal((await (await post(base, cookie)).json()).score, 4);
 
-  // Seed the same current bucket just below capacity, then race two workers.
+  const { rows: networks } = await db.query(
+    "SELECT DISTINCT network FROM daily_score_request_limits",
+  );
+  assert.equal(networks.length, 1);
+  // Exercise rollover: earlier requests need not have created this minute's row.
+  await db.query(
+    "DELETE FROM daily_score_request_limits WHERE minute=date_trunc('minute',statement_timestamp())",
+  );
+  // Seed the current bucket just below capacity, then race two workers.
   // Retry near a minute boundary so the test does not depend on wall-clock luck.
   for (;;) {
     const {
@@ -113,7 +121,12 @@ try {
       await new Promise((resolve) => setTimeout(resolve, 2100));
       continue;
     }
-    await db.query("UPDATE daily_score_request_limits SET requests=119");
+    await db.query(
+      `INSERT INTO daily_score_request_limits (minute,network,requests)
+       VALUES (date_trunc('minute',statement_timestamp()),$1,119)
+       ON CONFLICT (minute,network) DO UPDATE SET requests=119`,
+      [networks[0].network],
+    );
     const responses = await Promise.all([
       post(base, cookie),
       post(peer, cookie),
