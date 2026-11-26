@@ -111,7 +111,11 @@ function queueBall() {
 }
 function tickBall() {
   if (phase !== "countdown") return;
-  if (isRush && document.documentElement.hasAttribute("data-rush-paused")) {
+  if (
+    isRush &&
+    (document.hidden ||
+      document.documentElement.hasAttribute("data-rush-paused"))
+  ) {
     pausePlayback();
     later(tickBall, 1000);
     return;
@@ -1011,6 +1015,10 @@ async function init() {
     }
   });
   document.addEventListener("visibilitychange", () => {
+    if (game === "trackrot" && isRush && document.hidden) {
+      pausePlayback();
+      return;
+    }
     if (
       !isRush &&
       document.hidden &&
@@ -1031,11 +1039,16 @@ async function init() {
       }
     }
   });
-  if (game === "trackrot" && !isRush) {
+  if (game === "trackrot") {
     const help = document.querySelector<HTMLDialogElement>("#help-dialog")!;
-    new MutationObserver(() =>
-      help.open ? pausePlayback() : resumePlayback(),
-    ).observe(help, { attributes: true, attributeFilter: ["open"] });
+    new MutationObserver(() => {
+      if (help.open) pausePlayback();
+      else if (
+        !document.hidden &&
+        (!isRush || !document.documentElement.hasAttribute("data-rush-paused"))
+      )
+        resumePlayback();
+    }).observe(help, { attributes: true, attributeFilter: ["open"] });
   }
   window.addEventListener("message", (event) => {
     if (!isRush || event.source !== parent || event.origin !== location.origin)

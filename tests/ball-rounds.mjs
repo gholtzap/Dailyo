@@ -74,6 +74,16 @@ try {
     const status = page.locator("#rush-status"),
       child = page.frameLocator("iframe[title=trackrot]");
     await child.locator(".track-countdown").waitFor();
+    await child
+      .getByRole("button", { name: "How to play", exact: true })
+      .click();
+    await page.clock.runFor(5000);
+    assert.equal(
+      await child.locator(".track-countdown").textContent(),
+      "3",
+      "Help also freezes the untimed opening countdown",
+    );
+    await child.getByRole("button", { name: "Close", exact: true }).click();
     await page.clock.runFor(4300);
     await child.getByRole("slider").waitFor();
     const seed = await rushSeed(page, "trackrot"),
