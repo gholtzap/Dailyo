@@ -42,7 +42,7 @@
     "ci:feedback": "bun scripts/ci-feedback.ts",
     "build:api": "tsc --noCheck -p tsconfig.api.json && node scripts/stage-verified.mjs .test-build/src",
     "hooks:install": "git config core.hooksPath .githooks",
-    "test:ci": "node tests/ci-proof-reuse.mjs && node tests/ci-finish.mjs && bun tests/ci-source-snapshot.mjs",
+    "test:ci": "node tests/ci-proof-reuse.mjs && node tests/ci-finish.mjs && bun tests/ci-source-snapshot.mjs && node tests/ci-feedback-order.mjs",
     "lint:ui:map-answer": "node tests/map-answer-review.mjs --ui",
     "lint:ui:border-input": "node tests/border-country-input.mjs --ui",
     "test:e2e:playroom": "node tests/playroom.mjs",

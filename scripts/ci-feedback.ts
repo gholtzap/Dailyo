@@ -71,27 +71,34 @@ const tasks: [string, string[]][] = [
     : []),
 ];
 const started = performance.now();
+function runTask([name, [command, ...args]]: [string, string[]]) {
+  return new Promise<{ name: string; status: number; durationMs: number }>(
+    (resolve) => {
+      const start = performance.now();
+      const child = spawn(command, args, { stdio: "inherit" });
+      child.once("error", (error) => {
+        console.error(error);
+        resolve({ name, status: 1, durationMs: performance.now() - start });
+      });
+      child.once("exit", (status) =>
+        resolve({
+          name,
+          status: status ?? 1,
+          durationMs: performance.now() - start,
+        }),
+      );
+    },
+  );
+}
+// The build rewrites generated HTML. Its output check must read completed files.
+const buildTask = tasks.find(([name]) => name === "build");
+const build = buildTask ? runTask(buildTask) : undefined;
 const results = await Promise.all(
-  tasks.map(
-    ([name, [command, ...args]]) =>
-      new Promise<{ name: string; status: number; durationMs: number }>(
-        (resolve) => {
-          const start = performance.now();
-          const child = spawn(command, args, { stdio: "inherit" });
-          child.once("error", (error) => {
-            console.error(error);
-            resolve({ name, status: 1, durationMs: performance.now() - start });
-          });
-          child.once("exit", (status) =>
-            resolve({
-              name,
-              status: status ?? 1,
-              durationMs: performance.now() - start,
-            }),
-          );
-        },
-      ),
-  ),
+  tasks.map((task) => {
+    if (task[0] === "build") return build!;
+    if (task[0] === "lint" && build) return build.then(() => runTask(task));
+    return runTask(task);
+  }),
 );
 const durationMs = performance.now() - started;
 mkdirSync("test-results/ci-optimization", { recursive: true });
