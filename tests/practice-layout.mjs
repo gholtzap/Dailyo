@@ -41,7 +41,9 @@ try {
           )
           .first();
         await control.waitFor();
-        const box = await control.boundingBox();
+        const target =
+          game === "zoomrot" ? p.locator(".visual-choice").last() : control;
+        const box = await target.boundingBox();
         assert.ok(
           box.y + box.height <= 568,
           `${game}: opening answer is visible on a short phone`,
