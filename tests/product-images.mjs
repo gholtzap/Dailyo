@@ -229,7 +229,7 @@ try {
     const frame = page.frameLocator("iframe:not(.feed-loading):not([hidden])");
     await ready(frame);
     await inspect("rush-prompt", frame);
-    await frame
+    await page
       .getByRole("button", { name: "How to play", exact: true })
       .click();
     assert.match(await frame.getByRole("dialog").innerText(), /within 20%/i);

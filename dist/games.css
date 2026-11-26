@@ -815,12 +815,13 @@
   font-size: var(--font-size-12);
 }
 .perception-field {
+  --perception-field-max-width: 480px;
   display: block;
-  width: 100%;
+  width: min(100%, var(--perception-field-max-width));
   height: auto;
   aspect-ratio: 12 / 7;
   border: var(--stroke-1) solid var(--line);
-  margin: var(--space-4) 0;
+  margin: var(--space-4) auto;
 }
 .perception-control {
   display: grid;
@@ -1080,7 +1081,7 @@ body[data-game=yearrot] .main {
   font-size: var(--font-size-24);
 }
 .angle-board {
-  --angle-board-width: 48dvh;
+  --angle-board-width: 320px;
   display: block;
   width: min(100%, var(--angle-board-width), var(--layout-dialog));
   height: auto;
@@ -1245,4 +1246,8 @@ body:has(#practice[aria-pressed="true"]) .perception-settings {
   align-items: center;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
+}
+
+@media (max-width: 700px) {
+  .angle-board { --angle-board-width: 280px; }
 }

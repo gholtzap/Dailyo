@@ -29,21 +29,21 @@ const actions = $(".feed-actions"),
   retry = $("#rush-retry"),
   next = $("#rush-next");
 const pause = $("#rush-pause");
-const splitHelp = document.createElement("button");
-splitHelp.type = "button";
-splitHelp.id = "rush-split-help";
-splitHelp.className = "game-icon";
-splitHelp.textContent = "How to play";
-splitHelp.setAttribute("aria-haspopup", "dialog");
-splitHelp.hidden = true;
-actions.append(splitHelp);
-splitHelp.onclick = () => {
+const gameHelp = document.createElement("button");
+gameHelp.type = "button";
+gameHelp.id = "rush-help";
+gameHelp.className = "game-icon";
+gameHelp.textContent = "How to play";
+gameHelp.setAttribute("aria-haspopup", "dialog");
+gameHelp.hidden = true;
+actions.append(gameHelp);
+gameHelp.onclick = () => {
   const doc = panel.querySelector<HTMLIFrameElement>(
     "iframe[title]:not([hidden])",
   )?.contentDocument;
   const dialog = doc?.querySelector<HTMLDialogElement>("#help-dialog");
   if (!dialog || dialog.open) return;
-  dialog.addEventListener("close", () => splitHelp.focus(), { once: true });
+  dialog.addEventListener("close", () => gameHelp.focus(), { once: true });
   doc?.querySelector<HTMLButtonElement>("#help")?.click();
 };
 const pauseSurface = $("#rush-resume-panel");
@@ -247,6 +247,8 @@ function updatePauseControl() {
     positionPauseSurface();
     pauseLayout = new ResizeObserver(positionPauseSurface);
     pauseLayout.observe(visible.contentDocument.body);
+    pauseLayout.observe(visible);
+    pauseLayout.observe(pauseSurface.parentElement!);
   }
 }
 let current: Round | null | undefined,
@@ -283,9 +285,9 @@ let advance: {
   deadline: number;
 } | null = null;
 function updateReviewControl() {
-  splitHelp.hidden =
-    panel.querySelector<HTMLIFrameElement>("iframe[title]:not([hidden])")
-      ?.contentDocument?.body.dataset.game !== "splitrot";
+  gameHelp.hidden = !panel
+    .querySelector<HTMLIFrameElement>("iframe[title]:not([hidden])")
+    ?.contentDocument?.querySelector("#help");
   reviewButton.hidden =
     !lastAnswer ||
     review.state === "previous" ||
@@ -502,12 +504,7 @@ function makeRound(gameIndex: number, roundIndex: number) {
   frame.dataset.game = games[gameIndex].label;
   frame.inert = true;
   panel.append(frame);
-  if (
-    !["countrot", "trackrot", "anglerot", "temporot"].includes(
-      games[gameIndex].label,
-    )
-  )
-    sizeFeedFrame(frame);
+  sizeFeedFrame(frame);
   return { frame, ready: false };
 }
 

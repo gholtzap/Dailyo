@@ -104,7 +104,7 @@ try {
       "Timed knowledge questions stay concealed",
     );
     assert.equal(
-      await child().locator(".heading").isVisible(),
+      await page.locator(".feed-actions").isVisible(),
       true,
       "The game shell remains visible while paused",
     );

@@ -60,7 +60,7 @@ try {
     await status.filter({ hasText: "Correct" }).waitFor();
     await page.clock.runFor(200);
     await status.filter({ hasText: "Round 2" }).waitFor();
-    await flag
+    await page
       .getByRole("button", { name: "How to play", exact: true })
       .click();
     await status.filter({ hasText: "Paused" }).waitFor({ timeout: 3000 });

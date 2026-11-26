@@ -74,7 +74,7 @@ try {
     const status = page.locator("#rush-status"),
       child = page.frameLocator("iframe[title=trackrot]");
     await child.locator(".track-countdown").waitFor();
-    await child
+    await page
       .getByRole("button", { name: "How to play", exact: true })
       .click();
     await child
@@ -130,6 +130,22 @@ try {
     assert.equal(await child.locator("canvas").isVisible(), true);
     assert.equal(await child.getByRole("slider").isVisible(), true);
     assert.equal(await child.getByRole("slider").inputValue(), "42.5");
+    await page.clock.resume();
+    await page.waitForFunction(
+      () => {
+        const frame = document.querySelector("iframe[title=trackrot]");
+        const board = frame?.contentDocument.querySelector("canvas");
+        const resume = document.querySelector("#rush-pause");
+        if (!board || !resume) return false;
+        const b = board.getBoundingClientRect(),
+          f = frame.getBoundingClientRect(),
+          r = resume.getBoundingClientRect();
+        return Math.abs(r.y + r.height / 2 - f.y - b.y - b.height / 2) < 32;
+      },
+      {},
+      { timeout: 3000 },
+    );
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
     const pausedBoard = await child.locator("canvas").boundingBox();
     const resumeButton = await page
       .getByRole("button", { name: "Resume", exact: true })

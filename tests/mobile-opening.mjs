@@ -86,7 +86,7 @@ for (const engine of process.argv.includes("--webkit")
                 "Lintapple computed-style inspection is unsupported in WebKit; geometry and interactions checked directly.",
             }),
       });
-      await child
+      await page
         .getByRole("button", { name: "How to play", exact: true })
         .click();
       await child.locator("dialog[open]").waitFor();
@@ -111,7 +111,7 @@ for (const engine of process.argv.includes("--webkit")
       await page.bringToFront();
       await page.goto(`${base}/rush/${game.label.toLowerCase()}/`);
       const child = page.frameLocator(`iframe[title="${game.label}"]`);
-      await (game.label === "splitrot" ? page : child)
+      await page
         .getByRole("button", { name: "How to play", exact: true })
         .waitFor()
         .catch(async (error) => {
