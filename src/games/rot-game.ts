@@ -1195,6 +1195,7 @@ function summary(session: RotSession): Content {
 }
 
 function draw() {
+  window.frameElement?.classList.remove("feed-map-expanded");
   mapObserver?.disconnect();
   mapObserver = undefined;
   settings?.sync(difficulty, mode === "practice");
