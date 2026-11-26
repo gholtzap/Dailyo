@@ -43,6 +43,7 @@ try {
     const page = await context.newPage();
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
+    await page.clock.install({ time: date });
     await page.clock.setFixedTime(date);
     await context.route("**/api/daily-score", (route) =>
       route.fulfill({ status: 404 }),
@@ -586,7 +587,10 @@ https://trainrot.vercel.app/daily/`;
     ]) {
       const child = frame(name);
       for (let round = 0; round < 5; round++) {
-        if (name !== "anglerot")
+        if (name === "trackrot") {
+          await child.locator(".track-countdown").waitFor();
+          await page.clock.runFor(3000);
+        } else if (name !== "anglerot")
           await child
             .getByRole("button", { name: "Start round", exact: true })
             .click();

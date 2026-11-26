@@ -82,3 +82,16 @@ def Laws.train_skipped_cannot_retry(C, R, c, ls, gs, a, r):
 
 def Laws.train_legacy_retry_is_assisted(C, R, c, head, tail, a, r):
   {==}
+
+
+def Laws.rush_deadline_snapshot_grades(s, g, clock, correct):
+  {==}
+
+def Laws.rush_early_deadline_snapshot_is_ignored(s, g, clock, correct):
+  {==}
+
+def Laws.rush_feedback_rejects_deadline_snapshot(g, clock, incoming, now, correct):
+  {==}
+
+def Laws.rush_paused_rejects_deadline_snapshot(g, remaining, incoming, now, correct):
+  {==}

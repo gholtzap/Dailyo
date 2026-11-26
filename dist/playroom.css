@@ -239,3 +239,5 @@ body[data-game=yearrot] .rot-slot { min-height: 48px; white-space: normal; }
 .rot-pin.answer { fill: #86d6a0; }
 .rot-event.highlight, .swap-board .swap-tile[aria-pressed=true] { background: #264332; border-color: #609772; color: #b5edc2; }
 .border-map-label { background: #264332; border-color: #609772; color: #b5edc2; }
+.track-cue { position: relative; }
+.track-countdown { position: absolute; inset: 0; display: grid; place-items: center; font-size: 24px; font-weight: 500; pointer-events: none; }

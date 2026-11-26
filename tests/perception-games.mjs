@@ -34,7 +34,8 @@ async function solve(page, game, q) {
   if (await start.count()) await start.press("Enter");
   else
     assert.ok(
-      game === "anglerot" ||
+      game === "trackrot" ||
+        game === "anglerot" ||
         (game === "splitrot" &&
           (new URL(page.url()).searchParams.has("rush") ||
             (await page
@@ -45,6 +46,8 @@ async function solve(page, game, q) {
               })
               .count()))),
     );
+  if (game === "trackrot" && (await page.locator(".track-countdown").count()))
+    await page.clock.runFor(3000);
   if (game === "countrot" || game === "trackrot") await page.clock.runFor(1400);
   if (game === "countrot") {
     await page.getByLabel("How many dots?").fill(String(q.target));
@@ -118,11 +121,13 @@ try {
     };
     for (const game of perceptionGames) {
       await page.goto(`${base}/${game}/`);
-      await page
-        .getByRole(game === "anglerot" ? "slider" : "button", {
-          name: game === "anglerot" ? "Draw angle" : "Start round",
-        })
-        .waitFor();
+      if (game === "trackrot") await page.locator(".track-countdown").waitFor();
+      else
+        await page
+          .getByRole(game === "anglerot" ? "slider" : "button", {
+            name: game === "anglerot" ? "Draw angle" : "Start round",
+          })
+          .waitFor();
       await inspect(game, "ready");
       if (game === "anglerot") {
         const board = page.getByRole("slider", { name: "Draw angle" });
@@ -219,7 +224,7 @@ try {
         game,
       );
       // Starting fresh practice saves its seed before the first round for repeatable replay.
-      if (game === "anglerot" || game === "splitrot")
+      if (game === "trackrot" || game === "anglerot" || game === "splitrot")
         assert.equal(
           await page
             .getByRole("button", { name: "Start round", exact: true })
@@ -230,6 +235,7 @@ try {
         await page
           .getByRole("button", { name: "Start round", exact: true })
           .click();
+      if (game === "trackrot") await page.clock.runFor(3000);
       if (game === "countrot" || game === "trackrot")
         await page.clock.runFor(1400);
       if (game === "temporot") await page.clock.runFor(3000);
@@ -332,9 +338,13 @@ try {
         await page.goto(`${base}/${game}/?practice=1`);
         if (hard)
           await page.getByLabel("Practice variation").selectOption("hard");
-        await page
-          .getByRole("button", { name: "Start round", exact: true })
-          .click();
+        if (game === "trackrot") {
+          await page.locator(".track-countdown").waitFor();
+          await page.clock.runFor(3000);
+        } else
+          await page
+            .getByRole("button", { name: "Start round", exact: true })
+            .click();
         const canvas = page.locator("canvas");
         const initial = await canvas.evaluate((canvas) => canvas.toDataURL());
         await page.clock.runFor(500);
@@ -410,6 +420,17 @@ try {
         "Paused playback must not score or time out",
       );
       await page.getByRole("button", { name: "Resume", exact: true }).click();
+      if (game === "trackrot") {
+        await page.clock.runFor(4500);
+        const nextPuzzle = perceptionPuzzle(
+          game,
+          await rushSeed(page, game),
+          1,
+        );
+        await second
+          .getByRole("slider")
+          .fill(nextPuzzle.target < 0.5 ? "100" : "0");
+      }
       await page.clock.runFor(30000);
       await page
         .getByRole("heading", { name: "Rush recap", exact: true })

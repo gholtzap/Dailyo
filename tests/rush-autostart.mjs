@@ -49,7 +49,7 @@ try {
       let soundGestures = 0;
       for (let round = 0; round < 2; round++) {
         const q = perceptionPuzzle(game, seed, round);
-        const manual = round === 0 && !staticGame;
+        const manual = round === 0 && !staticGame && game !== "trackrot";
         if (manual)
           await child()
             .getByRole("button", { name: "Start round", exact: true })
@@ -61,7 +61,7 @@ try {
               .count(),
             0,
           );
-          if (!staticGame) {
+          if (!staticGame && game !== "trackrot") {
             await page
               .getByRole("button", { name: "Pause", exact: true })
               .click();
@@ -86,6 +86,10 @@ try {
             )
               await page.clock.runFor(20);
           }
+        }
+        if (game === "trackrot") {
+          await child().locator(".track-countdown").waitFor();
+          await page.clock.runFor(3000);
         }
         if (game === "countrot" || game === "trackrot")
           await page.clock.runFor(1400);
