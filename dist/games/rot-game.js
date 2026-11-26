@@ -906,7 +906,7 @@ function draw() {
 }
 async function start() {
     const geometry = kind === "borderrot" || mapGame
-        ? fetch("/games/data/border-map.json")
+        ? fetch(`/games/data/${mapGame ? "map-geometry" : "border-map"}.json`)
             .then((response) => (response.ok ? response.json() : null))
             .catch(() => null)
         : null;
@@ -916,22 +916,8 @@ async function start() {
     data = preparePuzzles(kind, await response.json());
     const rawGeometry = await geometry;
     if (mapGame && rawGeometry) {
-        // Borderrot uses Mercator; the city map uses longitude/latitude directly.
-        const latitudeY = (value) => (Math.atan(Math.sinh((value * Math.PI) / 180)) * 180) / Math.PI;
-        mapGeometry = {
-            paths: rawGeometry.paths.map(([id, path]) => [
-                id,
-                path.replace(/(-?[\d.]+),(-?[\d.]+)/g, (_, x, y) => `${x},${latitudeY(Number(y)).toFixed(4)}`),
-            ]),
-            anchors: Object.fromEntries(Object.entries(rawGeometry.anchors).map(([id, [x, y]]) => [
-                id,
-                [x, latitudeY(y)],
-            ])),
-        };
-        const names = await fetch("/games/data/borderrot.json")
-            .then((response) => (response.ok ? response.json() : []))
-            .catch(() => []);
-        countryNames = new Map(names.map(([id, name]) => [id, name]));
+        mapGeometry = rawGeometry;
+        countryNames = new Map(rawGeometry.names);
     }
     borderGeometry =
         kind === "borderrot" && rawGeometry
