@@ -167,7 +167,7 @@ input::placeholder { color: var(--muted); }
 .rot-event.highlight, .border-map-label { background: var(--color-success-surface); border-color: var(--color-success); color: var(--color-success-text); }
 /* Embedded games form one continuous board with the host's clock. */
 [data-daily-feed] { --paper: var(--color-panel); --panel: var(--color-panel); }
-[data-daily-feed] .main {
+:root[data-daily-feed] body > .main {
   margin: 0 auto; padding: var(--space-4) var(--space-6) var(--space-6); max-width: var(--layout-playfield);
   border: 0; border-radius: 0; background: transparent; box-shadow: none;
 }
@@ -181,7 +181,7 @@ input::placeholder { color: var(--muted); }
 .daily-feed > .feed-body { width: min(var(--layout-playfield), calc(100% - var(--control-size-large))); margin: var(--space-6) auto; background: var(--color-panel); border-radius: var(--radius-board); border: var(--stroke-1) solid var(--color-border-quiet); }
 .rush-feed .feed-actions {
   width: min(var(--layout-playfield), calc(100% - var(--control-size-large))); margin: var(--space-8) auto 0; padding: var(--space-4) var(--space-6);
-  min-height: var(--size-80); border: var(--stroke-1) solid var(--color-border-quiet); border-bottom: 0; border-radius: var(--radius-board) var(--radius-board) 0 0;
+  min-height: var(--size-56); border: var(--stroke-1) solid var(--color-border-quiet); border-bottom: 0; border-radius: var(--radius-board) var(--radius-board) 0 0;
   gap: var(--space-2) var(--space-4); flex-wrap: wrap; background: var(--color-panel); box-shadow: var(--shadow-panel-highlight);
 }
 .rush-feed > .feed-body {
@@ -239,13 +239,12 @@ input::placeholder { color: var(--muted); }
 .swap-board { gap: var(--space-3); padding: var(--space-6) 0; }
 .swap-board .swap-tile { padding: var(--space-2) var(--space-1) var(--space-3); min-height: var(--size-80); text-align: center; font-size: var(--font-size-14); }
 .swap-board .swap-tile[aria-pressed=true] { background: var(--piece); color: var(--ink); outline: var(--stroke-2) solid var(--yellow); outline-offset: var(--stroke-3); transform: translateY(calc(var(--size-3) * -1)); }
-.timeline-playfield { overflow-x: auto; padding: var(--space-6) var(--space-2); margin: 0 calc(var(--space-2) * -1); }
-.timeline-playfield .rot-timeline { display: flex; gap: var(--space-12); width: max-content; min-width: 100%; border-top: var(--stroke-2) solid var(--line); padding: var(--space-6) var(--space-20) 0; }
-.timeline-playfield .rot-event { display: flex; flex-direction: column; position: relative; width: var(--size-152); flex: 0 0 var(--size-152); padding: var(--space-4); min-height: var(--size-144); background: var(--well); border: var(--stroke-1) solid var(--line); border-radius: var(--radius-piece-large); }
-.timeline-playfield .rot-event::before { content: ''; position: absolute; left: 50%; top: calc(var(--space-8) * -1); width: var(--size-12); height: var(--size-12); background: var(--yellow); border: var(--stroke-4) solid var(--panel); border-radius: var(--radius-sm); }
+.timeline-playfield { padding: var(--space-2) 0; }
+.timeline-playfield .rot-timeline { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); padding: 0; margin: 0; list-style: none; }
+.timeline-playfield .rot-event { display: flex; flex-direction: column; position: relative; min-width: 0; gap: var(--space-2); padding: var(--space-3); background: var(--well); border: var(--stroke-1) solid var(--line); border-radius: var(--radius-piece-large); }
 .timeline-playfield .rot-event time { font-size: var(--font-size-18); color: var(--yellow); }
-body[data-game=yearrot] .rot-year-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--size-144), 1fr)); gap: var(--space-2); margin-top: var(--space-4); }
-body[data-game=yearrot] .rot-slot { min-height: var(--control-size-large); white-space: normal; }
+body[data-game=yearrot] .rot-year-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-2); }
+body[data-game=yearrot] .rot-slot { min-height: var(--control-size-large); padding: var(--space-3) var(--space-2) var(--space-4); font-size: var(--font-size-13); white-space: normal; text-align: center; }
 .track-cue { position: relative; }
 .track-countdown { position: absolute; inset: 0; display: grid; place-items: center; font-size: var(--font-size-24); font-weight:var(--font-weight-medium); pointer-events: none; }
 /* Subway's map is its board; the route rack sits underneath. */
@@ -286,7 +285,7 @@ body[data-game=yearrot] .rot-slot { min-height: var(--control-size-large); white
   #rush-streak { gap: var(--space-2); }
   .streak-block { width: var(--size-8); height: var(--size-12); }
   .streak-blocks { gap: var(--size-3); }
-  [data-daily-feed] .main { padding: var(--space-2) var(--space-4) var(--space-6); }
+  :root[data-daily-feed] body > .main { padding: var(--space-2) var(--space-4) var(--space-6); }
   [data-rush] .prompt { padding: var(--space-4); margin-bottom: var(--space-4); }
   .rush-feed .rush-time[data-timed] { order: 5; }
   .swap-board { gap: var(--space-2); }
@@ -298,7 +297,8 @@ body[data-game=yearrot] .rot-slot { min-height: var(--control-size-large); white
   #app .journey-route { flex-basis: var(--size-160); }
   #app .route-actions { margin-left: auto; }
   #app .train-choice { min-width: var(--control-size-large); }
-  .timeline-playfield .rot-event { min-height: var(--size-160); }
+  body[data-game=yearrot] .rot-year-event { font-size: var(--font-size-18); }
+  body[data-game=yearrot] .rot-slot { padding-inline: var(--space-2); }
   .site-masthead:has(.site-more[open]) { gap: var(--space-2); }
   .site-masthead .site-more[open] > summary { right: var(--space-4); }
   .site-masthead .site-more[open] .site-more-links { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: var(--space-3); }
@@ -309,7 +309,7 @@ body[data-game=yearrot] .rot-slot { min-height: var(--control-size-large); white
   .site-modes a { padding-inline: var(--space-2); }
   .choice { font-size: var(--font-size-13); padding-inline: var(--space-2); }
   .daily-feed > .feed-body, .rush-feed .feed-actions { width: calc(100% - var(--size-16)); }
-  [data-daily-feed] .main { padding-inline: var(--space-3); }
+  :root[data-daily-feed] body > .main { padding-inline: var(--space-3); }
 }
 /* Rush keeps secondary controls below the board and Resume beside the paused draft. */
 .rush-feed { grid-template-rows: auto auto minmax(0, 1fr) auto; }
@@ -345,3 +345,22 @@ body:has(.feed-actions[hidden]) .rush-controls { display: none; }
   .rush-controls { width: calc(100% - var(--size-24)); padding-inline: var(--space-4); }
 }
 [data-rush-phase=paused] .rush-track span { background: var(--muted); }
+/* Embedded puzzles share the phone's available space with navigation and the clock. */
+@media (max-height: 700px) {
+  [data-rush] .prompt { padding: 0; margin: var(--space-2) 0 var(--space-4); }
+  [data-rush] .flag { height: clamp(var(--size-80), var(--viewport-24dvh), var(--size-144)); }
+  [data-rush] .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  [data-rush] .choice { min-height: var(--size-56); padding: var(--space-3) var(--space-2) var(--space-4); font-size: var(--font-size-13); }
+  [data-rush] #quiz > h2 { font-size: var(--font-size-18); }
+  [data-rush] .visual-viewport { max-height: var(--viewport-26dvh); }
+  [data-rush] .visual-price-label + .extra-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  [data-rush] .visual-price-label + .extra-form label { grid-column: 1 / -1; }
+  [data-rush] .visual-price-label + .extra-form input { min-width: 0; }
+  [data-rush] .rot-actions:empty { display: none; }
+  [data-rush] .split-field { height: var(--size-96); margin-block: var(--space-2); }
+  [data-rush] .split-line { top: 50%; }
+  [data-rush] .split-marker { top: calc(50% - var(--space-5)); }
+  [data-rush] .split-answer { top: calc(50% - var(--space-7)); }
+  [data-rush] body[data-game=trackrot] .perception-field { width: min(100%, calc(var(--viewport-36dvh) * 12 / 7)); margin: var(--space-2) auto; }
+  [data-rush] .perception-control { gap: var(--space-2); margin-block: var(--space-2); }
+}

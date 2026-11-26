@@ -764,9 +764,6 @@ function drawTimeline(
   const { event, timeline } = question;
   const heading = element("h2", event[1], "rot-year-event");
   const board = element("div", undefined, "timeline-playfield");
-  board.tabIndex = 0;
-  board.setAttribute("role", "region");
-  board.setAttribute("aria-label", "Timeline board; scroll to explore");
   const list = element("ol", undefined, "rot-timeline");
   list.setAttribute("aria-label", "Timeline");
   const addEvent = ([year, description]: YearEvent, highlight = false) => {
@@ -806,11 +803,7 @@ function drawTimeline(
         ? `After ${earlier[0]}`
         : `Between ${earlier[0]} and ${later[0]}`;
     choices.append(
-      button(
-        label,
-        () => update({ type: "place", slot }),
-        "secondary rot-slot",
-      ),
+      button(label, () => update({ type: "place", slot }), "choice rot-slot"),
     );
   }
   board.append(list);
