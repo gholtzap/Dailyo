@@ -224,6 +224,94 @@ try {
     await context.close();
   }
   if (ciShared()) {
+    // Exercise actual canvas paints and the stimulus deadline with a controlled clock.
+    for (const width of [390, 1440]) {
+      for (const { game, hard, reducedMotion, animated } of [
+        {
+          game: "countrot",
+          hard: false,
+          reducedMotion: "no-preference",
+          animated: false,
+        },
+        {
+          game: "countrot",
+          hard: true,
+          reducedMotion: "reduce",
+          animated: false,
+        },
+        {
+          game: "countrot",
+          hard: true,
+          reducedMotion: "no-preference",
+          animated: true,
+        },
+        {
+          game: "trackrot",
+          hard: false,
+          reducedMotion: "no-preference",
+          animated: true,
+        },
+      ]) {
+        const context = await browser.newContext({
+          viewport: { width, height: 1000 },
+          reducedMotion,
+          colorScheme: "dark",
+        });
+        await context.addInitScript(() => {
+          window.canvasPaints = 0;
+          const clear = CanvasRenderingContext2D.prototype.clearRect;
+          CanvasRenderingContext2D.prototype.clearRect = function (...args) {
+            if (this.canvas.classList.contains("perception-field"))
+              window.canvasPaints++;
+            return clear.apply(this, args);
+          };
+        });
+        const page = await context.newPage();
+        await page.clock.install({ time: new Date(`${day}T16:00:00Z`) });
+        await page.clock.pauseAt(new Date(`${day}T16:00:01Z`));
+        await page.goto(`${base}/${game}/?practice=1`);
+        if (hard)
+          await page.getByLabel("Practice variation").selectOption("hard");
+        await page
+          .getByRole("button", { name: "Start round", exact: true })
+          .click();
+        const canvas = page.locator("canvas");
+        const initial = await canvas.evaluate((canvas) => canvas.toDataURL());
+        await page.clock.runFor(500);
+        const later = await canvas.evaluate((canvas) => canvas.toDataURL());
+        const paints = await page.evaluate(() => window.canvasPaints);
+        if (animated) {
+          assert.ok(paints > 1, `${game}: moving stimuli must keep animating`);
+          assert.notEqual(later, initial);
+        } else {
+          assert.equal(paints, 1, "Stationary dots must paint exactly once");
+          assert.equal(later, initial);
+        }
+        const duration = game === "countrot" ? 1100 : 1300;
+        const answer = page.locator(
+          game === "countrot" ? "#dot-count" : "input[type=range]",
+        );
+        await page.clock.runFor(duration - 501);
+        if (!animated)
+          assert.equal(
+            await page.evaluate(() => window.canvasPaints),
+            1,
+            "Stationary dots must not repaint before the display deadline",
+          );
+        assert.equal(
+          await answer.count(),
+          0,
+          "The stimulus must keep its full display interval",
+        );
+        await page.clock.runFor(1);
+        await answer.waitFor();
+        if (game === "countrot") assert.equal(await canvas.count(), 0);
+        receipt.push(
+          `${width}px ${game} ${hard ? "hard" : "standard"} ${reducedMotion}: ${paints} paints at 500ms; ${duration}ms deadline preserved`,
+        );
+        await context.close();
+      }
+    }
     // Rush readiness, correct answer, and timeout travel through the parent iframe contract.
     const page = await browser.newPage();
     await page.clock.install({ time: new Date(`${day}T16:00:00Z`) });
