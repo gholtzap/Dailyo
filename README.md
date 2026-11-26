@@ -90,7 +90,7 @@ npm run build
 npx playwright install chromium
 ```
 
-With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Use `npm run lint:ui:feed` for the Daily Feed. Reports go in `test-results/`. `npm run test:migration:browser` checks that every compiled game loads and that Daily Feed and Rush advance to their recaps on mobile and desktop.
+With the local server running in another terminal, run `npm run test:e2e` for desktop and mobile browser checks. Use `npm run lint:ui` for trainrot and `npm run lint:ui:games` for the other three games. Use `npm run lint:ui:feed` for the Daily Feed. Reports go in `test-results/`. Daily Feed and Rush browser suites cover game loading, progression, restoration, and recaps.
 
 `npm run data:demo` creates the fictional stations, line geometry, and puzzles in `dist/data/`. Local builds, local dev, and GitHub CI generate this dataset. The build independently checks all shortest routes before adding the license and notices to the static site output.
 
