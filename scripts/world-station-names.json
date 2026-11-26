@@ -1,0 +1,166 @@
+{
+  "kaohsiung": {
+    "s30824": {
+      "name": "Kaohsiung Medical University Gangshan Hospital",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=725054970c1e4190acd09a13a6ccc301"
+    },
+    "s30825": {
+      "name": "Ciaotou Station",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=dfe61922627749818dbe765735b105eb"
+    },
+    "s30826": {
+      "name": "Ciaotou Sugar Refinery",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=e9cba18c383644c8bedd4dc2b8813497"
+    },
+    "s30827": {
+      "name": "Cingpu",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=b4b950682d6d4c329f0169371274292d"
+    },
+    "s30828": {
+      "name": "Metropolitan Park",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=3db7e14e4e8b4df897473b0ec7c90fe6"
+    },
+    "s30829": {
+      "name": "Houjing",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=c7055f6f5c4c401cae8f6e462be29b0d"
+    },
+    "s30830": {
+      "name": "Nanzih Technology Industrial Park",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=cedda823e92740c5a4b6bd2b41145487"
+    },
+    "s30831": {
+      "name": "Oil Refinery Elementary School",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=22671d79b5da4cb582a89d9120aa2c9f"
+    },
+    "s30832": {
+      "name": "World Games",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=2ead14d8e66749ea89babbaaad4cafe7"
+    },
+    "s30833": {
+      "name": "Zuoying",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=e9d98c3129844b4c8a7d88814f89135a"
+    },
+    "s30834": {
+      "name": "Ecological District",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=d3742a35b9f74fee9e5be39db69fbf44"
+    },
+    "s30835": {
+      "name": "Kaohsiung Arena",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=a1c06bb703254457aca99dc4075d935a"
+    },
+    "s30836": {
+      "name": "Aozihdi",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=0163908aa6734dd980b5cca80dfa2c66"
+    },
+    "s30837": {
+      "name": "Houyi",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=53797e196ec1450eb05837f0fa96b22f"
+    },
+    "s30838": {
+      "name": "Kaohsiung Main Station",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=bbca0fceac624e1c955f499d242ec1aa"
+    },
+    "s30839": {
+      "name": "Sanduo Shopping District",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=754e9d8f3cd147a99572f64f682ac377"
+    },
+    "s30840": {
+      "name": "Shihjia",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=f32d6d848fe746a68eb55221338c750e"
+    },
+    "s30841": {
+      "name": "Kaisyuan",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=80a3694c02aa43ce803b853a175932b2"
+    },
+    "s30842": {
+      "name": "Cianjhen Senior High School",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=2eee6438992d40f6a27a4b4d3ac6f3ac"
+    },
+    "s30843": {
+      "name": "Caoya",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=32d41a47ebae4a9d8065befe431cb8ee"
+    },
+    "s30844": {
+      "name": "Kaohsiung International Airport",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=24111d6cff1647769899c2409be9f645"
+    },
+    "s30845": {
+      "name": "Siaogang",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=b7345f3908e24ab4addf001cda746759"
+    },
+    "s30846": {
+      "name": "Yanchengpu",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=9b6d71337b264f5f9924c54364ca5b5a"
+    },
+    "s30847": {
+      "name": "Cianjin",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=b0e0ab63a64e41dc8ce78c4d08432c1a"
+    },
+    "s30848": {
+      "name": "Sinyi Elementary School",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=3470f496dca147588366f1cd26a4689b"
+    },
+    "s30849": {
+      "name": "Cultural Center",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=df5ee6367ebb484b86a4874010bc15e1"
+    },
+    "s30850": {
+      "name": "Wukuaicuo",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=c6f437c432b24eedb26a8db72a656241"
+    },
+    "s30851": {
+      "name": "Lingya Sports Park",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=4f24a7b8d98a43f38ec87cb158bcc250"
+    },
+    "s30852": {
+      "name": "Weiwuying",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=7df4b572a8e94424b1b23313510bd41a"
+    },
+    "s30853": {
+      "name": "Fongshan West(Kaohsiung City Council)",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=76bd499c23024a048828968464eec056"
+    },
+    "s30854": {
+      "name": "Fongshan",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=a09f77cdf99947438cfd4db724bcbe65"
+    },
+    "s30855": {
+      "name": "Dadong",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=254c8109502742d28a651c4df187bf2c"
+    },
+    "s30856": {
+      "name": "Fongshan Junior High School",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=87605ba3d77843ee9a1a2a4813edfd31"
+    },
+    "s30857": {
+      "name": "Daliao",
+      "source": "https://www.krtc.com.tw/eng/Guide/station_info?id=edd92f0cc2c747c283654a55d5d3c543"
+    }
+  },
+  "brussels": {
+    "s19133": {
+      "name": "Ottignies",
+      "source": "https://www.belgiantrain.be/en/station-information/brabant-wallon/ottignies"
+    },
+    "s19134": {
+      "name": "Louvain-la-Neuve",
+      "source": "https://www.belgiantrain.be/-/media/files/pdf/support/riv/s-leaflets/fr/s-bruxelles-dec2025-fr-v2.ashx"
+    },
+    "s19142": {
+      "name": "Bockstael",
+      "source": "https://www.belgiantrain.be/-/media/files/pdf/support/riv/s-leaflets/fr/s-bruxelles-dec2025-fr-v2.ashx"
+    }
+  },
+  "santiago": {
+    "s171": {
+      "name": "Bellavista de La Florida",
+      "source": "https://www.sepchile.cl/websepchile/fileadmin/ArchivosPortal/SepChile/Documentos/Memorias/memoria_2006.pdf"
+    }
+  },
+  "mumbai": {
+    "s17586": {
+      "name": "Sanpada",
+      "source": "https://cr.indianrailways.gov.in/cris/uploads/files/1640850838696-3.%20DN%20Harbour.pdf"
+    }
+  }
+}
