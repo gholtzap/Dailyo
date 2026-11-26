@@ -974,7 +974,7 @@ body:has(#app) .game-help-header h2 {
   height: clamp(var(--flag-rush-min-height),var(--flag-rush-fluid-height),var(--flag-rush-max-height));
 }
 [data-rush] .visual-viewport {
-  --visual-viewport-rush-height: 40dvh;
+  --visual-viewport-rush-height: 360px;
   max-height: var(--visual-viewport-rush-height);
 }
 :root[data-rush-paused]:not([data-rush-preview]) #quiz {
@@ -1110,15 +1110,6 @@ body:has(#app) .game-help-header h2 {
   [data-rush] #quiz > h2 {
     font-size: var(--font-size-18);
   }
-  [data-rush] .visual-viewport {
-    --visual-viewport-compact-max-height: 36dvh;
-    width: 100%;
-    max-height: var(--visual-viewport-compact-max-height);
-  }
-  [data-rush] .visual-viewport[data-kind=pricerot] {
-    --visual-viewport-price-compact-height: 26dvh;
-    max-height: var(--visual-viewport-price-compact-height);
-  }
   [data-rush] .visual-price-label + .extra-form {
     display: grid;
     grid-template-columns: minmax(0,1fr) auto;
@@ -1173,5 +1164,16 @@ body:has(#app) .game-help-header h2 {
     max-height: var(--rot-map-dialog-mobile-height);
     margin: 0;
     border-radius: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  [data-rush] .visual-viewport {
+    --visual-viewport-mobile-height: 180px;
+    max-height: var(--visual-viewport-mobile-height);
+  }
+  [data-rush] .visual-viewport[data-kind=pricerot] {
+    --visual-viewport-mobile-price-height: 160px;
+    max-height: var(--visual-viewport-mobile-price-height);
   }
 }
