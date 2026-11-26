@@ -972,7 +972,7 @@ body:has(#app) .game-help-header h2 {
   height: clamp(var(--flag-rush-min-height),var(--flag-rush-fluid-height),var(--flag-rush-max-height));
 }
 [data-rush] .visual-viewport {
-  --visual-viewport-rush-height: 40dvh;
+  --visual-viewport-rush-height: 360px;
   max-height: var(--visual-viewport-rush-height);
 }
 :root[data-rush-paused]:not([data-rush-preview]) #quiz {
