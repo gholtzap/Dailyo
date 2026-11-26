@@ -1108,8 +1108,6 @@
 }
 [data-rush] .visual-viewport {
   width: 100%;
-  --visual-viewport-max-height: 360px;
-  max-height: var(--visual-viewport-max-height);
 }
 .main:has(.angle-playfield) {
   max-width: var(--layout-playfield);
