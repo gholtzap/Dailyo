@@ -785,6 +785,7 @@ body:has(#app) .game-help-header h2 {
 }
 /* Results and review */
 .result-score {
+  position: relative;
   font-size: var(--font-size-24);
   font-weight: var(--font-weight-medium);
   line-height: var(--leading-1-2);
