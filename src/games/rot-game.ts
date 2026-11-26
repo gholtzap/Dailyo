@@ -213,6 +213,54 @@ function zoomToPins(
   );
 }
 
+// Great-circle contours use the same spherical Earth radius as distanceKm.
+function distanceRings(
+  map: SVGSVGElement,
+  target: Coordinate,
+  distance: number,
+) {
+  if (!distance) return;
+  const rad = Math.PI / 180,
+    lat = target[1] * rad,
+    lon = target[0] * rad;
+  const rings = svg("g", {
+    class: "rot-distance-rings",
+    "aria-hidden": "true",
+  });
+  for (const fraction of [0.25, 0.5, 1]) {
+    const km = distance * fraction,
+      angular = km / 6371;
+    let path = "",
+      previous: number | undefined;
+    for (let i = 0; i <= 360; i++) {
+      const bearing = i * rad;
+      const latitude = Math.asin(
+        Math.sin(lat) * Math.cos(angular) +
+          Math.cos(lat) * Math.sin(angular) * Math.cos(bearing),
+      );
+      const longitude =
+        lon +
+        Math.atan2(
+          Math.sin(bearing) * Math.sin(angular) * Math.cos(lat),
+          Math.cos(angular) - Math.sin(lat) * Math.sin(latitude),
+        );
+      const x =
+        target[0] + ((longitude / rad - target[0] + 540) % 360) - 180 + 180;
+      const y = 90 - latitude / rad;
+      path += `${previous === undefined || Math.abs(x - previous) > 180 ? "M" : "L"}${x.toFixed(4)},${y.toFixed(4)}`;
+      previous = x;
+    }
+    rings.append(
+      svg("path", {
+        d: path,
+        "data-distance-km": km,
+        class: "rot-distance-ring",
+      }),
+    );
+  }
+  map.insertBefore(rings, map.querySelector(".rot-connector"));
+}
+
 function coordinates([lon, lat]: number[], digits = 1) {
   return `${Math.abs(lat).toFixed(digits)}° ${lat < 0 ? "S" : "N"}, ${Math.abs(lon).toFixed(digits)}° ${lon < 0 ? "W" : "E"}`;
 }
@@ -273,6 +321,7 @@ function drawMap(
   if (reviewing) {
     if (guess) {
       zoomToPins(map, guess, [lon, lat]);
+      distanceRings(map, [lon, lat], scoreAnswer(kind, question, guess));
       feedback.append(
         element(
           "p",
@@ -280,7 +329,8 @@ function drawMap(
         ),
         element(
           "p",
-          `Yellow pin: your guess at ${coordinates(guess)}. Green pin: ${city}, ${country}.`,
+          `Your pin: ${coordinates(guess)}. ${city}, ${country}.`,
+          "screen-reader-only",
         ),
       );
     } else {
@@ -365,7 +415,10 @@ function drawMap(
           const copy = geography.cloneNode(true) as SVGElement;
           copy.setAttribute("transform", `translate(${shift} 0)`);
           copy.setAttribute("data-map-wrap", String(shift));
-          map.insertBefore(copy, map.querySelector(".rot-connector, .rot-pin"));
+          map.insertBefore(
+            copy,
+            map.querySelector(".rot-distance-rings, .rot-connector, .rot-pin"),
+          );
         }
       }
     if (pin)
@@ -703,7 +756,11 @@ function drawTimeline(
   reviewing: boolean,
 ): Content {
   const { event, timeline } = question;
-  const heading = element("h2", reviewing ? event[1] : "When did this happen?");
+  const heading = element("h2", event[1], "rot-year-event");
+  const board = element("div", undefined, "timeline-playfield");
+  board.tabIndex = 0;
+  board.setAttribute("role", "region");
+  board.setAttribute("aria-label", "Timeline board; scroll to explore");
   const list = element("ol", undefined, "rot-timeline");
   list.setAttribute("aria-label", "Timeline");
   const addEvent = ([year, description]: YearEvent, highlight = false) => {
@@ -727,7 +784,8 @@ function drawTimeline(
     feedback.setAttribute("role", "status");
     for (const item of [...timeline, event].sort((a, b) => a[0] - b[0]))
       addEvent(item, item === event);
-    return [heading, feedback, list];
+    board.append(list);
+    return [heading, feedback, board];
   }
   for (const item of timeline) addEvent(item);
   const choices = element("div", undefined, "rot-year-choices");
@@ -749,7 +807,8 @@ function drawTimeline(
       ),
     );
   }
-  return [heading, element("p", event[1], "rot-year-event"), list, choices];
+  board.append(list);
+  return [heading, board, choices];
 }
 
 function drawBorderMap(

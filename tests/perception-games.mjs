@@ -1,3 +1,4 @@
+import { setAngle, drawAngle } from "./angle-helpers.mjs";
 import { ciWidths, ciShared } from "./ci-parts.mjs";
 import { rushSeed } from "./rush-helpers.mjs";
 import assert from "node:assert/strict";
@@ -33,15 +34,16 @@ async function solve(page, game, q) {
   if (await start.count()) await start.press("Enter");
   else
     assert.ok(
-      ["anglerot", "splitrot"].includes(game) &&
-        (new URL(page.url()).searchParams.has("rush") ||
-          (await page
-            .getByRole("button", {
-              name: "Practice",
-              pressed: true,
-              exact: true,
-            })
-            .count())),
+      game === "anglerot" ||
+        (game === "splitrot" &&
+          (new URL(page.url()).searchParams.has("rush") ||
+            (await page
+              .getByRole("button", {
+                name: "Practice",
+                pressed: true,
+                exact: true,
+              })
+              .count()))),
     );
   if (game === "countrot" || game === "trackrot") await page.clock.runFor(1400);
   if (game === "countrot") {
@@ -57,7 +59,7 @@ async function solve(page, game, q) {
       .click();
   }
   if (game === "anglerot") {
-    await setRange(page, q.target);
+    await setAngle(page, q.target);
     await page
       .getByRole("button", { name: "Check angle", exact: true })
       .click();
@@ -84,7 +86,7 @@ async function solve(page, game, q) {
   await page.locator("#perception-feedback").waitFor();
   if (game === "temporot") await page.clock.resume();
   const points = Number(
-    (await page.locator(".perception-feedback").innerText()).match(
+    (await page.locator(".perception-feedback").textContent()).match(
       /(\d+) \/ 100/,
     )[1],
   );
@@ -116,8 +118,60 @@ try {
     };
     for (const game of perceptionGames) {
       await page.goto(`${base}/${game}/`);
-      await page.getByRole("button", { name: "Start round" }).waitFor();
+      await page
+        .getByRole(game === "anglerot" ? "slider" : "button", {
+          name: game === "anglerot" ? "Draw angle" : "Start round",
+        })
+        .waitFor();
       await inspect(game, "ready");
+      if (game === "anglerot") {
+        const board = page.getByRole("slider", { name: "Draw angle" });
+        const check = page.getByRole("button", {
+          name: "Check angle",
+          exact: true,
+        });
+        assert.equal(await check.isDisabled(), true);
+        const box = await board.boundingBox();
+        // A tap away from the center cannot create an answer.
+        await page.mouse.click(
+          box.x + box.width * 0.8,
+          box.y + box.height * 0.3,
+        );
+        assert.equal(await check.isDisabled(), true);
+        await drawAngle(page, page, 42.5);
+        assert.ok(
+          Math.abs(Number(await board.getAttribute("aria-valuenow")) - 42.5) <
+            0.1,
+        );
+        await page.reload();
+        assert.ok(
+          Math.abs(Number(await board.getAttribute("aria-valuenow")) - 42.5) <
+            0.1,
+        );
+        // An interrupted redraw keeps the committed ray.
+        const restored = await board.boundingBox();
+        await page.mouse.move(
+          restored.x + restored.width / 2,
+          restored.y + restored.height / 2,
+        );
+        await page.mouse.down();
+        await page.mouse.move(
+          restored.x + restored.width * 0.7,
+          restored.y + restored.height * 0.7,
+        );
+        await board.dispatchEvent("pointercancel");
+        await page.mouse.up();
+        assert.ok(
+          Math.abs(Number(await board.getAttribute("aria-valuenow")) - 42.5) <
+            0.1,
+        );
+        await page.getByRole("button", { name: "Clear", exact: true }).click();
+        assert.equal(await check.isDisabled(), true);
+        assert.equal(await board.getAttribute("aria-valuetext"), "Not drawn");
+        await drawAngle(page, page, 127);
+        assert.equal(await check.isEnabled(), true);
+      }
+
       await page
         .getByRole("button", { name: "How to play", exact: true })
         .click();
@@ -181,9 +235,15 @@ try {
       if (game === "temporot") await page.clock.runFor(3000);
       await inspect(game, "hard-answer");
       if (game === "anglerot") {
-        await page.locator("input").focus();
+        await page.getByRole("slider", { name: "Draw angle" }).focus();
         await page.keyboard.press("ArrowRight");
-        assert.ok(Number(await page.locator("input").inputValue()) > 0);
+        assert.ok(
+          Number(
+            await page
+              .getByRole("slider", { name: "Draw angle" })
+              .getAttribute("aria-valuenow"),
+          ) > 0,
+        );
       }
       await page.screenshot({
         path: `test-results/perception/${game}-${width}.png`,

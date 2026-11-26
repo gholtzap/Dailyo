@@ -40,7 +40,7 @@ let index = 0,
   round = 0,
   duration = 0;
 let streak = 0;
-function showStreak() {
+function showStreak(celebrate = false) {
   streakLabel.hidden = streak === 0;
   streakLabel.replaceChildren();
   if (streak) {
@@ -52,7 +52,7 @@ function showStreak() {
   } else streakLabel.removeAttribute("aria-label");
   streakLabel.classList.toggle(
     "rush-milestone",
-    streak > 0 && streak % 5 === 0,
+    celebrate && streak > 0 && streak % 5 === 0,
   );
 }
 const saveKey = `dailyo:rush:run:${selected ? slug : "all"}`;
@@ -547,7 +547,7 @@ function showFinish(effect: RushEffect) {
   stopClock();
   if (correct) scores[index]++;
   streak = correct ? streak + 1 : 0;
-  showStreak();
+  showStreak(true);
   if (lastAnswer && lastAnswer.frame !== visible) lastAnswer.frame.remove();
   lastAnswer = visible
     ? {

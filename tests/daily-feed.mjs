@@ -586,9 +586,10 @@ https://trainrot.vercel.app/daily/`;
     ]) {
       const child = frame(name);
       for (let round = 0; round < 5; round++) {
-        await child
-          .getByRole("button", { name: "Start round", exact: true })
-          .click();
+        if (name !== "anglerot")
+          await child
+            .getByRole("button", { name: "Start round", exact: true })
+            .click();
         await child
           .getByRole("button", { name: "Skip round", exact: true })
           .click();
@@ -604,6 +605,11 @@ https://trainrot.vercel.app/daily/`;
     await page
       .getByRole("button", { name: "See recap", exact: true })
       .waitFor();
+    assert.equal(
+      await page.getByRole("heading", { name: "Daily recap" }).isVisible(),
+      false,
+    );
+    await page.getByRole("button", { name: "See recap", exact: true }).click();
     await page.getByRole("heading", { name: "Daily recap" }).waitFor();
     assert.equal(await replay.isVisible(), false);
     assert.equal(await rows.filter({ hasText: "Skipped" }).count(), 0);
