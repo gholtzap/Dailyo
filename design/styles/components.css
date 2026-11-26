@@ -1184,3 +1184,5 @@ body:has(#app) .game-help-header h2 {
     font-size: var(--font-size-13);
   }
 }
+
+select:not([multiple]) { height: var(--control-size); }
