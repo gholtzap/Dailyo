@@ -120,6 +120,16 @@ for (const engine of process.argv.includes("--webkit")
           throw error;
         });
       await child.locator("#quiz button").first().waitFor();
+      await page.waitForFunction(() => {
+        const frame = document.querySelector("iframe[title]:not([hidden])");
+        return (
+          frame &&
+          !frame.classList.contains("feed-loading") &&
+          (!frame.hasAttribute("data-content-sized") ||
+            frame.contentDocument.documentElement.scrollHeight <=
+              frame.clientHeight + 2)
+        );
+      });
       const hidden = await child.locator("body").evaluate(() =>
         [...document.querySelectorAll("#quiz button, .game-help button")]
           .filter((n) => n.checkVisibility())
