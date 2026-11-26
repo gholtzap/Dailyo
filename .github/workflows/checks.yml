@@ -110,6 +110,12 @@ jobs:
         if: steps.node-runtime.outputs.available != 'true'
         with:
           node-version: "24"
+      - name: Start subway fixtures during browser cache restore
+        run: |
+          (
+            trap 'echo $? > /tmp/trainrot-data.exit' EXIT
+            node scripts/stage-data.mjs > /tmp/trainrot-data.log 2>&1
+          ) > /dev/null 2>&1 &
       - uses: actions/cache@v4
         id: runtime
         with:
@@ -132,7 +138,18 @@ jobs:
           bun-version: 1.4.5
       - if: steps.runtime.outputs.cache-hit != 'true' && steps.dependencies.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
-      - run: node scripts/stage-data.mjs
+      - name: Require successful subway fixtures
+        run: |
+          for _attempt in {1..300}; do
+            if [[ -f /tmp/trainrot-data.exit ]]; then
+              cat /tmp/trainrot-data.log
+              exit "$(cat /tmp/trainrot-data.exit)"
+            fi
+            sleep 0.1
+          done
+          cat /tmp/trainrot-data.log 2>/dev/null || true
+          echo 'Subway fixture generation did not finish.' >&2
+          exit 1
       - uses: actions/cache@v4
         if: steps.runtime.outputs.cache-hit != 'true'
         id: chromium
