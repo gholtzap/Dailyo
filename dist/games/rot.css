@@ -497,3 +497,8 @@
   max-width: calc(100% - 16px);
   white-space: normal;
 }
+
+.estimate-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 16px 0; font-variant-numeric: tabular-nums; }
+.estimate-comparison dt { color: var(--muted); font-size: 12px; }
+.estimate-comparison dd { margin: 4px 0 0; font-size: 18px; overflow-wrap: anywhere; }
+.estimate-comparison .estimate-actual { font-size: 24px; font-weight: 500; }

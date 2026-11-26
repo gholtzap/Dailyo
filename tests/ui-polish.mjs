@@ -111,9 +111,16 @@ try {
         name: "Games",
         exact: true,
       });
-      await menu
-        .getByRole("link", { name: "GitHub repository", exact: true })
-        .waitFor();
+      assert.equal(
+        await menu
+          .getByRole("link", { name: "GitHub repository", exact: true })
+          .count(),
+        0,
+      );
+      if (route !== "/")
+        await menu
+          .getByRole("link", { name: "Subway cities", exact: true })
+          .waitFor();
       assert.equal(await menu.locator(".game-picker-context").count(), 0);
       const vocabulary = menu.getByRole("link", { name: "Words", exact: true });
       assert.equal(await vocabulary.locator("small").count(), 0);

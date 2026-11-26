@@ -18,7 +18,7 @@ const selected = individualRushGames.find(
 let games = selected ? [selected] : [...rotation];
 const date = rushDate(new URLSearchParams(location.search).get("date"));
 const bestKey = `dailyo:rush:best:${selected ? slug : "all"}`;
-if (selected) document.title = `${selected.label} Rush | dailyo`;
+if (selected) document.title = `${gameName(selected.label)} Rush | dailyo`;
 const $ = required;
 const panel = $("#feed-game"),
   status = $("#rush-status"),
@@ -225,7 +225,7 @@ function holdAnswer(
     return;
   clearTimeout(timer);
   review = { state: "held", reason };
-  clock.textContent = "Held";
+  clock.textContent = "";
   updateReviewControl();
 }
 function inspectingAnswer() {
@@ -369,7 +369,7 @@ function closeReview() {
     next.onclick = skipGame;
     if (from === "playing" && run.phase === "paused") resumeRound();
     else {
-      status.textContent = `${games[index].label} · ${run.phase === "paused" ? "Paused" : `Round ${round + 1}`}`;
+      status.textContent = `${gameName(games[index].label)} · ${run.phase === "paused" ? "Paused" : `Round ${round + 1}`}`;
       next.toggleAttribute("disabled", run.phase === "paused");
       updatePauseControl();
       if (visible) visible.inert = run.phase === "paused";
@@ -448,7 +448,7 @@ function openRound(
     showRound();
     return;
   }
-  status.textContent = `Loading ${game.label}…`;
+  status.textContent = `Loading ${gameName(game.label)}…`;
   const loadingGeneration = run.generation;
   timer = setTimeout(() => showError(loadingGeneration), 12000);
 }
@@ -459,7 +459,7 @@ function showError(generation = run.generation) {
   stopClock();
   current?.frame.remove();
   current = null;
-  status.textContent = `${games[index].label} didn’t load.`;
+  status.textContent = `${gameName(games[index].label)} didn’t load.`;
   $("#rush-game-name").textContent =
     `${gameName(games[index].label)} couldn’t load`;
   retry.hidden = false;
@@ -496,7 +496,7 @@ function showRound() {
   frame.inert = false;
   if (frame.contentDocument) watchAnswer(frame.contentDocument);
   updateReviewControl();
-  status.textContent = `${game.label} · Round ${round + 1}`;
+  status.textContent = `${gameName(game.label)} · Round ${round + 1}`;
   if (duration) {
     timeDisplay.dataset.timed = "";
     updateClock();
@@ -589,7 +589,7 @@ function showFinish(effect: RushEffect) {
   lastAnswer = visible
     ? {
         frame: visible,
-        label: `${games[index].label} · Round ${round + 1}`,
+        label: `${gameName(games[index].label)} · Round ${round + 1}`,
         outcome: expired ? "Time’s up" : correct ? "Correct" : "Missed",
       }
     : null;
@@ -658,7 +658,7 @@ function showRecap() {
       const link = document.createElement("a");
       link.href = `${game.path}?practice=1`;
       link.textContent = "Play more";
-      link.setAttribute("aria-label", `Play more ${game.label}`);
+      link.setAttribute("aria-label", `Play more ${gameName(game.label)}`);
       row.append(score, link);
       return row;
     }),
@@ -724,7 +724,7 @@ function scoreSummary() {
   const best = Math.max(...scores);
   const labels = games
     .filter((_, i) => scores[i] === best)
-    .map((game) => game.label);
+    .map((game) => gameName(game.label));
   return { total, bestRun: best ? `${best} in ${labels.join(", ")}` : "" };
 }
 
@@ -741,7 +741,9 @@ function showPersonalBest(total: number) {
 }
 
 function shareText() {
-  const title = selected ? `dailyo Rush · ${selected.label}` : "dailyo Rush";
+  const title = selected
+    ? `dailyo Rush · ${gameName(selected.label)}`
+    : "dailyo Rush";
   const { total, bestRun } = scoreSummary();
   const score = `${total} correct${!selected && bestRun ? ` · ${bestRun}` : ""}`;
   const rows = selected
@@ -837,7 +839,7 @@ function pauseRound() {
     visible.contentDocument!.documentElement.dataset.rushPaused = "";
   }
   visible?.contentWindow?.postMessage("rush-pause", location.origin);
-  status.textContent = `${games[index].label} · Paused`;
+  status.textContent = `${gameName(games[index].label)} · Paused`;
   $("#rush-game-name").textContent = `${gameName(games[index].label)} · Paused`;
   next.setAttribute("disabled", "");
   checkpoint();
@@ -852,7 +854,7 @@ function resumeRound() {
   }
   visible?.contentWindow?.postMessage("rush-resume", location.origin);
   visible?.contentWindow?.postMessage("rush-activate", location.origin);
-  status.textContent = `${games[index].label} · Round ${round + 1}`;
+  status.textContent = `${gameName(games[index].label)} · Round ${round + 1}`;
   $("#rush-game-name").textContent = gameName(games[index].label);
   next.removeAttribute("disabled");
   updateClock();

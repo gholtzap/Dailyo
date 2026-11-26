@@ -167,7 +167,7 @@ try {
                   : game === "anglerot"
                     ? "Set the angle"
                     : game === "splitrot"
-                      ? "Split the line"
+                      ? /% from (left|right)/
                       : "Keep the beat",
             exact: true,
           })

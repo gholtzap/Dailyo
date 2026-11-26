@@ -120,7 +120,7 @@ try {
       return route.continue();
     });
     await page.reload();
-    await status.filter({ hasText: "flagrot didn’t load." }).waitFor();
+    await status.filter({ hasText: "Flags didn’t load." }).waitFor();
     await page.reload();
     await status.filter({ hasText: "Paused" }).waitFor();
     assert.equal(
@@ -269,10 +269,10 @@ try {
       { times: 1 },
     );
     await page.reload();
-    await status.filter({ hasText: "flagrot didn’t load." }).waitFor();
+    await status.filter({ hasText: "Flags didn’t load." }).waitFor();
     await page.getByRole("button", { name: "Skip game", exact: true }).click();
     await status
-      .filter({ hasText: "langrot · Round 1" })
+      .filter({ hasText: "Languages · Round 1" })
       .waitFor({ timeout: 3000 });
     assert.equal(
       await timer.innerText(),

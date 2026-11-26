@@ -1,3 +1,4 @@
+import { assertEditorialUI } from "./editorial-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -75,6 +76,7 @@ try {
       const heading = page.locator("#extra-title");
       await heading.waitFor();
       const inspect = async (state) => {
+        await assertEditorialUI(page);
         assert.ok(
           await page.evaluate(
             () => document.documentElement.scrollWidth <= innerWidth,

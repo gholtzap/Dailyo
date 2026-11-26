@@ -1,3 +1,4 @@
+import { gameName } from "../game-names.js";
 import type { Mode, RotGame, Coordinate } from "../types.js";
 import type {
   RotData,
@@ -335,9 +336,7 @@ function drawMap(
       );
     } else {
       map.append(marker([lon, lat], "answer"));
-      feedback.append(
-        element("p", `${city}, ${country} · ${coordinates([lon, lat])}`),
-      );
+      feedback.append(element("p", `${city}, ${country}`));
     }
   }
 
@@ -345,10 +344,14 @@ function drawMap(
     "p",
     state.draft.length
       ? `Your pin: ${coordinates(state.draft as number[], 2)}`
-      : "Tap to place a pin. Drag the map to pan or drag the pin to adjust.",
+      : "Tap the map to place a pin.",
     "rot-coordinate",
   );
   pointLabel.setAttribute("role", "status");
+  pointLabel.classList.toggle(
+    "screen-reader-only",
+    state.draft.length > 0 || reviewing,
+  );
   const dialog = element("dialog", undefined, "rot-map-dialog");
   dialog.setAttribute("aria-label", reviewing ? "Map answer" : "Find the city");
   const header = element("div", undefined, "rot-map-dialog-heading");
@@ -565,6 +568,7 @@ function drawMap(
     pin = marker(bounded, "guess");
     map.append(pin);
     pointLabel.textContent = `Your pin: ${coordinates(bounded, 2)}`;
+    pointLabel.classList.add("screen-reader-only");
     submit.disabled = false;
     if (follow) center = { x: bounded[0] + 180, y: 90 - bounded[1] };
     renderView();
@@ -778,7 +782,7 @@ function drawTimeline(
     const correct = scoreAnswer(kind, question, state.answers[state.index]);
     const feedback = element(
       "p",
-      `${correct ? "Correct placement" : "Correct year"} · ${event[0]}`,
+      correct ? "Correct" : "Missed",
       "rot-feedback",
     );
     feedback.setAttribute("role", "status");
@@ -1127,7 +1131,7 @@ function summary(session: RotSession): Content {
   const footer = element("div");
   if (mode === "daily") {
     const text = [
-      `${kind} ${day}`,
+      `${gameName(kind)} ${day}`,
       mapGame ? `${title.textContent} across five cities` : title.textContent,
       mapGame
         ? scores.map((score) => `${number.format(score)} km`).join(" · ")
@@ -1164,11 +1168,7 @@ function summary(session: RotSession): Content {
         "primary",
       ),
     );
-    footer.append(
-      element("p", "Next daily set at midnight in New York.", "rot-coordinate"),
-      actions,
-      status,
-    );
+    footer.append(actions, status);
   } else {
     actions.append(
       button(
@@ -1201,17 +1201,13 @@ function draw() {
   const { state, questions } = session;
   const current = phase(state);
   const counter = element("div", undefined, "round-head rot-counter");
-  counter.append(
-    element(
-      "p",
-      current === "complete"
-        ? mode === "daily"
-          ? "Daily results"
-          : "Practice results"
-        : `Question ${state.index + 1} of ${roundCount}`,
-    ),
+  if (current !== "complete")
+    counter.append(
+      element("p", `Question ${state.index + 1} of ${roundCount}`),
+    );
+  showGameProgress(
+    rushRound === null && current !== "complete" ? counter : undefined,
   );
-  showGameProgress(rushRound === null ? counter : undefined);
   const question = questions[state.index];
   const content =
     current === "complete"
@@ -1315,9 +1311,9 @@ async function start() {
   if (yearGame && !inFeed) {
     settings = practiceSettings(
       {
-        easy: "Broad eras. Build your sense of history.",
-        standard: "Daily difficulty. A growing timeline.",
-        hard: "Nearby events. Find the finer distinctions.",
+        easy: "Broad eras.",
+        standard: "Daily difficulty.",
+        hard: "Nearby events.",
       },
       (next) => {
         if (next === difficulty) return;

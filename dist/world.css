@@ -25,7 +25,6 @@ body[data-world-city]:not([data-world-city="nyc"]) .train-choice .train-badge { 
 .world-map-note { position:absolute; z-index:3; bottom:12px; left:12px; right:12px; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; pointer-events:none; font-size:12px; }
 .world-map-note a { display:inline-flex; align-items:center; min-height:32px; background:var(--paper); border:1px solid var(--line); padding:4px 8px; border-radius:4px; color:var(--muted); pointer-events:auto; }
 .world-credits { font-size:12px; color:var(--muted); }
-.world-discover { display:block; text-align:center; padding:12px; background:var(--paper); color:var(--muted); border-bottom:1px solid var(--line); font-size:13px; }
 .world-sources { max-width:850px; padding:24px; margin:auto; line-height:1.6; }
 .world-sources p { margin:16px 0; }
 .world-sources li { margin:16px 0; }

@@ -58,7 +58,7 @@ try {
     await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
     await page.goto(`${base}/trackrot/?practice=1`);
     await page.locator(".track-countdown").waitFor();
-    await page.getByLabel("Practice variation").selectOption("hard");
+    await page.getByLabel("Difficulty").selectOption("hard");
     await page.clock.runFor(2999);
     assert.equal(await page.locator(".track-countdown").textContent(), "1");
     await page.clock.runFor(1301);
