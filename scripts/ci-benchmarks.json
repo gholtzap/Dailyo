@@ -55,5 +55,42 @@
     "fullCiSeconds": 60,
     "localPrePushMilliseconds": 9000
   },
-  "measurement": "Run creation to the latest required job completion; queue, setup and cleanup included. Runner seconds sum job start-to-completion; they are not CPU time. Raw 150-run baseline and job/step receipts retained locally under test-results/ci-optimization."
+  "measurement": "Run creation to the latest required job completion; queue, setup and cleanup included. Runner seconds sum job start-to-completion; they are not CPU time. Raw 150-run baseline and job/step receipts retained locally under test-results/ci-optimization.",
+  "setupAndBalancing": {
+    "baseline": [
+      {
+        "id": 45884022415,
+        "sha": "4bba59523125ac372e8d65c2ea58235a1595f59b",
+        "url": "https://github.com/gholtzap/Dailyo/actions/runs/45884022415",
+        "wallSeconds": 55.0,
+        "aggregateRunnerSeconds": 805.0,
+        "apiJobSeconds": 46.0,
+        "maximumBrowserExecutionSeconds": 32.0
+      },
+      {
+        "id": 45884190776,
+        "sha": "b7679836b3844206b040a1811886bd2369aba32f",
+        "url": "https://github.com/gholtzap/Dailyo/actions/runs/45884190776",
+        "wallSeconds": 55.0,
+        "aggregateRunnerSeconds": 829.0,
+        "apiJobSeconds": 45.0,
+        "maximumBrowserExecutionSeconds": 33.0
+      }
+    ],
+    "candidate": [
+      {
+        "id": 45888195528,
+        "sha": "006f6f671c971b8e57f5827ffa54156c8741d94e",
+        "url": "https://github.com/gholtzap/Dailyo/actions/runs/45888195528",
+        "wallSeconds": 54.0,
+        "aggregateRunnerSeconds": 809.0,
+        "apiJobSeconds": 29.0,
+        "maximumBrowserExecutionSeconds": 33.0
+      }
+    ],
+    "conditions": "Standard GitHub Ubuntu 24.04 runners, same dependency lockfile, 18 browser shards with two lanes, all 65 browser commands and PostgreSQL 17 integration checks. Proofs run in full because the workflow and reuse checker changed. No checks removed or budget widened.",
+    "proofDocumentation": "Only Markdown within verification/ is excluded from proof invalidation; verifier, reuse-checker, workflow, toolchain and proof changes still require full verification. Real Git fixtures exercise documentation reuse, changed executable inputs and unavailable baseline evidence.",
+    "result": "API job fell from 45 to 29 seconds versus latest main; full CI 55 to 54 seconds. Browser execution maximum stayed 33 seconds, so a hosted browser speedup is not established. One candidate sample; p95 and cold-cache guarantees remain unverified.",
+    "cost": "Aggregate runner seconds measure allocated execution time, not CPU utilization or billed cost. Monthly cost is not established."
+  }
 }
