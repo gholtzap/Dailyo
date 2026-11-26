@@ -1,35 +1,105 @@
-import core from './rush.mjs';
-import type {RushEffect, RushEvent, RushValue} from './rush.mjs';
-import {maybe} from './representation.js';
+import core from "./rush.mjs";
+import type { RushEffect, RushEvent, RushValue } from "./rush.mjs";
+import { maybe } from "./representation.js";
 
-const phases = {Loading: 'loading', Playing: 'playing', Feedback: 'feedback', Paused: 'paused', Error: 'error', Recap: 'recap'} as const;
+const phases = {
+  Loading: "loading",
+  Playing: "playing",
+  Feedback: "feedback",
+  Paused: "paused",
+  Error: "error",
+  Recap: "recap",
+} as const;
 // Integer microseconds retain sub-millisecond deadlines without floating-point proofs.
 function micros(milliseconds: number): number {
   const value = Math.floor(milliseconds * 1000);
-  if (!Number.isSafeInteger(value) || value < 0 || value > 281474976710655) throw new RangeError('Invalid monotonic time');
+  if (!Number.isSafeInteger(value) || value < 0 || value > 281474976710655)
+    throw new RangeError("Invalid monotonic time");
   return value;
 }
 
 /** Owns the Bend state; TypeScript supplies clock readings and performs effects. */
 export class RushMachine {
-  private value: RushValue = {$: 'Rush', phase: {$: 'Recap'}, generation: 0, clock: {$: 'Untimed'}};
-  get phase() {return phases[this.value.phase.$];}
-  get generation() {return this.value.generation;}
-  get deadline() {return this.value.clock.$ === 'Running' ? this.value.clock.deadline / 1000 : Infinity;}
-  get remaining() {return this.value.clock.$ === 'Stopped' ? this.value.clock.remaining / 1000 : undefined;}
+  private value: RushValue = {
+    $: "Rush",
+    phase: { $: "Recap" },
+    generation: 0,
+    clock: { $: "Untimed" },
+  };
+  get phase() {
+    return phases[this.value.phase.$];
+  }
+  get generation() {
+    return this.value.generation;
+  }
+  get deadline() {
+    return this.value.clock.$ === "Running"
+      ? this.value.clock.deadline / 1000
+      : Infinity;
+  }
+  get remaining() {
+    return this.value.clock.$ === "Stopped"
+      ? this.value.clock.remaining / 1000
+      : undefined;
+  }
   private send(event: RushEvent): RushEffect {
     const result = core.rush_step(this.value, event);
     this.value = result.state;
     return result.effect;
   }
-  load(generation = this.generation) {return this.send({$: 'RushLoad', generation});}
-  ready(now: number, duration: number | undefined, generation = this.generation) {
-    return this.send({$: 'RushReady', generation, now: micros(now), duration: maybe(duration === undefined ? undefined : micros(duration))});
+  load(generation = this.generation) {
+    return this.send({ $: "RushLoad", generation });
   }
-  fail(generation = this.generation) {return this.send({$: 'RushFail', generation});}
-  complete() {return this.send({$: 'RushComplete', generation: this.generation});}
-  answer(correct: boolean, now: number, generation = this.generation) {return this.send({$: 'RushAnswer', generation, now: micros(now), correct});}
-  timeout(now: number, generation = this.generation) {return this.send({$: 'RushTimeout', generation, now: micros(now)});}
-  pause(now: number) {return this.send({$: 'RushPause', generation: this.generation, now: micros(now)});}
-  resume(now: number, visible: boolean) {return this.send({$: 'RushResume', generation: this.generation, now: micros(now), visible});}
+  ready(
+    now: number,
+    duration: number | undefined,
+    generation = this.generation,
+  ) {
+    return this.send({
+      $: "RushReady",
+      generation,
+      now: micros(now),
+      duration: maybe(duration === undefined ? undefined : micros(duration)),
+    });
+  }
+  fail(generation = this.generation) {
+    return this.send({ $: "RushFail", generation });
+  }
+  complete() {
+    return this.send({ $: "RushComplete", generation: this.generation });
+  }
+  answer(correct: boolean, now: number, generation = this.generation) {
+    return this.send({
+      $: "RushAnswer",
+      generation,
+      now: micros(now),
+      correct,
+    });
+  }
+  deadlineAnswer(correct: boolean, now: number, generation = this.generation) {
+    return this.send({
+      $: "RushDeadlineAnswer",
+      generation,
+      now: micros(now),
+      correct,
+    });
+  }
+  timeout(now: number, generation = this.generation) {
+    return this.send({ $: "RushTimeout", generation, now: micros(now) });
+  }
+  pause(now: number) {
+    return this.send({
+      $: "RushPause",
+      generation: this.generation,
+      now: micros(now),
+    });
+  }
+  resume(now: number, visible: boolean) {
+    return this.send({
+      $: "RushResume",
+      generation: this.generation,
+      now: micros(now),
+      visible,
+    });
+  }
 }

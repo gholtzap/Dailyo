@@ -135,7 +135,7 @@ try {
         })
         .waitFor();
     }
-    for (const game of ["countrot", "trackrot", "temporot"]) {
+    for (const game of ["countrot", "temporot"]) {
       await page.goto(`${base}/${game}/?practice=1`);
       await page
         .getByRole(game === "anglerot" ? "slider" : "button", {

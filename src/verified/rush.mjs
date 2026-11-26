@@ -214,6 +214,14 @@ function $timeout_round(_state_0, _generation_0, _clock_0, _late_0) {
   }
 }
 
+function $deadline_answer(_state_0, _generation_0, _clock_0, _correct_0, _late_0) {
+  if (_late_0) {
+    return {$: "RushResult", "state": {$: "Rush", "phase": {$: "Feedback"}, "generation": _generation_0, "clock": _clock_0}, "effect": {$: "Finished", "correct": _correct_0, "expired": false}};
+  } else {
+    return {$: "RushResult", "state": _state_0, "effect": {$: "NoChange"}};
+  }
+}
+
 function $pause_running(_generation_0, _deadline_0, _now_0, _late_0) {
   if (_late_0) {
     return {$: "RushResult", "state": {$: "Rush", "phase": {$: "Feedback"}, "generation": _generation_0, "clock": {$: "Running", "deadline": _deadline_0}}, "effect": {$: "Finished", "correct": false, "expired": true}};
@@ -259,12 +267,16 @@ function $current_step(_s_0, _event_0) {
         const _now_1 = _event_0["now"];
         const _correct_0 = _event_0["correct"];
         return $finish_answer(_generation_1, {$: "Running", "deadline": _deadline_0}, _correct_0, $$expired({$: "Running", "deadline": _deadline_0}, _now_1));
-      } else if (_event_0.$ === "RushTimeout") {
+      } else if (_event_0.$ === "RushDeadlineAnswer") {
         const _now_2 = _event_0["now"];
-        return $timeout_round({$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": {$: "Running", "deadline": _deadline_0}}, _generation_1, {$: "Running", "deadline": _deadline_0}, $$expired({$: "Running", "deadline": _deadline_0}, _now_2));
-      } else if (_event_0.$ === "RushPause") {
+        const _correct_1 = _event_0["correct"];
+        return $deadline_answer({$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": {$: "Running", "deadline": _deadline_0}}, _generation_1, {$: "Running", "deadline": _deadline_0}, _correct_1, $$expired({$: "Running", "deadline": _deadline_0}, _now_2));
+      } else if (_event_0.$ === "RushTimeout") {
         const _now_3 = _event_0["now"];
-        return $pause_running(_generation_1, _deadline_0, _now_3, $$Nat_is_ge(_now_3, _deadline_0));
+        return $timeout_round({$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": {$: "Running", "deadline": _deadline_0}}, _generation_1, {$: "Running", "deadline": _deadline_0}, $$expired({$: "Running", "deadline": _deadline_0}, _now_3));
+      } else if (_event_0.$ === "RushPause") {
+        const _now_4 = _event_0["now"];
+        return $pause_running(_generation_1, _deadline_0, _now_4, $$Nat_is_ge(_now_4, _deadline_0));
       } else {
         return {$: "RushResult", "state": {$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": {$: "Running", "deadline": _deadline_0}}, "effect": {$: "NoChange"}};
       }
@@ -272,12 +284,16 @@ function $current_step(_s_0, _event_0) {
       if (_event_0.$ === "RushLoad") {
         return {$: "RushResult", "state": {$: "Rush", "phase": {$: "Loading"}, "generation": nat_chk(_generation_1 + 1), "clock": {$: "Untimed"}}, "effect": {$: "Loaded"}};
       } else if (_event_0.$ === "RushAnswer") {
-        const _now_4 = _event_0["now"];
-        const _correct_1 = _event_0["correct"];
-        return $finish_answer(_generation_1, _t_1, _correct_1, $$expired(_t_1, _now_4));
-      } else if (_event_0.$ === "RushTimeout") {
         const _now_5 = _event_0["now"];
-        return $timeout_round({$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": _t_1}, _generation_1, _t_1, $$expired(_t_1, _now_5));
+        const _correct_2 = _event_0["correct"];
+        return $finish_answer(_generation_1, _t_1, _correct_2, $$expired(_t_1, _now_5));
+      } else if (_event_0.$ === "RushDeadlineAnswer") {
+        const _now_6 = _event_0["now"];
+        const _correct_3 = _event_0["correct"];
+        return $deadline_answer({$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": _t_1}, _generation_1, _t_1, _correct_3, $$expired(_t_1, _now_6));
+      } else if (_event_0.$ === "RushTimeout") {
+        const _now_7 = _event_0["now"];
+        return $timeout_round({$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": _t_1}, _generation_1, _t_1, $$expired(_t_1, _now_7));
       } else {
         return {$: "RushResult", "state": {$: "Rush", "phase": {$: "Playing"}, "generation": _generation_1, "clock": _t_1}, "effect": {$: "NoChange"}};
       }
@@ -290,9 +306,9 @@ function $current_step(_s_0, _event_0) {
       if (_event_0.$ === "RushLoad") {
         return {$: "RushResult", "state": {$: "Rush", "phase": {$: "Loading"}, "generation": nat_chk(_generation_2 + 1), "clock": {$: "Untimed"}}, "effect": {$: "Loaded"}};
       } else if (_event_0.$ === "RushResume") {
-        const _now_6 = _event_0["now"];
+        const _now_8 = _event_0["now"];
         const _visible_0 = _event_0["visible"];
-        return $resume_stopped(_generation_2, _remaining_0, _now_6, _visible_0);
+        return $resume_stopped(_generation_2, _remaining_0, _now_8, _visible_0);
       } else {
         return {$: "RushResult", "state": {$: "Rush", "phase": {$: "Paused"}, "generation": _generation_2, "clock": {$: "Stopped", "remaining": _remaining_0}}, "effect": {$: "NoChange"}};
       }
@@ -327,18 +343,21 @@ function $event_generation(_event_0) {
   } else if (_event_0.$ === "RushAnswer") {
     const _generation_3 = _event_0["generation"];
     return _generation_3;
-  } else if (_event_0.$ === "RushTimeout") {
+  } else if (_event_0.$ === "RushDeadlineAnswer") {
     const _generation_4 = _event_0["generation"];
     return _generation_4;
-  } else if (_event_0.$ === "RushPause") {
+  } else if (_event_0.$ === "RushTimeout") {
     const _generation_5 = _event_0["generation"];
     return _generation_5;
-  } else if (_event_0.$ === "RushResume") {
+  } else if (_event_0.$ === "RushPause") {
     const _generation_6 = _event_0["generation"];
     return _generation_6;
-  } else {
+  } else if (_event_0.$ === "RushResume") {
     const _generation_7 = _event_0["generation"];
     return _generation_7;
+  } else {
+    const _generation_8 = _event_0["generation"];
+    return _generation_8;
   }
 }
 
@@ -390,6 +409,7 @@ const $$Nat_is_eq = $Nat_is_eq;export default {
   "expired": run_lib((a0,a1) => run_loop($expired(a0,nat_in(a1))), 2),
   "finish_answer": run_lib((a0,a1,a2,a3) => run_loop($finish_answer(nat_in(a0),a1,a2,a3)), 4),
   "timeout_round": run_lib((a0,a1,a2,a3) => run_loop($timeout_round(a0,nat_in(a1),a2,a3)), 4),
+  "deadline_answer": run_lib((a0,a1,a2,a3,a4) => run_loop($deadline_answer(a0,nat_in(a1),a2,a3,a4)), 5),
   "pause_running": run_lib((a0,a1,a2,a3) => run_loop($pause_running(nat_in(a0),nat_in(a1),nat_in(a2),a3)), 4),
   "resume_stopped": run_lib((a0,a1,a2,a3) => run_loop($resume_stopped(nat_in(a0),nat_in(a1),nat_in(a2),a3)), 4),
   "current_step": run_lib((a0,a1) => run_loop($current_step(a0,a1)), 2),

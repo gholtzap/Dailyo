@@ -71,7 +71,8 @@
     "node tests/map-answer-review.mjs": 2922.2053940000005,
     "node tests/border-country-input.mjs": 4685.150489,
     "node tests/playroom.mjs": 8950.69184,
-    "node tests/puzzle-preloads.mjs": 8576.312003000001
+    "node tests/puzzle-preloads.mjs": 8576.312003000001,
+    "node tests/ball-rounds.mjs": 8166.629167
   },
   "additionalMeasurements": [
     {
@@ -885,6 +886,16 @@
           "durationMs": 26440.995116000002,
           "status": 0,
           "signal": null
+        }
+      ]
+    },
+    {
+      "environment": "Mac mini, Chromium, local Bun HTTP server; ball countdown/deadline browser coverage",
+      "measurements": [
+        {
+          "command": "node tests/ball-rounds.mjs",
+          "durationMs": 8166.629167,
+          "status": 0
         }
       ]
     }

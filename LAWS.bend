@@ -187,3 +187,34 @@ law train_legacy_retry_is_assisted:
   for a: Maybe<&2, Bool>
   for r: Maybe<&2, R>
   {Train.train_step(C, R, Train.Train{Train.Revealed{}, c, head <> tail, None{}, a, None{}, r}, Train.Retry{False{}}) == Some{Train.Train{Train.Planning{}, c, Train.drop_last(head <> tail), Some{[head <> tail]}, Some{True{}}, None{}, None{}}} : Maybe<&2, Train.Train<C, R>>}
+
+
+law rush_deadline_snapshot_grades:
+  for s: Rush.Rush
+  for g: Nat
+  for clock: Rush.Clock
+  for correct: Bool
+  {Rush.deadline_answer(s, g, clock, correct, True{}) == Rush.RushResult{Rush.Rush{Rush.Feedback{}, g, clock}, Rush.Finished{correct, False{}}} : Rush.RushResult}
+
+law rush_early_deadline_snapshot_is_ignored:
+  for s: Rush.Rush
+  for g: Nat
+  for clock: Rush.Clock
+  for correct: Bool
+  {Rush.deadline_answer(s, g, clock, correct, False{}) == Rush.RushResult{s, Rush.NoChange{}} : Rush.RushResult}
+
+law rush_feedback_rejects_deadline_snapshot:
+  for g: Nat
+  for clock: Rush.Clock
+  for incoming: Nat
+  for now: Nat
+  for correct: Bool
+  {Rush.current_step(Rush.Rush{Rush.Feedback{}, g, clock}, Rush.RushDeadlineAnswer{incoming, now, correct}) == Rush.RushResult{Rush.Rush{Rush.Feedback{}, g, clock}, Rush.NoChange{}} : Rush.RushResult}
+
+law rush_paused_rejects_deadline_snapshot:
+  for g: Nat
+  for remaining: Nat
+  for incoming: Nat
+  for now: Nat
+  for correct: Bool
+  {Rush.current_step(Rush.Rush{Rush.Paused{}, g, Rush.Stopped{remaining}}, Rush.RushDeadlineAnswer{incoming, now, correct}) == Rush.RushResult{Rush.Rush{Rush.Paused{}, g, Rush.Stopped{remaining}}, Rush.NoChange{}} : Rush.RushResult}

@@ -22,6 +22,7 @@ type RushEvent is Data:
   RushFail{generation: Nat}
   RushAnswer{generation: Nat, now: Nat, correct: Bool}
   RushTimeout{generation: Nat, now: Nat}
+  RushDeadlineAnswer{generation: Nat, now: Nat, correct: Bool}
   RushPause{generation: Nat, now: Nat}
   RushResume{generation: Nat, now: Nat, visible: Bool}
   RushComplete{generation: Nat}
@@ -67,6 +68,14 @@ def timeout_round(+state: Rush, +generation: Nat, clock: Clock, late: Bool) -> R
     case False{}:
       RushResult{state, NoChange{}}
 
+# A deadline snapshot is a distinct input from a late manual answer.
+def deadline_answer(+state: Rush, +generation: Nat, clock: Clock, correct: Bool, late: Bool) -> RushResult:
+  match late:
+    case True{}:
+      RushResult{Rush{Feedback{}, generation, clock}, Finished{correct, False{}}}
+    case False{}:
+      RushResult{state, NoChange{}}
+
 def pause_running(+generation: Nat, +deadline: Nat, +now: Nat, late: Bool) -> RushResult:
   match late:
     case True{}:
@@ -93,6 +102,8 @@ def current_step(+s: Rush, event: RushEvent) -> RushResult:
       RushResult{Rush{Recap{}, generation, clock}, Recapped{}}
     case Rush{Playing{}, generation, +clock} RushAnswer{_, now, correct}:
       finish_answer(generation, clock, correct, expired(clock, now))
+    case Rush{Playing{}, generation, +clock} RushDeadlineAnswer{_, now, correct}:
+      deadline_answer(s, generation, clock, correct, expired(clock, now))
     case Rush{Playing{}, generation, +clock} RushTimeout{_, now}:
       timeout_round(s, generation, clock, expired(clock, now))
     case Rush{Playing{}, generation, Running{+deadline}} RushPause{_, +now}:
@@ -111,6 +122,8 @@ def event_generation(event: RushEvent) -> Nat:
     case RushFail{generation}:
       generation
     case RushAnswer{generation, _, _}:
+      generation
+    case RushDeadlineAnswer{generation, _, _}:
       generation
     case RushTimeout{generation, _}:
       generation

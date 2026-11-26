@@ -13,6 +13,7 @@ import {
   saveRushDraft,
   rushFeedback,
   onRushActivation,
+  onRushDeadlineSubmit,
 } from "../daily/bridge.js";
 import { showGameProgress } from "./help.js";
 import {
@@ -30,13 +31,15 @@ const game = name as PerceptionGame,
   quiz = document.querySelector<HTMLElement>("#quiz")!;
 const isRush = rushRound !== null;
 type Mode = "daily" | "practice";
-type Phase = "ready" | "showing" | "answering" | "feedback" | "results";
-type Event = "start" | "shown" | "answer" | "next" | "reset";
+type Phase =
+  "ready" | "countdown" | "showing" | "answering" | "feedback" | "results";
+type Event = "cue" | "start" | "shown" | "answer" | "next" | "reset";
 // State | Event | Rule | Next: ready/start -> showing; showing/shown -> answering;
 // showing or answering/answer -> feedback; feedback/next -> ready or results.
 // Any/reset -> ready or results; all other events are ignored. Reset releases timers/audio.
 const transitions: Record<Phase, Partial<Record<Event, Phase>>> = {
-  ready: { start: "showing", reset: "ready" },
+  ready: { cue: "countdown", start: "showing", reset: "ready" },
+  countdown: { start: "showing", reset: "ready" },
   showing: { shown: "answering", answer: "feedback", reset: "ready" },
   answering: { answer: "feedback", reset: "ready" },
   feedback: { next: "ready", reset: "ready" },
@@ -70,6 +73,7 @@ let playback:
   { state: "running" } | { state: "paused"; since: number; remaining: number } =
   { state: "running" };
 let cancelAngle: (() => void) | undefined;
+let countdown = 3;
 let draft = 50,
   taps: number[] = [],
   beatStart = 0,
@@ -79,15 +83,46 @@ let draft = 50,
 let activation: "waiting" | "queued" | "started" | "manual" = "waiting";
 const automaticRush = () =>
   isRush &&
-  (game === "anglerot" || game === "splitrot" || (rushRound ?? 0) > 0);
+  (game === "trackrot" ||
+    game === "anglerot" ||
+    game === "splitrot" ||
+    (rushRound ?? 0) > 0);
 function activateRush() {
   if (!automaticRush() || phase !== "ready" || activation !== "waiting") return;
+  if (game === "trackrot") {
+    queueBall();
+    return;
+  }
   activation = "queued";
   if (game === "anglerot" || game === "splitrot") start();
   else {
     draw();
     later(start, 600);
   }
+}
+// Ready/cue -> Countdown; ticks 3,2,1 -> Showing. Pause retains a tick;
+// reset/skip cancels it. Only the visible Rush frame receives activation.
+function queueBall() {
+  if (document.hidden || !transition("cue")) return;
+  activation = "queued";
+  countdown = 3;
+  draw();
+  later(tickBall, 1000);
+}
+function tickBall() {
+  if (phase !== "countdown") return;
+  if (isRush && document.documentElement.hasAttribute("data-rush-paused")) {
+    pausePlayback();
+    later(tickBall, 1000);
+    return;
+  }
+  countdown--;
+  if (!countdown) {
+    start();
+    return;
+  }
+  draw();
+  later(tickBall, 1000);
 }
 const el = <K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -282,6 +317,7 @@ function finish(guess: number | number[] | null) {
   draw();
   quiz.querySelector<HTMLElement>("#perception-feedback")?.focus();
   if (isRush) reportRush("answered", grade.points >= 70);
+  return grade.points >= 70;
 }
 function canvas() {
   const c = el("canvas", undefined, "perception-field");
@@ -528,6 +564,18 @@ function drawRound() {
   title.id = "question-title";
   title.tabIndex = -1;
   quiz.append(title);
+  if (game === "trackrot" && (phase === "ready" || phase === "countdown")) {
+    if (phase === "ready" && isRush) return;
+    const field = el("div", undefined, "perception-field track-cue");
+    if (phase === "countdown") {
+      const cue = el("span", String(countdown), "track-countdown");
+      cue.setAttribute("role", "status");
+      cue.setAttribute("aria-label", `Starting in ${countdown}`);
+      field.append(cue);
+    }
+    quiz.append(field);
+    return;
+  }
   if (phase === "ready") {
     quiz.append(el("p", instructions[game], "perception-note"));
     if (q.hard)
@@ -590,7 +638,17 @@ function drawRound() {
     track(c, 1, reveal);
     if (phase === "answering") {
       const pick = (value: number) => {
-        draft = value;
+        if (
+          phase !== "answering" ||
+          !c.isConnected ||
+          playback.state === "paused" ||
+          document.documentElement.hasAttribute("data-rush-paused")
+        )
+          return;
+        const input =
+          quiz.querySelector<HTMLInputElement>("#perception-input")!;
+        input.value = String(value);
+        draft = Number(input.value);
         track(c, 1);
       };
       quiz.append(slider("Landing position", 0, 100, draft, pick));
@@ -878,6 +936,8 @@ function draw() {
   else {
     drawRound();
     reportDaily("playing", undefined, day);
+    if (game === "trackrot" && !isRush && phase === "ready" && !document.hidden)
+      queueBall();
   }
 }
 async function init() {
@@ -954,13 +1014,29 @@ async function init() {
     if (
       !isRush &&
       document.hidden &&
-      ["showing", "answering"].includes(phase)
+      ["countdown", "showing", "answering"].includes(phase)
     ) {
       stop();
       transition("reset");
       draw();
-    } else if (!document.hidden) checkDate();
+    } else if (!document.hidden && !checkDate() && game === "trackrot") {
+      if (!isRush && phase === "ready") draw();
+      else if (
+        isRush &&
+        window.frameElement?.hasAttribute("title") &&
+        !document.documentElement.hasAttribute("data-rush-paused")
+      ) {
+        resumePlayback();
+        if (phase === "ready") activateRush();
+      }
+    }
   });
+  if (game === "trackrot" && !isRush) {
+    const help = document.querySelector<HTMLDialogElement>("#help-dialog")!;
+    new MutationObserver(() =>
+      help.open ? pausePlayback() : resumePlayback(),
+    ).observe(help, { attributes: true, attributeFilter: ["open"] });
+  }
   window.addEventListener("message", (event) => {
     if (!isRush || event.source !== parent || event.origin !== location.origin)
       return;
@@ -970,24 +1046,43 @@ async function init() {
   // The host marks suspension before posting its playback message. Cancel the
   // gesture at that boundary, even if resume arrives before message delivery.
   if (isRush)
-    new MutationObserver(() => cancelAngle?.()).observe(
-      document.documentElement,
-      {
-        attributes: true,
-        attributeFilter: ["data-rush-paused"],
-      },
-    );
+    new MutationObserver(() => {
+      cancelAngle?.();
+      if (game === "trackrot") {
+        if (document.documentElement.hasAttribute("data-rush-paused"))
+          pausePlayback();
+        else resumePlayback();
+      }
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-rush-paused"],
+    });
   window.addEventListener("blur", () => cancelAngle?.());
-  window.addEventListener("pagehide", stop);
-  window.addEventListener("pageshow", () => checkDate());
+  window.addEventListener("pagehide", () =>
+    game === "trackrot" ? pausePlayback() : stop(),
+  );
+  window.addEventListener("pageshow", (event) => {
+    if (checkDate()) return;
+    if (game === "trackrot" && event.persisted && !isRush && !document.hidden) {
+      resumePlayback();
+      if (phase === "ready") draw();
+    }
+  });
   setInterval(() => checkDate(), 30000);
   onRushActivation(activateRush);
+  onRushDeadlineSubmit(() => {
+    if (game !== "trackrot") return undefined;
+    if (phase === "answering") return finish(draft / 100);
+    if (phase === "feedback" && feedback && feedback.guess !== null)
+      return feedback!.points >= 70;
+    return undefined;
+  });
   onRushTimeout(() => {
     if (phase === "feedback") {
       draw();
       return;
     }
-    if (phase === "ready") transition("start");
+    if (phase === "ready" || phase === "countdown") transition("start");
     finish(null);
   });
   draw();

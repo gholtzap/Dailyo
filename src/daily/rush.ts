@@ -158,6 +158,7 @@ let current: Round | null | undefined,
   visible: HTMLIFrameElement | null = null;
 let timer: ReturnType<typeof setTimeout> | undefined,
   ticker: ReturnType<typeof setInterval> | undefined;
+let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
 const upcoming = new Map<string, Round>();
 
 // Feedback + press -> held until release; Feedback + Keep -> held until Next; inspection/background resume on close/return.
@@ -319,6 +320,7 @@ function openReview() {
   }
   review = { state: "previous", from, scroll: panel.parentElement!.scrollTop };
   clearInterval(ticker);
+  clearTimeout(deadlineTimer);
   if (visible) {
     visible.hidden = true;
     visible.inert = true;
@@ -381,6 +383,7 @@ reviewButton.onclick = openReview;
 recapReview.onclick = openReview;
 
 function stopClock() {
+  clearTimeout(deadlineTimer);
   clearTimeout(timer);
   clearInterval(ticker);
   clock.textContent = "";
@@ -511,6 +514,7 @@ function showRound() {
       )
       ?.focus({ preventScroll: true });
   checkpoint();
+  armDraftDeadline();
   if (run.phase === "playing")
     frame.contentWindow?.postMessage("rush-activate", location.origin);
   if (!document.hidden && !navigator.connection?.saveData) {
@@ -519,6 +523,25 @@ function showRound() {
   }
 }
 
+function armDraftDeadline() {
+  clearTimeout(deadlineTimer);
+  if (
+    games[index]?.label !== "trackrot" ||
+    run.phase !== "playing" ||
+    !Number.isFinite(run.deadline)
+  )
+    return;
+  const generation = run.generation;
+  deadlineTimer = setTimeout(
+    () => {
+      if (generation === run.generation && run.phase === "playing") {
+        if (performance.now() < run.deadline) armDraftDeadline();
+        else finishRound(false, true);
+      }
+    },
+    Math.max(0, run.deadline - performance.now()),
+  );
+}
 function updateClock() {
   const remaining = run.deadline - performance.now();
   if (remaining <= 0) {
@@ -533,6 +556,20 @@ function updateClock() {
 }
 
 function finishRound(correct: boolean, expired = false) {
+  if (
+    expired &&
+    games[index]?.label === "trackrot" &&
+    run.phase === "playing"
+  ) {
+    const snapshot: { correct?: boolean } = {};
+    current?.frame.contentWindow?.dispatchEvent(
+      new CustomEvent("rush-submit-draft", { detail: snapshot }),
+    );
+    if (typeof snapshot.correct === "boolean") {
+      showFinish(run.deadlineAnswer(snapshot.correct, performance.now()));
+      return;
+    }
+  }
   showFinish(
     expired
       ? run.timeout(performance.now())
@@ -672,7 +709,12 @@ window.addEventListener(
       reported === "answered" &&
       typeof correct === "boolean"
     ) {
-      showFinish(run.answer(correct, performance.now()));
+      if (
+        games[index]?.label === "trackrot" &&
+        performance.now() >= run.deadline
+      )
+        finishRound(false, true);
+      else showFinish(run.answer(correct, performance.now()));
     }
   },
 );
@@ -773,6 +815,14 @@ function skipGame() {
 }
 next.onclick = skipGame;
 function pauseRound() {
+  if (
+    games[index]?.label === "trackrot" &&
+    run.phase === "playing" &&
+    performance.now() >= run.deadline
+  ) {
+    finishRound(false, true);
+    return;
+  }
   const effect = run.pause(performance.now());
   if (effect.$ === "Finished") {
     showFinish(effect);
@@ -781,6 +831,7 @@ function pauseRound() {
   if (effect.$ !== "Suspended") return;
   updatePauseControl();
   clearInterval(ticker);
+  clearTimeout(deadlineTimer);
   if (visible) {
     visible.inert = !helpOpen();
     visible.contentDocument!.documentElement.dataset.rushPaused = "";
@@ -806,6 +857,7 @@ function resumeRound() {
   next.removeAttribute("disabled");
   updateClock();
   ticker = setInterval(updateClock, 100);
+  armDraftDeadline();
   visible?.contentDocument
     ?.querySelector<HTMLElement>(
       "#question-title, #rush-journey, #round-title, #extra-title",

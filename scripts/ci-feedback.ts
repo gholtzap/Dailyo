@@ -35,10 +35,18 @@ const formatChanged = formatBase
       .split("\0")
       .filter(Boolean)
   : changed;
+// Compiler output is checked byte-for-byte by verify:artifacts and the proof job.
+// Formatting it as handwritten source would invalidate that independent check.
+const generated = new Set(
+  Object.keys(
+    JSON.parse(readFileSync("verification/generated.json", "utf8")).outputs,
+  ),
+);
 const formatted = formatChanged.filter(
   (file) =>
     existsSync(file) &&
     !file.startsWith("dist/") &&
+    !generated.has(file) &&
     /\.(?:[cm]?[jt]s|tsx|json|ya?ml|md|toml)$/.test(file),
 );
 const tasks: [string, string[]][] = [
