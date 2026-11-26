@@ -30,7 +30,7 @@ export function angleBoard(options: {
     const value =
       gesture.state === "drawing" ? gesture.preview : options.value();
     ctx.clearRect(0, 0, 960, 960);
-    ctx.strokeStyle = "#c6bba9";
+    ctx.strokeStyle = "#74777d";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(480, 480, 400, 0, Math.PI * 2);
@@ -47,11 +47,11 @@ export function angleBoard(options: {
       );
       ctx.stroke();
     };
-    ray(0, "#a79c8b", 3);
+    ray(0, "#9a9da2", 3);
     if (options.reveal && value !== null) {
       const raw = options.target - value;
       const gap = options.max > 360 ? raw : ((raw + 540) % 360) - 180;
-      ctx.fillStyle = "#c5422d26";
+      ctx.fillStyle = "#f39b8526";
       ctx.beginPath();
       ctx.moveTo(480, 480);
       ctx.arc(
@@ -65,9 +65,9 @@ export function angleBoard(options: {
       ctx.closePath();
       ctx.fill();
     }
-    if (value !== null) ray(value, "#c5422d", 7);
-    if (options.reveal) ray(options.target, "#2a7443", 5);
-    ctx.fillStyle = "#302d29";
+    if (value !== null) ray(value, "#f39b85", 7);
+    if (options.reveal) ray(options.target, "#86d6a0", 5);
+    ctx.fillStyle = "#eeeef0";
     ctx.beginPath();
     ctx.arc(480, 480, 12, 0, Math.PI * 2);
     ctx.fill();

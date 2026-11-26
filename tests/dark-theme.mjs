@@ -19,7 +19,7 @@ try {
       await page.locator("#reveal").waitFor();
       assert.equal(
         await page.locator("meta[name=theme-color]").getAttribute("content"),
-        "#fff8ec",
+        "#141516",
       );
       const actual = await page.evaluate(() => ({
         scheme: getComputedStyle(document.documentElement).colorScheme,
@@ -30,10 +30,10 @@ try {
           .backgroundColor,
       }));
       assert.deepEqual(actual, {
-        scheme: "light",
-        background: "rgb(255, 248, 236)",
-        land: "rgb(245, 237, 223)",
-        water: "rgb(227, 233, 228)",
+        scheme: "dark",
+        background: "rgb(20, 21, 22)",
+        land: "rgb(41, 43, 46)",
+        water: "rgb(21, 25, 29)",
       });
       const helpButton = page.getByRole("button", {
         name: "How to play",
@@ -44,7 +44,7 @@ try {
       await helpDialog.waitFor();
       assert.equal(
         await helpDialog.evaluate((n) => getComputedStyle(n).backgroundColor),
-        "rgb(255, 248, 236)",
+        "rgb(20, 21, 22)",
       );
       await helpDialog
         .getByRole("button", { name: "Close", exact: true })
@@ -63,6 +63,32 @@ try {
         fullPage: true,
       });
       reports.push({ width, systemPreference: colorScheme, ...actual });
+      for (const route of [
+        "/flags/",
+        "/anglerot/",
+        "/maprot/",
+        "/daily/",
+        "/rush/flagrot/",
+      ]) {
+        await page.goto(
+          new URL(
+            route,
+            process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173",
+          ).href,
+        );
+        await page.locator(".site-masthead").waitFor();
+        const theme = await page.evaluate(() => ({
+          scheme: getComputedStyle(document.documentElement).colorScheme,
+          background: getComputedStyle(document.body).backgroundColor,
+        }));
+        assert.deepEqual(
+          theme,
+          { scheme: "dark", background: "rgb(20, 21, 22)" },
+          `${route} stays dark with ${colorScheme} system preference`,
+        );
+        reports.push({ width, systemPreference: colorScheme, route, ...theme });
+      }
+
       await page.close();
     }
   console.log(JSON.stringify(reports, null, 2));
