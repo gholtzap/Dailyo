@@ -743,3 +743,39 @@ iframe[data-content-sized] { border-radius: inherit; }
   :root[data-daily-feed]:not([data-rush]) .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
   :root[data-daily-feed]:not([data-rush]) .visual-viewport { --visual-viewport-feed-height: 160px; width: 100%; height: var(--visual-viewport-feed-height); aspect-ratio: auto; }
 }
+
+/* Keep Rush controls available while the map fills the remaining screen. */
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) {
+  position: fixed;
+  inset: 0;
+  height: var(--daily-feed-height);
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) > :is(.site-masthead, .rush-controls) { display: none; }
+.daily-feed:not(.rush-feed):has(iframe.feed-map-expanded[title]:not([hidden])) { grid-template-rows: minmax(0, 1fr); }
+.daily-feed:not(.rush-feed):has(iframe.feed-map-expanded[title]:not([hidden])) > .feed-actions { display: none; }
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) > .feed-actions {
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) > .feed-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.daily-feed:has(iframe.feed-map-expanded[title]:not([hidden])) #feed-game { position: static; }
+#feed-game iframe.feed-map-expanded {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  z-index: var(--layer-map-label);
+  border-radius: 0;
+}
+body:has(iframe.feed-map-expanded[title]:not([hidden])) { overflow: hidden; }
