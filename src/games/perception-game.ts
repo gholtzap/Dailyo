@@ -221,7 +221,7 @@ function load() {
       (typeof session.draft !== "number" ||
         !Number.isFinite(session.draft) ||
         session.draft < 0 ||
-        session.draft > (hard ? 1080 : 360))
+        session.draft > (mode === "practice" && hard ? 1080 : 360))
     )
       delete session.draft;
   } catch {}
@@ -649,6 +649,10 @@ function drawRound() {
       "primary",
     );
     const turns = el("span", undefined, "angle-turns");
+    const turnLabel = (angle: number | null) => {
+      const count = Math.floor((angle ?? 0) / 360);
+      return `${count} full turn${count === 1 ? "" : "s"}`;
+    };
     const change = (next: number | null) => {
       if (phase !== "answering" || playback.state === "paused") return;
       session.draft = next;
@@ -656,7 +660,7 @@ function drawRound() {
       board.refresh();
       check.disabled = next === null;
       clear.disabled = next === null;
-      turns.textContent = `${Math.floor((next ?? 0) / 360)} full turns`;
+      turns.textContent = turnLabel(next);
     };
     const board = angleBoard({
       target: q.target,
@@ -672,7 +676,7 @@ function drawRound() {
       const actions = el("div", undefined, "angle-actions");
       clear.disabled = check.disabled = value() === null;
       if (q.hard) {
-        turns.textContent = `${Math.floor((value() ?? 0) / 360)} full turns`;
+        turns.textContent = turnLabel(value());
         const turnControls = el("div", undefined, "angle-turn-controls");
         turnControls.append(
           button("Remove turn", () =>
