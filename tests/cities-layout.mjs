@@ -42,8 +42,9 @@ try {
       await f.locator("dialog[open]").waitFor();
       const expanded = await map.boundingBox();
       assert.ok(
-        expanded.width > before.width,
-        "Enlarge uses more screen width",
+        expanded.width >= before.width &&
+          expanded.width * expanded.height > before.width * before.height,
+        "Enlarge gives the atlas more usable area",
       );
       const frame = await page.locator('iframe[title="maprot"]').boundingBox();
       assert.equal(

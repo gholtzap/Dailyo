@@ -135,6 +135,7 @@ document.querySelector<HTMLElement>("#help")!.onclick = () => {
     parent.postMessage({ type: "rush-help", open: true }, location.origin);
 };
 dialog.addEventListener("close", () => {
+  document.querySelector<HTMLElement>("#help")?.focus({ preventScroll: true });
   if (rushRound !== null)
     parent.postMessage({ type: "rush-help", open: false }, location.origin);
 });

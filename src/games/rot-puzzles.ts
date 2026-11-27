@@ -319,6 +319,8 @@ export function transition(
   });
 
   if (kind === "maprot") {
+    if (action.type === "clear-position" && state.draft.length)
+      return { ...state, draft: [] };
     if (action.type === "position" && isCoordinate(action.point))
       return { ...state, draft: action.point };
     if (action.type === "submit" && isCoordinate(state.draft))

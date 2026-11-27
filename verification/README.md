@@ -98,3 +98,20 @@ that specific rule regressions and an omitted proof make the gate fail.
 The existing isolated tests also check generated-code/adapter behavior and
 routing or security risks outside these laws. They remain alongside proofs and
 end-to-end checks. No Quint model or second rules implementation is maintained.
+
+## Cities pin presentation
+
+The existing Cities session owns the draft and submitted answer. The atlas,
+world overview and pin piece render those values without a second saved state.
+
+| State  | Event                               | Condition             | Result                                          |
+| ------ | ----------------------------------- | --------------------- | ----------------------------------------------- |
+| Guess  | Position                            | Valid coordinate      | Move the cyan draft pin; persist draft          |
+| Guess  | Clear pin                           | Draft exists          | Remove draft; disable Check pin                 |
+| Guess  | Submit                              | Valid draft exists    | Record answer; pin becomes gold and cannot move |
+| Review | Position / Clear / Submit           | Never editable        | No change                                       |
+| Review | Next                                | Current answer exists | Next question; no draft pin                     |
+| Any    | Zoom / Pan / World / Enlarge / Help | View interaction only | Keep draft, submitted answer and score          |
+
+`tests/cities-atlas.mjs` exercises placement, reload, lock color, clear,
+keyboard input, Help, bottom modes and mobile/desktop dark defaults.
