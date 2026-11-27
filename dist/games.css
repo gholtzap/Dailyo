@@ -1340,7 +1340,7 @@ body[data-game=maprot] > .city-main {
 .city-main .rot-coordinate {
   margin: var(--space-2) var(--space-5) 0;
 }
-.city-main .rot-feedback {
+.city-main .rot-feedback:not(.screen-reader-only) {
   margin: 0;
   padding: var(--space-4) var(--space-5) 0;
 }

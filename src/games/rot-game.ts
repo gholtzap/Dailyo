@@ -1194,6 +1194,10 @@ function questionReview(session: RotSession, scores: number[]) {
           .slice(1)
           .filter((node): node is HTMLElement | SVGElement => node !== null),
       );
+      if (mapGame)
+        panel
+          .querySelector(".rot-feedback")
+          ?.classList.add("screen-reader-only");
       details.append(panel);
     };
     row.append(details);
