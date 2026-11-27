@@ -16,7 +16,7 @@ const read = async (name) =>
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const ui = process.argv.includes("--ui");
 const policy = await read("../ui-policy.json");
-const day = "2026-11-17";
+const day = "2026-11-28";
 const browser = await chromium.launch();
 const reports = [];
 const date = new Date(`${day}T16:00:00Z`);
@@ -45,6 +45,11 @@ try {
         : undefined,
     );
     const puzzle = extraPuzzle(game, data, day);
+    if (game === "cluerot")
+      assert.deepEqual(
+        extraPuzzle(game, data, "2026-11-27"),
+        await read("./fixtures/issued-clue-puzzle.json"),
+      );
     assert.equal(replayExtra(game, puzzle, [false]), undefined);
     if (game === "swaprot")
       assert.equal(sortMoves(puzzle).length, puzzle.minimum);
