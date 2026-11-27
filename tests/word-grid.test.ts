@@ -34,3 +34,30 @@ test("word grids contain six intersecting words and can be solved within the swa
   }
   assert.ok(ids.size > 70);
 });
+
+import { wordBoards, wordClues } from "../src/games/boards/word-board-data.js";
+import { makeCrossword } from "../src/games/boards/crossword.js";
+import { readFileSync } from "node:fs";
+test("every curated layout has six distinct clued words with matching crossings", () => {
+  const seen = new Set<string>();
+  for (const words of wordBoards) {
+    assert.equal(words.length, 6);
+    assert.equal(new Set(words).size, 6);
+    assert.ok(!seen.has(words.join("/")));
+    seen.add(words.join("/"));
+    for (const word of words) assert.ok(wordClues[word]);
+    for (let row = 0; row < 3; row++)
+      for (let col = 0; col < 3; col++)
+        assert.equal(words[row][col * 2], words[col + 3][row * 2]);
+  }
+});
+test("issued word grids and crosswords retain their puzzle and clues", () => {
+  const issued = JSON.parse(
+    readFileSync(
+      new URL("./fixtures/issued-word-boards.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  assert.deepEqual(makeWordGrid("2026-11-27"), issued.wordgrid);
+  assert.deepEqual(makeCrossword("2026-11-27"), issued.crossword);
+});

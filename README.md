@@ -281,3 +281,5 @@ Ladderrot includes 1,000 solvable word pairs. `python3 scripts/expand-ladders.py
 Maprot includes 1,000 cities. Rebuild the expansion with `python3 scripts/expand-map-cities.py ne_10m_populated_places.geojson` using Natural Earth v5.1.2. The original 214 cities remain the pool for daily puzzles issued through 2026-11-27.
 
 Langrot retains up to 32 qualifying excerpts per language from the bundled UDHR source. Daily and dated Rush puzzles issued through 2026-11-27 retain their original eight-excerpt selection.
+
+Word grid and Mini crossword share 1,000 crossing layouts built from 280 clued words. `python3 scripts/expand-word-boards.py` rebuilds the layouts. Issued daily puzzles through 2026-11-27 retain the original 120 layouts.
