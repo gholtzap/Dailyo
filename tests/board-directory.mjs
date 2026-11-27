@@ -11,9 +11,32 @@ try {
       viewport: { width, height: 1000 },
       colorScheme: "light",
     });
+    let releaseFrame = () => {};
+    let readyFrame = Promise.resolve();
+    await page.route("**/*", async (route) => {
+      if (
+        route.request().isNavigationRequest() &&
+        route.request().frame().parentFrame()
+      )
+        await readyFrame;
+      await route.continue();
+    });
     for (const game of boardGames) {
-      await page.goto(base);
+      readyFrame = new Promise((resolve) => {
+        releaseFrame = resolve;
+      });
+      await page.goto(base, { waitUntil: "domcontentloaded" });
+      await page
+        .locator("iframe.feed-loading")
+        .first()
+        .waitFor({ state: "attached" });
       await page.locator(".site-more summary").click();
+      releaseFrame();
+      await page.locator("iframe[title]:not(.feed-loading)").waitFor();
+      assert.ok(
+        await page.locator(".site-more").evaluate((menu) => menu.open),
+        "A game finishing loading must preserve the open Games menu",
+      );
       const link = page
         .getByRole("navigation", { name: "Games", exact: true })
         .getByRole("link", { name: game.name, exact: true });

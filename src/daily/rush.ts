@@ -611,13 +611,16 @@ function showRound() {
   }
   pause.hidden = !Number.isFinite(run.deadline);
   if (document.hidden || (restoring && duration)) pauseRound();
-  if (run.phase === "paused") pause.focus();
-  else
-    frame.contentDocument
-      ?.querySelector<HTMLElement>(
-        "#question-title, #rush-journey, #round-title, #extra-title",
-      )
-      ?.focus({ preventScroll: true });
+  // A late frame must not take focus away from an open Games menu.
+  if (!document.querySelector(".site-more[open]")) {
+    if (run.phase === "paused") pause.focus();
+    else
+      frame.contentDocument
+        ?.querySelector<HTMLElement>(
+          "#question-title, #rush-journey, #round-title, #extra-title",
+        )
+        ?.focus({ preventScroll: true });
+  }
   checkpoint();
   actions.style.removeProperty("min-height");
   armDraftDeadline();
