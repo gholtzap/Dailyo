@@ -8,7 +8,9 @@ const root = mkdtempSync(join(tmpdir(), "ci-finish-")),
   script = resolve("scripts/ci-finish.mjs");
 let mode = "success",
   calls = 0;
+const cacheHeaders = [];
 const server = createServer((req, res) => {
+  cacheHeaders.push(req.headers["cache-control"]);
   res.setHeader("content-type", "application/json");
   if (mode === "api-error") {
     res.writeHead(503);
@@ -61,6 +63,10 @@ async function probe(scenario, expected) {
     child.once("exit", (status) => resolve({ status }));
   });
   assert.equal(result.status === 0, expected, scenario);
+  assert.ok(
+    cacheHeaders.every((value) => value === "no-cache"),
+    "Live gate requests must revalidate cacheable job status responses",
+  );
   if (scenario === "missing-then-success")
     assert.ok(calls >= 2, "A missing required job cannot pass");
 }
