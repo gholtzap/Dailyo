@@ -7,6 +7,7 @@ const engine = process.argv.includes("--webkit") ? webkit : chromium;
 const b = await engine.launch();
 const policy = JSON.parse(await fs.readFile("ui-policy.json", "utf8"));
 const receipts = [];
+const checkUI = !process.argv.includes("--functional-only");
 await fs.mkdir("test-results/cities-atlas", { recursive: true });
 try {
   for (const width of [390, 1440])
@@ -31,7 +32,12 @@ try {
           path: `test-results/cities-atlas/${engine.name()}-${width}-${colorScheme}-${state}.png`,
           fullPage: true,
         });
-        const report = await checkPage(p, policy);
+        const report = checkUI
+          ? await checkPage(p, policy)
+          : {
+              findings: [],
+              uiCheck: "not run; functional browser verification only",
+            };
         // Keep unresolved native-dialog readings; verify their opaque colors directly.
         const helpContrast =
           state === "help"
@@ -177,7 +183,7 @@ try {
 } finally {
   await b.close();
   await fs.writeFile(
-    "test-results/cities-atlas/report.json",
+    `test-results/cities-atlas/report-${engine.name()}.json`,
     JSON.stringify(receipts, null, 2),
   );
 }
