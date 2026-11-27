@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { checkPage } from "lintapple";
-import { rushDate, shuffle } from "../dist/daily/puzzles.js";
+import { rushDate, shuffle, quizPool } from "../dist/daily/puzzles.js";
 import {
   makeSet,
   preparePuzzles,
@@ -287,7 +287,14 @@ try {
           const words = await loadJson("/games/data/vocabulary.json");
           await child
             .getByRole("button", {
-              name: shuffle(words, await rushSeed(page, "vocabulary"))[0].name,
+              name: shuffle(
+                quizPool(
+                  words,
+                  "vocabulary",
+                  await rushSeed(page, "vocabulary"),
+                ),
+                await rushSeed(page, "vocabulary"),
+              )[0].name,
               exact: true,
             })
             .click();
