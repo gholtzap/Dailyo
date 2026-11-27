@@ -19,6 +19,7 @@ export function releasedPool<T>(game: string, rows: T[], seed: string): T[] {
     ladderrot: 129,
     maprot: 214,
     wordboards: 120,
+    cluerot: 24,
   };
   if (novemberPools[game] && date && date <= "2026-11-27")
     return rows.slice(0, novemberPools[game]);

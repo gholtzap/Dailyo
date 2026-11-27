@@ -1,0 +1,13 @@
+{
+  "game": "cluerot",
+  "id": "Venus",
+  "answer": "Venus",
+  "aliases": ["venus", "venus"],
+  "clues": [
+    "I rotate in the opposite direction to most of my peers.",
+    "I take longer to rotate once than I do to orbit the Sun.",
+    "My thick clouds hide my surface.",
+    "I am the hottest planet in the Solar System.",
+    "I am the second planet from the Sun."
+  ]
+}
