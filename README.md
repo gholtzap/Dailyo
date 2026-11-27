@@ -2,6 +2,8 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
+Daily board games: [Path](https://trainrot.vercel.app/path/), [Crowns](https://trainrot.vercel.app/crowns/), [Word grid](https://trainrot.vercel.app/wordgrid/), [Mini crossword](https://trainrot.vercel.app/crossword/), [Groups](https://trainrot.vercel.app/groups/), and [Mini Sudoku](https://trainrot.vercel.app/sudoku/). Each has a shared daily puzzle, saved progress, answer review, and practice. Open them through Games.
+
 [Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through eight games. Play again starts a fresh random puzzle sequence. Refreshing restores the current run in this tab; timed rounds return paused. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout shows the answer briefly, then advances automatically. Press and hold an answer to stop automatic progression, or choose Keep answer until you are ready to continue. Review answer reopens the last result while preserving the current puzzle and its clock. Timed rounds pause when the tab is hidden; choose Resume when you return. Opening How to play also pauses the clock. Choose Resume after closing help. Paused puzzles are hidden. You can also pause a timed round yourself. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
 
 [Daily mix](https://trainrot.vercel.app/daily/) plays all fourteen daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.

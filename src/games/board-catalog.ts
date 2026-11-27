@@ -1,9 +1,9 @@
 export const boardGames = [
-  { id: "groups", name: "Groups", description: "Find four hidden connections" },
+  { id: "path", name: "Path", description: "Connect every square in one path" },
   {
-    id: "crossword",
-    name: "Mini crossword",
-    description: "Solve a small crossing-word puzzle",
+    id: "crowns",
+    name: "Crowns",
+    description: "Place one crown in every region",
   },
   {
     id: "wordgrid",
@@ -11,10 +11,15 @@ export const boardGames = [
     description: "Swap letters to complete six words",
   },
   {
-    id: "crowns",
-    name: "Crowns",
-    description: "Place one crown in every region",
+    id: "crossword",
+    name: "Mini crossword",
+    description: "Solve a small crossing-word puzzle",
   },
-  { id: "path", name: "Path", description: "Connect every square in one path" },
+  { id: "groups", name: "Groups", description: "Find four hidden connections" },
+  {
+    id: "sudoku",
+    name: "Mini Sudoku",
+    description: "Complete a six-by-six Sudoku",
+  },
 ] as const;
 export type BoardGame = (typeof boardGames)[number]["id"];

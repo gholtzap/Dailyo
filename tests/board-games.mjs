@@ -1,7 +1,7 @@
 import { ciWidths } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 import { checkPage } from "lintapple";
 import { boardGames } from "../dist/games/board-catalog.js";
 import { makeBoard } from "../dist/games/board-state.js";
@@ -11,9 +11,14 @@ const output = "test-results/board-games";
 await fs.mkdir(output, { recursive: true });
 const reports = [],
   receipts = [];
-const browser = await chromium.launch();
+const safari = process.argv.includes("--webkit");
+const browser = await (safari ? webkit : chromium).launch();
 const only = process.argv.find((a) => a.startsWith("--game="))?.split("=")[1];
 async function solve(page, puzzle) {
+  if (puzzle.kind === "sudoku")
+    for (let i = 0; i < 36; i++)
+      if (!puzzle.initial[i])
+        await page.locator(`[data-cell="${i}"]`).fill(puzzle.solution[i]);
   if (puzzle.kind === "groups")
     for (const group of puzzle.groups) {
       for (const word of group.words)
@@ -67,7 +72,7 @@ try {
           viewport,
           colorScheme,
           hasTouch: viewport.width === 390,
-          permissions: ["clipboard-read", "clipboard-write"],
+          permissions: safari ? [] : ["clipboard-read", "clipboard-write"],
         });
         const page = await context.newPage();
         const errors = [];
@@ -149,18 +154,39 @@ try {
           .locator("#puzzle-title")
           .filter({ hasText: "Solved" })
           .waitFor();
+        if (safari)
+          await page.evaluate(() =>
+            Object.defineProperty(navigator, "clipboard", { value: undefined }),
+          );
         await page
           .getByRole("button", { name: "Copy results", exact: true })
           .click();
-        assert.match(
-          await page.evaluate(() => navigator.clipboard.readText()),
-          new RegExp(`dailyo · ${game.name}`),
-        );
+        if (safari)
+          assert.match(
+            await page
+              .getByRole("textbox", { name: "Results to copy" })
+              .inputValue(),
+            new RegExp(`dailyo · ${game.name}`),
+          );
+        else
+          assert.match(
+            await page.evaluate(() => navigator.clipboard.readText()),
+            new RegExp(`dailyo · ${game.name}`),
+          );
         await page
           .getByRole("button", { name: "Play practice", exact: true })
           .click();
         await page.locator(".puzzle-grid").waitFor();
         await inspect("practice");
+        await page.reload();
+        await page.locator(".puzzle-grid").waitFor();
+        assert.equal(
+          await page
+            .getByRole("button", { name: "Practice", exact: true })
+            .getAttribute("aria-pressed"),
+          "true",
+        );
+
         await page.locator(".puzzle-assistance summary").click();
         await page
           .getByRole("button", { name: "Show answer", exact: true })
