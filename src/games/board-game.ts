@@ -74,15 +74,29 @@ function drawBoard() {
   const grid = el(
     "div",
     undefined,
-    `puzzle-grid columns-${puzzle.size} path-grid`,
+    `puzzle-grid columns-${puzzle.size} ${puzzle.kind}-grid`,
   );
   grid.setAttribute("role", "group");
   grid.setAttribute("aria-label", `${info.name} board`);
   for (let i = 0; i < puzzle.size * puzzle.size; i++) {
-    const checkpoint = puzzle.checkpoints.indexOf(i);
-    const position = state.selected.indexOf(i);
+    const checkpoint =
+      puzzle.kind === "path" ? puzzle.checkpoints.indexOf(i) : -1;
+    const position =
+      puzzle.kind === "path"
+        ? state.selected.indexOf(i)
+        : state.values[i] === "C"
+          ? 0
+          : -1;
     const b = button(
-      checkpoint >= 0 ? String(checkpoint + 1) : "",
+      puzzle.kind === "crowns"
+        ? state.values[i] === "C"
+          ? "Crown"
+          : state.values[i] === "x"
+            ? "No"
+            : ""
+        : checkpoint >= 0
+          ? String(checkpoint + 1)
+          : "",
       () => {},
       "puzzle-cell",
     );
@@ -90,10 +104,18 @@ function drawBoard() {
     b.classList.toggle("is-picked", position >= 0);
     b.classList.toggle(
       "is-tail",
-      position === state.selected.length - 1 && position >= 0,
+      puzzle.kind === "path" &&
+        position === state.selected.length - 1 &&
+        position >= 0,
     );
-    const previous = position > 0 ? state.selected[position - 1] : undefined;
-    const next = position >= 0 ? state.selected[position + 1] : undefined;
+    const previous =
+      puzzle.kind === "path" && position > 0
+        ? state.selected[position - 1]
+        : undefined;
+    const next =
+      puzzle.kind === "path" && position >= 0
+        ? state.selected[position + 1]
+        : undefined;
     for (const neighbor of [previous, next])
       if (neighbor !== undefined) {
         const delta = neighbor - i;
@@ -112,6 +134,15 @@ function drawBoard() {
       "aria-label",
       `Row ${Math.floor(i / puzzle.size) + 1}, column ${(i % puzzle.size) + 1}${checkpoint >= 0 ? `, checkpoint ${checkpoint + 1}` : ""}${position >= 0 ? `, path step ${position + 1}` : ""}`,
     );
+    if (puzzle.kind === "crowns") {
+      const region = String.fromCharCode(65 + puzzle.regions[i]);
+      b.classList.add(`region-${puzzle.regions[i]}`);
+      b.append(el("span", region, "puzzle-region"));
+      b.setAttribute(
+        "aria-label",
+        `Row ${Math.floor(i / puzzle.size) + 1}, column ${(i % puzzle.size) + 1}, region ${region}, ${state.values[i] === "C" ? "Crown" : state.values[i] === "x" ? "No crown" : "empty"}`,
+      );
+    }
     const tip = el("span", b.getAttribute("aria-label")!, "puzzle-tooltip");
     tip.id = `cell-tip-${i}`;
     tip.setAttribute("role", "tooltip");
@@ -126,7 +157,7 @@ function drawBoard() {
     b.onpointerdown = (e) => {
       if (e.button !== 0) return;
       e.preventDefault();
-      dragging = true;
+      dragging = puzzle.kind === "path";
       act({ type: "cell", index: i });
     };
     grid.append(b);
@@ -140,7 +171,11 @@ function draw() {
     .forEach((b) => b.setAttribute("aria-pressed", String(b.id === mode)));
   const title = el(
     "h2",
-    state.phase === "playing" ? "Connect the checkpoints" : result(),
+    state.phase === "playing"
+      ? puzzle.kind === "crowns"
+        ? "Place six crowns"
+        : "Connect the checkpoints"
+      : result(),
   );
   title.id = "puzzle-title";
   title.tabIndex = -1;
@@ -149,7 +184,9 @@ function draw() {
     content.push(
       el(
         "p",
-        `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
+        puzzle.kind === "crowns"
+          ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
+          : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
         "puzzle-progress",
       ),
     );
@@ -162,10 +199,16 @@ function draw() {
   const actions = el("div", undefined, "rot-actions");
   if (state.phase === "playing") {
     const undo = button("Undo", () => act({ type: "undo" }));
-    undo.disabled = state.selected.length === 0;
+    undo.disabled =
+      puzzle.kind === "path"
+        ? state.selected.length === 0
+        : state.history.length === 0;
     actions.append(undo);
     const reset = button("Restart", () => act({ type: "reset" }));
-    reset.disabled = state.selected.length === 0;
+    reset.disabled =
+      puzzle.kind === "path"
+        ? state.selected.length === 0
+        : !state.values.some(Boolean);
     actions.append(reset);
     const answer = el("details", undefined, "puzzle-assistance");
     answer.append(
