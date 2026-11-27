@@ -1,4 +1,4 @@
-import { ciWidths } from "./ci-parts.mjs";
+import { ciWidths, ciMotions } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium, webkit } from "playwright";
@@ -7,6 +7,11 @@ import { prepareVisual, visualSet } from "../dist/games/visual-puzzles.js";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const engine = process.argv.includes("--webkit") ? webkit : chromium;
 const out = `test-results/photo-map-motion/${engine.name()}`;
+const part = process.argv
+  .filter((arg) => arg.startsWith("--ci-"))
+  .map((arg) => arg.replace("--ci-", "").replace("=", "-"))
+  .join("_");
+const suffix = part ? `-${part}` : "";
 const browser = await engine.launch(),
   receipts = [],
   reports = [],
@@ -111,7 +116,7 @@ async function inspect(page, name) {
 }
 try {
   for (const width of ciWidths([390, 1440]))
-    for (const reducedMotion of ["no-preference", "reduce"]) {
+    for (const reducedMotion of ciMotions(["no-preference", "reduce"])) {
       const context = await browser.newContext({
         viewport: { width, height: width === 390 ? 620 : 1000 },
         colorScheme: "light",
@@ -307,8 +312,14 @@ try {
     }
 } finally {
   await browser.close();
-  await fs.writeFile(`${out}/receipt.json`, JSON.stringify(receipts, null, 2));
-  await fs.writeFile(`${out}/ui.json`, JSON.stringify(reports, null, 2));
+  await fs.writeFile(
+    `${out}/receipt${suffix}.json`,
+    JSON.stringify(receipts, null, 2),
+  );
+  await fs.writeFile(
+    `${out}/ui${suffix}.json`,
+    JSON.stringify(reports, null, 2),
+  );
 }
 assert.deepEqual(
   reports.flatMap((r) => r.findings.filter((f) => f.status !== "unresolved")),

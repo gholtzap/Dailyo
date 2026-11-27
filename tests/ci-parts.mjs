@@ -21,3 +21,14 @@ export function ciShared() {
     !process.argv.some((arg) => arg.startsWith("--ci-width="))
   );
 }
+
+export function ciMotions(motions) {
+  const part = process.argv.find((arg) => arg.startsWith("--ci-motion="));
+  if (!part) return motions;
+  const motion = part.slice("--ci-motion=".length);
+  assert.ok(
+    motions.includes(motion),
+    `Unknown CI motion preference: ${motion}`,
+  );
+  return [motion];
+}

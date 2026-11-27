@@ -44,8 +44,10 @@ if (actualWorld) {
   durationsMs[world.at(-1)] ??= 5000;
 }
 const split = {
-  "node tests/photo-map-motion.mjs": [390, 1440].map(
-    (width) => `--ci-width=${width}`,
+  "node tests/photo-map-motion.mjs": [390, 1440].flatMap((width) =>
+    ["no-preference", "reduce"].map(
+      (motion) => `--ci-width=${width} --ci-motion=${motion}`,
+    ),
   ),
   "node tests/app-layout.mjs": [320, 390, 1440].map(
     (width) => `--ci-width=${width}`,
@@ -92,6 +94,13 @@ for (const width of [390, 1440])
         durationsMs[`${prefix} --ci-difficulty=${difficulty}`] ??=
           durationsMs[prefix] / 2;
     }
+for (const width of [390, 1440])
+  for (const motion of ["no-preference", "reduce"])
+    durationsMs[
+      `node tests/photo-map-motion.mjs --ci-width=${width} --ci-motion=${motion}`
+    ] ??=
+      durationsMs[`node tests/photo-map-motion.mjs --ci-width=${width}`] / 2;
+
 const browser = scripts["test:e2e"].split(" && ").flatMap((command) => {
   const parts = split[command];
   if (!parts) return [command];
