@@ -118,6 +118,7 @@ try {
         colorScheme: "light",
         reducedMotion,
         hasTouch: width === 390,
+        isMobile: width === 390,
       });
       const page = await context.newPage();
       page.setDefaultTimeout(10000);
@@ -197,6 +198,7 @@ try {
           viewport: { width, height: width === 390 ? 620 : 1000 },
           colorScheme: "dark",
           hasTouch: width === 390,
+          isMobile: width === 390,
           reducedMotion,
         });
         await page.goto(`${base}/${game}/?practice=1`, {
@@ -265,6 +267,7 @@ try {
         viewport: { width, height: width === 390 ? 620 : 1000 },
         reducedMotion,
         hasTouch: width === 390,
+        isMobile: width === 390,
         colorScheme: "dark",
       });
       await mapPage.goto(`${base}/rush/maprot/`, {
