@@ -1121,14 +1121,16 @@
       "name": "Pear",
       "file": "Pears.jpg",
       "detailFocus": [36, 55],
-      "lookalikes": ["Apple", "Avocado", "Fig"]
+      "lookalikes": ["Apple", "Avocado", "Fig"],
+      "focus": [36, 55]
     },
     {
       "id": "pineapple",
       "name": "Pineapple",
       "file": "കൈതച്ചക്ക.jpg",
       "detailFocus": [50, 60],
-      "lookalikes": ["Pine cone", "Artichoke", "Jackfruit"]
+      "lookalikes": ["Pine cone", "Artichoke", "Jackfruit"],
+      "focus": [50, 60]
     },
     {
       "id": "watermelon",
@@ -1141,8 +1143,9 @@
       "id": "lemon",
       "name": "Lemon",
       "file": "P1030323.JPG",
-      "detailFocus": [50, 50],
-      "lookalikes": ["Lime", "Orange", "Grapefruit"]
+      "detailFocus": [84, 55],
+      "lookalikes": ["Lime", "Orange", "Grapefruit"],
+      "focus": [84, 55]
     },
     {
       "id": "lime",
