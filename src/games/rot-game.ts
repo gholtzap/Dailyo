@@ -1428,7 +1428,9 @@ async function start() {
       typeof saved?.seed === "string" && saved.seed.length < 100
         ? saved.seed
         : randomSeed();
-    return mountSession(practiceSlot(difficulty), seed, difficulty);
+    const session = mountSession(practiceSlot(difficulty), seed, difficulty);
+    write(practiceSlot(difficulty), session.state);
+    return session;
   };
   if (mode === "practice") sessions.practice = loadPractice();
   if (yearGame && !inFeed) {
@@ -1443,7 +1445,6 @@ async function start() {
         difficulty = next;
         write("difficulty", difficulty);
         sessions.practice = loadPractice();
-        write(practiceSlot(difficulty), sessions.practice.state);
         draw();
       },
     );

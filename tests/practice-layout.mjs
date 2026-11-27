@@ -36,6 +36,31 @@ try {
       );
       await p.getByRole("button", { name: "Practice", exact: true }).click();
       await p.locator('#practice[aria-pressed="true"]').waitFor();
+      if (["yearrot", "maprot", "borderrot"].includes(game)) {
+        const initial = await p.evaluate(
+          (game) =>
+            localStorage.getItem(
+              `dailyo:${game}:${game === "borderrot" ? "v2" : "v1"}:practice`,
+            ),
+          game,
+        );
+        assert.ok(
+          initial,
+          "Opening Practice must checkpoint its initial puzzle",
+        );
+        await p.reload();
+        await p.locator('#practice[aria-pressed="true"]').waitFor();
+        assert.equal(
+          await p.evaluate(
+            (game) =>
+              localStorage.getItem(
+                `dailyo:${game}:${game === "borderrot" ? "v2" : "v1"}:practice`,
+              ),
+            game,
+          ),
+          initial,
+        );
+      }
       assert.doesNotMatch(
         await p.locator("main").innerText(),
         /Daily difficulty\./,

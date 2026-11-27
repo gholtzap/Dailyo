@@ -118,7 +118,9 @@ function loadPractice() {
     saved.token.length < 100
       ? saved.token
       : seed();
-  return mount("practice", token);
+  const session = mount("practice", token);
+  save(session);
+  return session;
 }
 
 function selectMode(next: Mode) {
