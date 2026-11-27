@@ -1,3 +1,4 @@
+import { makeWordGrid, type WordGridPuzzle } from "./boards/word-grid.js";
 import { makeCrowns, crownsSolved, type CrownPuzzle } from "./boards/crowns.js";
 import {
   makePath,
@@ -6,7 +7,7 @@ import {
   type PathPuzzle,
 } from "./boards/path.js";
 import type { BoardGame } from "./board-catalog.js";
-export type BoardPuzzle = PathPuzzle | CrownPuzzle;
+export type BoardPuzzle = PathPuzzle | CrownPuzzle | WordGridPuzzle;
 export interface BoardState {
   phase: "playing" | "solved" | "revealed" | "failed";
   values: string[];
@@ -26,6 +27,8 @@ export type BoardAction =
   | { type: "check" };
 export function makeBoard(game: BoardGame, seed: string): BoardPuzzle {
   switch (game) {
+    case "wordgrid":
+      return makeWordGrid(seed);
     case "crowns":
       return makeCrowns(seed);
     case "path":
@@ -35,7 +38,8 @@ export function makeBoard(game: BoardGame, seed: string): BoardPuzzle {
 export function initialBoard(p: BoardPuzzle): BoardState {
   return {
     phase: "playing",
-    values: Array(p.size * p.size).fill(""),
+    values:
+      p.kind === "wordgrid" ? [...p.initial] : Array(p.size * p.size).fill(""),
     history: [],
     selected: [],
     found: [],
@@ -52,6 +56,57 @@ export function stepBoard(
   a: BoardAction,
 ): BoardState {
   if (a.type === "reset") return initialBoard(p);
+  if (p.kind === "wordgrid") {
+    if (a.type === "reveal" && s.phase !== "solved")
+      return {
+        ...s,
+        phase: "revealed",
+        values: [...p.solution],
+        selected: [],
+        notice: "",
+      };
+    if (s.phase !== "playing") return s;
+    if (a.type === "undo") {
+      const prior = s.history.at(-1);
+      return prior
+        ? {
+            ...s,
+            values: prior,
+            history: s.history.slice(0, -1),
+            moves: Math.max(0, s.moves - 1),
+            selected: [],
+            notice: "",
+          }
+        : s;
+    }
+    if (
+      a.type !== "cell" ||
+      !Number.isInteger(a.index) ||
+      a.index < 0 ||
+      a.index >= 25 ||
+      s.values[a.index] === "#" ||
+      s.values[a.index] === p.solution[a.index]
+    )
+      return s;
+    if (s.selected.length === 0) return { ...s, selected: [a.index] };
+    const from = s.selected[0];
+    if (from === a.index) return { ...s, selected: [] };
+    const values = [...s.values];
+    [values[from], values[a.index]] = [values[a.index], values[from]];
+    const moves = s.moves + 1;
+    return {
+      ...s,
+      values,
+      moves,
+      selected: [],
+      history: [...s.history, s.values],
+      phase: values.every((v, i) => v === p.solution[i])
+        ? "solved"
+        : moves >= p.maxMoves
+          ? "failed"
+          : "playing",
+    };
+  }
   if (s.phase !== "playing") return s;
   if (p.kind === "crowns") {
     if (a.type === "reveal")
@@ -118,6 +173,41 @@ export function restoreBoard(p: BoardPuzzle, raw: unknown): BoardState {
   const blank = initialBoard(p);
   if (!raw || typeof raw !== "object") return blank;
   const saved = raw as Partial<BoardState>;
+  if (p.kind === "wordgrid") {
+    const valid = (v: unknown): v is string[] =>
+      Array.isArray(v) &&
+      v.length === 25 &&
+      v.every(
+        (c, i) =>
+          typeof c === "string" &&
+          (p.solution[i] === "#" ? c === "#" : /^[A-Z]$/.test(c)),
+      ) &&
+      [...v].sort().join("") === [...p.initial].sort().join("");
+    if (
+      !valid(saved.values) ||
+      !Number.isInteger(saved.moves) ||
+      saved.moves! < 0 ||
+      saved.moves! > p.maxMoves
+    )
+      return blank;
+    if (saved.phase === "revealed")
+      return stepBoard(p, blank, { type: "reveal" });
+    const values = saved.values;
+    const phase = values.every((v, i) => v === p.solution[i])
+      ? "solved"
+      : saved.moves === p.maxMoves
+        ? "failed"
+        : "playing";
+    return {
+      ...blank,
+      values,
+      moves: saved.moves!,
+      phase,
+      history: Array.isArray(saved.history)
+        ? saved.history.filter(valid).slice(-15)
+        : [],
+    };
+  }
   if (p.kind === "crowns") {
     if (
       !Array.isArray(saved.values) ||

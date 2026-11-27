@@ -1,5 +1,10 @@
 export const boardGames = [
   {
+    id: "wordgrid",
+    name: "Word grid",
+    description: "Swap letters to complete six words",
+  },
+  {
     id: "crowns",
     name: "Crowns",
     description: "Place one crown in every region",

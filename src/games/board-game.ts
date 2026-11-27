@@ -70,7 +70,39 @@ function button(label: string, action: () => void, kind = "secondary") {
   b.onclick = action;
   return b;
 }
+function drawWordGrid() {
+  if (puzzle.kind !== "wordgrid") throw new Error("Wrong board");
+  const grid = el("div", undefined, "puzzle-grid columns-5 word-grid");
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "Word grid board");
+  puzzle.solution.forEach((target, i) => {
+    if (target === "#") {
+      const blank = el("div", undefined, "puzzle-block");
+      blank.setAttribute("aria-hidden", "true");
+      grid.append(blank);
+      return;
+    }
+    const value = state.values[i];
+    const b = button(
+      value,
+      () => act({ type: "cell", index: i }),
+      "puzzle-cell",
+    );
+    b.dataset.cell = String(i);
+    b.dataset.value = value;
+    b.classList.toggle("letter-right", value === target);
+    b.classList.toggle("is-picked", state.selected.includes(i));
+    b.disabled = state.phase !== "playing" || value === target;
+    b.setAttribute(
+      "aria-label",
+      `${value}, row ${Math.floor(i / 5) + 1}, column ${(i % 5) + 1}${value === target ? ", correct position" : ""}`,
+    );
+    grid.append(b);
+  });
+  return grid;
+}
 function drawBoard() {
+  if (puzzle.kind === "wordgrid") return drawWordGrid();
   const grid = el(
     "div",
     undefined,
@@ -172,9 +204,11 @@ function draw() {
   const title = el(
     "h2",
     state.phase === "playing"
-      ? puzzle.kind === "crowns"
-        ? "Place six crowns"
-        : "Connect the checkpoints"
+      ? puzzle.kind === "wordgrid"
+        ? "Complete six words"
+        : puzzle.kind === "crowns"
+          ? "Place six crowns"
+          : "Connect the checkpoints"
       : result(),
   );
   title.id = "puzzle-title";
@@ -184,9 +218,11 @@ function draw() {
     content.push(
       el(
         "p",
-        puzzle.kind === "crowns"
-          ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
-          : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
+        puzzle.kind === "wordgrid"
+          ? `${puzzle.maxMoves - state.moves} swaps left`
+          : puzzle.kind === "crowns"
+            ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
+            : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
         "puzzle-progress",
       ),
     );
@@ -223,6 +259,8 @@ function draw() {
       );
     else actions.append(button("New puzzle", newPuzzle, "primary"));
     actions.append(button("Copy results", copyResults));
+    if (state.phase === "failed")
+      actions.append(button("Show answer", () => act({ type: "reveal" })));
     content.push(actions);
   }
   quiz.replaceChildren(...content);
