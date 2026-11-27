@@ -1,3 +1,4 @@
+import { makeCrossword, type CrosswordPuzzle } from "./boards/crossword.js";
 import { makeWordGrid, type WordGridPuzzle } from "./boards/word-grid.js";
 import { makeCrowns, crownsSolved, type CrownPuzzle } from "./boards/crowns.js";
 import {
@@ -7,7 +8,8 @@ import {
   type PathPuzzle,
 } from "./boards/path.js";
 import type { BoardGame } from "./board-catalog.js";
-export type BoardPuzzle = PathPuzzle | CrownPuzzle | WordGridPuzzle;
+export type BoardPuzzle =
+  PathPuzzle | CrownPuzzle | WordGridPuzzle | CrosswordPuzzle;
 export interface BoardState {
   phase: "playing" | "solved" | "revealed" | "failed";
   values: string[];
@@ -27,6 +29,8 @@ export type BoardAction =
   | { type: "check" };
 export function makeBoard(game: BoardGame, seed: string): BoardPuzzle {
   switch (game) {
+    case "crossword":
+      return makeCrossword(seed);
     case "wordgrid":
       return makeWordGrid(seed);
     case "crowns":
@@ -39,7 +43,11 @@ export function initialBoard(p: BoardPuzzle): BoardState {
   return {
     phase: "playing",
     values:
-      p.kind === "wordgrid" ? [...p.initial] : Array(p.size * p.size).fill(""),
+      p.kind === "wordgrid"
+        ? [...p.initial]
+        : p.kind === "crossword"
+          ? p.solution.map((v) => (v === "#" ? "#" : ""))
+          : Array(p.size * p.size).fill(""),
     history: [],
     selected: [],
     found: [],
@@ -56,6 +64,49 @@ export function stepBoard(
   a: BoardAction,
 ): BoardState {
   if (a.type === "reset") return initialBoard(p);
+  if (p.kind === "crossword") {
+    if (a.type === "reveal")
+      return {
+        ...s,
+        phase: s.phase === "solved" ? "solved" : "revealed",
+        values: [...p.solution],
+        notice: "",
+      };
+    if (s.phase !== "playing") return s;
+    if (a.type === "undo") {
+      const prior = s.history.at(-1);
+      return prior
+        ? { ...s, values: prior, history: s.history.slice(0, -1), notice: "" }
+        : s;
+    }
+    if (a.type === "check") {
+      const wrong = s.values.filter((v, i) => v !== p.solution[i]).length;
+      return {
+        ...s,
+        notice: `${wrong} ${wrong === 1 ? "square needs" : "squares need"} another look.`,
+      };
+    }
+    if (
+      a.type !== "input" ||
+      !Number.isInteger(a.index) ||
+      a.index < 0 ||
+      a.index >= 25 ||
+      p.solution[a.index] === "#" ||
+      !/^([a-zA-Z]?)$/.test(a.value)
+    )
+      return s;
+    const values = [...s.values];
+    values[a.index] = a.value.toUpperCase();
+    if (values[a.index] === s.values[a.index]) return s;
+    return {
+      ...s,
+      values,
+      history: [...s.history, s.values].slice(-200),
+      moves: s.moves + 1,
+      notice: "",
+      phase: values.every((v, i) => v === p.solution[i]) ? "solved" : "playing",
+    };
+  }
   if (p.kind === "wordgrid") {
     if (a.type === "reveal" && s.phase !== "solved")
       return {
@@ -173,6 +224,30 @@ export function restoreBoard(p: BoardPuzzle, raw: unknown): BoardState {
   const blank = initialBoard(p);
   if (!raw || typeof raw !== "object") return blank;
   const saved = raw as Partial<BoardState>;
+  if (p.kind === "crossword") {
+    const valid = (v: unknown): v is string[] =>
+      Array.isArray(v) &&
+      v.length === 25 &&
+      v.every((c, i) =>
+        p.solution[i] === "#"
+          ? c === "#"
+          : typeof c === "string" && /^[A-Z]?$/.test(c),
+      );
+    if (!valid(saved.values)) return blank;
+    if (saved.phase === "revealed")
+      return stepBoard(p, blank, { type: "reveal" });
+    return {
+      ...blank,
+      values: saved.values,
+      phase: saved.values.every((v, i) => v === p.solution[i])
+        ? "solved"
+        : "playing",
+      history: Array.isArray(saved.history)
+        ? saved.history.filter(valid).slice(-200)
+        : [],
+    };
+  }
+
   if (p.kind === "wordgrid") {
     const valid = (v: unknown): v is string[] =>
       Array.isArray(v) &&
