@@ -1,0 +1,47 @@
+[
+  {
+    "event": [1719, "Robinson Crusoe is first published"],
+    "timeline": [
+      [1588, "The Spanish Armada sails against England"],
+      [1876, "Alexander Graham Bell receives his US telephone patent"]
+    ]
+  },
+  {
+    "event": [1666, "The Great Fire of London"],
+    "timeline": [
+      [1588, "The Spanish Armada sails against England"],
+      [1719, "Robinson Crusoe is first published"],
+      [1876, "Alexander Graham Bell receives his US telephone patent"]
+    ]
+  },
+  {
+    "event": [1066, "Battle of Hastings"],
+    "timeline": [
+      [1588, "The Spanish Armada sails against England"],
+      [1666, "The Great Fire of London"],
+      [1719, "Robinson Crusoe is first published"],
+      [1876, "Alexander Graham Bell receives his US telephone patent"]
+    ]
+  },
+  {
+    "event": [1543, "Copernicus publishes his Sun-centered model"],
+    "timeline": [
+      [1066, "Battle of Hastings"],
+      [1588, "The Spanish Armada sails against England"],
+      [1666, "The Great Fire of London"],
+      [1719, "Robinson Crusoe is first published"],
+      [1876, "Alexander Graham Bell receives his US telephone patent"]
+    ]
+  },
+  {
+    "event": [1752, "Britain adopts the Gregorian calendar"],
+    "timeline": [
+      [1066, "Battle of Hastings"],
+      [1543, "Copernicus publishes his Sun-centered model"],
+      [1588, "The Spanish Armada sails against England"],
+      [1666, "The Great Fire of London"],
+      [1719, "Robinson Crusoe is first published"],
+      [1876, "Alexander Graham Bell receives his US telephone patent"]
+    ]
+  }
+]

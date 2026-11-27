@@ -1,56 +1,802 @@
 [
-  [1066, "Battle of Hastings"],
-  [1215, "Magna Carta is sealed"],
-  [1453, "Constantinople falls to the Ottoman Empire"],
-  [1492, "Columbus’s first voyage reaches the Caribbean"],
-  [1501, "Michelangelo begins carving David"],
-  [1517, "Martin Luther circulates the Ninety-five Theses"],
-  [1543, "Copernicus publishes his Sun-centered model"],
-  [1588, "The Spanish Armada sails against England"],
-  [1605, "The first part of Don Quixote is published"],
-  [1632, "Galileo publishes his Dialogue on the two world systems"],
-  [1666, "The Great Fire of London"],
-  [1687, "Newton publishes Principia Mathematica"],
-  [1719, "Robinson Crusoe is first published"],
-  [1752, "Britain adopts the Gregorian calendar"],
-  [1776, "The US Declaration of Independence is adopted"],
-  [1789, "The Bastille is stormed"],
-  [1804, "Haiti declares independence"],
-  [1815, "The Battle of Waterloo"],
-  [1825, "The Stockton and Darlington Railway opens"],
-  [1839, "The daguerreotype process is announced publicly"],
-  [1848, "The Communist Manifesto is published"],
-  [1859, "Darwin publishes On the Origin of Species"],
-  [1869, "The Suez Canal opens"],
-  [1876, "Alexander Graham Bell receives his US telephone patent"],
-  [1889, "The Eiffel Tower opens to the public"],
-  [1896, "The first modern Olympic Games are held in Athens"],
-  [1903, "The Wright brothers make their first powered flights"],
-  [1908, "The first Ford Model T is produced"],
-  [1912, "The Titanic sinks on its maiden voyage"],
-  [1914, "The Panama Canal opens"],
-  [1922, "Tutankhamun’s tomb is discovered"],
-  [1927, "Lindbergh flies solo nonstop across the Atlantic"],
-  [1929, "The first Academy Awards ceremony"],
-  [1937, "The Golden Gate Bridge opens"],
-  [1939, "Germany invades Poland"],
-  [1945, "The United Nations is founded"],
-  [1947, "India becomes independent from Britain"],
-  [1953, "The first confirmed ascent of Mount Everest"],
-  [1957, "Sputnik 1 becomes the first artificial satellite"],
-  [1961, "Yuri Gagarin becomes the first person in space"],
-  [1969, "Apollo 11 lands on the Moon"],
-  [1971, "Apollo 15 astronauts first drive a rover on the Moon"],
-  [1977, "Voyager 1 launches"],
-  [1981, "The first Space Shuttle flight"],
-  [1989, "The Berlin Wall opens"],
-  [1993, "CERN makes World Wide Web software freely available"],
-  [1998, "The first International Space Station module launches"],
-  [2001, "Wikipedia launches"],
-  [2004, "The first privately funded crewed spaceflight"],
-  [2007, "The first iPhone goes on sale"],
-  [2012, "The Curiosity rover lands on Mars"],
-  [2015, "New Horizons flies past Pluto"],
-  [2019, "The first image of a black hole is released"],
-  [2021, "The James Webb Space Telescope launches"]
+  [
+    1066,
+    "Battle of Hastings"
+  ],
+  [
+    1215,
+    "Magna Carta is sealed"
+  ],
+  [
+    1453,
+    "Constantinople falls to the Ottoman Empire"
+  ],
+  [
+    1492,
+    "Columbus’s first voyage reaches the Caribbean"
+  ],
+  [
+    1501,
+    "Michelangelo begins carving David"
+  ],
+  [
+    1517,
+    "Martin Luther circulates the Ninety-five Theses"
+  ],
+  [
+    1543,
+    "Copernicus publishes his Sun-centered model"
+  ],
+  [
+    1588,
+    "The Spanish Armada sails against England"
+  ],
+  [
+    1605,
+    "The first part of Don Quixote is published"
+  ],
+  [
+    1632,
+    "Galileo publishes his Dialogue on the two world systems"
+  ],
+  [
+    1666,
+    "The Great Fire of London"
+  ],
+  [
+    1687,
+    "Newton publishes Principia Mathematica"
+  ],
+  [
+    1719,
+    "Robinson Crusoe is first published"
+  ],
+  [
+    1752,
+    "Britain adopts the Gregorian calendar"
+  ],
+  [
+    1776,
+    "The US Declaration of Independence is adopted"
+  ],
+  [
+    1789,
+    "The Bastille is stormed"
+  ],
+  [
+    1804,
+    "Haiti declares independence"
+  ],
+  [
+    1815,
+    "The Battle of Waterloo"
+  ],
+  [
+    1825,
+    "The Stockton and Darlington Railway opens"
+  ],
+  [
+    1839,
+    "The daguerreotype process is announced publicly"
+  ],
+  [
+    1848,
+    "The Communist Manifesto is published"
+  ],
+  [
+    1859,
+    "Darwin publishes On the Origin of Species"
+  ],
+  [
+    1869,
+    "The Suez Canal opens"
+  ],
+  [
+    1876,
+    "Alexander Graham Bell receives his US telephone patent"
+  ],
+  [
+    1889,
+    "The Eiffel Tower opens to the public"
+  ],
+  [
+    1896,
+    "The first modern Olympic Games are held in Athens"
+  ],
+  [
+    1903,
+    "The Wright brothers make their first powered flights"
+  ],
+  [
+    1908,
+    "The first Ford Model T is produced"
+  ],
+  [
+    1912,
+    "The Titanic sinks on its maiden voyage"
+  ],
+  [
+    1914,
+    "The Panama Canal opens"
+  ],
+  [
+    1922,
+    "Tutankhamun’s tomb is discovered"
+  ],
+  [
+    1927,
+    "Lindbergh flies solo nonstop across the Atlantic"
+  ],
+  [
+    1929,
+    "The first Academy Awards ceremony"
+  ],
+  [
+    1937,
+    "The Golden Gate Bridge opens"
+  ],
+  [
+    1939,
+    "Germany invades Poland"
+  ],
+  [
+    1945,
+    "The United Nations is founded"
+  ],
+  [
+    1947,
+    "India becomes independent from Britain"
+  ],
+  [
+    1953,
+    "The first confirmed ascent of Mount Everest"
+  ],
+  [
+    1957,
+    "Sputnik 1 becomes the first artificial satellite"
+  ],
+  [
+    1961,
+    "Yuri Gagarin becomes the first person in space"
+  ],
+  [
+    1969,
+    "Apollo 11 lands on the Moon"
+  ],
+  [
+    1971,
+    "Apollo 15 astronauts first drive a rover on the Moon"
+  ],
+  [
+    1977,
+    "Voyager 1 launches"
+  ],
+  [
+    1981,
+    "The first Space Shuttle flight"
+  ],
+  [
+    1989,
+    "The Berlin Wall opens"
+  ],
+  [
+    1993,
+    "CERN makes World Wide Web software freely available"
+  ],
+  [
+    1998,
+    "The first International Space Station module launches"
+  ],
+  [
+    2001,
+    "Wikipedia launches"
+  ],
+  [
+    2004,
+    "The first privately funded crewed spaceflight"
+  ],
+  [
+    2007,
+    "The first iPhone goes on sale"
+  ],
+  [
+    2012,
+    "The Curiosity rover lands on Mars"
+  ],
+  [
+    2015,
+    "New Horizons flies past Pluto"
+  ],
+  [
+    2019,
+    "The first image of a black hole is released"
+  ],
+  [
+    2021,
+    "The James Webb Space Telescope launches"
+  ],
+  [
+    79,
+    "Mount Vesuvius buries Pompeii"
+  ],
+  [
+    313,
+    "The Edict of Milan grants religious toleration"
+  ],
+  [
+    476,
+    "Romulus Augustulus is deposed"
+  ],
+  [
+    622,
+    "Muhammad's migration from Mecca to Medina"
+  ],
+  [
+    800,
+    "Charlemagne is crowned emperor in Rome"
+  ],
+  [
+    843,
+    "The Treaty of Verdun divides the Carolingian Empire"
+  ],
+  [
+    1054,
+    "The East–West Schism divides the churches"
+  ],
+  [
+    1096,
+    "The First Crusade begins"
+  ],
+  [
+    1206,
+    "Temujin is proclaimed Genghis Khan"
+  ],
+  [
+    1271,
+    "Marco Polo begins his journey to Asia"
+  ],
+  [
+    1324,
+    "Mansa Musa makes his pilgrimage to Mecca"
+  ],
+  [
+    1347,
+    "The Black Death reaches Sicily"
+  ],
+  [
+    1431,
+    "Joan of Arc is executed"
+  ],
+  [
+    1488,
+    "Bartolomeu Dias rounds the Cape of Good Hope"
+  ],
+  [
+    1498,
+    "Vasco da Gama reaches India by sea"
+  ],
+  [
+    1519,
+    "Magellan's expedition sets sail"
+  ],
+  [
+    1522,
+    "Magellan's expedition completes the first circumnavigation"
+  ],
+  [
+    1564,
+    "William Shakespeare is born"
+  ],
+  [
+    1600,
+    "The English East India Company receives its royal charter"
+  ],
+  [
+    1607,
+    "Jamestown is founded in Virginia"
+  ],
+  [
+    1609,
+    "Galileo begins making telescopic observations of the sky"
+  ],
+  [
+    1610,
+    "Galileo discovers four large moons of Jupiter"
+  ],
+  [
+    1616,
+    "William Shakespeare dies"
+  ],
+  [
+    1620,
+    "The Mayflower reaches New England"
+  ],
+  [
+    1642,
+    "The English Civil War begins"
+  ],
+  [
+    1648,
+    "The Peace of Westphalia is signed"
+  ],
+  [
+    1665,
+    "London suffers the Great Plague"
+  ],
+  [
+    1707,
+    "England and Scotland unite as Great Britain"
+  ],
+  [
+    1727,
+    "Isaac Newton dies"
+  ],
+  [
+    1755,
+    "A major earthquake strikes Lisbon"
+  ],
+  [
+    1769,
+    "James Watt patents his separate steam condenser"
+  ],
+  [
+    1781,
+    "William Herschel discovers Uranus"
+  ],
+  [
+    1783,
+    "The first untethered crewed hot-air balloon flight"
+  ],
+  [
+    1791,
+    "Wolfgang Amadeus Mozart dies"
+  ],
+  [
+    1796,
+    "Edward Jenner tests a smallpox vaccination"
+  ],
+  [
+    1799,
+    "The Rosetta Stone is discovered"
+  ],
+  [
+    1807,
+    "Robert Fulton's steamboat begins regular Hudson River service"
+  ],
+  [
+    1822,
+    "Champollion announces his decipherment of Egyptian hieroglyphs"
+  ],
+  [
+    1831,
+    "Darwin sets sail aboard HMS Beagle"
+  ],
+  [
+    1837,
+    "Victoria becomes queen of the United Kingdom"
+  ],
+  [
+    1844,
+    "Morse sends a telegraph message from Washington to Baltimore"
+  ],
+  [
+    1846,
+    "Neptune is discovered"
+  ],
+  [
+    1851,
+    "The Great Exhibition opens in London"
+  ],
+  [
+    1858,
+    "Darwin and Wallace's ideas on natural selection are presented"
+  ],
+  [
+    1861,
+    "The American Civil War begins"
+  ],
+  [
+    1863,
+    "The Emancipation Proclamation takes effect"
+  ],
+  [
+    1865,
+    "The American Civil War ends"
+  ],
+  [
+    1867,
+    "Canadian Confederation takes place"
+  ],
+  [
+    1871,
+    "The German Empire is proclaimed"
+  ],
+  [
+    1872,
+    "Yellowstone becomes a national park"
+  ],
+  [
+    1879,
+    "Edison publicly demonstrates his practical incandescent lighting system"
+  ],
+  [
+    1883,
+    "Krakatoa erupts catastrophically"
+  ],
+  [
+    1886,
+    "Karl Benz receives his motorcar patent"
+  ],
+  [
+    1888,
+    "The first Kodak camera goes on sale"
+  ],
+  [
+    1893,
+    "The World's Columbian Exposition opens in Chicago"
+  ],
+  [
+    1895,
+    "Röntgen discovers X-rays"
+  ],
+  [
+    1898,
+    "Marie and Pierre Curie announce polonium and radium"
+  ],
+  [
+    1900,
+    "The first Zeppelin airship makes its maiden flight"
+  ],
+  [
+    1901,
+    "The first Nobel Prizes are awarded"
+  ],
+  [
+    1905,
+    "Einstein publishes his theory of special relativity"
+  ],
+  [
+    1906,
+    "A major earthquake strikes San Francisco"
+  ],
+  [
+    1911,
+    "Amundsen's expedition reaches the South Pole"
+  ],
+  [
+    1913,
+    "Ford introduces a moving automobile assembly line"
+  ],
+  [
+    1917,
+    "The Russian revolutions overthrow the old political order"
+  ],
+  [
+    1918,
+    "The First World War armistice takes effect"
+  ],
+  [
+    1920,
+    "The League of Nations comes into existence"
+  ],
+  [
+    1924,
+    "The first Winter Olympic Games are held in Chamonix"
+  ],
+  [
+    1926,
+    "Goddard launches the first liquid-fueled rocket"
+  ],
+  [
+    1928,
+    "Fleming discovers penicillin"
+  ],
+  [
+    1930,
+    "The first FIFA World Cup is held in Uruguay"
+  ],
+  [
+    1931,
+    "The Empire State Building opens"
+  ],
+  [
+    1932,
+    "Amelia Earhart flies solo nonstop across the Atlantic"
+  ],
+  [
+    1933,
+    "Prohibition ends in the United States"
+  ],
+  [
+    1935,
+    "The first Penguin paperbacks are published"
+  ],
+  [
+    1936,
+    "The Berlin Olympic Games are held"
+  ],
+  [
+    1938,
+    "Hahn and Strassmann's experiments reveal nuclear fission"
+  ],
+  [
+    1940,
+    "The Battle of Britain takes place"
+  ],
+  [
+    1941,
+    "Japan attacks Pearl Harbor"
+  ],
+  [
+    1944,
+    "Allied forces land in Normandy on D-Day"
+  ],
+  [
+    1946,
+    "ENIAC is publicly unveiled"
+  ],
+  [
+    1948,
+    "The World Health Organization is established"
+  ],
+  [
+    1949,
+    "NATO is founded"
+  ],
+  [
+    1950,
+    "The Korean War begins"
+  ],
+  [
+    1951,
+    "The US Census Bureau receives the first UNIVAC I"
+  ],
+  [
+    1952,
+    "Elizabeth II becomes queen"
+  ],
+  [
+    1954,
+    "The first successful human kidney transplant"
+  ],
+  [
+    1955,
+    "Rosa Parks refuses to give up her bus seat"
+  ],
+  [
+    1956,
+    "The first Eurovision Song Contest is held"
+  ],
+  [
+    1958,
+    "NASA begins operations"
+  ],
+  [
+    1959,
+    "Luna 2 becomes the first spacecraft to reach the Moon"
+  ],
+  [
+    1960,
+    "The first working laser is demonstrated"
+  ],
+  [
+    1962,
+    "The Cuban Missile Crisis takes place"
+  ],
+  [
+    1963,
+    "The March on Washington takes place"
+  ],
+  [
+    1964,
+    "Tokyo hosts the Summer Olympic Games"
+  ],
+  [
+    1965,
+    "Alexei Leonov makes the first spacewalk"
+  ],
+  [
+    1966,
+    "Luna 9 makes the first soft landing on the Moon"
+  ],
+  [
+    1967,
+    "The first human-to-human heart transplant"
+  ],
+  [
+    1968,
+    "Mexico City hosts the Summer Olympic Games"
+  ],
+  [
+    1970,
+    "Apollo 13 returns safely to Earth"
+  ],
+  [
+    1972,
+    "Apollo 17 makes the last crewed Moon landing of the twentieth century"
+  ],
+  [
+    1973,
+    "The Sydney Opera House opens"
+  ],
+  [
+    1974,
+    "The fossil skeleton known as Lucy is discovered"
+  ],
+  [
+    1975,
+    "Viking 1 launches toward Mars"
+  ],
+  [
+    1976,
+    "Viking 1 lands on Mars"
+  ],
+  [
+    1978,
+    "The first baby conceived through IVF is born"
+  ],
+  [
+    1979,
+    "Sony introduces the Walkman"
+  ],
+  [
+    1980,
+    "Mount St. Helens erupts"
+  ],
+  [
+    1982,
+    "Commercial compact discs launch in Japan"
+  ],
+  [
+    1983,
+    "ARPANET switches to TCP/IP"
+  ],
+  [
+    1984,
+    "Apple introduces the Macintosh"
+  ],
+  [
+    1985,
+    "The wreck of the Titanic is found"
+  ],
+  [
+    1986,
+    "The Chernobyl nuclear disaster"
+  ],
+  [
+    1987,
+    "The Montreal Protocol is signed"
+  ],
+  [
+    1988,
+    "Seoul hosts the Summer Olympic Games"
+  ],
+  [
+    1990,
+    "The Hubble Space Telescope launches"
+  ],
+  [
+    1991,
+    "The Soviet Union dissolves"
+  ],
+  [
+    1992,
+    "Barcelona hosts the Summer Olympic Games"
+  ],
+  [
+    1994,
+    "The Channel Tunnel officially opens"
+  ],
+  [
+    1995,
+    "Toy Story is released"
+  ],
+  [
+    1996,
+    "Dolly the sheep is born"
+  ],
+  [
+    1997,
+    "Hong Kong is handed over to China"
+  ],
+  [
+    1999,
+    "The euro is introduced as an accounting currency"
+  ],
+  [
+    2000,
+    "Sydney hosts the Summer Olympic Games"
+  ],
+  [
+    2002,
+    "Euro banknotes and coins enter circulation"
+  ],
+  [
+    2003,
+    "The Human Genome Project announces completion"
+  ],
+  [
+    2005,
+    "Huygens lands on Titan"
+  ],
+  [
+    2006,
+    "Pluto is reclassified as a dwarf planet"
+  ],
+  [
+    2008,
+    "Beijing hosts the Summer Olympic Games"
+  ],
+  [
+    2009,
+    "The Kepler space telescope launches"
+  ],
+  [
+    2010,
+    "The Burj Khalifa officially opens"
+  ],
+  [
+    2011,
+    "Atlantis flies the final Space Shuttle mission"
+  ],
+  [
+    2014,
+    "Rosetta enters orbit around comet 67P"
+  ],
+  [
+    2016,
+    "Juno enters orbit around Jupiter"
+  ],
+  [
+    2017,
+    "Cassini ends its mission by entering Saturn's atmosphere"
+  ],
+  [
+    2018,
+    "The Parker Solar Probe launches"
+  ],
+  [
+    2020,
+    "Crew Dragon launches astronauts for the first time"
+  ],
+  [
+    2022,
+    "The James Webb Space Telescope's first full-color images are released"
+  ],
+  [
+    2023,
+    "India's Chandrayaan-3 lands on the Moon"
+  ],
+  [
+    2024,
+    "Paris hosts the Summer Olympic Games"
+  ],
+  [
+    1558,
+    "Elizabeth I becomes queen of England"
+  ],
+  [
+    1582,
+    "The Gregorian calendar is introduced"
+  ],
+  [
+    1192,
+    "Minamoto no Yoritomo is appointed shogun"
+  ],
+  [
+    1405,
+    "Zheng He begins his first major maritime expedition"
+  ],
+  [
+    1521,
+    "Tenochtitlan falls to Spanish-led forces"
+  ],
+  [
+    1637,
+    "Descartes publishes Discourse on the Method"
+  ],
+  [
+    1816,
+    "Argentina declares independence"
+  ]
 ]

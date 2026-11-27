@@ -292,6 +292,11 @@ try {
       await read(`../dist/games/data/${kind}.json`),
     );
     const questions = makeSet(kind, data, day);
+    if (kind === "yearrot")
+      assert.deepEqual(
+        makeSet(kind, data, "2026-11-27"),
+        await read("./fixtures/issued-year-puzzle.json"),
+      );
     if (kind === "borderrot") {
       assert.deepEqual(
         data.items.find((route) => route[0] === "IT" && route.at(-1) === "PT"),
