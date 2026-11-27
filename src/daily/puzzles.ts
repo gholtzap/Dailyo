@@ -101,7 +101,7 @@ export function quizOptions(
 }
 
 export const quizDeck = (items: QuizItem[], kind: string, day: string) =>
-  shuffle(items, `daily:${kind}:${day}`).slice(0, 5);
+  shuffle(quizPool(items, kind, day), `daily:${kind}:${day}`).slice(0, 5);
 export const quizPuzzle = (deck: QuizItem[]) =>
   JSON.stringify(deck.map((item) => item.id));
 export const trainPuzzle = (network: Network, challenge: Challenge) =>
@@ -121,4 +121,14 @@ export function languageSample(samples: string[], seed: string) {
   const date = /^(?:daily|rush):languages:(\d{4}-\d{2}-\d{2}):/.exec(seed)?.[1];
   const pool = date && date <= "2026-11-27" ? samples.slice(0, 8) : samples;
   return pool[hash(`${seed}:sample`) % pool.length];
+}
+
+export function quizPool(items: QuizItem[], kind: string, seed: string) {
+  const date =
+    /^(?:daily:[a-z]+:|rush:[a-z]+:)?(\d{4}-\d{2}-\d{2})(?::|$)/.exec(
+      seed,
+    )?.[1];
+  return kind === "vocabulary" && date && date <= "2026-11-27"
+    ? items.slice(0, 30)
+    : items;
 }

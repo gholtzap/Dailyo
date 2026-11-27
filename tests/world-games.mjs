@@ -22,6 +22,11 @@ const issuedLanguageSamples = JSON.parse(
     new URL("./fixtures/issued-language-samples.json", import.meta.url),
   ),
 );
+const issuedVocabulary = JSON.parse(
+  fs.readFileSync(
+    new URL("./fixtures/issued-vocabulary.json", import.meta.url),
+  ),
+);
 const browser = await chromium.launch();
 try {
   for (const kind of ["flags", "languages", "vocabulary"])
@@ -127,6 +132,7 @@ try {
         const prompt = await content(page);
         if (kind === "languages" && i < 5 && prompts.length < 5)
           assert.equal(prompt, issuedLanguageSamples[i]);
+        if (kind === "vocabulary") assert.equal(prompt, issuedVocabulary[i]);
         assert.equal(await content(other), prompt);
         prompts.push(prompt);
         const name = await answer(page),

@@ -15,6 +15,7 @@ import {
 import {
   shuffle,
   quizDeck,
+  quizPool,
   quizOptions,
   quizPuzzle,
   languageSample,
@@ -184,7 +185,7 @@ function question() {
   return {
     item: (mode === "daily" && rushRound === null
       ? dailyDeck()
-      : shuffle(items, seed))[s.index],
+      : shuffle(quizPool(items, kind, seed), seed))[s.index],
     seed: `${seed}:${s.index}`,
   };
 }

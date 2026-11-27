@@ -1,32 +1,1222 @@
 [
-  {"id": "laconic", "name": "Using very few words", "distractors": ["Speaking with unusual precision", "Taking a long time to answer", "Avoiding a direct answer"], "example": "His laconic reply was “No.”"},
-  {"id": "candid", "name": "Frank and honest", "distractors": ["Tactful and diplomatic", "Formal and restrained", "Careful to hide one's intentions"], "example": "She was candid about why the plan had failed."},
-  {"id": "meticulous", "name": "Very attentive to detail", "distractors": ["Quick to make decisions", "Unwilling to change course", "Skilled at improvising"], "example": "His meticulous notes included the time and place of every interview."},
-  {"id": "ambivalent", "name": "Having mixed feelings", "distractors": ["Feeling no interest", "Having a strong preference", "Willing to let others decide"], "example": "Lena felt ambivalent about moving closer to work and farther from her friends."},
-  {"id": "plausible", "name": "Seeming believable", "distractors": ["Proven beyond doubt", "Likely to offend", "Easy to verify independently"], "example": "His explanation sounded plausible until I checked the dates."},
-  {"id": "elusive", "name": "Difficult to find, catch, or understand", "distractors": ["Likely to disappear soon", "Impossible to distinguish from another", "Easy to overlook because it is ordinary"], "example": "A permanent solution remained elusive despite months of testing."},
-  {"id": "pragmatic", "name": "Focused on what works in practice", "distractors": ["Guided mainly by tradition", "Concerned with abstract principles", "Driven by a desire to innovate"], "example": "She took a pragmatic approach and fixed the leaky window before replacing the trim."},
-  {"id": "cursory", "name": "Quick and lacking thoroughness", "distractors": ["Slow and methodical", "Repeated at regular intervals", "Restricted to a narrow specialty"], "example": "A cursory glance at the menu missed the specials printed on the back."},
-  {"id": "sporadic", "name": "Occurring at irregular intervals", "distractors": ["Occurring at fixed intervals", "Continuing without interruption", "Happening once and never again"], "example": "Sporadic showers sent us indoors twice that afternoon."},
-  {"id": "frugal", "name": "Careful about spending or using resources", "distractors": ["Willing to pay more for quality", "Unable to afford basic necessities", "Eager to share possessions"], "example": "A frugal cook, he made stock from vegetable scraps."},
-  {"id": "verbose", "name": "Using more words than necessary", "distractors": ["Speaking in a loud voice", "Using highly technical language", "Repeating exactly what someone said"], "example": "The verbose instructions took three paragraphs to explain how to plug it in."},
-  {"id": "wary", "name": "Cautious about possible danger or trouble", "distractors": ["Eager to take a calculated risk", "Embarrassed by a past mistake", "Unaware of a potential problem"], "example": "I was wary of opening an attachment from an unknown sender."},
-  {"id": "tenacious", "name": "Persistent and unwilling to give up", "distractors": ["Quick to recover after a setback", "Uncertain about what to pursue", "Eager to avoid disagreement"], "example": "The tenacious reporter kept requesting the records for months."},
-  {"id": "unequivocal", "name": "Clear and leaving no room for doubt", "distractors": ["Open to several interpretations", "Brief enough to be overlooked", "Polite but difficult to accept"], "example": "The inspector gave an unequivocal answer: the bridge had to close."},
-  {"id": "mundane", "name": "Ordinary and unremarkable", "distractors": ["Old-fashioned but still useful", "Repetitive and physically exhausting", "Rare but easy to recognize"], "example": "They chatted about mundane things like groceries and laundry."},
-  {"id": "redundant", "name": "Unnecessary because it duplicates something", "distractors": ["Useful only in emergencies", "Essential but often overlooked", "Included for clarification"], "example": "The second reminder was redundant because everyone had already received the first."},
-  {"id": "impartial", "name": "Fair and without favoritism", "distractors": ["Quick to form an opinion", "Reluctant to express an opinion", "Willing to compromise on every point"], "example": "They asked an impartial referee to settle the dispute."},
-  {"id": "tacit", "name": "Understood without being directly expressed", "distractors": ["Stated in precise terms", "Kept secret by explicit agreement", "Accepted only after debate"], "example": "They had a tacit agreement to leave the office door open."},
-  {"id": "obscure", "name": "Little known or hard to understand", "distractors": ["Recently discovered and widely discussed", "Intentionally false or misleading", "Easy to explain in simple terms"], "example": "The archive held an obscure pamphlet about a forgotten local election."},
-  {"id": "resilient", "name": "Able to recover after difficulty", "distractors": ["Able to prevent any damage", "Likely to break without warning", "Unwilling to adjust to changing conditions"], "example": "The resilient plants put out new leaves after the frost."},
-  {"id": "transient", "name": "Lasting only a short time", "distractors": ["Returning at predictable intervals", "Changing slowly over many years", "Continuing as long as conditions stay stable"], "example": "The headache was transient and faded before lunch."},
-  {"id": "prolific", "name": "Producing a large amount of work or output", "distractors": ["Producing work of exceptional quality", "Starting many projects and finishing few", "Working steadily on a single project"], "example": "The prolific author published six novels in four years."},
-  {"id": "scrutinize", "name": "Examine closely and carefully", "distractors": ["Summarize the most important points", "Approve after a routine check", "Compare two things from memory"], "example": "Please scrutinize the bill before we pay it."},
-  {"id": "anecdotal", "name": "Based on personal accounts or isolated examples", "distractors": ["Based on a representative survey", "Based on a controlled experiment", "Based on an established mathematical proof"], "example": "The evidence was anecdotal: three customers said their packages arrived early."},
-  {"id": "discern", "name": "Detect or recognize something that is hard to notice", "distractors": ["Conceal something that others might notice", "Describe something in exact detail", "Predict something from a familiar pattern"], "example": "In the fog I could barely discern the outline of the pier."},
-  {"id": "alleviate", "name": "Make suffering or a problem less severe", "distractors": ["Find the underlying cause of a problem", "Delay dealing with a problem", "Prevent a problem from starting"], "example": "A cold compress helped alleviate the swelling."},
-  {"id": "corroborate", "name": "Support a claim with additional evidence", "distractors": ["Repeat a claim without checking it", "Explain why two accounts disagree", "Withdraw a claim after an objection"], "example": "Two independent witnesses could corroborate her account."},
-  {"id": "exacerbate", "name": "Make an existing problem worse", "distractors": ["Bring a hidden problem to light", "Make a problem easier to tolerate", "Replace one problem with an unrelated one"], "example": "The detour threatened to exacerbate congestion downtown."},
-  {"id": "vindicate", "name": "Show that someone was right or free from blame", "distractors": ["Forgive someone without deciding who was right", "Punish someone for breaking a rule", "Explain someone's motives without defending them"], "example": "The newly recovered logs helped vindicate the engineer."},
-  {"id": "reconcile", "name": "Bring opposing accounts or views into agreement", "distractors": ["Choose one account without considering the other", "Collect every account in one place", "Keep two accounts from being compared"], "example": "The clerk managed to reconcile the receipts with the cash in the drawer."}
+  {
+    "id": "laconic",
+    "name": "Using very few words",
+    "distractors": [
+      "Speaking with unusual precision",
+      "Taking a long time to answer",
+      "Avoiding a direct answer"
+    ],
+    "example": "His laconic reply was \u201cNo.\u201d"
+  },
+  {
+    "id": "candid",
+    "name": "Frank and honest",
+    "distractors": [
+      "Tactful and diplomatic",
+      "Formal and restrained",
+      "Careful to hide one's intentions"
+    ],
+    "example": "She was candid about why the plan had failed."
+  },
+  {
+    "id": "meticulous",
+    "name": "Very attentive to detail",
+    "distractors": [
+      "Quick to make decisions",
+      "Unwilling to change course",
+      "Skilled at improvising"
+    ],
+    "example": "His meticulous notes included the time and place of every interview."
+  },
+  {
+    "id": "ambivalent",
+    "name": "Having mixed feelings",
+    "distractors": [
+      "Feeling no interest",
+      "Having a strong preference",
+      "Willing to let others decide"
+    ],
+    "example": "Lena felt ambivalent about moving closer to work and farther from her friends."
+  },
+  {
+    "id": "plausible",
+    "name": "Seeming believable",
+    "distractors": [
+      "Proven beyond doubt",
+      "Likely to offend",
+      "Easy to verify independently"
+    ],
+    "example": "His explanation sounded plausible until I checked the dates."
+  },
+  {
+    "id": "elusive",
+    "name": "Difficult to find, catch, or understand",
+    "distractors": [
+      "Likely to disappear soon",
+      "Impossible to distinguish from another",
+      "Easy to overlook because it is ordinary"
+    ],
+    "example": "A permanent solution remained elusive despite months of testing."
+  },
+  {
+    "id": "pragmatic",
+    "name": "Focused on what works in practice",
+    "distractors": [
+      "Guided mainly by tradition",
+      "Concerned with abstract principles",
+      "Driven by a desire to innovate"
+    ],
+    "example": "She took a pragmatic approach and fixed the leaky window before replacing the trim."
+  },
+  {
+    "id": "cursory",
+    "name": "Quick and lacking thoroughness",
+    "distractors": [
+      "Slow and methodical",
+      "Repeated at regular intervals",
+      "Restricted to a narrow specialty"
+    ],
+    "example": "A cursory glance at the menu missed the specials printed on the back."
+  },
+  {
+    "id": "sporadic",
+    "name": "Occurring at irregular intervals",
+    "distractors": [
+      "Occurring at fixed intervals",
+      "Continuing without interruption",
+      "Happening once and never again"
+    ],
+    "example": "Sporadic showers sent us indoors twice that afternoon."
+  },
+  {
+    "id": "frugal",
+    "name": "Careful about spending or using resources",
+    "distractors": [
+      "Willing to pay more for quality",
+      "Unable to afford basic necessities",
+      "Eager to share possessions"
+    ],
+    "example": "A frugal cook, he made stock from vegetable scraps."
+  },
+  {
+    "id": "verbose",
+    "name": "Using more words than necessary",
+    "distractors": [
+      "Speaking in a loud voice",
+      "Using highly technical language",
+      "Repeating exactly what someone said"
+    ],
+    "example": "The verbose instructions took three paragraphs to explain how to plug it in."
+  },
+  {
+    "id": "wary",
+    "name": "Cautious about possible danger or trouble",
+    "distractors": [
+      "Eager to take a calculated risk",
+      "Embarrassed by a past mistake",
+      "Unaware of a potential problem"
+    ],
+    "example": "I was wary of opening an attachment from an unknown sender."
+  },
+  {
+    "id": "tenacious",
+    "name": "Persistent and unwilling to give up",
+    "distractors": [
+      "Quick to recover after a setback",
+      "Uncertain about what to pursue",
+      "Eager to avoid disagreement"
+    ],
+    "example": "The tenacious reporter kept requesting the records for months."
+  },
+  {
+    "id": "unequivocal",
+    "name": "Clear and leaving no room for doubt",
+    "distractors": [
+      "Open to several interpretations",
+      "Brief enough to be overlooked",
+      "Polite but difficult to accept"
+    ],
+    "example": "The inspector gave an unequivocal answer: the bridge had to close."
+  },
+  {
+    "id": "mundane",
+    "name": "Ordinary and unremarkable",
+    "distractors": [
+      "Old-fashioned but still useful",
+      "Repetitive and physically exhausting",
+      "Rare but easy to recognize"
+    ],
+    "example": "They chatted about mundane things like groceries and laundry."
+  },
+  {
+    "id": "redundant",
+    "name": "Unnecessary because it duplicates something",
+    "distractors": [
+      "Useful only in emergencies",
+      "Essential but often overlooked",
+      "Included for clarification"
+    ],
+    "example": "The second reminder was redundant because everyone had already received the first."
+  },
+  {
+    "id": "impartial",
+    "name": "Fair and without favoritism",
+    "distractors": [
+      "Quick to form an opinion",
+      "Reluctant to express an opinion",
+      "Willing to compromise on every point"
+    ],
+    "example": "They asked an impartial referee to settle the dispute."
+  },
+  {
+    "id": "tacit",
+    "name": "Understood without being directly expressed",
+    "distractors": [
+      "Stated in precise terms",
+      "Kept secret by explicit agreement",
+      "Accepted only after debate"
+    ],
+    "example": "They had a tacit agreement to leave the office door open."
+  },
+  {
+    "id": "obscure",
+    "name": "Little known or hard to understand",
+    "distractors": [
+      "Recently discovered and widely discussed",
+      "Intentionally false or misleading",
+      "Easy to explain in simple terms"
+    ],
+    "example": "The archive held an obscure pamphlet about a forgotten local election."
+  },
+  {
+    "id": "resilient",
+    "name": "Able to recover after difficulty",
+    "distractors": [
+      "Able to prevent any damage",
+      "Likely to break without warning",
+      "Unwilling to adjust to changing conditions"
+    ],
+    "example": "The resilient plants put out new leaves after the frost."
+  },
+  {
+    "id": "transient",
+    "name": "Lasting only a short time",
+    "distractors": [
+      "Returning at predictable intervals",
+      "Changing slowly over many years",
+      "Continuing as long as conditions stay stable"
+    ],
+    "example": "The headache was transient and faded before lunch."
+  },
+  {
+    "id": "prolific",
+    "name": "Producing a large amount of work or output",
+    "distractors": [
+      "Producing work of exceptional quality",
+      "Starting many projects and finishing few",
+      "Working steadily on a single project"
+    ],
+    "example": "The prolific author published six novels in four years."
+  },
+  {
+    "id": "scrutinize",
+    "name": "Examine closely and carefully",
+    "distractors": [
+      "Summarize the most important points",
+      "Approve after a routine check",
+      "Compare two things from memory"
+    ],
+    "example": "Please scrutinize the bill before we pay it."
+  },
+  {
+    "id": "anecdotal",
+    "name": "Based on personal accounts or isolated examples",
+    "distractors": [
+      "Based on a representative survey",
+      "Based on a controlled experiment",
+      "Based on an established mathematical proof"
+    ],
+    "example": "The evidence was anecdotal: three customers said their packages arrived early."
+  },
+  {
+    "id": "discern",
+    "name": "Detect or recognize something that is hard to notice",
+    "distractors": [
+      "Conceal something that others might notice",
+      "Describe something in exact detail",
+      "Predict something from a familiar pattern"
+    ],
+    "example": "In the fog I could barely discern the outline of the pier."
+  },
+  {
+    "id": "alleviate",
+    "name": "Make suffering or a problem less severe",
+    "distractors": [
+      "Find the underlying cause of a problem",
+      "Delay dealing with a problem",
+      "Prevent a problem from starting"
+    ],
+    "example": "A cold compress helped alleviate the swelling."
+  },
+  {
+    "id": "corroborate",
+    "name": "Support a claim with additional evidence",
+    "distractors": [
+      "Repeat a claim without checking it",
+      "Explain why two accounts disagree",
+      "Withdraw a claim after an objection"
+    ],
+    "example": "Two independent witnesses could corroborate her account."
+  },
+  {
+    "id": "exacerbate",
+    "name": "Make an existing problem worse",
+    "distractors": [
+      "Bring a hidden problem to light",
+      "Make a problem easier to tolerate",
+      "Replace one problem with an unrelated one"
+    ],
+    "example": "The detour threatened to exacerbate congestion downtown."
+  },
+  {
+    "id": "vindicate",
+    "name": "Show that someone was right or free from blame",
+    "distractors": [
+      "Forgive someone without deciding who was right",
+      "Punish someone for breaking a rule",
+      "Explain someone's motives without defending them"
+    ],
+    "example": "The newly recovered logs helped vindicate the engineer."
+  },
+  {
+    "id": "reconcile",
+    "name": "Bring opposing accounts or views into agreement",
+    "distractors": [
+      "Choose one account without considering the other",
+      "Collect every account in one place",
+      "Keep two accounts from being compared"
+    ],
+    "example": "The clerk managed to reconcile the receipts with the cash in the drawer."
+  },
+  {
+    "id": "affable",
+    "name": "Friendly and easy to talk to",
+    "example": "The affable host made every guest feel welcome.",
+    "distractors": [
+      "Emotionally distant and uninvolved",
+      "Enjoying the company of other people",
+      "Avoiding company and living privately"
+    ]
+  },
+  {
+    "id": "aloof",
+    "name": "Emotionally distant and uninvolved",
+    "example": "He remained aloof while the others celebrated.",
+    "distractors": [
+      "Friendly and easy to talk to",
+      "Enjoying the company of other people",
+      "Avoiding company and living privately"
+    ]
+  },
+  {
+    "id": "gregarious",
+    "name": "Enjoying the company of other people",
+    "example": "Her gregarious nature suited the busy hostel.",
+    "distractors": [
+      "Friendly and easy to talk to",
+      "Emotionally distant and uninvolved",
+      "Avoiding company and living privately"
+    ]
+  },
+  {
+    "id": "reclusive",
+    "name": "Avoiding company and living privately",
+    "example": "The reclusive writer rarely attended public events.",
+    "distractors": [
+      "Friendly and easy to talk to",
+      "Emotionally distant and uninvolved",
+      "Enjoying the company of other people"
+    ]
+  },
+  {
+    "id": "assiduous",
+    "name": "Working with steady care and effort",
+    "example": "Her assiduous research uncovered the missing records.",
+    "distractors": [
+      "Disinclined to work or make an effort",
+      "Acting suddenly without careful thought",
+      "Done slowly and with careful thought"
+    ]
+  },
+  {
+    "id": "indolent",
+    "name": "Disinclined to work or make an effort",
+    "example": "An indolent afternoon gave way to a frantic evening.",
+    "distractors": [
+      "Working with steady care and effort",
+      "Acting suddenly without careful thought",
+      "Done slowly and with careful thought"
+    ]
+  },
+  {
+    "id": "impetuous",
+    "name": "Acting suddenly without careful thought",
+    "example": "His impetuous purchase emptied his savings.",
+    "distractors": [
+      "Working with steady care and effort",
+      "Disinclined to work or make an effort",
+      "Done slowly and with careful thought"
+    ]
+  },
+  {
+    "id": "deliberate",
+    "name": "Done slowly and with careful thought",
+    "example": "She made a deliberate choice after comparing the offers.",
+    "distractors": [
+      "Working with steady care and effort",
+      "Disinclined to work or make an effort",
+      "Acting suddenly without careful thought"
+    ]
+  },
+  {
+    "id": "credulous",
+    "name": "Too willing to believe what others say",
+    "example": "Credulous readers accepted the invented story.",
+    "distractors": [
+      "Doubting a claim until there is evidence",
+      "Innocent and free from deceit",
+      "Believing people act mainly from self-interest"
+    ]
+  },
+  {
+    "id": "skeptical",
+    "name": "Doubting a claim until there is evidence",
+    "example": "The skeptical audience asked to see the original data.",
+    "distractors": [
+      "Too willing to believe what others say",
+      "Innocent and free from deceit",
+      "Believing people act mainly from self-interest"
+    ]
+  },
+  {
+    "id": "guileless",
+    "name": "Innocent and free from deceit",
+    "example": "His guileless question exposed the complicated arrangement.",
+    "distractors": [
+      "Too willing to believe what others say",
+      "Doubting a claim until there is evidence",
+      "Believing people act mainly from self-interest"
+    ]
+  },
+  {
+    "id": "cynical",
+    "name": "Believing people act mainly from self-interest",
+    "example": "Her cynical response assumed the donation bought influence.",
+    "distractors": [
+      "Too willing to believe what others say",
+      "Doubting a claim until there is evidence",
+      "Innocent and free from deceit"
+    ]
+  },
+  {
+    "id": "concise",
+    "name": "Expressing much in a few words",
+    "example": "The concise report fit on one page.",
+    "distractors": [
+      "Talking a great deal",
+      "Expressing ideas fluently and persuasively",
+      "Unable to express thoughts clearly"
+    ]
+  },
+  {
+    "id": "loquacious",
+    "name": "Talking a great deal",
+    "example": "Our loquacious guide filled the journey with stories.",
+    "distractors": [
+      "Expressing much in a few words",
+      "Expressing ideas fluently and persuasively",
+      "Unable to express thoughts clearly"
+    ]
+  },
+  {
+    "id": "eloquent",
+    "name": "Expressing ideas fluently and persuasively",
+    "example": "Her eloquent speech won over the undecided voters.",
+    "distractors": [
+      "Expressing much in a few words",
+      "Talking a great deal",
+      "Unable to express thoughts clearly"
+    ]
+  },
+  {
+    "id": "inarticulate",
+    "name": "Unable to express thoughts clearly",
+    "example": "He became inarticulate when asked about his feelings.",
+    "distractors": [
+      "Expressing much in a few words",
+      "Talking a great deal",
+      "Expressing ideas fluently and persuasively"
+    ]
+  },
+  {
+    "id": "benevolent",
+    "name": "Wishing to do good for others",
+    "example": "A benevolent neighbor paid for the repairs.",
+    "distractors": [
+      "Wishing harm to others",
+      "Generous toward a defeated rival",
+      "Extremely unwilling to spend money"
+    ]
+  },
+  {
+    "id": "malevolent",
+    "name": "Wishing harm to others",
+    "example": "The letter contained a malevolent threat.",
+    "distractors": [
+      "Wishing to do good for others",
+      "Generous toward a defeated rival",
+      "Extremely unwilling to spend money"
+    ]
+  },
+  {
+    "id": "magnanimous",
+    "name": "Generous toward a defeated rival",
+    "example": "She was magnanimous in victory and praised her opponent.",
+    "distractors": [
+      "Wishing to do good for others",
+      "Wishing harm to others",
+      "Extremely unwilling to spend money"
+    ]
+  },
+  {
+    "id": "parsimonious",
+    "name": "Extremely unwilling to spend money",
+    "example": "The parsimonious owner refused even minor repairs.",
+    "distractors": [
+      "Wishing to do good for others",
+      "Wishing harm to others",
+      "Generous toward a defeated rival"
+    ]
+  },
+  {
+    "id": "complacent",
+    "name": "Too satisfied to notice possible problems",
+    "example": "A year without accidents made the crew complacent.",
+    "distractors": [
+      "Worried about what may happen",
+      "Enduring hardship without showing distress",
+      "Full of lively energy and excitement"
+    ]
+  },
+  {
+    "id": "apprehensive",
+    "name": "Worried about what may happen",
+    "example": "We felt apprehensive before the difficult crossing.",
+    "distractors": [
+      "Too satisfied to notice possible problems",
+      "Enduring hardship without showing distress",
+      "Full of lively energy and excitement"
+    ]
+  },
+  {
+    "id": "stoic",
+    "name": "Enduring hardship without showing distress",
+    "example": "She remained stoic through the long recovery.",
+    "distractors": [
+      "Too satisfied to notice possible problems",
+      "Worried about what may happen",
+      "Full of lively energy and excitement"
+    ]
+  },
+  {
+    "id": "exuberant",
+    "name": "Full of lively energy and excitement",
+    "example": "An exuberant crowd greeted the returning team.",
+    "distractors": [
+      "Too satisfied to notice possible problems",
+      "Worried about what may happen",
+      "Enduring hardship without showing distress"
+    ]
+  },
+  {
+    "id": "coherent",
+    "name": "Logical and clearly connected",
+    "example": "The witness gave a coherent account of the evening.",
+    "distractors": [
+      "Lacking a clear connection between parts",
+      "Clear and convincing as an argument",
+      "Based on mistaken reasoning"
+    ]
+  },
+  {
+    "id": "disjointed",
+    "name": "Lacking a clear connection between parts",
+    "example": "His disjointed notes jumped between unrelated subjects.",
+    "distractors": [
+      "Logical and clearly connected",
+      "Clear and convincing as an argument",
+      "Based on mistaken reasoning"
+    ]
+  },
+  {
+    "id": "cogent",
+    "name": "Clear and convincing as an argument",
+    "example": "The lawyer offered a cogent explanation for the delay.",
+    "distractors": [
+      "Logical and clearly connected",
+      "Lacking a clear connection between parts",
+      "Based on mistaken reasoning"
+    ]
+  },
+  {
+    "id": "fallacious",
+    "name": "Based on mistaken reasoning",
+    "example": "The conclusion rested on a fallacious comparison.",
+    "distractors": [
+      "Logical and clearly connected",
+      "Lacking a clear connection between parts",
+      "Clear and convincing as an argument"
+    ]
+  },
+  {
+    "id": "conspicuous",
+    "name": "Easy to notice because it stands out",
+    "example": "The orange tent was conspicuous against the snow.",
+    "distractors": [
+      "Avoiding attention or disturbance",
+      "Spreading through every part of something",
+      "Present but not yet active or visible"
+    ]
+  },
+  {
+    "id": "unobtrusive",
+    "name": "Avoiding attention or disturbance",
+    "example": "The cameras were small and unobtrusive.",
+    "distractors": [
+      "Easy to notice because it stands out",
+      "Spreading through every part of something",
+      "Present but not yet active or visible"
+    ]
+  },
+  {
+    "id": "pervasive",
+    "name": "Spreading through every part of something",
+    "example": "A pervasive smell of smoke filled the building.",
+    "distractors": [
+      "Easy to notice because it stands out",
+      "Avoiding attention or disturbance",
+      "Present but not yet active or visible"
+    ]
+  },
+  {
+    "id": "latent",
+    "name": "Present but not yet active or visible",
+    "example": "The stress exposed a latent weakness in the design.",
+    "distractors": [
+      "Easy to notice because it stands out",
+      "Avoiding attention or disturbance",
+      "Spreading through every part of something"
+    ]
+  },
+  {
+    "id": "austere",
+    "name": "Plain and without comfort or decoration",
+    "example": "The room was austere, with only a bed and desk.",
+    "distractors": [
+      "Rich and luxurious in appearance",
+      "Decorated with intricate detail",
+      "In poor condition from age or neglect"
+    ]
+  },
+  {
+    "id": "opulent",
+    "name": "Rich and luxurious in appearance",
+    "example": "The hotel lobby was opulent with marble and gold.",
+    "distractors": [
+      "Plain and without comfort or decoration",
+      "Decorated with intricate detail",
+      "In poor condition from age or neglect"
+    ]
+  },
+  {
+    "id": "ornate",
+    "name": "Decorated with intricate detail",
+    "example": "An ornate frame surrounded the small painting.",
+    "distractors": [
+      "Plain and without comfort or decoration",
+      "Rich and luxurious in appearance",
+      "In poor condition from age or neglect"
+    ]
+  },
+  {
+    "id": "dilapidated",
+    "name": "In poor condition from age or neglect",
+    "example": "They restored a dilapidated house by the river.",
+    "distractors": [
+      "Plain and without comfort or decoration",
+      "Rich and luxurious in appearance",
+      "Decorated with intricate detail"
+    ]
+  },
+  {
+    "id": "archaic",
+    "name": "Belonging to a much earlier period",
+    "example": "The contract contained archaic legal phrases.",
+    "distractors": [
+      "New and unlike what came before",
+      "Following commonly accepted ways",
+      "Belonging to a different historical period"
+    ]
+  },
+  {
+    "id": "novel",
+    "name": "New and unlike what came before",
+    "example": "The team proposed a novel way to store the samples.",
+    "distractors": [
+      "Belonging to a much earlier period",
+      "Following commonly accepted ways",
+      "Belonging to a different historical period"
+    ]
+  },
+  {
+    "id": "conventional",
+    "name": "Following commonly accepted ways",
+    "example": "They chose a conventional design familiar to builders.",
+    "distractors": [
+      "Belonging to a much earlier period",
+      "New and unlike what came before",
+      "Belonging to a different historical period"
+    ]
+  },
+  {
+    "id": "anachronistic",
+    "name": "Belonging to a different historical period",
+    "example": "The wristwatch looked anachronistic in the medieval scene.",
+    "distractors": [
+      "Belonging to a much earlier period",
+      "New and unlike what came before",
+      "Following commonly accepted ways"
+    ]
+  },
+  {
+    "id": "capricious",
+    "name": "Changing suddenly and unpredictably",
+    "example": "The capricious weather disrupted the outdoor festival.",
+    "distractors": [
+      "Firmly loyal and dependable",
+      "Frequently changing loyalties or preferences",
+      "Stubbornly refusing to change one's position"
+    ]
+  },
+  {
+    "id": "steadfast",
+    "name": "Firmly loyal and dependable",
+    "example": "She remained a steadfast supporter during the dispute.",
+    "distractors": [
+      "Changing suddenly and unpredictably",
+      "Frequently changing loyalties or preferences",
+      "Stubbornly refusing to change one's position"
+    ]
+  },
+  {
+    "id": "fickle",
+    "name": "Frequently changing loyalties or preferences",
+    "example": "Fickle customers soon abandoned the fashionable brand.",
+    "distractors": [
+      "Changing suddenly and unpredictably",
+      "Firmly loyal and dependable",
+      "Stubbornly refusing to change one's position"
+    ]
+  },
+  {
+    "id": "obstinate",
+    "name": "Stubbornly refusing to change one's position",
+    "example": "The obstinate driver refused to ask for directions.",
+    "distractors": [
+      "Changing suddenly and unpredictably",
+      "Firmly loyal and dependable",
+      "Frequently changing loyalties or preferences"
+    ]
+  },
+  {
+    "id": "ambiguous",
+    "name": "Open to more than one interpretation",
+    "example": "The ambiguous instruction confused both teams.",
+    "distractors": [
+      "Stated clearly and directly",
+      "Suggested without being directly stated",
+      "Having a meaning that is difficult to understand"
+    ]
+  },
+  {
+    "id": "explicit",
+    "name": "Stated clearly and directly",
+    "example": "The guide gave explicit directions to the shelter.",
+    "distractors": [
+      "Open to more than one interpretation",
+      "Suggested without being directly stated",
+      "Having a meaning that is difficult to understand"
+    ]
+  },
+  {
+    "id": "implicit",
+    "name": "Suggested without being directly stated",
+    "example": "Accepting the role carried an implicit promise to help.",
+    "distractors": [
+      "Open to more than one interpretation",
+      "Stated clearly and directly",
+      "Having a meaning that is difficult to understand"
+    ]
+  },
+  {
+    "id": "cryptic",
+    "name": "Having a meaning that is difficult to understand",
+    "example": "He left a cryptic note with only three initials.",
+    "distractors": [
+      "Open to more than one interpretation",
+      "Stated clearly and directly",
+      "Suggested without being directly stated"
+    ]
+  },
+  {
+    "id": "banal",
+    "name": "So ordinary that it lacks interest",
+    "example": "The speech was full of banal observations.",
+    "distractors": [
+      "Evoking a keen sense of sadness or regret",
+      "Playful in an unusual or imaginative way",
+      "Suggesting that something bad may happen"
+    ]
+  },
+  {
+    "id": "poignant",
+    "name": "Evoking a keen sense of sadness or regret",
+    "example": "The empty chair was a poignant reminder of her absence.",
+    "distractors": [
+      "So ordinary that it lacks interest",
+      "Playful in an unusual or imaginative way",
+      "Suggesting that something bad may happen"
+    ]
+  },
+  {
+    "id": "whimsical",
+    "name": "Playful in an unusual or imaginative way",
+    "example": "The garden featured whimsical sculptures of dancing birds.",
+    "distractors": [
+      "So ordinary that it lacks interest",
+      "Evoking a keen sense of sadness or regret",
+      "Suggesting that something bad may happen"
+    ]
+  },
+  {
+    "id": "ominous",
+    "name": "Suggesting that something bad may happen",
+    "example": "An ominous crack sounded above the tunnel.",
+    "distractors": [
+      "So ordinary that it lacks interest",
+      "Evoking a keen sense of sadness or regret",
+      "Playful in an unusual or imaginative way"
+    ]
+  },
+  {
+    "id": "augment",
+    "name": "Make something greater by adding to it",
+    "example": "They hired seasonal workers to augment the staff.",
+    "distractors": [
+      "Reduce the extent or duration of something",
+      "Combine separate things into a stronger whole",
+      "Spread information widely"
+    ]
+  },
+  {
+    "id": "curtail",
+    "name": "Reduce the extent or duration of something",
+    "example": "Rain forced us to curtail the expedition.",
+    "distractors": [
+      "Make something greater by adding to it",
+      "Combine separate things into a stronger whole",
+      "Spread information widely"
+    ]
+  },
+  {
+    "id": "consolidate",
+    "name": "Combine separate things into a stronger whole",
+    "example": "The company will consolidate its offices in one building.",
+    "distractors": [
+      "Make something greater by adding to it",
+      "Reduce the extent or duration of something",
+      "Spread information widely"
+    ]
+  },
+  {
+    "id": "disseminate",
+    "name": "Spread information widely",
+    "example": "The library helped disseminate the research findings.",
+    "distractors": [
+      "Make something greater by adding to it",
+      "Reduce the extent or duration of something",
+      "Combine separate things into a stronger whole"
+    ]
+  },
+  {
+    "id": "mitigate",
+    "name": "Make something less severe or harmful",
+    "example": "The barriers helped mitigate the flood damage.",
+    "distractors": [
+      "Make a problem or condition worse",
+      "Put something right or correct an error",
+      "Cause something to continue or last"
+    ]
+  },
+  {
+    "id": "aggravate",
+    "name": "Make a problem or condition worse",
+    "example": "Scratching the bite will aggravate the irritation.",
+    "distractors": [
+      "Make something less severe or harmful",
+      "Put something right or correct an error",
+      "Cause something to continue or last"
+    ]
+  },
+  {
+    "id": "rectify",
+    "name": "Put something right or correct an error",
+    "example": "The bank acted quickly to rectify the mistake.",
+    "distractors": [
+      "Make something less severe or harmful",
+      "Make a problem or condition worse",
+      "Cause something to continue or last"
+    ]
+  },
+  {
+    "id": "perpetuate",
+    "name": "Cause something to continue or last",
+    "example": "Repeating the rumor would perpetuate the misunderstanding.",
+    "distractors": [
+      "Make something less severe or harmful",
+      "Make a problem or condition worse",
+      "Put something right or correct an error"
+    ]
+  },
+  {
+    "id": "substantiate",
+    "name": "Support a claim with evidence",
+    "example": "Receipts helped substantiate her account of the trip.",
+    "distractors": [
+      "Show that a claim is false",
+      "Form an opinion from incomplete information",
+      "Reach a conclusion from evidence or reasoning"
+    ]
+  },
+  {
+    "id": "refute",
+    "name": "Show that a claim is false",
+    "example": "The new measurements refute the earlier claim.",
+    "distractors": [
+      "Support a claim with evidence",
+      "Form an opinion from incomplete information",
+      "Reach a conclusion from evidence or reasoning"
+    ]
+  },
+  {
+    "id": "conjecture",
+    "name": "Form an opinion from incomplete information",
+    "example": "We can only conjecture what happened to the missing ship.",
+    "distractors": [
+      "Support a claim with evidence",
+      "Show that a claim is false",
+      "Reach a conclusion from evidence or reasoning"
+    ]
+  },
+  {
+    "id": "infer",
+    "name": "Reach a conclusion from evidence or reasoning",
+    "example": "From the wet pavement, she could infer that it had rained.",
+    "distractors": [
+      "Support a claim with evidence",
+      "Show that a claim is false",
+      "Form an opinion from incomplete information"
+    ]
+  },
+  {
+    "id": "coalesce",
+    "name": "Come together to form a whole",
+    "example": "Several small campaigns began to coalesce into one movement.",
+    "distractors": [
+      "Move or develop in different directions",
+      "Move repeatedly between two positions or states",
+      "Stop developing or making progress"
+    ]
+  },
+  {
+    "id": "diverge",
+    "name": "Move or develop in different directions",
+    "example": "Their views began to diverge after the election.",
+    "distractors": [
+      "Come together to form a whole",
+      "Move repeatedly between two positions or states",
+      "Stop developing or making progress"
+    ]
+  },
+  {
+    "id": "oscillate",
+    "name": "Move repeatedly between two positions or states",
+    "example": "The fan will oscillate to cool the entire room.",
+    "distractors": [
+      "Come together to form a whole",
+      "Move or develop in different directions",
+      "Stop developing or making progress"
+    ]
+  },
+  {
+    "id": "stagnate",
+    "name": "Stop developing or making progress",
+    "example": "The project began to stagnate without a clear decision.",
+    "distractors": [
+      "Come together to form a whole",
+      "Move or develop in different directions",
+      "Move repeatedly between two positions or states"
+    ]
+  },
+  {
+    "id": "expedite",
+    "name": "Make a process happen more quickly",
+    "example": "The extra documents helped expedite the application.",
+    "distractors": [
+      "Hinder movement or progress",
+      "Delay doing something that needs to be done",
+      "Continue despite difficulty or delay"
+    ]
+  },
+  {
+    "id": "impede",
+    "name": "Hinder movement or progress",
+    "example": "Fallen trees impede travel along the road.",
+    "distractors": [
+      "Make a process happen more quickly",
+      "Delay doing something that needs to be done",
+      "Continue despite difficulty or delay"
+    ]
+  },
+  {
+    "id": "procrastinate",
+    "name": "Delay doing something that needs to be done",
+    "example": "She tended to procrastinate until the deadline approached.",
+    "distractors": [
+      "Make a process happen more quickly",
+      "Hinder movement or progress",
+      "Continue despite difficulty or delay"
+    ]
+  },
+  {
+    "id": "persevere",
+    "name": "Continue despite difficulty or delay",
+    "example": "They chose to persevere after the first attempt failed.",
+    "distractors": [
+      "Make a process happen more quickly",
+      "Hinder movement or progress",
+      "Delay doing something that needs to be done"
+    ]
+  },
+  {
+    "id": "exonerate",
+    "name": "Clear someone from blame or wrongdoing",
+    "example": "The recording helped exonerate the accused driver.",
+    "distractors": [
+      "Show someone to be involved in wrongdoing",
+      "Warn or reprimand someone firmly",
+      "Praise someone or something highly"
+    ]
+  },
+  {
+    "id": "implicate",
+    "name": "Show someone to be involved in wrongdoing",
+    "example": "The documents implicate two officials in the scheme.",
+    "distractors": [
+      "Clear someone from blame or wrongdoing",
+      "Warn or reprimand someone firmly",
+      "Praise someone or something highly"
+    ]
+  },
+  {
+    "id": "admonish",
+    "name": "Warn or reprimand someone firmly",
+    "example": "The referee stopped to admonish the players.",
+    "distractors": [
+      "Clear someone from blame or wrongdoing",
+      "Show someone to be involved in wrongdoing",
+      "Praise someone or something highly"
+    ]
+  },
+  {
+    "id": "extol",
+    "name": "Praise someone or something highly",
+    "example": "The review went on to extol the restaurant's service.",
+    "distractors": [
+      "Clear someone from blame or wrongdoing",
+      "Show someone to be involved in wrongdoing",
+      "Warn or reprimand someone firmly"
+    ]
+  },
+  {
+    "id": "assuage",
+    "name": "Soothe an unpleasant feeling",
+    "example": "The explanation helped assuage her anxiety.",
+    "distractors": [
+      "Encourage people to act, especially violently",
+      "Make an angry person less angry",
+      "Persuade someone not to do something"
+    ]
+  },
+  {
+    "id": "incite",
+    "name": "Encourage people to act, especially violently",
+    "example": "The speaker tried to incite the crowd to riot.",
+    "distractors": [
+      "Soothe an unpleasant feeling",
+      "Make an angry person less angry",
+      "Persuade someone not to do something"
+    ]
+  },
+  {
+    "id": "placate",
+    "name": "Make an angry person less angry",
+    "example": "The refund did little to placate the customer.",
+    "distractors": [
+      "Soothe an unpleasant feeling",
+      "Encourage people to act, especially violently",
+      "Persuade someone not to do something"
+    ]
+  },
+  {
+    "id": "dissuade",
+    "name": "Persuade someone not to do something",
+    "example": "We tried to dissuade him from crossing the flooded road.",
+    "distractors": [
+      "Soothe an unpleasant feeling",
+      "Encourage people to act, especially violently",
+      "Make an angry person less angry"
+    ]
+  },
+  {
+    "id": "succinct",
+    "name": "Clearly expressed in very few words",
+    "example": "Her succinct instructions were easy to remember.",
+    "distractors": [
+      "Containing an error or based on a mistake",
+      "Directly relevant to the matter at hand",
+      "More than is needed or useful"
+    ]
+  },
+  {
+    "id": "erroneous",
+    "name": "Containing an error or based on a mistake",
+    "example": "The invoice listed an erroneous delivery date.",
+    "distractors": [
+      "Clearly expressed in very few words",
+      "Directly relevant to the matter at hand",
+      "More than is needed or useful"
+    ]
+  },
+  {
+    "id": "pertinent",
+    "name": "Directly relevant to the matter at hand",
+    "example": "The committee asked for any pertinent information.",
+    "distractors": [
+      "Clearly expressed in very few words",
+      "Containing an error or based on a mistake",
+      "More than is needed or useful"
+    ]
+  },
+  {
+    "id": "superfluous",
+    "name": "More than is needed or useful",
+    "example": "The editor removed a superfluous paragraph.",
+    "distractors": [
+      "Clearly expressed in very few words",
+      "Containing an error or based on a mistake",
+      "Directly relevant to the matter at hand"
+    ]
+  },
+  {
+    "id": "empirical",
+    "name": "Based on observation or experiment",
+    "example": "The theory needed empirical evidence.",
+    "distractors": [
+      "Proposed for discussion rather than known to exist",
+      "Understood without conscious reasoning",
+      "Accepted as self-evidently true"
+    ]
+  },
+  {
+    "id": "hypothetical",
+    "name": "Proposed for discussion rather than known to exist",
+    "example": "They considered a hypothetical shortage of fuel.",
+    "distractors": [
+      "Based on observation or experiment",
+      "Understood without conscious reasoning",
+      "Accepted as self-evidently true"
+    ]
+  },
+  {
+    "id": "intuitive",
+    "name": "Understood without conscious reasoning",
+    "example": "The answer seemed intuitive, but needed checking.",
+    "distractors": [
+      "Based on observation or experiment",
+      "Proposed for discussion rather than known to exist",
+      "Accepted as self-evidently true"
+    ]
+  },
+  {
+    "id": "axiomatic",
+    "name": "Accepted as self-evidently true",
+    "example": "It was axiomatic that a fair contest needed clear rules.",
+    "distractors": [
+      "Based on observation or experiment",
+      "Proposed for discussion rather than known to exist",
+      "Understood without conscious reasoning"
+    ]
+  },
+  {
+    "id": "feasible",
+    "name": "Possible to do successfully",
+    "example": "The engineers agreed the bridge design was feasible.",
+    "distractors": [
+      "Unstable and likely to become dangerous",
+      "Unable to achieve a useful result",
+      "Certain to happen and impossible to avoid"
+    ]
+  },
+  {
+    "id": "precarious",
+    "name": "Unstable and likely to become dangerous",
+    "example": "The ladder was balanced in a precarious position.",
+    "distractors": [
+      "Possible to do successfully",
+      "Unable to achieve a useful result",
+      "Certain to happen and impossible to avoid"
+    ]
+  },
+  {
+    "id": "futile",
+    "name": "Unable to achieve a useful result",
+    "example": "Further repairs proved futile after the engine failed.",
+    "distractors": [
+      "Possible to do successfully",
+      "Unstable and likely to become dangerous",
+      "Certain to happen and impossible to avoid"
+    ]
+  },
+  {
+    "id": "inevitable",
+    "name": "Certain to happen and impossible to avoid",
+    "example": "Without more water, crop losses became inevitable.",
+    "distractors": [
+      "Possible to do successfully",
+      "Unstable and likely to become dangerous",
+      "Unable to achieve a useful result"
+    ]
+  }
 ]
