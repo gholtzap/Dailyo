@@ -76,7 +76,10 @@ if (scripts["test:e2e"].includes("node tests/board-games.mjs")) {
     (game) => `--game=${game.id}`,
   );
   for (const game of boardGames)
-    durationsMs[`node tests/board-games.mjs --game=${game.id}`] ??= 10000;
+    for (const width of [390, 1440])
+      durationsMs[
+        `node tests/board-games.mjs --game=${game.id} --ci-width=${width}`
+      ] ??= 6000;
 }
 const browser = scripts["test:e2e"].split(" && ").flatMap((command) => {
   const parts = split[command];

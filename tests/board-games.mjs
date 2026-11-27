@@ -1,3 +1,4 @@
+import { ciWidths } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -19,7 +20,9 @@ async function solve(page, puzzle) {
 }
 try {
   for (const game of boardGames.filter((g) => !only || g.id === only))
-    for (const viewport of policy.viewports)
+    for (const viewport of policy.viewports.filter((v) =>
+      ciWidths([390, 1440]).includes(v.width),
+    ))
       for (const colorScheme of ["light", "dark"]) {
         const context = await browser.newContext({
           viewport,
