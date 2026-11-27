@@ -1,3 +1,4 @@
+import { boardGames } from "../dist/games/board-catalog.js";
 import { ciWidths } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -64,7 +65,10 @@ try {
         const labels = await menu.locator("a span").allTextContents();
         for (const label of retiredLabels)
           assert.ok(!labels.includes(label), label);
-        assert.equal(labels.length, mix === "rush" ? 8 : 15); // Daily's directory includes Subway cities.
+        assert.equal(
+          labels.length,
+          mix === "rush" ? 8 : 15 + boardGames.length,
+        ); // Daily's directory includes Subway cities.
         reports.push({
           viewport,
           colorScheme,

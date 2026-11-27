@@ -1,5 +1,6 @@
 // Presentation names are separate from stable game IDs, URLs and saved scores.
 const names: Record<string, string> = {
+  path: "Path",
   train: "Subway",
   trainrot: "Subway",
   flags: "Flags",

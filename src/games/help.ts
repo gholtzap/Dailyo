@@ -1,6 +1,10 @@
 import { rushRound } from "../daily/bridge.js";
 
 const instructions: Record<string, string[]> = {
+  path: [
+    "Draw one path through every square, visiting the numbered checkpoints in order. Start at 1 and finish at 7.",
+    "Drag across squares or use the arrow keys to focus a square and Enter to extend the path. Select an earlier square to backtrack.",
+  ],
   skyrot: [
     "Identify the city from an overhead photograph. Each missed guess reveals a wider view. You have three guesses per photo.",
     "A correct answer earns 100, 65, or 35 points depending on the view and guesses used. Rush gives one guess per photo.",

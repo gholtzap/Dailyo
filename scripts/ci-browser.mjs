@@ -70,6 +70,17 @@ const split = {
     "--ci-shared",
   ],
 };
+if (scripts["test:e2e"].includes("node tests/board-games.mjs")) {
+  const { boardGames } = await import("../dist/games/board-catalog.js");
+  split["node tests/board-games.mjs"] = boardGames.flatMap((game) =>
+    [390, 1440].map((width) => `--game=${game.id} --ci-width=${width}`),
+  );
+  for (const game of boardGames)
+    for (const width of [390, 1440])
+      durationsMs[
+        `node tests/board-games.mjs --game=${game.id} --ci-width=${width}`
+      ] ??= 6000;
+}
 const browser = scripts["test:e2e"].split(" && ").flatMap((command) => {
   const parts = split[command];
   if (!parts) return [command];

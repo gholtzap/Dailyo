@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { boardGames } from "../dist/games/board-catalog.js";
 import { gameName } from "../dist/game-names.js";
 import { retiredGames } from "../dist/retired-games.js";
 import { rushGames } from "../dist/daily/rush-games.js";
@@ -23,6 +24,7 @@ const games = [
   ["skylinerot", "skylinerot", "Skylines"],
   ["zoomrot", "zoomrot", "Close-up objects"],
   ["orderrot", "orderrot", "Ordering"],
+  ...boardGames.map(({ id, description }) => [id, id, description]),
 ];
 // Match each game's startup fetches so the HTML parser can start them early.
 const puzzleData = Object.fromEntries(
@@ -173,6 +175,23 @@ async function visit(directory) {
       await fs.writeFile(file, html.replace(/^[ \t]+$/gm, ""));
     }
   }
+}
+// Board games share the site shell; their own module owns the puzzle.
+for (const game of boardGames) {
+  const directory = path.join("dist", game.id);
+  await fs.mkdir(directory, { recursive: true });
+  await fs.writeFile(
+    path.join(directory, "index.html"),
+    `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark"><meta name="theme-color" content="${themeColor}"><title>${game.name} | dailyo</title>
+<link rel="stylesheet" href="/design-system.css"><link rel="stylesheet" href="/components.css"><link rel="stylesheet" href="/games.css"></head>
+<body data-game="${game.id}"><header class="site-masthead"></header>
+<main class="main rot-main puzzle-main"><div class="heading"><p class="game-title">${game.name}</p></div>
+<nav class="modes" aria-label="Game mode"><button id="daily" type="button" aria-pressed="true">Daily</button><button id="practice" type="button" aria-pressed="false">Practice</button></nav>
+<section id="quiz" aria-label="${game.name} puzzle"></section></main>
+<script type="module" src="/games/board-game.js"></script></body></html>`,
+  );
 }
 // Every Rush URL serves the same app shell, including in local static servers.
 const rushShell = await fs.readFile("dist/index.html", "utf8");
