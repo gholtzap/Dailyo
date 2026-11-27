@@ -92,7 +92,7 @@ function drawGroups() {
     )
       return;
     const b = button(
-      word,
+      word[0] + word.slice(1).toLowerCase(),
       () => act({ type: "cell", index: i }),
       "puzzle-cell group-word",
     );
