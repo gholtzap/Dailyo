@@ -11,6 +11,7 @@ import type {
   Mode,
 } from "./types.js";
 interface TrainSave {
+  revision?: string;
   seed: string;
   position: number;
   difficulty: Challenge["difficulty"];
@@ -196,6 +197,15 @@ async function start() {
     assisted: !!state.assisted,
     skipped: !!state.skipped,
   });
+  let practiceSnapshot:
+    | {
+        deck: Challenge[];
+        seed: string;
+        position: number;
+        revision: string;
+      }
+    | undefined;
+  const checkpointKey = `${storageKey}:state`;
   function save() {
     if (rushRound !== null) return;
     try {
@@ -204,10 +214,24 @@ async function start() {
           dailyKey(dailyDate),
           JSON.stringify(storedState()),
         );
-      else
+      else if (
+        practiceSnapshot?.deck === deck &&
+        practiceSnapshot.seed === seed &&
+        practiceSnapshot.position === position
+      ) {
+        localStorage.setItem(
+          checkpointKey,
+          JSON.stringify({
+            revision: practiceSnapshot.revision,
+            state: storedState(),
+          }),
+        );
+      } else {
+        const revision = crypto.randomUUID();
         localStorage.setItem(
           storageKey,
           JSON.stringify({
+            revision,
             seed,
             position,
             difficulty,
@@ -217,6 +241,9 @@ async function start() {
             state: storedState(),
           }),
         );
+        practiceSnapshot = { deck, seed, position, revision };
+        localStorage.removeItem(checkpointKey);
+      }
     } catch {}
   }
   function load() {
@@ -257,6 +284,19 @@ async function start() {
           !validState(saved.state)
         )
           return;
+        // A checkpoint belongs only to the exact deck snapshot that issued it.
+        // Old saves without a revision continue to restore their inline state.
+        try {
+          const checkpoint = JSON.parse(
+            localStorage.getItem(checkpointKey) ?? "null",
+          );
+          if (
+            saved.revision &&
+            checkpoint?.revision === saved.revision &&
+            validState(checkpoint.state)
+          )
+            saved.state = checkpoint.state;
+        } catch {}
         seed = saved.seed;
         difficulty = difficulties.includes(saved.difficulty)
           ? saved.difficulty
