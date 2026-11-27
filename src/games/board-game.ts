@@ -137,7 +137,7 @@ function drawBoard() {
     if (puzzle.kind === "crowns") {
       const region = String.fromCharCode(65 + puzzle.regions[i]);
       b.classList.add(`region-${puzzle.regions[i]}`);
-      b.append(el("span", region, "puzzle-region"));
+      b.append(" ", el("span", region, "puzzle-region"));
       b.setAttribute(
         "aria-label",
         `${state.values[i] === "C" ? "C " : state.values[i] === "x" ? "No " : ""}${region}, row ${Math.floor(i / puzzle.size) + 1}, column ${(i % puzzle.size) + 1}, region ${region}, ${state.values[i] === "C" ? "Crown" : state.values[i] === "x" ? "No crown" : "empty"}`,
