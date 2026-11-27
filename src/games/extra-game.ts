@@ -481,6 +481,7 @@ function draw() {
     complete ? "complete" : "playing",
     complete ? content[0].textContent : undefined,
     day,
+    key(`daily:${day}`),
   );
 }
 
