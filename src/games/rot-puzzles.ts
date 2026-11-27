@@ -1,3 +1,4 @@
+import { releasedPool } from "./pool-version.js";
 import type { Coordinate, JsonValue } from "../types.js";
 import type {
   RotData,
@@ -152,7 +153,10 @@ export function makeSet(
   offset = 0,
   difficulty: PracticeDifficulty = "standard",
 ): RotQuestion[] {
-  const deck = shuffle<Place | YearEvent | string[]>(data.items, seed);
+  const deck = shuffle<Place | YearEvent | string[]>(
+    releasedPool<Place | YearEvent | string[]>(kind, data.items, seed),
+    seed,
+  );
   const questions = deck.slice(offset, offset + roundCount);
   if (kind === "yearrot") {
     const anchors = [0, 1].map(

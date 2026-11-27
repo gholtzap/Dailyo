@@ -15,7 +15,7 @@ const read = async (path) =>
 const policy = await read("../ui-policy.json");
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const ui = process.argv.includes("--ui");
-const day = "2026-11-15";
+const day = "2026-11-28";
 const reports = [];
 const browser = await chromium.launch();
 const dayTime = new Date(`${day}T16:00:00Z`);
@@ -247,9 +247,24 @@ const answer = {
   borderrot: answerBorder,
 };
 
+const mapData = preparePuzzles(
+  "maprot",
+  await read("../dist/games/data/maprot.json"),
+);
+assert.equal(mapData.items.length, 1000);
+assert.equal(
+  new Set(mapData.items.map((row) => `${row[0]}:${row[1]}`)).size,
+  1000,
+);
+assert.deepEqual(
+  makeSet("maprot", mapData, "2026-11-27"),
+  await read("./fixtures/issued-map-puzzle.json"),
+);
+// These historic seeds target named-city regressions in the preserved pool.
+
 try {
   const astana = await browser.newPage();
-  await astana.clock.setFixedTime(new Date("2027-03-31T16:00:00Z"));
+  await astana.clock.setFixedTime(new Date("2020-03-29T16:00:00Z"));
   await astana.goto(`${base}/maprot/`);
   await astana.getByRole("button", { name: "Reset view", exact: true }).click();
   for (let i = 0; i < 2; i++) {
@@ -261,7 +276,7 @@ try {
   await astana.close();
 
   const suva = await browser.newPage();
-  await suva.clock.setFixedTime(new Date("2027-07-12T16:00:00Z"));
+  await suva.clock.setFixedTime(new Date("2020-01-17T16:00:00Z"));
   await suva.goto(`${base}/maprot/`);
   await suva.getByRole("button", { name: "Reset view", exact: true }).click();
   assert.equal(await suva.locator("#round-title").innerText(), "Find Suva");
@@ -300,6 +315,7 @@ try {
         isMobile: mobile,
         hasTouch: mobile,
         colorScheme: "dark",
+        reducedMotion: "reduce",
         permissions: ["clipboard-read", "clipboard-write"],
       });
       const page = await context.newPage();
