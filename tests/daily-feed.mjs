@@ -1,3 +1,4 @@
+import { boardGames } from "../dist/games/board-catalog.js";
 import { ciWidths } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -100,7 +101,7 @@ try {
     const directory = page.getByText("Games", { exact: true });
     await directory.press("Enter");
     const nav = page.getByRole("navigation", { name: "Games" });
-    assert.equal(await nav.getByRole("link").count(), 15);
+    assert.equal(await nav.getByRole("link").count(), 15 + boardGames.length);
     await nav
       .getByRole("link", { name: "Subway cities", exact: true })
       .waitFor();

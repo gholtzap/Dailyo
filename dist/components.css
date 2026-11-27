@@ -777,6 +777,7 @@ body:has(#app) .game-help-header h2 {
   background: var(--surface-hover);
 }
 .game-help-dialog p {
+  background: var(--panel);
   margin: var(--space-4) 0 0;
   line-height: var(--leading-1-5);
 }
@@ -1188,3 +1189,62 @@ select:not([multiple]) { height: var(--control-size); }
 .split-control:focus-visible { outline: none; }
 .split-control:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 var(--stroke-2) var(--focus); }
 .split-control:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 var(--stroke-2) var(--focus); }
+
+/* Shared cells for daily board puzzles. */
+.puzzle-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: var(--space-1);
+  color: var(--ink);
+  background: var(--surface-raised);
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-control-compact);
+  font: inherit;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+.puzzle-cell:hover:not(:disabled) { background: var(--surface-hover); }
+.puzzle-cell.is-picked { background: var(--action); border-color: var(--accent); }
+.puzzle-cell.is-tail { outline: var(--stroke-2) solid var(--focus); outline-offset: calc(-1 * var(--space-1)); }
+.puzzle-cell:disabled { cursor: default; opacity: 1; }
+.puzzle-cell.is-checkpoint { font-size: var(--font-size-14); }
+.puzzle-cell.connect-right::after, .puzzle-cell.connect-down::before {
+  content: '';
+  position: absolute;
+  background: var(--accent);
+  pointer-events: none;
+}
+.puzzle-cell.connect-right::after { width: var(--space-2); height: var(--stroke-3); right: calc(-1 * var(--space-2)); top: 50%; }
+.puzzle-cell.connect-down::before { height: var(--space-2); width: var(--stroke-3); bottom: calc(-1 * var(--space-2)); left: 50%; }
+.puzzle-assistance { margin-top: var(--space-4); color: var(--muted); }
+.puzzle-assistance summary { cursor: pointer; padding: var(--space-2) 0; }
+.puzzle-assistance button { margin-top: var(--space-2); }
+.puzzle-tooltip {
+  --puzzle-tooltip-width: 14ch;
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: var(--puzzle-tooltip-width);
+  z-index: var(--layer-help);
+  padding: var(--space-2);
+  background: var(--well);
+  color: var(--ink);
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-control);
+  font-size: var(--font-size-12);
+  line-height: var(--leading-1-4);
+  text-align: left;
+  pointer-events: none;
+}
+.puzzle-cell:not(:disabled):is(:hover,:focus-visible) .puzzle-tooltip { display: block; }
+.columns-5 .puzzle-cell:nth-child(5n) .puzzle-tooltip,
+.columns-6 .puzzle-cell:nth-child(6n) .puzzle-tooltip { left: auto; right: 0; }
+
+body:has(dialog[open]) .puzzle-tooltip { display: none; }
