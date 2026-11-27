@@ -69,9 +69,12 @@ const blank = (): WorldState => ({
   correct: 0,
   selected: null,
 });
+let practice: WorldState | undefined;
 const modeState: Record<Mode, WorldState> = {
   daily: blank(),
-  practice: blank(),
+  get practice() {
+    return (practice ??= practiceState());
+  },
 };
 let mode: Mode = "daily",
   day = "",
@@ -513,7 +516,6 @@ async function start() {
     return;
   }
   modeState.daily = dailyState();
-  modeState.practice = practiceState();
   const saved = read<string>(key("mode"));
   mode =
     startPractice || (!inFeed && saved === "practice") ? "practice" : "daily";

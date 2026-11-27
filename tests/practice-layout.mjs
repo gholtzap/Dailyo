@@ -11,6 +11,14 @@ try {
       viewport: { width, height: 568 },
       reducedMotion: "reduce",
     });
+    await p.addInitScript(() => {
+      window.practiceReads = [];
+      const read = Storage.prototype.getItem;
+      Storage.prototype.getItem = function (key) {
+        if (/:practice(?:$|:)/.test(key)) window.practiceReads.push(key);
+        return read.call(this, key);
+      };
+    });
     for (const game of [
       "zoomrot",
       "skylinerot",
@@ -21,6 +29,11 @@ try {
     ]) {
       await p.goto(`${base}/${game}/`);
       await p.locator("#quiz button").first().waitFor();
+      assert.deepEqual(
+        await p.evaluate(() => window.practiceReads),
+        [],
+        `${game}: Daily must not restore an unused practice session`,
+      );
       await p.getByRole("button", { name: "Practice", exact: true }).click();
       await p.locator('#practice[aria-pressed="true"]').waitFor();
       assert.doesNotMatch(

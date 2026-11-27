@@ -110,7 +110,19 @@ function resetDay() {
   return true;
 }
 
+function loadPractice() {
+  const saved = read<ExtraSave>("practice");
+  const token =
+    typeof saved?.token === "string" &&
+    saved.token.startsWith("practice:") &&
+    saved.token.length < 100
+      ? saved.token
+      : seed();
+  return mount("practice", token);
+}
+
 function selectMode(next: Mode) {
+  if (next === "practice") sessions.practice ??= loadPractice();
   mode = next;
   selected = undefined;
   resetDay();
@@ -519,15 +531,7 @@ async function start() {
     return;
   }
   await waitForFeedActivation();
-  const saved = read<ExtraSave>("practice");
-  const token =
-    typeof saved?.token === "string" &&
-    saved.token.startsWith("practice:") &&
-    saved.token.length < 100
-      ? saved.token
-      : seed();
-  sessions.practice = mount("practice", token);
-  if (!inFeed) save(sessions.practice);
+  if (mode === "practice") sessions.practice = loadPractice();
   resetDay();
   for (const control of controls)
     control.onclick = () => selectMode(control.id as Mode);

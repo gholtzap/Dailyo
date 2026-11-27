@@ -84,7 +84,8 @@ let mode: "daily" | "practice" =
   startPractice || (!inFeed && read("mode") === "practice")
     ? "practice"
     : "daily";
-let sessions: Record<"daily" | "practice", Session>;
+const sessions = {} as Record<"daily" | "practice", Session>;
+let loadPractice: () => Session;
 let draft: string[] = [];
 let imageFailed = false;
 let focusNext = false;
@@ -161,6 +162,7 @@ function resetDay() {
   return true;
 }
 function selectMode(next: "daily" | "practice") {
+  if (next === "practice") sessions.practice ??= loadPractice();
   mode = next;
   resetDay();
   write("mode", mode);
@@ -743,10 +745,7 @@ async function start() {
       draft: string[];
     }>();
     mode = "daily";
-    sessions = {
-      daily: mount(rushSeed(game), saved as JsonValue),
-      practice: mount(freshSeed()),
-    };
+    sessions.daily = mount(rushSeed(game), saved as JsonValue);
     if (sessions.daily.index !== 0) sessions.daily = mount(rushSeed(game));
     const tiles = sessions.daily.questions[0].tiles;
     if (
@@ -777,7 +776,7 @@ async function start() {
   }
   await waitForFeedActivation();
   day = dailyDate();
-  const practiceSession = () => {
+  loadPractice = () => {
     const saved = read(practiceSlot(difficulty));
     const seed =
       saved &&
@@ -790,10 +789,8 @@ async function start() {
         : freshSeed();
     return mount(seed, saved, difficulty);
   };
-  sessions = {
-    daily: mount(day, read(`daily:${day}`)),
-    practice: practiceSession(),
-  };
+  sessions.daily = mount(day, read(`daily:${day}`));
+  if (mode === "practice") sessions.practice = loadPractice();
   if (photoGame && !inFeed) {
     settings = practiceSettings(
       {
@@ -806,7 +803,7 @@ async function start() {
         save();
         difficulty = next;
         write("difficulty", difficulty);
-        sessions.practice = practiceSession();
+        sessions.practice = loadPractice();
         draft = [];
         imageFailed = false;
         save();

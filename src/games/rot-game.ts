@@ -89,6 +89,7 @@ const number = new Intl.NumberFormat("en");
 const mapGame = kind === "maprot";
 const yearGame = kind === "yearrot";
 const sessions = {} as Record<Mode, RotSession>;
+let loadPractice: () => RotSession;
 let mode: Mode =
   startPractice || (!inFeed && readMode() === "practice")
     ? "practice"
@@ -135,6 +136,7 @@ function resetDay() {
 }
 
 function selectMode(next: Mode) {
+  if (next === "practice") sessions.practice ??= loadPractice();
   mode = next;
   write("mode", mode);
   resetDay();
@@ -1419,7 +1421,7 @@ async function start() {
     return;
   }
   await waitForFeedActivation();
-  const practiceSession = () => {
+  loadPractice = () => {
     const saved = read(practiceSlot(difficulty));
     const seed =
       typeof saved?.seed === "string" && saved.seed.length < 100
@@ -1427,8 +1429,7 @@ async function start() {
         : randomSeed();
     return mountSession(practiceSlot(difficulty), seed, difficulty);
   };
-  sessions.practice = practiceSession();
-  write(practiceSlot(difficulty), sessions.practice.state);
+  if (mode === "practice") sessions.practice = loadPractice();
   if (yearGame && !inFeed) {
     settings = practiceSettings(
       {
@@ -1440,7 +1441,7 @@ async function start() {
         if (next === difficulty) return;
         difficulty = next;
         write("difficulty", difficulty);
-        sessions.practice = practiceSession();
+        sessions.practice = loadPractice();
         write(practiceSlot(difficulty), sessions.practice.state);
         draw();
       },
