@@ -1,3 +1,4 @@
+import { releasedPool } from "../pool-version.js";
 import { hash, shuffle } from "../../daily/puzzles.js";
 import { wordBoards } from "./word-board-data.js";
 export interface WordGridPuzzle {
@@ -9,7 +10,8 @@ export interface WordGridPuzzle {
   maxMoves: number;
 }
 export function wordBoard(seed: string) {
-  const words = wordBoards[hash(seed) % wordBoards.length];
+  const pool = releasedPool("wordboards", wordBoards, seed.split(":")[0]);
+  const words = pool[hash(seed) % pool.length];
   const solution = Array(25).fill("#");
   for (let row = 0; row < 3; row++)
     for (let col = 0; col < 5; col++)

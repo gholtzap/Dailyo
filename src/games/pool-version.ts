@@ -15,7 +15,11 @@ export function releasedPool<T>(game: string, rows: T[], seed: string): T[] {
   const cutoff = game === "pricerot" ? "2026-11-26" : "2026-11-18";
   if (size && date && date <= cutoff) return rows.slice(0, size);
   // Content added after November 27 must not change already-issued puzzles.
-  const novemberPools: Record<string, number> = { ladderrot: 129, maprot: 214 };
+  const novemberPools: Record<string, number> = {
+    ladderrot: 129,
+    maprot: 214,
+    wordboards: 120,
+  };
   if (novemberPools[game] && date && date <= "2026-11-27")
     return rows.slice(0, novemberPools[game]);
   return rows;
