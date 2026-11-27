@@ -244,6 +244,11 @@ const mapData = preparePuzzles(
   "maprot",
   await read("../dist/games/data/maprot.json"),
 );
+assert.equal(mapData.items.length, 1000);
+assert.equal(
+  new Set(mapData.items.map((row) => `${row[0]}:${row[1]}`)).size,
+  1000,
+);
 assert.deepEqual(
   makeSet("maprot", mapData, "2026-11-27"),
   await read("./fixtures/issued-map-puzzle.json"),
