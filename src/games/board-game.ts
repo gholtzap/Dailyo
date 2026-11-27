@@ -70,6 +70,43 @@ function button(label: string, action: () => void, kind = "secondary") {
   b.onclick = action;
   return b;
 }
+function drawSudoku() {
+  if (puzzle.kind !== "sudoku") throw new Error("Wrong board");
+  const current = puzzle;
+  const grid = el("div", undefined, "puzzle-grid columns-6 sudoku-grid");
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "Mini Sudoku board");
+  current.initial.forEach((given, i) => {
+    const square = el("div", undefined, "puzzle-entry");
+    const input = el("input", undefined, "puzzle-input");
+    input.type = "text";
+    input.inputMode = "numeric";
+    input.pattern = "[1-6]";
+    input.maxLength = 1;
+    input.autocomplete = "off";
+    input.dataset.cell = String(i);
+    input.value = state.values[i];
+    input.readOnly = Boolean(given) || state.phase !== "playing";
+    input.setAttribute(
+      "aria-label",
+      `Row ${Math.floor(i / 6) + 1}, column ${(i % 6) + 1}${given ? ", given" : ""}`,
+    );
+    input.classList.toggle("is-given", Boolean(given));
+    input.classList.toggle("box-right", i % 6 === 2);
+    input.classList.toggle("box-bottom", Math.floor(i / 6) % 2 === 1 && i < 30);
+    input.oninput = () => {
+      const value = input.value.slice(-1);
+      if (!/^[1-6]?$/.test(value)) {
+        input.value = state.values[i];
+        return;
+      }
+      act({ type: "input", index: i, value });
+    };
+    square.append(input);
+    grid.append(square);
+  });
+  return grid;
+}
 function drawGroups() {
   if (puzzle.kind !== "groups") throw new Error("Wrong board");
   const section = el("div");
@@ -133,6 +170,10 @@ function drawCrossword() {
     );
     input.oninput = () => {
       const value = input.value.slice(-1);
+      if (!/^[a-zA-Z]?$/.test(value)) {
+        input.value = state.values[i];
+        return;
+      }
       act({ type: "input", index: i, value });
       if (value) {
         const clue =
@@ -208,6 +249,7 @@ function drawWordGrid() {
   return grid;
 }
 function drawBoard() {
+  if (puzzle.kind === "sudoku") return drawSudoku();
   if (puzzle.kind === "groups") return drawGroups();
   if (puzzle.kind === "crossword") return drawCrossword();
   if (puzzle.kind === "wordgrid") return drawWordGrid();
@@ -312,15 +354,17 @@ function draw() {
   const title = el(
     "h2",
     state.phase === "playing"
-      ? puzzle.kind === "groups"
-        ? "Find four groups of four"
-        : puzzle.kind === "crossword"
-          ? "Solve the crossword"
-          : puzzle.kind === "wordgrid"
-            ? "Complete six words"
-            : puzzle.kind === "crowns"
-              ? "Place six crowns"
-              : "Connect the checkpoints"
+      ? puzzle.kind === "sudoku"
+        ? "Fill the grid"
+        : puzzle.kind === "groups"
+          ? "Find four groups of four"
+          : puzzle.kind === "crossword"
+            ? "Solve the crossword"
+            : puzzle.kind === "wordgrid"
+              ? "Complete six words"
+              : puzzle.kind === "crowns"
+                ? "Place six crowns"
+                : "Connect the checkpoints"
       : result(),
   );
   title.id = "puzzle-title";
@@ -330,15 +374,17 @@ function draw() {
     content.push(
       el(
         "p",
-        puzzle.kind === "groups"
-          ? `${4 - state.mistakes} mistakes left`
-          : puzzle.kind === "crossword"
-            ? `${state.values.filter((v) => v && v !== "#").length} of 21 letters`
-            : puzzle.kind === "wordgrid"
-              ? `${puzzle.maxMoves - state.moves} swaps left`
-              : puzzle.kind === "crowns"
-                ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
-                : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
+        puzzle.kind === "sudoku"
+          ? `${state.values.filter(Boolean).length} of 36 squares`
+          : puzzle.kind === "groups"
+            ? `${4 - state.mistakes} mistakes left`
+            : puzzle.kind === "crossword"
+              ? `${state.values.filter((v) => v && v !== "#").length} of 21 letters`
+              : puzzle.kind === "wordgrid"
+                ? `${puzzle.maxMoves - state.moves} swaps left`
+                : puzzle.kind === "crowns"
+                  ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
+                  : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
         "puzzle-progress",
       ),
     );
@@ -366,7 +412,7 @@ function draw() {
         ? state.selected.length === 0
         : state.history.length === 0;
     actions.append(undo);
-    if (puzzle.kind === "crossword")
+    if (puzzle.kind === "crossword" || puzzle.kind === "sudoku")
       actions.append(button("Check answers", () => act({ type: "check" })));
     const reset = button("Restart", () => act({ type: "reset" }));
     reset.disabled =

@@ -13,6 +13,10 @@ const reports = [],
 const browser = await chromium.launch();
 const only = process.argv.find((a) => a.startsWith("--game="))?.split("=")[1];
 async function solve(page, puzzle) {
+  if (puzzle.kind === "sudoku")
+    for (let i = 0; i < 36; i++)
+      if (!puzzle.initial[i])
+        await page.locator(`[data-cell="${i}"]`).fill(puzzle.solution[i]);
   if (puzzle.kind === "groups")
     for (const group of puzzle.groups) {
       for (const word of group.words)

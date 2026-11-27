@@ -1,4 +1,9 @@
 export const boardGames = [
+  {
+    id: "sudoku",
+    name: "Mini Sudoku",
+    description: "Complete a six-by-six Sudoku",
+  },
   { id: "groups", name: "Groups", description: "Find four hidden connections" },
   {
     id: "crossword",

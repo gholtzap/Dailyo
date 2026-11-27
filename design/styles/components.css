@@ -1268,3 +1268,6 @@ body:has(dialog[open]) .puzzle-tooltip { display: none; }
 .puzzle-found { margin-top: var(--space-2); padding: var(--space-3); background: var(--success-surface); border: var(--stroke-1) solid var(--success); border-radius: var(--radius-control); color: var(--success-ink); }
 .puzzle-found h3 { font-size: var(--font-size-14); font-weight: var(--font-weight-medium); margin: 0 0 var(--space-2); }
 .puzzle-found p { margin: 0; font-size: var(--font-size-12); line-height: var(--leading-1-5); }
+.puzzle-input.is-given { background: var(--well); color: var(--muted); }
+.puzzle-input.box-right { border-right: var(--stroke-3) solid var(--line-strong); }
+.puzzle-input.box-bottom { border-bottom: var(--stroke-3) solid var(--line-strong); }
