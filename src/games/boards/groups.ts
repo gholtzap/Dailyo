@@ -35,8 +35,8 @@ const categories: WordGroup[] = [
   { name: "Types of cloud", words: ["CIRRUS", "CUMULUS", "STRATUS", "NIMBUS"] },
   { name: "Metric prefixes", words: ["KILO", "CENTI", "MILLI", "MICRO"] },
   {
-    name: "Olympic swimming strokes",
-    words: ["FREESTYLE", "BACKSTROKE", "BREASTSTROKE", "BUTTERFLY"],
+    name: "Sports played with a ball",
+    words: ["SOCCER", "TENNIS", "GOLF", "RUGBY"],
   },
   { name: "Pieces of cutlery", words: ["FORK", "KNIFE", "SPOON", "SPORK"] },
   { name: "Citrus fruits", words: ["LEMON", "LIME", "ORANGE", "GRAPEFRUIT"] },

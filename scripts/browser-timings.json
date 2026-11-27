@@ -99,7 +99,8 @@
     "node tests/retired-games.mjs --ci-width=1440": 22853.711762,
     "node tests/board-games.mjs --game=path": 11796.146644,
     "node tests/board-games.mjs --game=path --ci-width=390": 5898.073322,
-    "node tests/board-games.mjs --game=path --ci-width=1440": 5898.073322
+    "node tests/board-games.mjs --game=path --ci-width=1440": 5898.073322,
+    "node tests/board-failures.mjs": 6000
   },
   "additionalMeasurements": [
     {

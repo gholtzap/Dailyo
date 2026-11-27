@@ -10,6 +10,7 @@ import {
 } from "./board-state.js";
 import {
   dailyDate,
+  inFeed,
   reportDaily,
   waitForFeedActivation,
   startPractice,
@@ -18,12 +19,24 @@ import "./help.js";
 const game = document.body.dataset.game as BoardGame;
 const info = boardGames.find((x) => x.id === game)!;
 const quiz = required("#quiz");
+const modeKey = `dailyo:${game}:v1:mode`;
+function rememberedMode() {
+  try {
+    return localStorage.getItem(modeKey) === "practice";
+  } catch {
+    return false;
+  }
+}
+
 let day = dailyDate(),
-  mode: "daily" | "practice" = startPractice ? "practice" : "daily";
+  mode: "daily" | "practice" =
+    startPractice || (!inFeed && rememberedMode()) ? "practice" : "daily";
 let seed = day,
   puzzle = makeBoard(game, seed),
   state: BoardState = initialBoard(puzzle);
-let dragging = false;
+let gesture: { state: "idle" } | { state: "drawing"; pointer: number } = {
+  state: "idle",
+};
 const slot = (m = mode) =>
   `dailyo:${game}:v1:${m === "daily" ? `daily:${day}` : "practice"}`;
 const read = () => {
@@ -44,6 +57,7 @@ function load() {
         : `practice:${crypto.randomUUID()}`;
   puzzle = makeBoard(game, seed);
   state = restoreBoard(puzzle, raw?.state);
+  save();
 }
 function save() {
   try {
@@ -129,7 +143,7 @@ function drawGroups() {
     )
       return;
     const b = button(
-      word,
+      word[0] + word.slice(1).toLowerCase(),
       () => act({ type: "cell", index: i }),
       "puzzle-cell group-word",
     );
@@ -337,9 +351,12 @@ function drawBoard() {
       if ((e as PointerEvent).detail === 0) act({ type: "cell", index: i });
     };
     b.onpointerdown = (e) => {
-      if (e.button !== 0) return;
+      if (e.button !== 0 || !e.isPrimary) return;
       e.preventDefault();
-      dragging = puzzle.kind === "path";
+      gesture =
+        puzzle.kind === "path"
+          ? { state: "drawing", pointer: e.pointerId }
+          : { state: "idle" };
       act({ type: "cell", index: i });
     };
     grid.append(b);
@@ -449,7 +466,12 @@ function draw() {
   );
 }
 function selectMode(next: "daily" | "practice") {
+  gesture = { state: "idle" };
   mode = next;
+  if (!inFeed)
+    try {
+      localStorage.setItem(modeKey, mode);
+    } catch {}
   load();
   draw();
 }
@@ -478,8 +500,13 @@ async function copyResults() {
     field.select();
   }
 }
-quiz.addEventListener("pointermove", (e) => {
-  if (!dragging || state.phase !== "playing") return;
+window.addEventListener("pointermove", (e) => {
+  if (
+    gesture.state !== "drawing" ||
+    e.pointerId !== gesture.pointer ||
+    state.phase !== "playing"
+  )
+    return;
   const target = document
     .elementFromPoint(e.clientX, e.clientY)
     ?.closest<HTMLElement>("[data-cell]");
@@ -487,13 +514,13 @@ quiz.addEventListener("pointermove", (e) => {
     act({ type: "cell", index: Number(target.dataset.cell) });
 });
 window.addEventListener("pointerup", () => {
-  dragging = false;
+  gesture = { state: "idle" };
 });
 window.addEventListener("pointercancel", () => {
-  dragging = false;
+  gesture = { state: "idle" };
 });
 window.addEventListener("blur", () => {
-  dragging = false;
+  gesture = { state: "idle" };
 });
 quiz.addEventListener("keydown", (e) => {
   const cell = (e.target as HTMLElement).closest<HTMLElement>("[data-cell]");
