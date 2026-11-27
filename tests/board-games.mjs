@@ -126,6 +126,7 @@ try {
         });
 
         await page.keyboard.press("Escape");
+        await page.waitForFunction(() => document.activeElement?.id === "help");
         const puzzle = makeBoard(game.id, day);
         if (puzzle.kind === "path") {
           await page.locator(`[data-cell="${puzzle.solution[1]}"]`).click();
