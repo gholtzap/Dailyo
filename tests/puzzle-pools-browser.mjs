@@ -166,7 +166,7 @@ try {
     if (ciGames(["skyrot", "skylinerot", "zoomrot"]).includes("skyrot")) {
       const ladders = await read("ladderrot"),
         data = prepareExtra("ladderrot", ladders, await read("ladder-words"));
-      for (const index of [29, 45, 65, 85, 105, 128]) {
+      for (const index of [29, 128, 129, 500, 999]) {
         const token = `practice:deck:${index}:expanded-check`,
           puzzle = extraPuzzle("ladderrot", data, token);
         await page.evaluate(
