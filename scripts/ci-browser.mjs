@@ -8,10 +8,10 @@ const match = (planning ? "--shard=1/18" : process.argv[2])?.match(
 );
 assert.ok(
   match && [3, 4].includes(process.argv.length),
-  "Use --shard=index/count [--jobs=1|2]",
+  "Use --shard=index/count [--jobs=1|2|3]",
 );
 const jobsArg = process.argv[3] ?? "--jobs=1";
-assert.match(jobsArg, /^--jobs=[12]$/);
+assert.match(jobsArg, /^--jobs=[123]$/);
 const jobs = Number(jobsArg.split("=")[1]);
 const index = Number(match[1]),
   count = Number(match[2]);
