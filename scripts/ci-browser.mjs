@@ -72,8 +72,8 @@ const split = {
 };
 if (scripts["test:e2e"].includes("node tests/board-games.mjs")) {
   const { boardGames } = await import("../dist/games/board-catalog.js");
-  split["node tests/board-games.mjs"] = boardGames.map(
-    (game) => `--game=${game.id}`,
+  split["node tests/board-games.mjs"] = boardGames.flatMap((game) =>
+    [390, 1440].map((width) => `--game=${game.id} --ci-width=${width}`),
   );
   for (const game of boardGames)
     for (const width of [390, 1440])
