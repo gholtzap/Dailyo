@@ -154,7 +154,7 @@ export function makeSet(
   difficulty: PracticeDifficulty = "standard",
 ): RotQuestion[] {
   const deck = shuffle<Place | YearEvent | string[]>(
-    releasedPool(kind, data.items, seed),
+    releasedPool<Place | YearEvent | string[]>(kind, data.items, seed),
     seed,
   );
   const questions = deck.slice(offset, offset + roundCount);
