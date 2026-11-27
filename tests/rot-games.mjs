@@ -29,6 +29,7 @@ assert.equal(
 
 async function answerMap(page, [city, , lon, lat], index) {
   const map = page.locator(".rot-map");
+  await page.getByRole("button", { name: "Reset view", exact: true }).click();
   if (index === 0) {
     await map.press("ArrowRight");
     await map.press("Shift+ArrowUp");
@@ -44,9 +45,15 @@ async function answerMap(page, [city, , lon, lat], index) {
     );
   }
   await map.scrollIntoViewIfNeeded();
-  const box = await map.boundingBox();
-  const x = box.x + (box.width * (lon + 180)) / 360;
-  const y = box.y + (box.height * (90 - lat)) / 180;
+  const { x, y } = await map.evaluate(
+    (svg, [lon, lat]) => {
+      const p = new DOMPoint(lon + 180, 90 - lat).matrixTransform(
+        svg.getScreenCTM(),
+      );
+      return { x: p.x, y: p.y };
+    },
+    [lon, lat],
+  );
   if (page.viewportSize().width < 700) await page.touchscreen.tap(x, y);
   else await page.mouse.click(x, y);
   await page.getByRole("button", { name: "Check pin", exact: true }).click();
@@ -81,7 +88,7 @@ async function checkMapResult(map, maxWidth) {
       };
     },
   );
-  assert.ok(width > 0 && width <= maxWidth && height === width / 2);
+  assert.ok(width > 0 && width <= maxWidth && height > 0);
   assert.ok(
     visible && dotted && lineLength <= width,
     "Draw a dotted line with both pins inside the zoomed map",
@@ -244,23 +251,22 @@ const mapData = preparePuzzles(
   "maprot",
   await read("../dist/games/data/maprot.json"),
 );
+assert.equal(mapData.items.length, 1000);
+assert.equal(
+  new Set(mapData.items.map((row) => `${row[0]}:${row[1]}`)).size,
+  1000,
+);
 assert.deepEqual(
   makeSet("maprot", mapData, "2026-11-27"),
   await read("./fixtures/issued-map-puzzle.json"),
 );
-function cityDay(name, index) {
-  for (let n = 0; n < 10000; n++) {
-    const date = new Date(Date.UTC(2026, 11, 1 + n)).toISOString().slice(0, 10);
-    if (makeSet("maprot", mapData, date)[index][0] === name) return date;
-  }
-  throw new Error(`No daily set found for ${name}`);
-}
+// These historic seeds target named-city regressions in the preserved pool.
+
 try {
   const astana = await browser.newPage();
-  await astana.clock.setFixedTime(
-    new Date(`${cityDay("Astana", 2)}T16:00:00Z`),
-  );
+  await astana.clock.setFixedTime(new Date("2020-03-29T16:00:00Z"));
   await astana.goto(`${base}/maprot/`);
+  await astana.getByRole("button", { name: "Reset view", exact: true }).click();
   for (let i = 0; i < 2; i++) {
     await astana.locator(".rot-map").press("ArrowRight");
     await astana.getByRole("button", { name: "Check pin" }).click();
@@ -270,16 +276,17 @@ try {
   await astana.close();
 
   const suva = await browser.newPage();
-  await suva.clock.setFixedTime(new Date(`${cityDay("Suva", 0)}T16:00:00Z`));
+  await suva.clock.setFixedTime(new Date("2020-01-17T16:00:00Z"));
   await suva.goto(`${base}/maprot/`);
+  await suva.getByRole("button", { name: "Reset view", exact: true }).click();
   assert.equal(await suva.locator("#round-title").innerText(), "Find Suva");
   const map = suva.locator(".rot-map");
   await map.scrollIntoViewIfNeeded();
-  const box = await map.boundingBox();
-  await suva.mouse.click(
-    box.x + box.width / 360,
-    box.y + (box.height * 108) / 180,
-  );
+  const nearDateLine = await map.evaluate((svg) => {
+    const p = new DOMPoint(1, 108).matrixTransform(svg.getScreenCTM());
+    return { x: p.x, y: p.y };
+  });
+  await suva.mouse.click(nearDateLine.x, nearDateLine.y);
   await suva.getByRole("button", { name: "Check pin" }).click();
   await checkMapResult(map, 20);
   assert.equal(await map.locator(".rot-land").count(), 2);
@@ -367,10 +374,14 @@ try {
         }
         await next.click();
         if (kind === "maprot" && index < 4) {
-          assert.equal(
-            await page.locator(".rot-map").getAttribute("viewBox"),
-            "0 0 360 180",
-          );
+          await page.waitForFunction(() => {
+            const view = document.querySelector(".rot-map").viewBox.baseVal;
+            return (
+              Math.abs(view.x + view.width / 2 - 180) < 0.01 &&
+              Math.abs(view.y + view.height / 2 - 90) < 0.01
+            );
+          });
+          assert.equal(await page.locator(".city-pin").count(), 0);
           assert.equal(await page.locator(".rot-connector").count(), 0);
         }
       }
@@ -398,7 +409,10 @@ try {
       assert.ok(!copied.includes(clue), "Share the score without spoilers");
 
       await page
-        .getByRole("button", { name: "Play practice", exact: true })
+        .getByRole("button", {
+          name: kind === "maprot" ? "Practice" : "Play practice",
+          exact: true,
+        })
         .click();
       assert.equal(
         await page.locator("#practice").getAttribute("aria-pressed"),

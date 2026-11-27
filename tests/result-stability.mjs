@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium, webkit } from "playwright";
 import { checkPage } from "lintapple";
-import { shuffle } from "../dist/daily/puzzles.js";
+import { shuffle, quizPool } from "../dist/daily/puzzles.js";
 import { rushSeed } from "./rush-helpers.mjs";
 import { individualRushGames } from "../dist/daily/rush-games.js";
 import { visualSet, prepareVisual } from "../dist/games/visual-puzzles.js";
@@ -123,7 +123,8 @@ try {
           const rows = JSON.parse(
             await fs.readFile(`dist/games/data/${kind}.json`, "utf8"),
           );
-          const target = shuffle(rows, `rush:${kind}:${day}:${runId}`)[1];
+          const seed = `rush:${kind}:${day}:${runId}`;
+          const target = shuffle(quizPool(rows, kind, seed), seed)[1];
           const buttons = child.locator(".choice");
           if (correct)
             await child

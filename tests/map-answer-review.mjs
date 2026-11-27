@@ -40,6 +40,7 @@ try {
     await page.locator("#rush-status").filter({ hasText: "Round 1" }).waitFor();
     const f = page.frameLocator("iframe[title=maprot]"),
       map = f.locator(".rot-map");
+    await f.getByRole("button", { name: "Reset view", exact: true }).click();
     const point = await map.evaluate((svg) => {
       const p = new DOMPoint(114.9 + 180, 90 - 26.4).matrixTransform(
           svg.getScreenCTM(),
