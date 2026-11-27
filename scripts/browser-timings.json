@@ -1,6 +1,6 @@
 {
   "sourceSha": "5424ccd",
-  "measurement": "GitHub Ubuntu 24.04 run 46083315376: all 18 browser shards passed; final time 58.493s plus 2s reserve missed the 60s gate by 0.493s. Refresh all command estimates from these receipts; preserve every test and the gate.",
+  "measurement": "GitHub Ubuntu 24.04 run 46083315376: all 18 browser shards passed; final time 58.493s plus 2s reserve missed the 60s gate by 0.493s. Refresh all command estimates from these receipts; preserve every test and the gate. Gesture-input coverage: Ubuntu 24.04 run 46084213982 measured the new command at 22,238.745ms; add its actual duration instead of the scheduler’s 376,990ms unknown-command fallback. Every correctness job passed; the final gate missed by 1,163ms including its 2s reserve.",
   "durationsMs": {
     "node tests/puzzle-pools-browser.mjs": 113231.803143,
     "node tests/second-playtest.mjs": 24915.176955,
@@ -124,7 +124,8 @@
     "node tests/puzzle-pools-browser.mjs --ci-width=1440 --ci-game=zoomrot --ci-difficulty=hard": 21378.896919000003,
     "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=zoomrot --ci-difficulty=hard": 19493.886197,
     "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=zoomrot --ci-difficulty=standard": 20942.484591,
-    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skylinerot --ci-difficulty=hard": 18495.471384
+    "node tests/puzzle-pools-browser.mjs --ci-width=390 --ci-game=skylinerot --ci-difficulty=hard": 18495.471384,
+    "node tests/gesture-inputs.mjs": 22238.745049
   },
   "additionalMeasurements": [
     {
