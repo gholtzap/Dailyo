@@ -224,7 +224,7 @@ try {
     }
     // Completed standalone daily sets are shared with the feed and appear in its recap.
     await page.goto(`${base}/daily/`);
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 9; i++) {
       await page
         .getByRole("button", { name: "Skip game", exact: true })
         .waitFor();
@@ -232,19 +232,15 @@ try {
         .getByRole("button", { name: "Skip game", exact: true })
         .click();
     }
-    for (let i = 0; i < 5; i++)
-      await page
-        .getByRole("button", { name: "Skip game", exact: true })
-        .click();
     await page
       .getByRole("heading", { name: "Daily recap", exact: true })
       .waitFor();
-    assert.equal(await page.locator("#feed-results li").count(), 21);
+    assert.equal(await page.locator("#feed-results li").count(), 14);
     for (const [i, game] of visualGames.entries())
       assert.match(
         await page
           .locator("#feed-results li")
-          .nth(11 + i)
+          .nth(9 + i)
           .textContent(),
         new RegExp(`${gameName(game)}.*500 / 500 points`),
       );

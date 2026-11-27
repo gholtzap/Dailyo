@@ -280,7 +280,7 @@ try {
       });
     await context.close();
   }
-  for (const game of ["cluerot", "scalerot", "ladderrot"])
+  for (const game of ["cluerot", "ladderrot"])
     await check(`${game} practice deck cycle and reload`, async () => {
       const context = await browser.newContext({
           viewport: { width: 390, height: 844 },

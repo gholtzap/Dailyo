@@ -35,14 +35,14 @@ try {
     await page.locator("#feed-next").waitFor();
     await inspect("daily-feedback");
     await page.clock.fastForward(10000);
-    assert.equal(await page.locator("#feed-progress").textContent(), "1 of 21");
+    assert.equal(await page.locator("#feed-progress").textContent(), "1 of 14");
     await page.locator("#feed-next").click();
     await page
       .frameLocator('iframe[title="flagrot"]')
       .locator(".choice")
       .first()
       .waitFor();
-    assert.equal(await page.locator("#feed-progress").textContent(), "2 of 21");
+    assert.equal(await page.locator("#feed-progress").textContent(), "2 of 14");
     await inspect("daily-advanced");
 
     // Reload skips completed games; each newly completed game waits for Next.
@@ -66,7 +66,7 @@ try {
       .first()
       .waitFor();
     await page.clock.fastForward(2500);
-    assert.equal(await page.locator("#feed-progress").textContent(), "3 of 21");
+    assert.equal(await page.locator("#feed-progress").textContent(), "3 of 14");
 
     // A miss automatically ends a single-game run and opens the recap.
     await page.goto(`${base}/rush/flagrot/`);

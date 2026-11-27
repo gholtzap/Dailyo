@@ -2,13 +2,10 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium, webkit } from "playwright";
 import { checkPage } from "lintapple";
-import { perceptionPuzzle } from "../dist/games/perception-puzzles.js";
 import { shuffle } from "../dist/daily/puzzles.js";
 import { rushSeed } from "./rush-helpers.mjs";
-import { setAngle } from "./angle-helpers.mjs";
 import { individualRushGames } from "../dist/daily/rush-games.js";
 import { visualSet, prepareVisual } from "../dist/games/visual-puzzles.js";
-import { extraPuzzle, prepareExtra } from "../dist/games/extra-puzzles.js";
 import { makeSet, preparePuzzles } from "../dist/games/rot-puzzles.js";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const engine = process.argv.includes("--webkit") ? webkit : chromium;
@@ -63,11 +60,7 @@ try {
       "flagrot",
       "langrot",
       "Vocabulary",
-      "trackrot",
-      "splitrot",
-      "anglerot",
       "pricerot",
-      "scalerot",
       "yearrot",
     ]) {
       for (const correct of game === "flagrot" ? [true, false] : [true]) {
@@ -108,7 +101,6 @@ try {
         await p.getByRole("button", { name: "Resume", exact: true }).waitFor();
         await p.getByRole("button", { name: "Resume", exact: true }).click();
         const child = p.frameLocator(`iframe[title="${game}"]`);
-        if (game === "trackrot") await child.getByRole("slider").waitFor();
         await settle(p);
         await child.locator("body").evaluate(() => {
           window.resultScrollSamples = [scrollY];
@@ -139,11 +131,7 @@ try {
               .click();
           else
             await buttons.filter({ hasNotText: target.name }).first().click();
-        } else if (
-          game === "pricerot" ||
-          game === "scalerot" ||
-          game === "yearrot"
-        ) {
+        } else if (game === "pricerot" || game === "yearrot") {
           const raw = JSON.parse(
             await fs.readFile(`dist/games/data/${game}.json`, "utf8"),
           );
@@ -156,44 +144,11 @@ try {
             await child
               .getByRole("button", { name: "Check price", exact: true })
               .click();
-          } else if (game === "scalerot") {
-            const q = extraPuzzle(game, prepareExtra(game, raw), `${seed}:1`);
-            await child.getByRole("spinbutton").fill(String(q.actual));
-            await child
-              .getByRole("button", { name: "Check estimate", exact: true })
-              .click();
           } else {
             const q = makeSet(game, preparePuzzles(game, raw), seed)[1];
             await child
               .locator(".rot-slot")
               .nth(q.timeline.filter(([year]) => year < q.event[0]).length)
-              .click();
-          }
-        } else {
-          const q = perceptionPuzzle(game, await rushSeed(p, game), 1);
-          if (game === "anglerot") {
-            await setAngle(child, q.target);
-            await child
-              .getByRole("button", { name: "Check angle", exact: true })
-              .click();
-          } else {
-            await child
-              .getByRole("slider")
-              .fill(
-                String(
-                  Number(
-                    (game === "trackrot"
-                      ? q.target * 100
-                      : (q.right ? 1 - q.target : q.target) * 100
-                    ).toFixed(1),
-                  ),
-                ),
-              );
-            await child
-              .getByRole("button", {
-                name: game === "trackrot" ? "Check landing" : "Check split",
-                exact: true,
-              })
               .click();
           }
         }
@@ -263,60 +218,6 @@ try {
         console.log(engine.name(), viewport.width, game, correct, "stable");
         await p.close();
       }
-    }
-    if (viewport.width === 390) {
-      // Real wall-clock playback verifies that the result is readable on a phone.
-      const p = await browser.newPage({ viewport, colorScheme: "dark" });
-      p.setDefaultTimeout(10000);
-      await p.clock.setFixedTime(new Date(day + "T17:00:00Z"));
-      await p.goto(`${base}/rush/trackrot/`, { waitUntil: "domcontentloaded" });
-      const child = p.frameLocator("iframe[title=trackrot]");
-      await child.getByRole("slider").waitFor();
-      const seed = await rushSeed(p, "trackrot");
-      async function submit(round) {
-        const q = perceptionPuzzle("trackrot", seed, round);
-        await child
-          .getByRole("slider")
-          .fill(String(Number((q.target * 100).toFixed(1))));
-        await child
-          .getByRole("button", { name: "Check landing", exact: true })
-          .click();
-        await child
-          .locator("#perception-feedback")
-          .filter({ hasText: "Correct" })
-          .waitFor();
-      }
-      await submit(0);
-      const began = performance.now();
-      await p.waitForTimeout(2700);
-      assert.equal(
-        await p.locator("#rush-round").textContent(),
-        "Round 1",
-        "Landing feedback remains readable for almost three seconds",
-      );
-      await p.locator("#rush-round").filter({ hasText: "Round 2" }).waitFor();
-      assert.ok(
-        performance.now() - began < 4000,
-        "Automatic progression still works after the reading window",
-      );
-      await child.getByRole("slider").waitFor();
-      await submit(1);
-      const keep = p.getByRole("button", { name: "Keep answer", exact: true });
-      await keep.click();
-      assert.equal(
-        await keep.isVisible(),
-        false,
-        "Keep answer must receive the click, including in WebKit",
-      );
-      await p.waitForTimeout(3500);
-      assert.equal(await p.locator("#rush-round").textContent(), "Round 2");
-      await p.getByRole("button", { name: "Next", exact: true }).click();
-      await p.locator("#rush-round").filter({ hasText: "Round 3" }).waitFor();
-      console.log(
-        engine.name(),
-        "Track: real three-second result, Keep answer, immediate Next passed",
-      );
-      await p.close();
     }
   }
 } finally {

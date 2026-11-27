@@ -19,7 +19,7 @@ try {
     });
     await p.clock.setFixedTime(new Date("2026-11-26T17:00:00Z"));
     await p.goto(`${base}/daily/`);
-    for (let n = 0; n < 21; n++) {
+    for (let n = 0; n < 14; n++) {
       const iframe = p.locator("iframe[title]:not([hidden])");
       await iframe.waitFor();
       const title = await iframe.getAttribute("title");
@@ -69,7 +69,7 @@ try {
       receipts.push({ viewport, title });
     }
     await p.locator("#feed-recap").waitFor();
-    assert.match(await p.locator("#feed-summary").innerText(), /21 skipped/);
+    assert.match(await p.locator("#feed-summary").innerText(), /14 skipped/);
     await p.close();
   }
 } finally {
@@ -80,5 +80,5 @@ await fs.writeFile(
   JSON.stringify(receipts, null, 2),
 );
 console.log(
-  "All 21 Daily games render their complete content and controls; skip and recap remain usable.",
+  "All 14 Daily games render their complete content and controls; skip and recap remain usable.",
 );

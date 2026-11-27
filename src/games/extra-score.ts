@@ -1,9 +1,4 @@
-export const extraGames: readonly string[] = [
-  "ladderrot",
-  "cluerot",
-  "scalerot",
-  "swaprot",
-];
+export const extraGames: readonly string[] = ["ladderrot", "cluerot"];
 export const lowerIsBetter = (game: string) =>
   game === "maprot" || extraGames.includes(game);
 

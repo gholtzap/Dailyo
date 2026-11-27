@@ -17,7 +17,7 @@ try {
         host === "rush" ? `${base}/rush/maprot/` : `${base}/daily/`,
       );
       if (host === "daily") {
-        for (let n = 0; n < 21; n++) {
+        for (let n = 0; n < 14; n++) {
           const active = page.locator("iframe[title]:not([hidden])");
           await active.waitFor();
           if ((await active.getAttribute("title")) === "maprot") break;

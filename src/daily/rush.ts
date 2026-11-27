@@ -50,22 +50,10 @@ const pauseSurface = $("#rush-resume-panel");
 const resumeCard =
   pauseSurface.querySelector<HTMLElement>(".rush-resume-card")!;
 // Keep spatial drafts visible. Knowledge questions remain masked while their clock is stopped.
-const previewGames = new Set([
-  "trainrot",
-  "maprot",
-  "borderrot",
-  "swaprot",
-  "orderrot",
-  "trackrot",
-  "anglerot",
-  "splitrot",
-]);
+const previewGames = new Set(["trainrot", "maprot", "borderrot", "orderrot"]);
 function positionPauseSurface() {
   if (pauseSurface.hidden || !visible?.contentDocument) return;
   const board = [
-    ".perception-field",
-    ".angle-board",
-    ".split-field",
     ".rot-map",
     ".map-panel",
     ".swap-board",
@@ -740,17 +728,7 @@ function showFinish(effect: RushEffect, atDeadline = false) {
     generation: run.generation,
     index: nextIndex,
     round: nextRound,
-    remaining: [
-      "countrot",
-      "trackrot",
-      "anglerot",
-      "temporot",
-      "splitrot",
-    ].includes(games[index].label)
-      ? 3000
-      : correct
-        ? 180
-        : 2400,
+    remaining: correct ? 180 : 2400,
     deadline: 0,
   };
   scheduleAdvance();

@@ -1,86 +1,9 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0b1428">
-  <meta name="description" content="Race the clock in dailyo games.">
-  <title>Track Rush | dailyo</title>
-  <link rel="stylesheet" href="/design-system.css">
-  <link rel="stylesheet" href="/feed.css">
+<html lang="en"><head><meta charset="utf-8"><meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b1428"><meta http-equiv="refresh" content="0;url=/rush/">
+<link rel="canonical" href="/rush/"><title>dailyo</title>
+<link rel="stylesheet" href="/design-system.css">
+  <link rel="stylesheet" href="/subway.css">
   <link rel="stylesheet" href="/components.css">
-<script type="module" src="/site.js"></script>
 </head>
-<body class="daily-feed rush-feed">
-  <header class="site-masthead feed-header">
-    <a class="site-brand" href="/">dailyo</a>
-    <nav class="site-modes" aria-label="Play mode">
-      <a href="/daily/" aria-label="Daily mix">Daily</a>
-      <a href="/rush/" aria-current="page">Rush</a>
-    </nav>
-
-    <details class="site-more feed-directory">
-      <summary>Games</summary>
-      <nav class="site-more-links" aria-label="Games">
-          <a aria-description="Flags in Rush" href="/rush/flagrot/"><span>Flags</span></a>
-          <a aria-description="Languages in Rush" href="/rush/langrot/"><span>Languages</span></a>
-          <a aria-description="Word meanings in Rush" href="/rush/vocabulary/"><span>Words</span></a>
-          <a aria-description="Timelines in Rush" href="/rush/yearrot/"><span>Timeline</span></a>
-          <a aria-description="Overhead cities in Rush" href="/rush/skyrot/"><span>From above</span></a>
-          <a aria-description="Prices in Rush" href="/rush/pricerot/"><span>Prices</span></a>
-          <a aria-description="Skylines in Rush" href="/rush/skylinerot/"><span>Skylines</span></a>
-          <a aria-description="Close-up objects in Rush" href="/rush/zoomrot/"><span>Close-up</span></a>
-          <a aria-description="Dot counting in Rush" href="/rush/countrot/"><span>Count</span></a>
-          <a aria-description="Ball tracking in Rush" href="/rush/trackrot/"><span>Track</span></a>
-          <a aria-description="Angle estimation in Rush" href="/rush/anglerot/"><span>Angles</span></a>
-          <a aria-description="Line proportions in Rush" href="/rush/splitrot/"><span>Split</span></a>
-
-      </nav>
-    </details>
-  </header>
-  <section aria-label="Rush status" class="feed-actions" hidden>
-    <div class="rush-progress">
-      <span id="rush-game-name" class="rush-game-name"></span>
-      <p class="screen-reader-only" id="rush-status" role="status" tabindex="-1"></p>
-      <span id="rush-streak" role="status" aria-live="polite" aria-atomic="true" hidden></span>
-    </div>
-    <div class="rush-time">
-      <span class="rush-track" aria-hidden="true"><span></span></span>
-      <span id="rush-clock" role="timer" aria-label="Time left"></span>
-    </div>
-    <button class="secondary" id="rush-pause" type="button" hidden>Pause</button>
-  </section>
-  <main class="feed-body">
-    <div id="feed-game"></div>
-    <section id="rush-resume-panel" class="rush-pause-surface" aria-label="Game paused" hidden>
-      <div class="rush-resume-card">
-        <p>Paused</p>
-      </div>
-    </section>
-    <section class="main result" id="feed-recap" hidden>
-      <div class="feed-recap-heading">
-        <h2 tabindex="-1" aria-label="Rush recap">Rush complete</h2>
-        <button class="secondary" type="button" id="rush-copy">Copy results</button>
-      </div>
-      <p id="rush-copy-status" role="status"></p>
-      <textarea id="rush-copy-text" aria-label="Rush results to copy" rows="6" readonly hidden></textarea>
-      <p id="rush-score"></p>
-      <p class="recap-streak">Best streak <span><span aria-hidden="true">🔥</span> <span id="rush-best-streak">0</span></span></p>
-      <details class="rush-breakdown"><summary>Review</summary>
-        <p id="rush-personal-best"></p>
-        <ul id="feed-results"></ul>
-        <button class="secondary" id="rush-review-recap" type="button" hidden>Review last answer</button>
-      </details>
-      <button class="primary" type="button" id="rush-replay">Play again</button>
-    </section>
-  </main>
-  <footer class="rush-controls" aria-label="Rush actions">
-    <button class="secondary" id="rush-review" type="button" hidden>Review answer</button>
-    <button class="secondary" id="rush-retry" type="button" hidden>Retry</button>
-    <button class="secondary rush-skip" id="rush-next" type="button">Skip game</button>
-  </footer>
-
-  <script type="module" src="/daily/rush.js"></script>
-</body>
-</html>
+<body><a href="/rush/">Rush</a></body></html>

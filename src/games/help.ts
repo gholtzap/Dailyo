@@ -1,26 +1,6 @@
 import { rushRound } from "../daily/bridge.js";
 
 const instructions: Record<string, string[]> = {
-  countrot: [
-    "Estimate how many dots flash on screen. Enter your count after they disappear.",
-    "Hard practice uses moving dots.",
-  ],
-  trackrot: [
-    "Watch the ball until it disappears. Tap the field or use the Landing position slider to predict where it reaches the floor.",
-    "Hard practice adds wall bounces.",
-  ],
-  anglerot: [
-    "Draw from the center to set the counterclockwise angle from the right-facing baseline. With the board focused, use arrow keys to adjust; Shift makes smaller steps.",
-    "Hard practice includes full turns. 450° means one turn plus 90°.",
-  ],
-  temporot: [
-    "Listen to four beats, then tap eight more using Tap or Space. Keep sound on.",
-    "Hard practice asks you to tap halfway between the imagined beats.",
-  ],
-  splitrot: [
-    "Measure the requested percentage from the named endpoint. Drag the marker or tap the line.",
-    "Hard practice extends beyond the line. 150% from the left is one and a half line lengths from the left endpoint.",
-  ],
   skyrot: [
     "Identify the city from an overhead photograph. Each missed guess reveals a wider view. You have three guesses per photo.",
     "A correct answer earns 100, 65, or 35 points depending on the view and guesses used. Rush gives one guess per photo.",
@@ -63,14 +43,6 @@ const instructions: Record<string, string[]> = {
     "Guess the answer from the clues.",
     "Aim to solve it with the fewest clues.",
   ],
-  scalerot: [
-    "Estimate the quantity in the unit shown.",
-    "Your score is the percentage your estimate was off. Lower is better.",
-  ],
-  swaprot: [
-    "Select a tile, then select a tile beside it to swap the two.",
-    "Put the numbers 1 to 7 in order in the fewest swaps.",
-  ],
 };
 
 const game = (document.body.dataset.game ??
@@ -92,8 +64,6 @@ const rushRules: Record<string, string[]> = {
   ],
   ladderrot: [instructions.ladderrot[0]],
   cluerot: [instructions.cluerot[0], "An incorrect guess ends this game."],
-  scalerot: [instructions.scalerot[0], "Estimate within 10%."],
-  swaprot: instructions.swaprot,
   skyrot: [
     "Identify the city from the overhead photograph. You have one guess.",
   ],
@@ -105,14 +75,6 @@ const rushRules: Record<string, string[]> = {
   ],
   pricerot: [instructions.pricerot[0], "Estimate within 20%."],
   orderrot: [instructions.orderrot[0]],
-  countrot: [
-    "Estimate how many dots flash on screen. Enter your count after they disappear.",
-    "Earn at least 70 points to continue.",
-  ],
-  trackrot: [instructions.trackrot[0], "Earn at least 70 points to continue."],
-  anglerot: [instructions.anglerot[0], "Earn at least 70 points to continue."],
-  temporot: [instructions.temporot[0], "Earn at least 70 points to continue."],
-  splitrot: [instructions.splitrot[0], "Earn at least 70 points to continue."],
 };
 const steps =
   rushRound === null

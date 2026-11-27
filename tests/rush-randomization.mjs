@@ -180,10 +180,6 @@ const expected = [
   "pricerot",
   "skylinerot",
   "zoomrot",
-  "countrot",
-  "trackrot",
-  "anglerot",
-  "splitrot",
 ].sort();
 assert.deepEqual(rushGames.map((g) => g.label).sort(), expected);
 const mixedBrowser = await chromium.launch();

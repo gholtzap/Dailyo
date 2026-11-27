@@ -147,6 +147,7 @@ try {
       const expected = extraScoreLabel(game, answer);
       assert.equal(await heading.innerText(), expected);
       await page.reload();
+      await heading.waitFor();
       assert.equal(await heading.innerText(), expected);
       await inspect("result");
       await page.getByRole("button", { name: "Copy results" }).click();

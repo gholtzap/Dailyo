@@ -2,9 +2,9 @@
 
 [Play dailyo](https://trainrot.vercel.app)
 
-[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through all twenty-one games. Play again starts a fresh random puzzle sequence. Refreshing restores the current run in this tab; timed rounds return paused. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout shows the answer briefly, then advances automatically. Press and hold an answer to stop automatic progression, or choose Keep answer until you are ready to continue. Review answer reopens the last result while preserving the current puzzle and its clock. Timed rounds pause when the tab is hidden; choose Resume when you return. Opening How to play also pauses the clock. Choose Resume after closing help. Paused puzzles are hidden. You can also pause a timed round yourself. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
+[Rush](https://trainrot.vercel.app/rush/) opens with the first puzzle and rotates through eight games. Play again starts a fresh random puzzle sequence. Refreshing restores the current run in this tab; timed rounds return paused. Only the opening puzzle of the run is untimed. Keep answering correctly to stay in a game. The clock gets shorter until it reaches the game’s minimum. A miss or timeout shows the answer briefly, then advances automatically. Press and hold an answer to stop automatic progression, or choose Keep answer until you are ready to continue. Review answer reopens the last result while preserving the current puzzle and its clock. Timed rounds pause when the tab is hidden; choose Resume when you return. Opening How to play also pauses the clock. Choose Resume after closing help. Paused puzzles are hidden. You can also pause a timed round yourself. Choose a game from the Rush menu to open its shareable URL, such as [flagrot Rush](https://trainrot.vercel.app/rush/flagrot/).
 
-[Daily mix](https://trainrot.vercel.app/daily/) plays all twenty-one daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
+[Daily mix](https://trainrot.vercel.app/daily/) plays all fourteen daily games in one session. It resumes from the first unfinished game, shares progress with the individual game pages, and shows a recap. Skipped games can be played from the recap.
 
 [trainrot](https://trainrot.vercel.app/trainrot/) is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 
@@ -16,8 +16,6 @@ The site also has [flagrot](https://trainrot.vercel.app/flags/), [langrot](https
 
 - [ladderrot](https://trainrot.vercel.app/ladderrot/) challenges you to connect two words one letter at a time.
 - [cluerot](https://trainrot.vercel.app/cluerot/) gives you up to five clues to identify the answer.
-- [scalerot](https://trainrot.vercel.app/scalerot/) scores your estimate by its percentage error.
-- [swaprot](https://trainrot.vercel.app/swaprot/) asks you to sort seven tiles using only adjacent swaps.
 
 These games have daily puzzles and practice. The daily results can be copied without revealing the answers.
 
@@ -38,7 +36,7 @@ bun install --frozen-lockfile
 bun run dev
 ```
 
-Open [localhost:4173](http://localhost:4173). The local build includes all twenty-one games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
+Open [localhost:4173](http://localhost:4173). The local build includes all fourteen games and uses Harbour City, a fictional subway network. No API keys or downloads of transit feeds are needed to play.
 
 ## trainrot
 
@@ -217,26 +215,10 @@ when another route ties it, the result explains the tie and offers the alternati
 Country search accepts words within a name, country codes, and familiar aliases
 such as DRC, Ivory Coast, and UK.
 
-Word-ladder, clue, and estimation Practice work through the available puzzles
+Word-ladder and clue Practice work through the available puzzles
 before starting another cycle. The current puzzle and cycle progress resume
 on reload. Map, timeline, and country-route results include a review of each
 completed question; opening a review does not change the saved score.
-
-Perception games: **countrot** (dot counting), **trackrot** (ball tracking),
-**anglerot** (angle estimation), **temporot** (rhythm), and **splitrot** (line
-proportions). Each has five seeded daily rounds, saved progress, unlimited
-practice, and a harder practice variation. They also appear in Daily mix and
-Rush. Tempo requires sound; tap with the button or Space after four reference beats. In Rush, angle and line-split puzzles open ready to answer. After the first dot-counting, ball-tracking, or rhythm round, later rounds start after a short ready cue. Preloaded rounds stay idle, and pausing freezes the cue and playback. Browsers that block automatic audio offer Enable sound.
-Anglerot and Splitrot practice open directly on the controls. Memory, motion, and
-audio rounds keep an explicit Start round action. Games use Next to continue,
-See results to finish a set, and New puzzle or New set to start fresh practice.
-
-Run `npm run test:e2e:perception` against the local server to check all five games,
-saved Daily results, hard Practice, sharing, Daily mix, Rush at
-390px and 1440px in the dark theme. Reports and screenshots go to
-`test-results/perception/`. Run `npm run lint:ui:perception` for the UI policy checks. These are original implementations of the five
-perception tasks described at https://perceptle.io/how-to-play/; no Perceptle
-code, artwork, or audio is used.
 
 ### CI performance
 

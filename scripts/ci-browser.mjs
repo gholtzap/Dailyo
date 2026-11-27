@@ -60,10 +60,6 @@ const split = {
     ...[390, 1440].map((width) => `--ci-width=${width}`),
     "--ci-shared",
   ],
-  "node tests/perception-games.mjs": [
-    ...[390, 1440].map((width) => `--ci-width=${width}`),
-    "--ci-shared",
-  ],
 };
 const browser = scripts["test:e2e"].split(" && ").flatMap((command) => {
   const parts = split[command];

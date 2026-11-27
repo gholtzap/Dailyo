@@ -22,8 +22,6 @@ const games = [
   "borderrot",
   "ladderrot",
   "cluerot",
-  "scalerot",
-  "swaprot",
   "skyrot",
   "pricerot",
   "skylinerot",

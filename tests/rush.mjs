@@ -9,7 +9,7 @@ import {
   preparePuzzles,
   roundCount,
 } from "../dist/games/rot-puzzles.js";
-import { extraPuzzle, prepareExtra } from "../dist/games/extra-puzzles.js";
+import { visualSet, prepareVisual } from "../dist/games/visual-puzzles.js";
 
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const policy = JSON.parse(
@@ -314,7 +314,7 @@ try {
         }
       }
     }
-    for (let i = 0; i < 9; i++) await next.click();
+    for (let i = 0; i < 5; i++) await next.click();
     await page.getByRole("heading", { name: "Rush recap" }).waitFor();
     assert.equal(await page.locator("#rush-score").textContent(), "13 correct");
     assert.equal(
@@ -334,7 +334,7 @@ try {
     const recapRows = await page
       .locator("#feed-results li span")
       .allTextContents();
-    assert.equal(recapRows.length, 12);
+    assert.equal(recapRows.length, 8);
     assert.ok(recapRows.every((row) => !/ladderrot|cluerot/.test(row)));
     assert.equal(
       share,
@@ -351,7 +351,7 @@ try {
     await page.getByRole("button", { name: "Play again" }).click();
     await status.filter({ hasText: "Round 1" }).waitFor();
     assert.equal(await timer.isVisible(), false);
-    for (let i = 0; i < 12; i++)
+    for (let i = 0; i < 8; i++)
       await page
         .getByRole("button", { name: "Skip game", exact: true })
         .click();
@@ -374,11 +374,6 @@ try {
     await page.getByRole("link", { name: "Daily mix", exact: true }).click();
     await page.waitForURL("**/daily/");
     await page.getByRole("link", { name: "Daily mix", exact: true }).waitFor();
-    if (new URL(base).hostname === "127.0.0.1") {
-      await page.route("**/rush/**", async (route) => {
-        await route.fulfill({ response: await page.request.get(base) });
-      });
-    }
     const sharedChallenge = new URL(share.split("\n").at(-1));
     await seedMixedRun(page, day);
     await page.clock.setFixedTime(new Date("2026-11-17T16:00:00Z"));
@@ -395,26 +390,29 @@ try {
       .getByRole("button", { name: sharedDeck[1].name, exact: true })
       .click();
     await status.filter({ hasText: "Correct" }).waitFor();
-    await page.goto(new URL(`/rush/scalerot/?date=${day}`, base).href);
+    await page.goto(new URL(`/rush/pricerot/?date=${day}`, base).href);
     await status.filter({ hasText: "Round 1" }).waitFor();
     assert.equal(await page.locator("#rush-clock").isVisible(), false);
-    const scale = game("scalerot");
-    const data = prepareExtra(
-      "scalerot",
-      await loadJson("/games/data/scalerot.json"),
+    const scale = game("pricerot");
+    const data = prepareVisual(
+      "pricerot",
+      await loadJson("/games/data/pricerot.json"),
     );
-    const puzzle = extraPuzzle(
-      "scalerot",
+    const puzzle = visualSet(
+      "pricerot",
       data,
-      `${await rushSeed(page, "scalerot")}:0`,
-    );
-    await scale.getByRole("spinbutton").fill(String(puzzle.actual));
-    await scale.getByRole("button", { name: "Check estimate" }).click();
+      await rushSeed(page, "pricerot"),
+      true,
+      0,
+    )[0];
+    await scale.getByRole("spinbutton").fill(String(puzzle.item.cents / 100));
+    await scale.getByRole("button", { name: "Check price" }).click();
     await status.filter({ hasText: "Correct" }).waitFor();
     await page.clock.fastForward(200);
-    await timer.filter({ hasText: "20s" }).waitFor();
-    await page.clock.fastForward(20100);
-    await scale.locator(".estimate-comparison").waitFor();
+    await status.filter({ hasText: "Round 2" }).waitFor();
+    await timer.filter({ hasText: "18s" }).waitFor();
+    await page.clock.fastForward(18100);
+    await scale.locator(".visual-reveal").waitFor();
     await page.clock.fastForward(2400);
     await page.locator(".rush-breakdown > summary").click();
     await page.locator("#feed-results li").waitFor();
@@ -429,7 +427,7 @@ try {
     );
     assert.equal(
       await page.evaluate(() =>
-        localStorage.getItem("dailyo:rush:best:scalerot"),
+        localStorage.getItem("dailyo:rush:best:pricerot"),
       ),
       "1",
     );
@@ -440,7 +438,7 @@ try {
     const manual = page.getByRole("textbox", { name: "Rush results to copy" });
     assert.equal(
       await manual.inputValue(),
-      `dailyo Rush · Estimates · ${day}\n1 correct\n\nhttps://trainrot.vercel.app/rush/scalerot/?date=${day}`,
+      `dailyo Rush · Prices · ${day}\n1 correct\n\nhttps://trainrot.vercel.app/rush/pricerot/?date=${day}`,
     );
     assert.ok(
       await manual.evaluate(
@@ -451,10 +449,10 @@ try {
       ),
     );
     await inspect("copy fallback");
-    // Saved links fall back to the remaining Rush rotation; standalone games stay playable.
+    // Legacy Rush links open their named standalone game.
     for (const removed of ["ladderrot", "cluerot"]) {
       await page.goto(`${base}/rush/${removed}/`);
-      await status.filter({ hasText: "Round 1" }).waitFor();
+      await page.waitForURL(`${base}/${removed}/`);
       assert.equal(await page.locator(`iframe[title='${removed}']`).count(), 0);
       await page.goto(`${base}/${removed}/`);
       await page.locator("#extra-title").waitFor();
@@ -466,7 +464,7 @@ try {
     assert.deepEqual(errors, []);
     await page.close();
     console.log(
-      `${width}px Rush: all twelve mixed games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`,
+      `${width}px Rush: all eight mixed games, one untimed opener, preloaded swaps, timed rounds, misses, timeouts and single-game links passed`,
     );
   }
   if (lint) {

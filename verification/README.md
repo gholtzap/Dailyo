@@ -62,14 +62,6 @@ revealed by pausing. Count's dots and timed knowledge questions remain concealed
 while the clock is stopped. Rhythm suspends audio and its playback position.
 Reload retains the existing checkpoint and draft recovery contracts.
 
-## Static perception readiness
-
-| State     | Event        | Conditions                            | Next state / effect                                            |
-| --------- | ------------ | ------------------------------------- | -------------------------------------------------------------- |
-| Ready     | Reset / next | Unanswered standalone Angles or Split | Showing, then Answering; render the editable board immediately |
-| Answering | Start        | Already active                        | Unchanged; no duplicate round                                  |
-| Feedback  | Next         | Final round completed                 | Results                                                        |
-
 ## Failure cases
 
 Proofs must cover illegal edits, duplicate submissions, exhausted guesses,
