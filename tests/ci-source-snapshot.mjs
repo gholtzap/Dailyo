@@ -130,9 +130,9 @@ try {
             await new Promise((r) => setTimeout(r, 5));
           }
         }
-        if (path.includes("/commits/"))
+        if (path.includes("/git/commits/"))
           return Response.json(
-            { sha, commit: { tree: { sha: treeSha } } },
+            { sha, tree: { sha: treeSha } },
             { status: mode === "unknown-commit" ? 404 : 200 },
           );
         if (path.includes("/git/trees/"))

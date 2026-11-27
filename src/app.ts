@@ -217,7 +217,10 @@ async function start() {
       else if (
         practiceSnapshot?.deck === deck &&
         practiceSnapshot.seed === seed &&
-        practiceSnapshot.position === position
+        practiceSnapshot.position === position &&
+        localStorage
+          .getItem(storageKey)
+          ?.startsWith(`{"revision":"${practiceSnapshot.revision}",`)
       ) {
         localStorage.setItem(
           checkpointKey,
@@ -242,7 +245,6 @@ async function start() {
           }),
         );
         practiceSnapshot = { deck, seed, position, revision };
-        localStorage.removeItem(checkpointKey);
       }
     } catch {}
   }
@@ -717,7 +719,7 @@ async function start() {
           });
         $("#city-map").focus({ preventScroll: true });
       };
-    reportDaily("playing", undefined, dailyDate);
+    reportDaily("playing", undefined, dailyDate, dailyKey(dailyDate));
   }
   function resultLegs(legs: Ride[]) {
     const walk = (w: Walk) =>
@@ -937,6 +939,7 @@ async function start() {
           ? "Map used"
           : `${r.score ?? 0} points`,
       dailyDate,
+      dailyKey(dailyDate),
     );
   }
   function nextJourney() {

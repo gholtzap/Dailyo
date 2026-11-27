@@ -352,7 +352,7 @@ function result() {
     box.append(actions, status);
   }
   quiz.replaceChildren(box);
-  reportDaily("complete", title.textContent, day);
+  reportDaily("complete", title.textContent, day, key(`daily:${day}`));
 }
 function draw() {
   for (const [id, button] of Object.entries(controls))
@@ -464,7 +464,7 @@ function draw() {
   else if (mode === "daily")
     quiz.replaceChildren(dailyProgress(), ...content, next);
   else quiz.replaceChildren(...content, next);
-  reportDaily("playing", undefined, day);
+  reportDaily("playing", undefined, day, key(`daily:${day}`));
 }
 async function start() {
   const response = await fetch(`/games/data/${kind}.json`);

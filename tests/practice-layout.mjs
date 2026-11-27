@@ -121,6 +121,21 @@ try {
       2,
       "Stale checkpoints must not replace a newer deck's answer",
     );
+    const other = await p.context().newPage();
+    await other.goto(`${base}/trainrot/?practice=1`);
+    await other.locator("[data-route]").first().waitFor();
+    await p.locator("[data-route]").first().click();
+    await other.close();
+    await p.reload();
+    await p.locator("#undo-train").waitFor();
+    assert.equal(
+      await p.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key)).state.legs.length,
+        key,
+      ),
+      3,
+      "Opening a second practice tab must not invalidate later edits in the first tab",
+    );
     await p.close();
   }
 } finally {
