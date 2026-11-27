@@ -1373,3 +1373,7 @@ body[data-game=maprot] > .city-main {
   background: var(--success-surface);
   color: var(--success-ink);
 }
+.city-main .rot-map:focus-visible {
+  outline: var(--stroke-2) solid var(--focus);
+  outline-offset: calc(var(--stroke-2) * -1);
+}
