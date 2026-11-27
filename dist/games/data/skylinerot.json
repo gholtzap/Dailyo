@@ -706,5 +706,341 @@
       "san-francisco",
       "buenos-aires"
     ]
+  },
+  {
+    "id": "istanbul",
+    "name": "Istanbul",
+    "image": "/games/media/skylinerot-istanbul.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Skyline_-_Istanbul,_Turkey_-_October_11,_2025.jpg",
+    "credit": "Giorgio Galeotti",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "athens",
+      "vienna",
+      "rome"
+    ]
+  },
+  {
+    "id": "vienna",
+    "name": "Vienna",
+    "image": "/games/media/skylinerot-vienna.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Vienna_skyline_across_the_Danube_river.jpg",
+    "credit": "Sohom Datta",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "distractors": [
+      "prague",
+      "munich",
+      "berlin"
+    ]
+  },
+  {
+    "id": "prague",
+    "name": "Prague",
+    "image": "/games/media/skylinerot-prague.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Prague_skyline_at_dawn.jpg",
+    "credit": "Petar Milošević",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "vienna",
+      "berlin",
+      "munich"
+    ]
+  },
+  {
+    "id": "stockholm",
+    "name": "Stockholm",
+    "image": "/games/media/skylinerot-stockholm.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Stockholm_Skyline_(15189547020).jpg",
+    "credit": "Tony Webster from Portland, Oregon, United States",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "distractors": [
+      "oslo",
+      "hamburg",
+      "berlin"
+    ]
+  },
+  {
+    "id": "oslo",
+    "name": "Oslo",
+    "image": "/games/media/skylinerot-oslo.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Oslo_skyline.jpg",
+    "credit": "Audun",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "stockholm",
+      "hamburg",
+      "berlin"
+    ]
+  },
+  {
+    "id": "rotterdam",
+    "name": "Rotterdam",
+    "image": "/games/media/skylinerot-rotterdam.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Skyline,_Rotterdam.jpg",
+    "credit": "John Samuel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "london",
+      "frankfurt",
+      "paris"
+    ]
+  },
+  {
+    "id": "frankfurt",
+    "name": "Frankfurt",
+    "image": "/games/media/skylinerot-frankfurt.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Skyline_Frankfurt_am_Main.jpg",
+    "credit": "Nicolas Scheuer",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+    "distractors": [
+      "munich",
+      "zurich",
+      "rotterdam"
+    ]
+  },
+  {
+    "id": "hamburg",
+    "name": "Hamburg",
+    "image": "/games/media/skylinerot-hamburg.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Neue_Skyline_Hamburg.JPG",
+    "credit": "Heide-Daniel",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "distractors": [
+      "berlin",
+      "frankfurt",
+      "rotterdam"
+    ]
+  },
+  {
+    "id": "munich",
+    "name": "Munich",
+    "image": "/games/media/skylinerot-munich.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Munich_Skyline_(16946691065).jpg",
+    "credit": "dom fellowes from UK",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "distractors": [
+      "zurich",
+      "prague",
+      "frankfurt"
+    ]
+  },
+  {
+    "id": "zurich",
+    "name": "Zurich",
+    "image": "/games/media/skylinerot-zurich.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Zurich_skyline_blue_hour.jpg",
+    "credit": "Kuhnmi",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "munich",
+      "frankfurt",
+      "paris"
+    ]
+  },
+  {
+    "id": "doha",
+    "name": "Doha",
+    "image": "/games/media/skylinerot-doha.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Doha_Skyline_12.jpg",
+    "credit": "Zairon",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "distractors": [
+      "abu-dhabi",
+      "dubai",
+      "riyadh"
+    ]
+  },
+  {
+    "id": "abu-dhabi",
+    "name": "Abu Dhabi",
+    "image": "/games/media/skylinerot-abu-dhabi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Abu_Dhabi_Skyline_UAE_Flag.jpg",
+    "credit": "Clint Ian Pinto",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "dubai",
+      "doha",
+      "riyadh"
+    ]
+  },
+  {
+    "id": "riyadh",
+    "name": "Riyadh",
+    "image": "/games/media/skylinerot-riyadh.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Riyadh_Skyline.jpg",
+    "credit": "B.alotaby",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "doha",
+      "abu-dhabi",
+      "dubai"
+    ]
+  },
+  {
+    "id": "tel-aviv",
+    "name": "Tel Aviv",
+    "image": "/games/media/skylinerot-tel-aviv.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Tel_Aviv_Skyline_02.jpg",
+    "credit": "Ynhockey",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "chicago",
+      "toronto",
+      "new-york"
+    ]
+  },
+  {
+    "id": "taipei",
+    "name": "Taipei",
+    "image": "/games/media/skylinerot-taipei.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Taipei_Skyline_2015.jpg",
+    "credit": "ynes95",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "distractors": [
+      "shanghai",
+      "hong-kong",
+      "manila"
+    ]
+  },
+  {
+    "id": "osaka",
+    "name": "Osaka",
+    "image": "/games/media/skylinerot-osaka.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Skyline_view_of_Osaka.jpg",
+    "credit": "Ian G Shingler",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "yokohama",
+      "tokyo",
+      "seoul"
+    ]
+  },
+  {
+    "id": "yokohama",
+    "name": "Yokohama",
+    "image": "/games/media/skylinerot-yokohama.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Skyline_of_Minato_Mirai_21,_Yokohama,_20150201.jpg",
+    "credit": "掬茶",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "tokyo",
+      "osaka",
+      "seoul"
+    ]
+  },
+  {
+    "id": "manila",
+    "name": "Manila",
+    "image": "/games/media/skylinerot-manila.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Makati_Skyline_and_Manila_Bay_sunset.jpg",
+    "credit": "RCJourn",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "hong-kong",
+      "taipei",
+      "ho-chi-minh-city"
+    ]
+  },
+  {
+    "id": "jakarta",
+    "name": "Jakarta",
+    "image": "/games/media/skylinerot-jakarta.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:South_Jakarta_buildings_skyline.jpg",
+    "credit": "Vitaium",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "singapore",
+      "kuala-lumpur",
+      "ho-chi-minh-city"
+    ]
+  },
+  {
+    "id": "ho-chi-minh-city",
+    "name": "Ho Chi Minh City",
+    "image": "/games/media/skylinerot-ho-chi-minh-city.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Ho_Chi_Minh_City_Skyline_at_Night.jpg",
+    "credit": "Tran Van Ngoc",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "distractors": [
+      "bangkok",
+      "kuala-lumpur",
+      "singapore"
+    ]
+  },
+  {
+    "id": "hanoi",
+    "name": "Hanoi",
+    "image": "/games/media/skylinerot-hanoi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Hanoi_Skyline.jpg",
+    "credit": "Minhvuong308hn",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "hong-kong",
+      "bangkok",
+      "ho-chi-minh-city"
+    ]
+  },
+  {
+    "id": "delhi",
+    "name": "Delhi",
+    "image": "/games/media/skylinerot-delhi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Delhi_skyline._01.jpg",
+    "credit": "Fredericknoronha",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "karachi",
+      "mumbai",
+      "hyderabad"
+    ]
+  },
+  {
+    "id": "hyderabad",
+    "name": "Hyderabad",
+    "image": "/games/media/skylinerot-hyderabad.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Financial_District,_Hyderabad_-_Wide_panoramic_skyline_view_from_Nanakramguda_to_Gachibowli.jpg",
+    "credit": "iMahesh",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "distractors": [
+      "mumbai",
+      "delhi",
+      "karachi"
+    ]
+  },
+  {
+    "id": "karachi",
+    "name": "Karachi",
+    "image": "/games/media/skylinerot-karachi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Karachi_Skyline_2025.jpg",
+    "credit": "Ktownboy103",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "distractors": [
+      "mumbai",
+      "delhi",
+      "dubai"
+    ]
   }
 ]
