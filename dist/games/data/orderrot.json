@@ -608,5 +608,1185 @@
         "value": 42195
       }
     ]
+  },
+  {
+    "id": "planet-mass",
+    "name": "Planets by mass",
+    "unit": "10²⁴ kg",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-mass-0",
+        "name": "Mercury",
+        "value": 0.33
+      },
+      {
+        "id": "planet-mass-1",
+        "name": "Venus",
+        "value": 4.87
+      },
+      {
+        "id": "planet-mass-2",
+        "name": "Earth",
+        "value": 5.97
+      },
+      {
+        "id": "planet-mass-3",
+        "name": "Mars",
+        "value": 0.642
+      },
+      {
+        "id": "planet-mass-4",
+        "name": "Jupiter",
+        "value": 1898
+      },
+      {
+        "id": "planet-mass-5",
+        "name": "Saturn",
+        "value": 568
+      },
+      {
+        "id": "planet-mass-6",
+        "name": "Uranus",
+        "value": 86.8
+      },
+      {
+        "id": "planet-mass-7",
+        "name": "Neptune",
+        "value": 102
+      }
+    ]
+  },
+  {
+    "id": "planet-density",
+    "name": "Planets by mean density",
+    "unit": "kg/m³",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-density-0",
+        "name": "Mercury",
+        "value": 5429
+      },
+      {
+        "id": "planet-density-1",
+        "name": "Venus",
+        "value": 5243
+      },
+      {
+        "id": "planet-density-2",
+        "name": "Earth",
+        "value": 5514
+      },
+      {
+        "id": "planet-density-3",
+        "name": "Mars",
+        "value": 3934
+      },
+      {
+        "id": "planet-density-4",
+        "name": "Jupiter",
+        "value": 1326
+      },
+      {
+        "id": "planet-density-5",
+        "name": "Saturn",
+        "value": 687
+      },
+      {
+        "id": "planet-density-6",
+        "name": "Uranus",
+        "value": 1270
+      },
+      {
+        "id": "planet-density-7",
+        "name": "Neptune",
+        "value": 1638
+      }
+    ]
+  },
+  {
+    "id": "planet-gravity",
+    "name": "Planets by equatorial gravity",
+    "unit": "m/s²",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-gravity-0",
+        "name": "Mercury",
+        "value": 3.7
+      },
+      {
+        "id": "planet-gravity-1",
+        "name": "Venus",
+        "value": 8.9
+      },
+      {
+        "id": "planet-gravity-2",
+        "name": "Earth",
+        "value": 9.8
+      },
+      {
+        "id": "planet-gravity-4",
+        "name": "Jupiter",
+        "value": 23.1
+      },
+      {
+        "id": "planet-gravity-5",
+        "name": "Saturn",
+        "value": 9
+      },
+      {
+        "id": "planet-gravity-6",
+        "name": "Uranus",
+        "value": 8.7
+      },
+      {
+        "id": "planet-gravity-7",
+        "name": "Neptune",
+        "value": 11
+      }
+    ]
+  },
+  {
+    "id": "planet-escape",
+    "name": "Planets by escape velocity",
+    "unit": "km/s",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-escape-0",
+        "name": "Mercury",
+        "value": 4.3
+      },
+      {
+        "id": "planet-escape-1",
+        "name": "Venus",
+        "value": 10.4
+      },
+      {
+        "id": "planet-escape-2",
+        "name": "Earth",
+        "value": 11.2
+      },
+      {
+        "id": "planet-escape-3",
+        "name": "Mars",
+        "value": 5
+      },
+      {
+        "id": "planet-escape-4",
+        "name": "Jupiter",
+        "value": 59.5
+      },
+      {
+        "id": "planet-escape-5",
+        "name": "Saturn",
+        "value": 35.5
+      },
+      {
+        "id": "planet-escape-6",
+        "name": "Uranus",
+        "value": 21.3
+      },
+      {
+        "id": "planet-escape-7",
+        "name": "Neptune",
+        "value": 23.5
+      }
+    ]
+  },
+  {
+    "id": "planet-rotation",
+    "name": "Planets by rotation duration",
+    "unit": "hours",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-rotation-0",
+        "name": "Mercury",
+        "value": 1407.6
+      },
+      {
+        "id": "planet-rotation-1",
+        "name": "Venus",
+        "value": 5832.5
+      },
+      {
+        "id": "planet-rotation-2",
+        "name": "Earth",
+        "value": 23.9
+      },
+      {
+        "id": "planet-rotation-3",
+        "name": "Mars",
+        "value": 24.6
+      },
+      {
+        "id": "planet-rotation-4",
+        "name": "Jupiter",
+        "value": 9.9
+      },
+      {
+        "id": "planet-rotation-5",
+        "name": "Saturn",
+        "value": 10.7
+      },
+      {
+        "id": "planet-rotation-6",
+        "name": "Uranus",
+        "value": 17.2
+      },
+      {
+        "id": "planet-rotation-7",
+        "name": "Neptune",
+        "value": 16.1
+      }
+    ]
+  },
+  {
+    "id": "planet-solar-day",
+    "name": "Planets by length of a solar day",
+    "unit": "hours",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-solar-day-0",
+        "name": "Mercury",
+        "value": 4222.6
+      },
+      {
+        "id": "planet-solar-day-1",
+        "name": "Venus",
+        "value": 2802
+      },
+      {
+        "id": "planet-solar-day-2",
+        "name": "Earth",
+        "value": 24
+      },
+      {
+        "id": "planet-solar-day-3",
+        "name": "Mars",
+        "value": 24.7
+      },
+      {
+        "id": "planet-solar-day-4",
+        "name": "Jupiter",
+        "value": 9.9
+      },
+      {
+        "id": "planet-solar-day-5",
+        "name": "Saturn",
+        "value": 10.7
+      },
+      {
+        "id": "planet-solar-day-6",
+        "name": "Uranus",
+        "value": 17.2
+      },
+      {
+        "id": "planet-solar-day-7",
+        "name": "Neptune",
+        "value": 16.1
+      }
+    ]
+  },
+  {
+    "id": "planet-orbital-period",
+    "name": "Planets by orbital period",
+    "unit": "days",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-orbital-period-0",
+        "name": "Mercury",
+        "value": 88
+      },
+      {
+        "id": "planet-orbital-period-1",
+        "name": "Venus",
+        "value": 224.7
+      },
+      {
+        "id": "planet-orbital-period-2",
+        "name": "Earth",
+        "value": 365.2
+      },
+      {
+        "id": "planet-orbital-period-3",
+        "name": "Mars",
+        "value": 687
+      },
+      {
+        "id": "planet-orbital-period-4",
+        "name": "Jupiter",
+        "value": 4331
+      },
+      {
+        "id": "planet-orbital-period-5",
+        "name": "Saturn",
+        "value": 10747
+      },
+      {
+        "id": "planet-orbital-period-6",
+        "name": "Uranus",
+        "value": 30589
+      },
+      {
+        "id": "planet-orbital-period-7",
+        "name": "Neptune",
+        "value": 59800
+      }
+    ]
+  },
+  {
+    "id": "planet-orbital-speed",
+    "name": "Planets by orbital speed",
+    "unit": "km/s",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-orbital-speed-0",
+        "name": "Mercury",
+        "value": 47.4
+      },
+      {
+        "id": "planet-orbital-speed-1",
+        "name": "Venus",
+        "value": 35
+      },
+      {
+        "id": "planet-orbital-speed-2",
+        "name": "Earth",
+        "value": 29.8
+      },
+      {
+        "id": "planet-orbital-speed-3",
+        "name": "Mars",
+        "value": 24.1
+      },
+      {
+        "id": "planet-orbital-speed-4",
+        "name": "Jupiter",
+        "value": 13.1
+      },
+      {
+        "id": "planet-orbital-speed-5",
+        "name": "Saturn",
+        "value": 9.7
+      },
+      {
+        "id": "planet-orbital-speed-6",
+        "name": "Uranus",
+        "value": 6.8
+      },
+      {
+        "id": "planet-orbital-speed-7",
+        "name": "Neptune",
+        "value": 5.4
+      }
+    ]
+  },
+  {
+    "id": "planet-eccentricity",
+    "name": "Planets by orbital eccentricity",
+    "unit": "eccentricity",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-eccentricity-0",
+        "name": "Mercury",
+        "value": 0.206
+      },
+      {
+        "id": "planet-eccentricity-1",
+        "name": "Venus",
+        "value": 0.007
+      },
+      {
+        "id": "planet-eccentricity-2",
+        "name": "Earth",
+        "value": 0.017
+      },
+      {
+        "id": "planet-eccentricity-3",
+        "name": "Mars",
+        "value": 0.094
+      },
+      {
+        "id": "planet-eccentricity-4",
+        "name": "Jupiter",
+        "value": 0.049
+      },
+      {
+        "id": "planet-eccentricity-5",
+        "name": "Saturn",
+        "value": 0.052
+      },
+      {
+        "id": "planet-eccentricity-6",
+        "name": "Uranus",
+        "value": 0.047
+      },
+      {
+        "id": "planet-eccentricity-7",
+        "name": "Neptune",
+        "value": 0.01
+      }
+    ]
+  },
+  {
+    "id": "planet-axial-tilt",
+    "name": "Planets by axial tilt",
+    "unit": "degrees",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-axial-tilt-0",
+        "name": "Mercury",
+        "value": 0.034
+      },
+      {
+        "id": "planet-axial-tilt-1",
+        "name": "Venus",
+        "value": 177.4
+      },
+      {
+        "id": "planet-axial-tilt-2",
+        "name": "Earth",
+        "value": 23.4
+      },
+      {
+        "id": "planet-axial-tilt-3",
+        "name": "Mars",
+        "value": 25.2
+      },
+      {
+        "id": "planet-axial-tilt-4",
+        "name": "Jupiter",
+        "value": 3.1
+      },
+      {
+        "id": "planet-axial-tilt-5",
+        "name": "Saturn",
+        "value": 26.7
+      },
+      {
+        "id": "planet-axial-tilt-6",
+        "name": "Uranus",
+        "value": 97.8
+      },
+      {
+        "id": "planet-axial-tilt-7",
+        "name": "Neptune",
+        "value": 28.3
+      }
+    ]
+  },
+  {
+    "id": "planet-mean-temperature",
+    "name": "Planets by mean temperature",
+    "unit": "°C",
+    "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "items": [
+      {
+        "id": "planet-mean-temperature-0",
+        "name": "Mercury",
+        "value": 167
+      },
+      {
+        "id": "planet-mean-temperature-1",
+        "name": "Venus",
+        "value": 464
+      },
+      {
+        "id": "planet-mean-temperature-2",
+        "name": "Earth",
+        "value": 15
+      },
+      {
+        "id": "planet-mean-temperature-3",
+        "name": "Mars",
+        "value": -65
+      },
+      {
+        "id": "planet-mean-temperature-4",
+        "name": "Jupiter",
+        "value": -110
+      },
+      {
+        "id": "planet-mean-temperature-5",
+        "name": "Saturn",
+        "value": -140
+      },
+      {
+        "id": "planet-mean-temperature-6",
+        "name": "Uranus",
+        "value": -195
+      },
+      {
+        "id": "planet-mean-temperature-7",
+        "name": "Neptune",
+        "value": -200
+      }
+    ]
+  },
+  {
+    "id": "light-elements",
+    "name": "Light elements by atomic number",
+    "unit": "atomic number",
+    "source": "https://www.ciaaw.org/atomic-weights.htm",
+    "items": [
+      {
+        "id": "light-elements-0",
+        "name": "Hydrogen",
+        "value": 1
+      },
+      {
+        "id": "light-elements-1",
+        "name": "Helium",
+        "value": 2
+      },
+      {
+        "id": "light-elements-2",
+        "name": "Lithium",
+        "value": 3
+      },
+      {
+        "id": "light-elements-3",
+        "name": "Beryllium",
+        "value": 4
+      },
+      {
+        "id": "light-elements-4",
+        "name": "Boron",
+        "value": 5
+      },
+      {
+        "id": "light-elements-5",
+        "name": "Carbon",
+        "value": 6
+      },
+      {
+        "id": "light-elements-6",
+        "name": "Nitrogen",
+        "value": 7
+      },
+      {
+        "id": "light-elements-7",
+        "name": "Oxygen",
+        "value": 8
+      },
+      {
+        "id": "light-elements-8",
+        "name": "Fluorine",
+        "value": 9
+      },
+      {
+        "id": "light-elements-9",
+        "name": "Neon",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "id": "common-metals",
+    "name": "Familiar metals by atomic number",
+    "unit": "atomic number",
+    "source": "https://www.ciaaw.org/atomic-weights.htm",
+    "items": [
+      {
+        "id": "common-metals-0",
+        "name": "Aluminum",
+        "value": 13
+      },
+      {
+        "id": "common-metals-1",
+        "name": "Iron",
+        "value": 26
+      },
+      {
+        "id": "common-metals-2",
+        "name": "Copper",
+        "value": 29
+      },
+      {
+        "id": "common-metals-3",
+        "name": "Zinc",
+        "value": 30
+      },
+      {
+        "id": "common-metals-4",
+        "name": "Silver",
+        "value": 47
+      },
+      {
+        "id": "common-metals-5",
+        "name": "Tin",
+        "value": 50
+      },
+      {
+        "id": "common-metals-6",
+        "name": "Gold",
+        "value": 79
+      },
+      {
+        "id": "common-metals-7",
+        "name": "Lead",
+        "value": 82
+      }
+    ]
+  },
+  {
+    "id": "noble-gases",
+    "name": "Noble gases by atomic number",
+    "unit": "atomic number",
+    "source": "https://www.ciaaw.org/atomic-weights.htm",
+    "items": [
+      {
+        "id": "noble-gases-0",
+        "name": "Helium",
+        "value": 2
+      },
+      {
+        "id": "noble-gases-1",
+        "name": "Neon",
+        "value": 10
+      },
+      {
+        "id": "noble-gases-2",
+        "name": "Argon",
+        "value": 18
+      },
+      {
+        "id": "noble-gases-3",
+        "name": "Krypton",
+        "value": 36
+      },
+      {
+        "id": "noble-gases-4",
+        "name": "Xenon",
+        "value": 54
+      },
+      {
+        "id": "noble-gases-5",
+        "name": "Radon",
+        "value": 86
+      }
+    ]
+  },
+  {
+    "id": "halogens",
+    "name": "Halogens by atomic number",
+    "unit": "atomic number",
+    "source": "https://www.ciaaw.org/atomic-weights.htm",
+    "items": [
+      {
+        "id": "halogens-0",
+        "name": "Fluorine",
+        "value": 9
+      },
+      {
+        "id": "halogens-1",
+        "name": "Chlorine",
+        "value": 17
+      },
+      {
+        "id": "halogens-2",
+        "name": "Bromine",
+        "value": 35
+      },
+      {
+        "id": "halogens-3",
+        "name": "Iodine",
+        "value": 53
+      },
+      {
+        "id": "halogens-4",
+        "name": "Astatine",
+        "value": 85
+      }
+    ]
+  },
+  {
+    "id": "alkali-metals",
+    "name": "Alkali metals by atomic number",
+    "unit": "atomic number",
+    "source": "https://www.ciaaw.org/atomic-weights.htm",
+    "items": [
+      {
+        "id": "alkali-metals-0",
+        "name": "Lithium",
+        "value": 3
+      },
+      {
+        "id": "alkali-metals-1",
+        "name": "Sodium",
+        "value": 11
+      },
+      {
+        "id": "alkali-metals-2",
+        "name": "Potassium",
+        "value": 19
+      },
+      {
+        "id": "alkali-metals-3",
+        "name": "Rubidium",
+        "value": 37
+      },
+      {
+        "id": "alkali-metals-4",
+        "name": "Cesium",
+        "value": 55
+      },
+      {
+        "id": "alkali-metals-5",
+        "name": "Francium",
+        "value": 87
+      }
+    ]
+  },
+  {
+    "id": "pixar-films",
+    "name": "Pixar films by original release year",
+    "unit": "year",
+    "source": "https://www.pixar.com/feature-films",
+    "items": [
+      {
+        "id": "pixar-films-0",
+        "name": "Toy Story",
+        "value": 1995
+      },
+      {
+        "id": "pixar-films-1",
+        "name": "A Bug's Life",
+        "value": 1998
+      },
+      {
+        "id": "pixar-films-2",
+        "name": "Toy Story 2",
+        "value": 1999
+      },
+      {
+        "id": "pixar-films-3",
+        "name": "Monsters, Inc.",
+        "value": 2001
+      },
+      {
+        "id": "pixar-films-4",
+        "name": "Finding Nemo",
+        "value": 2003
+      },
+      {
+        "id": "pixar-films-5",
+        "name": "The Incredibles",
+        "value": 2004
+      },
+      {
+        "id": "pixar-films-6",
+        "name": "Cars",
+        "value": 2006
+      },
+      {
+        "id": "pixar-films-7",
+        "name": "Ratatouille",
+        "value": 2007
+      },
+      {
+        "id": "pixar-films-8",
+        "name": "WALL-E",
+        "value": 2008
+      },
+      {
+        "id": "pixar-films-9",
+        "name": "Up",
+        "value": 2009
+      }
+    ]
+  },
+  {
+    "id": "nobel-physics",
+    "name": "Physics Nobel laureates by award year",
+    "unit": "year",
+    "source": "https://api.nobelprize.org/v1/prize.json",
+    "items": [
+      {
+        "id": "nobel-physics-0",
+        "name": "Wilhelm Conrad Röntgen",
+        "value": 1901
+      },
+      {
+        "id": "nobel-physics-1",
+        "name": "Marie Curie",
+        "value": 1903
+      },
+      {
+        "id": "nobel-physics-2",
+        "name": "Albert Einstein",
+        "value": 1921
+      },
+      {
+        "id": "nobel-physics-3",
+        "name": "Niels Bohr",
+        "value": 1922
+      },
+      {
+        "id": "nobel-physics-4",
+        "name": "Werner Heisenberg",
+        "value": 1932
+      },
+      {
+        "id": "nobel-physics-5",
+        "name": "Enrico Fermi",
+        "value": 1938
+      },
+      {
+        "id": "nobel-physics-6",
+        "name": "Richard P. Feynman",
+        "value": 1965
+      },
+      {
+        "id": "nobel-physics-7",
+        "name": "Peter Higgs",
+        "value": 2013
+      }
+    ]
+  },
+  {
+    "id": "nobel-chemistry",
+    "name": "Chemistry Nobel laureates by award year",
+    "unit": "year",
+    "source": "https://api.nobelprize.org/v1/prize.json",
+    "items": [
+      {
+        "id": "nobel-chemistry-0",
+        "name": "Ernest Rutherford",
+        "value": 1908
+      },
+      {
+        "id": "nobel-chemistry-1",
+        "name": "Marie Curie",
+        "value": 1911
+      },
+      {
+        "id": "nobel-chemistry-2",
+        "name": "Fritz Haber",
+        "value": 1918
+      },
+      {
+        "id": "nobel-chemistry-3",
+        "name": "Linus Pauling",
+        "value": 1954
+      },
+      {
+        "id": "nobel-chemistry-4",
+        "name": "Dorothy Crowfoot Hodgkin",
+        "value": 1964
+      },
+      {
+        "id": "nobel-chemistry-5",
+        "name": "Frederick Sanger",
+        "value": 1958
+      },
+      {
+        "id": "nobel-chemistry-6",
+        "name": "Ahmed Zewail",
+        "value": 1999
+      },
+      {
+        "id": "nobel-chemistry-7",
+        "name": "John Goodenough",
+        "value": 2019
+      }
+    ]
+  },
+  {
+    "id": "nobel-medicine",
+    "name": "Medicine Nobel laureates by award year",
+    "unit": "year",
+    "source": "https://api.nobelprize.org/v1/prize.json",
+    "items": [
+      {
+        "id": "nobel-medicine-0",
+        "name": "Ivan Pavlov",
+        "value": 1904
+      },
+      {
+        "id": "nobel-medicine-1",
+        "name": "Robert Koch",
+        "value": 1905
+      },
+      {
+        "id": "nobel-medicine-2",
+        "name": "Sir Alexander Fleming",
+        "value": 1945
+      },
+      {
+        "id": "nobel-medicine-3",
+        "name": "James Watson",
+        "value": 1962
+      },
+      {
+        "id": "nobel-medicine-4",
+        "name": "Barbara McClintock",
+        "value": 1983
+      },
+      {
+        "id": "nobel-medicine-5",
+        "name": "Tu Youyou",
+        "value": 2015
+      },
+      {
+        "id": "nobel-medicine-6",
+        "name": "Elizabeth H. Blackburn",
+        "value": 2009
+      },
+      {
+        "id": "nobel-medicine-7",
+        "name": "Barry J. Marshall",
+        "value": 2005
+      }
+    ]
+  },
+  {
+    "id": "nobel-peace",
+    "name": "Peace Nobel laureates by award year",
+    "unit": "year",
+    "source": "https://api.nobelprize.org/v1/prize.json",
+    "items": [
+      {
+        "id": "nobel-peace-0",
+        "name": "Henry Dunant",
+        "value": 1901
+      },
+      {
+        "id": "nobel-peace-1",
+        "name": "Theodore Roosevelt",
+        "value": 1906
+      },
+      {
+        "id": "nobel-peace-2",
+        "name": "Martin Luther King Jr.",
+        "value": 1964
+      },
+      {
+        "id": "nobel-peace-3",
+        "name": "Mother Teresa",
+        "value": 1979
+      },
+      {
+        "id": "nobel-peace-4",
+        "name": "Lech Wałęsa",
+        "value": 1983
+      },
+      {
+        "id": "nobel-peace-5",
+        "name": "Nelson Mandela",
+        "value": 1993
+      },
+      {
+        "id": "nobel-peace-6",
+        "name": "Barack Obama",
+        "value": 2009
+      },
+      {
+        "id": "nobel-peace-7",
+        "name": "Malala Yousafzai",
+        "value": 2014
+      }
+    ]
+  },
+  {
+    "id": "nobel-literature",
+    "name": "Literature Nobel laureates by award year",
+    "unit": "year",
+    "source": "https://api.nobelprize.org/v1/prize.json",
+    "items": [
+      {
+        "id": "nobel-literature-0",
+        "name": "Rudyard Kipling",
+        "value": 1907
+      },
+      {
+        "id": "nobel-literature-1",
+        "name": "Rabindranath Tagore",
+        "value": 1913
+      },
+      {
+        "id": "nobel-literature-2",
+        "name": "William Butler Yeats",
+        "value": 1923
+      },
+      {
+        "id": "nobel-literature-3",
+        "name": "Ernest Hemingway",
+        "value": 1954
+      },
+      {
+        "id": "nobel-literature-4",
+        "name": "John Steinbeck",
+        "value": 1962
+      },
+      {
+        "id": "nobel-literature-5",
+        "name": "Toni Morrison",
+        "value": 1993
+      },
+      {
+        "id": "nobel-literature-6",
+        "name": "Bob Dylan",
+        "value": 2016
+      },
+      {
+        "id": "nobel-literature-7",
+        "name": "Kazuo Ishiguro",
+        "value": 2017
+      }
+    ]
+  },
+  {
+    "id": "nobel-economics",
+    "name": "Economics Nobel laureates by award year",
+    "unit": "year",
+    "source": "https://api.nobelprize.org/v1/prize.json",
+    "items": [
+      {
+        "id": "nobel-economics-0",
+        "name": "Milton Friedman",
+        "value": 1976
+      },
+      {
+        "id": "nobel-economics-1",
+        "name": "Friedrich von Hayek",
+        "value": 1974
+      },
+      {
+        "id": "nobel-economics-2",
+        "name": "Amartya Sen",
+        "value": 1998
+      },
+      {
+        "id": "nobel-economics-3",
+        "name": "Paul Krugman",
+        "value": 2008
+      },
+      {
+        "id": "nobel-economics-4",
+        "name": "Elinor Ostrom",
+        "value": 2009
+      },
+      {
+        "id": "nobel-economics-5",
+        "name": "Daniel Kahneman",
+        "value": 2002
+      },
+      {
+        "id": "nobel-economics-6",
+        "name": "Richard H. Thaler",
+        "value": 2017
+      },
+      {
+        "id": "nobel-economics-7",
+        "name": "Esther Duflo",
+        "value": 2019
+      }
+    ]
+  },
+  {
+    "id": "polygon-diagonals",
+    "name": "Convex polygons by number of diagonals",
+    "unit": "diagonals",
+    "source": "https://mathworld.wolfram.com/PolygonDiagonal.html",
+    "items": [
+      {
+        "id": "polygon-diagonals-0",
+        "name": "Triangle",
+        "value": 0
+      },
+      {
+        "id": "polygon-diagonals-1",
+        "name": "Square",
+        "value": 2
+      },
+      {
+        "id": "polygon-diagonals-2",
+        "name": "Pentagon",
+        "value": 5
+      },
+      {
+        "id": "polygon-diagonals-3",
+        "name": "Hexagon",
+        "value": 9
+      },
+      {
+        "id": "polygon-diagonals-4",
+        "name": "Heptagon",
+        "value": 14
+      },
+      {
+        "id": "polygon-diagonals-5",
+        "name": "Octagon",
+        "value": 20
+      },
+      {
+        "id": "polygon-diagonals-6",
+        "name": "Decagon",
+        "value": 35
+      },
+      {
+        "id": "polygon-diagonals-7",
+        "name": "Dodecagon",
+        "value": 54
+      }
+    ]
+  },
+  {
+    "id": "polygon-angles",
+    "name": "Regular polygons by interior angle",
+    "unit": "degrees",
+    "source": "https://mathworld.wolfram.com/Polygon.html",
+    "items": [
+      {
+        "id": "polygon-angles-0",
+        "name": "Triangle",
+        "value": 60.0
+      },
+      {
+        "id": "polygon-angles-1",
+        "name": "Square",
+        "value": 90.0
+      },
+      {
+        "id": "polygon-angles-2",
+        "name": "Pentagon",
+        "value": 108.0
+      },
+      {
+        "id": "polygon-angles-3",
+        "name": "Hexagon",
+        "value": 120.0
+      },
+      {
+        "id": "polygon-angles-4",
+        "name": "Heptagon",
+        "value": 128.5714
+      },
+      {
+        "id": "polygon-angles-5",
+        "name": "Octagon",
+        "value": 135.0
+      },
+      {
+        "id": "polygon-angles-6",
+        "name": "Decagon",
+        "value": 144.0
+      },
+      {
+        "id": "polygon-angles-7",
+        "name": "Dodecagon",
+        "value": 150.0
+      }
+    ]
   }
 ]

@@ -24,7 +24,7 @@ Skyrot, Skylinerot, and Zoomrot bundle photographs with per-file source, author,
 
 Pricerot uses factual price snapshots from Trader Joe’s public product catalog, recorded 2026-11-17 for the original 12 products and 2026-11-26 for the expanded food and beverage catalog, with exact product source URLs in `dist/games/data/pricerot.json`. Product photographs are © Trader Joe’s and are bundled locally for identification of the exact products. Each item records its photograph URL in `imageSource`. The frozen official product records and import exclusions are in `scripts/product-catalog-snapshot.json` and `scripts/product-catalog-report.json`. The Assorted Belgian Chocolates photo is credited to Trader Joe’s by Martha Stewart; its source page is recorded in `imageSourcePage`. These photos and product packaging are outside dailyo’s code license. Prices are before tax and are not live offers. Trader Joe’s does not sponsor this game.
 
-Orderrot uses NASA planet comparison data, NIST measurement definitions, and mathematical facts. Each question links to its source.
+Orderrot uses NASA planetary fact sheets, NIST measurement definitions, CIAAW atomic numbers, Nobel Prize award records, Pixar release years, and mathematical facts. Each question links to its source.
 
 ## Trainrot World rail data
 
