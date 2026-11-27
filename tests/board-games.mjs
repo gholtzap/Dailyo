@@ -63,6 +63,9 @@ try {
             fullPage: true,
           });
         };
+        assert.ok(
+          (await page.locator(".puzzle-grid").boundingBox()).width <= 480,
+        );
         await inspect("opening");
         await page
           .getByRole("button", { name: "How to play", exact: true })
