@@ -3,9 +3,10 @@ const endpoint = `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOS
 const headers = {
   Authorization: `Bearer ${process.env.GH_TOKEN}`,
   Accept: "application/vnd.github+json",
+  "Cache-Control": "no-cache",
 };
 async function get(url) {
-  const response = await fetch(url, { headers });
+  const response = await fetch(url, { headers, cache: "no-store" });
   if (!response.ok)
     throw new Error(`CI evidence API returned ${response.status}`);
   return response.json();
