@@ -44,6 +44,15 @@ if (actualWorld) {
   durationsMs[world.at(-1)] ??= 5000;
 }
 const split = {
+  "node tests/photo-map-motion.mjs": [390, 1440].map(
+    (width) => `--ci-width=${width}`,
+  ),
+  "node tests/app-layout.mjs": [320, 390, 1440].map(
+    (width) => `--ci-width=${width}`,
+  ),
+  "node tests/retired-games.mjs": [390, 1440].map(
+    (width) => `--ci-width=${width}`,
+  ),
   "node tests/puzzle-pools-browser.mjs": [390, 1440].flatMap((width) =>
     ["skyrot", "skylinerot", "zoomrot"].map(
       (game) => `--ci-width=${width} --ci-game=${game}`,
