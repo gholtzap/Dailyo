@@ -60,6 +60,7 @@ try {
       .getByRole("button", { name: "Enlarge map", exact: true })
       .waitFor({ timeout: 3000 });
     await inspect("inline");
+    await page.getByRole("button", { name: "Reset view", exact: true }).click();
     await map.press("ArrowRight");
     await map.press("Shift+ArrowUp");
     assert.match(await pin.innerText(), /0.10° N, 1.00° E/);
@@ -204,6 +205,9 @@ try {
     await status.filter({ hasText: "Round 1" }).waitFor();
     const child = page.frameLocator("iframe[title=maprot]");
     const q = makeSet("maprot", data, await rushSeed(page, "maprot"), 0)[0];
+    await child
+      .getByRole("button", { name: "Reset view", exact: true })
+      .click();
     const position = await child.locator(".rot-picking").evaluate((svg, q) => {
       const p = new DOMPoint(q[2] + 180, 90 - q[3]).matrixTransform(
           svg.getScreenCTM(),
