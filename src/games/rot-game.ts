@@ -1,3 +1,4 @@
+import { releasedPool } from "./pool-version.js";
 import { designValue } from "../design.js";
 import { gameName } from "../game-names.js";
 import type { Mode, RotGame, Coordinate } from "../types.js";
@@ -1384,7 +1385,12 @@ async function start() {
       : null;
   if (rushRound !== null) {
     const seed = rushSeed(kind);
-    const position = rushRound % data.items.length;
+    const pool = releasedPool<Place | YearEvent | string[]>(
+      kind,
+      data.items,
+      seed,
+    );
+    const position = rushRound % pool.length;
     const index = position % roundCount;
     const question = makeSet(kind, data, seed, position - index)[index];
     const saved = readRushDraft<RotState>();
