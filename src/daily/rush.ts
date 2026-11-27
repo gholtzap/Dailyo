@@ -684,7 +684,7 @@ function finishRound(correct: boolean, expired = false) {
       new CustomEvent("rush-submit-draft", { detail: snapshot }),
     );
     if (typeof snapshot.correct === "boolean") {
-      showFinish(run.deadlineAnswer(snapshot.correct, performance.now()));
+      showFinish(run.deadlineAnswer(snapshot.correct, performance.now()), true);
       return;
     }
   }
@@ -692,17 +692,18 @@ function finishRound(correct: boolean, expired = false) {
     expired
       ? run.timeout(performance.now())
       : run.answer(correct, performance.now()),
+    expired,
   );
 }
 
-function showFinish(effect: RushEffect) {
+function showFinish(effect: RushEffect, atDeadline = false) {
   if (effect.$ !== "Finished") return;
   // Preserve the playing header while controls and streak change for feedback.
   actions.style.minHeight = `${actions.getBoundingClientRect().height}px`;
   updatePauseControl();
   const { correct, expired } = effect;
   stopClock(true);
-  if (expired && timeDisplay.hasAttribute("data-timed")) {
+  if ((expired || atDeadline) && timeDisplay.hasAttribute("data-timed")) {
     clock.textContent = "0s";
     timeDisplay.style.setProperty("--rush-remaining", "0");
   }

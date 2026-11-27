@@ -187,6 +187,11 @@ try {
     assert.equal(await child.getByRole("slider").isVisible(), true);
     await page.clock.runFor(1);
     await status.filter({ hasText: "Correct" }).waitFor();
+    assert.equal(
+      await page.locator("#rush-clock").textContent(),
+      "0s",
+      "An estimate submitted at the deadline freezes the clock at zero",
+    );
     assert.equal(await child.getByRole("slider").count(), 0);
     assert.doesNotMatch(
       await child.locator(".perception-feedback").innerText(),
