@@ -11,7 +11,7 @@ import {
   prepareVisual,
 } from "../dist/games/visual-puzzles.js";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
-const day = "2026-11-17";
+const day = "2026-11-28";
 const browser = await chromium.launch();
 const data = Object.fromEntries(
   await Promise.all(
@@ -27,6 +27,15 @@ const data = Object.fromEntries(
         ),
       ),
     ]),
+  ),
+);
+assert.deepEqual(
+  visualSet("orderrot", data.orderrot, "2026-11-27"),
+  JSON.parse(
+    await fs.readFile(
+      new URL("./fixtures/issued-order-puzzle.json", import.meta.url),
+      "utf8",
+    ),
   ),
 );
 async function solve(surface, game, q) {
