@@ -55,7 +55,7 @@ function range(name: string, id: string, max: number) {
   const label = el("label", undefined, "price-range");
   label.htmlFor = id;
   const heading = el("span", undefined, "price-range-heading");
-  const value = el("span", "00");
+  const value = el("span", name === "Cents" ? "00" : "0");
   value.setAttribute("aria-hidden", "true");
   heading.append(el("span", name), value);
   const input = el("input", undefined, "range-control");
