@@ -80,6 +80,47 @@ try {
   await reload.click();
   await page.locator(".choice").first().waitFor();
   await context.close();
+  const shared = await browser.newContext();
+  await shared.addInitScript(() => {
+    window.datasetReads = [];
+    for (const method of ["text", "json"]) {
+      const original = Response.prototype[method];
+      Response.prototype[method] = function (...args) {
+        if (this.url.includes("/games/data/"))
+          window.datasetReads.push(this.url);
+        return original.apply(this, args);
+      };
+    }
+  });
+  const rush = await shared.newPage();
+  await rush.goto(`${base}/rush/pricerot/`);
+  await rush.waitForFunction(
+    () =>
+      [...document.querySelectorAll("iframe")].filter((frame) =>
+        frame.contentDocument?.querySelector("#price-input"),
+      ).length >= 2,
+  );
+  const reads = (
+    await Promise.all(
+      rush
+        .frames()
+        .map((frame) => frame.evaluate(() => window.datasetReads ?? [])),
+    )
+  ).flat();
+  assert.equal(
+    reads.filter((url) => url.endsWith("/pricerot.json")).length,
+    1,
+    "Current and upcoming Rush rounds must share one parsed dataset",
+  );
+  await rush.route("**/games/data/pricerot.json", (route) =>
+    route.fulfill({ status: 503 }),
+  );
+  await rush.reload();
+  await rush.locator("#rush-retry:not([hidden])").waitFor();
+  await rush.unroute("**/games/data/pricerot.json");
+  await rush.locator("#rush-retry").click();
+  await rush.frameLocator("iframe[title]").locator("#price-input").waitFor();
+  await shared.close();
   console.log(
     `${games.length} game pages: early data downloads reused once; failed preload recovers on reload.`,
   );

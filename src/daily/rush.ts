@@ -1,8 +1,11 @@
+import { enableDatasetCache } from "../data.js";
 import { sizeFeedFrame } from "./frame-size.js";
 import { RushMachine } from "../verified/rush-state.js";
 import type { RushEffect } from "../verified/rush.mjs";
 import { required } from "../dom.js";
 import type { RushMessage, RushHelpMessage } from "../types.js";
+enableDatasetCache();
+
 interface Round {
   frame: HTMLIFrameElement;
   ready: boolean;

@@ -1,3 +1,4 @@
+import { loadDataset } from "../data.js";
 import { gameName } from "../game-names.js";
 import type { Mode, QuizGame, QuizItem } from "../types.js";
 import { showGameProgress } from "./help.js";
@@ -467,9 +468,7 @@ function draw() {
   reportDaily("playing", undefined, day);
 }
 async function start() {
-  const response = await fetch(`/games/data/${kind}.json`);
-  if (!response.ok) throw new Error("Could not load game data");
-  items = await response.json();
+  items = await loadDataset<QuizItem[]>(`/games/data/${kind}.json`);
   if (
     !Array.isArray(items) ||
     items.length < 5 ||

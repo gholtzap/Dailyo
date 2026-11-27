@@ -1,3 +1,4 @@
+import { loadDataset } from "../data.js";
 import { gameName } from "../game-names.js";
 import type { Mode, ExtraGame, JsonValue } from "../types.js";
 import { element as el, required } from "../dom.js";
@@ -484,21 +485,11 @@ function draw() {
   );
 }
 
-async function load(name: string): Promise<JsonValue> {
-  const response = await fetch(`/games/data/${name}.json`);
-  if (!response.ok) throw new Error("Game data unavailable");
-  return response.json();
-}
-
 async function start() {
   data =
     game === "swaprot"
       ? prepareExtra(game)
-      : prepareExtra(
-          game,
-          await load(game),
-          ladder ? await load("ladder-words") : undefined,
-        );
+      : await loadDataset<ExtraData>(`/games/data/${game}.json`, "extra");
   if (rushRound !== null) {
     const puzzle = extraPuzzle(game, data, `${rushSeed(game)}:${rushRound}`);
     const session = {

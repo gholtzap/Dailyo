@@ -1,3 +1,4 @@
+import { loadDataset } from "../data.js";
 import { releasedPool } from "./pool-version.js";
 import { designValue } from "../design.js";
 import { gameName } from "../game-names.js";
@@ -20,7 +21,6 @@ import {
   makeSet,
   newSession,
   phase,
-  preparePuzzles,
   rankingPuzzle,
   restoreSession,
   roundCount,
@@ -1362,13 +1362,11 @@ function draw() {
 async function start() {
   const geometry: Promise<BorderGeometry | null> | null =
     kind === "borderrot" || mapGame
-      ? fetch(`/games/data/${mapGame ? "map-geometry" : "border-map"}.json`)
-          .then((response) => (response.ok ? response.json() : null))
-          .catch(() => null)
+      ? loadDataset<BorderGeometry>(
+          `/games/data/${mapGame ? "map-geometry" : "border-map"}.json`,
+        ).catch(() => null)
       : null;
-  const response = await fetch(`/games/data/${kind}.json`);
-  if (!response.ok) throw new Error("Game data unavailable");
-  data = preparePuzzles(kind, await response.json());
+  data = await loadDataset<RotData>(`/games/data/${kind}.json`, "rot");
   const rawGeometry = await geometry;
   if (mapGame && rawGeometry) {
     mapGeometry = rawGeometry;

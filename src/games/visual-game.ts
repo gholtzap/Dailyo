@@ -1,3 +1,4 @@
+import { loadDataset } from "../data.js";
 import { gameName } from "../game-names.js";
 import type { JsonValue, Mode } from "../types.js";
 import { showGameProgress } from "./help.js";
@@ -24,7 +25,6 @@ import {
 import type { PracticeDifficulty } from "./difficulty.js";
 import {
   isVisualGame,
-  prepareVisual,
   visualSet,
   visualPuzzle,
   emptyAnswer,
@@ -733,9 +733,7 @@ function draw() {
   }
 }
 async function start() {
-  const response = await fetch(`/games/data/${game}.json`);
-  if (!response.ok) throw new Error("Data unavailable");
-  rows = prepareVisual(game, await response.json());
+  rows = await loadDataset<VisualItem[]>(`/games/data/${game}.json`, "visual");
   if (isRush) {
     const saved = readRushDraft<{
       seed: string;
