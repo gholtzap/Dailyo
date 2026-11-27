@@ -321,7 +321,9 @@ function finish(guess: number | number[] | null) {
   session.answers.push(feedback);
   save();
   draw();
-  quiz.querySelector<HTMLElement>("#perception-feedback")?.focus();
+  quiz
+    .querySelector<HTMLElement>("#perception-feedback")
+    ?.focus({ preventScroll: inFeed });
   if (isRush) reportRush("answered", grade.points >= 70);
   return grade.points >= 70;
 }
@@ -463,14 +465,18 @@ function start() {
         cancelAnimationFrame(animation);
         animateRound = undefined;
         draw();
-        quiz.querySelector<HTMLInputElement>("input")?.focus();
+        quiz
+          .querySelector<HTMLInputElement>("input")
+          ?.focus({ preventScroll: inFeed });
       }
     }, duration);
   } else if (game === "temporot") void startAudio();
   else {
     transition("shown");
     draw();
-    quiz.querySelector<HTMLInputElement>("input")?.focus();
+    quiz
+      .querySelector<HTMLInputElement>("input")
+      ?.focus({ preventScroll: inFeed });
   }
 }
 async function startAudio() {
@@ -521,7 +527,9 @@ async function startAudio() {
       () => {
         if (!transition("shown")) return;
         draw();
-        quiz.querySelector<HTMLElement>("#tap")?.focus();
+        quiz
+          .querySelector<HTMLElement>("#tap")
+          ?.focus({ preventScroll: inFeed });
         later(() => finish(taps.length === 8 ? taps : null), q.interval * 10);
       },
       150 + 3 * q.interval + 100,

@@ -98,6 +98,12 @@ try {
       .getByRole("button", { name: "Check landing", exact: true })
       .click();
     await status.filter({ hasText: "Correct" }).waitFor();
+    await page.clock.runFor(2800);
+    assert.equal(
+      await page.locator("#rush-round").textContent(),
+      "Round 1",
+      "The landing result remains visible long enough to compare the markers",
+    );
     await page.clock.runFor(200);
     await status.filter({ hasText: "Round 2" }).waitFor();
     await child.locator(".track-countdown").waitFor();
@@ -196,7 +202,7 @@ try {
       feedback,
       "Late slider events cannot change a submitted answer",
     );
-    await page.clock.runFor(200);
+    await page.clock.runFor(3000);
     await status.filter({ hasText: "Round 3" }).waitFor();
     await child.locator(".track-countdown").waitFor();
     await page.clock.runFor(4300);

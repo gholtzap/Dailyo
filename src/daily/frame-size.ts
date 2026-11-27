@@ -8,6 +8,7 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
   let dialogs: MutationObserver | undefined;
   let pending = 0;
   let wasVisible = false;
+  let puzzleHeight = 0;
   const panel = frame.parentElement!;
   frame.dataset.contentSized = "";
   const measure = () => {
@@ -34,7 +35,7 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
           parseFloat(dialogStyle.borderBottomWidth) +
           Number.parseFloat(designValue("--space-8"))
         : 0;
-    const height = Math.ceil(
+    const naturalHeight = Math.ceil(
       Math.max(
         Math.max(main.scrollHeight, main.getBoundingClientRect().height) +
           parseFloat(style.marginTop) +
@@ -42,6 +43,13 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
         dialogHeight,
       ),
     );
+    // Replacing answer controls must not pull the card and Next upward.
+    // Record the puzzle, excluding temporary Help expansion, for this round only.
+    if (!dialog && !frame.hasAttribute("data-rush-answer"))
+      puzzleHeight = Math.max(puzzleHeight, naturalHeight);
+    const height = frame.hasAttribute("data-rush-answer")
+      ? Math.max(naturalHeight, puzzleHeight)
+      : naturalHeight;
     if (height && frame.style.height !== `${height}px`) {
       frame.style.height = `${height}px`;
       // Viewport-dependent content can change overflow without resizing main.
@@ -56,7 +64,7 @@ export function sizeFeedFrame(frame: HTMLIFrameElement) {
   const attributes = new MutationObserver(schedule);
   attributes.observe(frame, {
     attributes: true,
-    attributeFilter: ["class", "hidden", "title"],
+    attributeFilter: ["class", "hidden", "title", "data-rush-answer"],
   });
   const removal = new MutationObserver(() => {
     if (!frame.isConnected) dispose();

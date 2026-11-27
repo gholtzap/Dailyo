@@ -294,8 +294,11 @@ function updateReviewControl() {
     (review.state === "held" && review.reason === "explicit") ||
     run.phase === "loading" ||
     run.phase === "error";
-  reviewButton.textContent =
+  const reviewLabel =
     run.phase === "feedback" ? "Keep answer" : "Review answer";
+  // Replacing a pressed button's text node can cancel its click in WebKit.
+  if (reviewButton.textContent !== reviewLabel)
+    reviewButton.textContent = reviewLabel;
   recapReview.hidden = !lastAnswer;
 }
 function scheduleAdvance() {
@@ -327,7 +330,6 @@ function holdAnswer(
     return;
   clearTimeout(timer);
   review = { state: "held", reason };
-  clock.textContent = "";
   updateReviewControl();
 }
 function inspectingAnswer() {
@@ -351,7 +353,6 @@ function releaseAnswer(
     return;
   }
   review = { state: "closed" };
-  clock.textContent = "";
   if (advance) advance.remaining = Math.max(600, advance.remaining);
   updateReviewControl();
   scheduleAdvance();
@@ -489,12 +490,14 @@ function closeReview() {
 reviewButton.onclick = openReview;
 recapReview.onclick = openReview;
 
-function stopClock() {
+function stopClock(preserveDisplay = false) {
   clearTimeout(deadlineTimer);
   clearTimeout(timer);
   clearInterval(ticker);
-  clock.textContent = "";
-  timeDisplay.removeAttribute("data-timed");
+  if (!preserveDisplay) {
+    clock.textContent = "";
+    timeDisplay.removeAttribute("data-timed");
+  }
 }
 
 function makeRound(gameIndex: number, roundIndex: number) {
@@ -526,7 +529,7 @@ function openRound(
   advance = null;
   updateReviewControl();
   updatePauseControl();
-  stopClock();
+  stopClock(true);
   if (current?.frame !== visible) current?.frame.remove();
   index = gameIndex;
   round = roundIndex;
@@ -628,6 +631,7 @@ function showRound() {
       )
       ?.focus({ preventScroll: true });
   checkpoint();
+  actions.style.removeProperty("min-height");
   armDraftDeadline();
   if (run.phase === "playing")
     frame.contentWindow?.postMessage("rush-activate", location.origin);
@@ -693,9 +697,15 @@ function finishRound(correct: boolean, expired = false) {
 
 function showFinish(effect: RushEffect) {
   if (effect.$ !== "Finished") return;
+  // Preserve the playing header while controls and streak change for feedback.
+  actions.style.minHeight = `${actions.getBoundingClientRect().height}px`;
   updatePauseControl();
   const { correct, expired } = effect;
-  stopClock();
+  stopClock(true);
+  if (expired && timeDisplay.hasAttribute("data-timed")) {
+    clock.textContent = "0s";
+    timeDisplay.style.setProperty("--rush-remaining", "0");
+  }
   if (correct) scores[index]++;
   streak = correct ? streak + 1 : 0;
   showStreak(true);
@@ -723,13 +733,23 @@ function showFinish(effect: RushEffect) {
       : "Next game";
   next.className = "primary rush-continue";
   status.focus({ preventScroll: true });
-  // Feedback + elapsed delay -> next round; Angles allows time to inspect the gap.
+  // Spatial results need time to compare the player's mark with the answer.
   // Next advances immediately; held feedback keeps its existing cancellation rules.
   advance = {
     generation: run.generation,
     index: nextIndex,
     round: nextRound,
-    remaining: games[index].label === "anglerot" ? 3000 : correct ? 180 : 2400,
+    remaining: [
+      "countrot",
+      "trackrot",
+      "anglerot",
+      "temporot",
+      "splitrot",
+    ].includes(games[index].label)
+      ? 3000
+      : correct
+        ? 180
+        : 2400,
     deadline: 0,
   };
   scheduleAdvance();

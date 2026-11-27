@@ -182,7 +182,9 @@ function commit(answer: VisualAnswer) {
   save();
   draw();
   if (answered(game, q, answer)) {
-    quiz.querySelector<HTMLElement>("#visual-feedback")?.focus();
+    quiz
+      .querySelector<HTMLElement>("#visual-feedback")
+      ?.focus({ preventScroll: inFeed });
     if (isRush) reportRush("answered", rushCorrect(game, q, answer));
   } else {
     quiz
