@@ -15,7 +15,7 @@ const read = async (path) =>
 const policy = await read("../ui-policy.json");
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const ui = process.argv.includes("--ui");
-const day = "2026-11-15";
+const day = "2026-11-28";
 const reports = [];
 const browser = await chromium.launch();
 const dayTime = new Date(`${day}T16:00:00Z`);
@@ -240,9 +240,26 @@ const answer = {
   borderrot: answerBorder,
 };
 
+const mapData = preparePuzzles(
+  "maprot",
+  await read("../dist/games/data/maprot.json"),
+);
+assert.deepEqual(
+  makeSet("maprot", mapData, "2026-11-27"),
+  await read("./fixtures/issued-map-puzzle.json"),
+);
+function cityDay(name, index) {
+  for (let n = 0; n < 10000; n++) {
+    const date = new Date(Date.UTC(2026, 11, 1 + n)).toISOString().slice(0, 10);
+    if (makeSet("maprot", mapData, date)[index][0] === name) return date;
+  }
+  throw new Error(`No daily set found for ${name}`);
+}
 try {
   const astana = await browser.newPage();
-  await astana.clock.setFixedTime(new Date("2027-03-31T16:00:00Z"));
+  await astana.clock.setFixedTime(
+    new Date(`${cityDay("Astana", 2)}T16:00:00Z`),
+  );
   await astana.goto(`${base}/maprot/`);
   for (let i = 0; i < 2; i++) {
     await astana.locator(".rot-map").press("ArrowRight");
@@ -253,7 +270,7 @@ try {
   await astana.close();
 
   const suva = await browser.newPage();
-  await suva.clock.setFixedTime(new Date("2027-07-12T16:00:00Z"));
+  await suva.clock.setFixedTime(new Date(`${cityDay("Suva", 0)}T16:00:00Z`));
   await suva.goto(`${base}/maprot/`);
   assert.equal(await suva.locator("#round-title").innerText(), "Find Suva");
   const map = suva.locator(".rot-map");
@@ -291,6 +308,7 @@ try {
         isMobile: mobile,
         hasTouch: mobile,
         colorScheme: "dark",
+        reducedMotion: "reduce",
         permissions: ["clipboard-read", "clipboard-write"],
       });
       const page = await context.newPage();
