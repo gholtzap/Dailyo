@@ -291,3 +291,5 @@ Cluerot includes 72 answers, each with five progressively revealing clues and ac
 Yearrot includes 200 events with distinct years, spanning ancient history, science, arts, technology, and sport. Daily puzzles issued through 2026-11-27 retain the original 54-event pool.
 
 Orderrot includes 40 categories covering planetary measurements, atomic numbers, Nobel award years, film releases, geometry, and the original measurement categories. Each category links to its source; issued daily puzzles through 2026-11-27 retain the original 15 categories.
+
+Skyrot includes 60 cities in locally bundled, attributed NASA photography. Added cities include Kuala Lumpur, Delhi, Taipei, Wellington, and Alexandria. Daily and dated Rush puzzles through 2026-11-27 retain the prior pool.

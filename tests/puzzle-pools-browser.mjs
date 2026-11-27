@@ -16,6 +16,10 @@ const read = async (name) =>
 const policy = JSON.parse(
   await fs.readFile(new URL("../ui-policy.json", import.meta.url), "utf8"),
 );
+const onlyDifficulty = process.argv
+  .find((arg) => arg.startsWith("--ci-difficulty="))
+  ?.split("=")[1];
+assert.ok(!onlyDifficulty || ["standard", "hard"].includes(onlyDifficulty));
 const ui = process.argv.includes("--ui"),
   reports = [],
   checks = [],
@@ -50,7 +54,9 @@ try {
           q = visualSet(game, rows, seed)[0];
         if (!seeds.has(q.item.id)) seeds.set(q.item.id, seed);
       }
-      for (const difficulty of ["standard", "hard"])
+      for (const difficulty of ["standard", "hard"].filter(
+        (value) => !onlyDifficulty || value === onlyDifficulty,
+      ))
         for (const row of rows.filter(
           (row, index) => index >= old || row.image.endsWith(".webp"),
         )) {
@@ -163,7 +169,10 @@ try {
     console.log(
       `${viewport.width}px: all expanded photo subjects, scoring and saved recaps passed.`,
     );
-    if (ciGames(["skyrot", "skylinerot", "zoomrot"]).includes("skyrot")) {
+    if (
+      ciGames(["skyrot", "skylinerot", "zoomrot"]).includes("skyrot") &&
+      (!onlyDifficulty || onlyDifficulty === "standard")
+    ) {
       const ladders = await read("ladderrot"),
         data = prepareExtra("ladderrot", ladders, await read("ladder-words"));
       for (const index of [29, 128, 129, 500, 999]) {

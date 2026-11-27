@@ -710,5 +710,341 @@
       "los-angeles",
       "san-francisco"
     ]
+  },
+  {
+    "id": "kuala-lumpur",
+    "name": "Kuala Lumpur",
+    "image": "/games/media/skyrot-kuala-lumpur.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Greater_Kuala_Lumpur_area_of_Malaysia,_home_to_approximately_9_1_million_people_(iss073e0763824).jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "singapore",
+      "ho-chi-minh-city",
+      "bangkok"
+    ]
+  },
+  {
+    "id": "miami",
+    "name": "Miami",
+    "image": "/games/media/skyrot-miami.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:The_city_lights_of_Miami,_Florida_(iss072e399013).jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "washington-d-c",
+      "chicago",
+      "mexico-city"
+    ]
+  },
+  {
+    "id": "delhi",
+    "name": "Delhi",
+    "image": "/games/media/skyrot-delhi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:India%E2%80%99s_National_Capital_Territory_of_Delhi,_home_to_approximately_34_67_million_people_(iss073e0763646).jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "karachi",
+      "mumbai",
+      "dubai"
+    ]
+  },
+  {
+    "id": "karachi",
+    "name": "Karachi",
+    "image": "/games/media/skyrot-karachi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS047-E-43026_-_View_of_Karachi,_Pakistan.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "mumbai",
+      "delhi",
+      "dubai"
+    ]
+  },
+  {
+    "id": "jerusalem",
+    "name": "Jerusalem",
+    "image": "/games/media/skyrot-jerusalem.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:The_city_lights_of_Jerusalem,_Israel_(iss069e009486).jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "cairo",
+      "alexandria",
+      "istanbul"
+    ]
+  },
+  {
+    "id": "doha",
+    "name": "Doha",
+    "image": "/games/media/skyrot-doha.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Doha,_Qatar_Astronaut_Imagery.JPG",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "abu-dhabi",
+      "dubai",
+      "riyadh"
+    ]
+  },
+  {
+    "id": "abu-dhabi",
+    "name": "Abu Dhabi",
+    "image": "/games/media/skyrot-abu-dhabi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Abu_Dhabi_from_Space-ISS006-E-32079-March_2003.JPG",
+    "credit": "Earth Science and Remote Sensing Unit, NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "dubai",
+      "doha",
+      "riyadh"
+    ]
+  },
+  {
+    "id": "riyadh",
+    "name": "Riyadh",
+    "image": "/games/media/skyrot-riyadh.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Riyadh,_Saudi_Arabia,_the_Middle_Eastern_nation%27s_capital_and_largest_city_(iss073e0222623).jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "doha",
+      "abu-dhabi",
+      "dubai"
+    ]
+  },
+  {
+    "id": "manila",
+    "name": "Manila",
+    "image": "/games/media/skyrot-manila.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Iss047e099713_lrg_Manila.jpg",
+    "credit": "Astronaut photograph ISS047-E-99713 was acquired on May 6, 2016, with a Nikon D4 digital camera using a 400 millimeter lens, and is provided by the ISS Crew Earth Observations Facility and the Earth Science and Remote Sensing Unit, Johnson Space Center.",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "taipei",
+      "ho-chi-minh-city",
+      "shanghai"
+    ]
+  },
+  {
+    "id": "ho-chi-minh-city",
+    "name": "Ho Chi Minh City",
+    "image": "/games/media/skyrot-ho-chi-minh-city.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS038-E-68481_-_View_of_Earth.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "bangkok",
+      "kuala-lumpur",
+      "singapore"
+    ]
+  },
+  {
+    "id": "taipei",
+    "name": "Taipei",
+    "image": "/games/media/skyrot-taipei.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS047-E-103409_-_View_of_Earth.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "shanghai",
+      "manila",
+      "seoul"
+    ]
+  },
+  {
+    "id": "osaka",
+    "name": "Osaka",
+    "image": "/games/media/skyrot-osaka.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Expedition_72_(iss072e519516).jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "tokyo",
+      "seoul",
+      "sapporo"
+    ]
+  },
+  {
+    "id": "sapporo",
+    "name": "Sapporo",
+    "image": "/games/media/skyrot-sapporo.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Iss069e000236.jpg",
+    "credit": "NASA Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "tokyo",
+      "osaka",
+      "seoul"
+    ]
+  },
+  {
+    "id": "wellington",
+    "name": "Wellington",
+    "image": "/games/media/skyrot-wellington.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Wellington,_New_Zealand.JPG",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "auckland",
+      "melbourne",
+      "singapore"
+    ]
+  },
+  {
+    "id": "madrid",
+    "name": "Madrid",
+    "image": "/games/media/skyrot-madrid.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS023-E-48967_-_View_of_Spain.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "lisbon",
+      "barcelona",
+      "casablanca"
+    ]
+  },
+  {
+    "id": "lisbon",
+    "name": "Lisbon",
+    "image": "/games/media/skyrot-lisbon.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS035-E-31506_-_View_of_Lissabon,_Portugal.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "madrid",
+      "casablanca",
+      "barcelona"
+    ]
+  },
+  {
+    "id": "budapest",
+    "name": "Budapest",
+    "image": "/games/media/skyrot-budapest.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS065-E-112961_-_View_of_Earth.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "venice",
+      "berlin",
+      "rome"
+    ]
+  },
+  {
+    "id": "dublin",
+    "name": "Dublin",
+    "image": "/games/media/skyrot-dublin.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS023-E-21766_-_View_of_Ireland.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "london",
+      "amsterdam",
+      "brussels"
+    ]
+  },
+  {
+    "id": "brussels",
+    "name": "Brussels",
+    "image": "/games/media/skyrot-brussels.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS026-E-13694_-_View_of_Belgium.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "amsterdam",
+      "paris",
+      "london"
+    ]
+  },
+  {
+    "id": "nairobi",
+    "name": "Nairobi",
+    "image": "/games/media/skyrot-nairobi.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Nairobi,_Kenya.JPG",
+    "credit": "NASA Astronauts",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "addis-ababa",
+      "riyadh",
+      "doha"
+    ]
+  },
+  {
+    "id": "addis-ababa",
+    "name": "Addis Ababa",
+    "image": "/games/media/skyrot-addis-ababa.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS012-E-12715_-_View_of_Ethiopia.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "nairobi",
+      "riyadh",
+      "doha"
+    ]
+  },
+  {
+    "id": "alexandria",
+    "name": "Alexandria",
+    "image": "/games/media/skyrot-alexandria.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Egypt%E2%80%99s_Mediterranean_Coast_(154431).jpg",
+    "credit": "Astronaut photograph ISS069-E-25231 was acquired on June 26, 2023, with a Nikon D5 digital camera using a focal length of 400 millimeters. It is provided by the ISS Crew Earth Observations Facility and the Earth Science and Remote Sensing Unit, Johnson Space Center. The image was taken by a member of the Expedition 69 crew. The image has been cropped and enhanced to improve contrast, and lens artifacts have been removed. The International Space Station Program supports the laboratory as part of the ISS National Lab to help astronauts take pictures of Earth that will be of the greatest value to scientists and the public, and to make those images freely available on the Internet. Additional images taken by astronauts and cosmonauts can be viewed at the NASA/JSC Gateway to Astronaut Photography of Earth. Caption by Justin Wilkinson, Texas State University, Jacobs JETS Contract at NASA-JSC.",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "cairo",
+      "jerusalem",
+      "athens"
+    ]
+  },
+  {
+    "id": "tunis",
+    "name": "Tunis",
+    "image": "/games/media/skyrot-tunis.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS039-E-16726_-_View_of_Tunisia.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "rome",
+      "barcelona",
+      "venice"
+    ]
+  },
+  {
+    "id": "casablanca",
+    "name": "Casablanca",
+    "image": "/games/media/skyrot-casablanca.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS026-E-15812_-_View_of_Morocco.jpg",
+    "credit": "Earth Science and Remote Sensing Unit, Lyndon B. Johnson Space Center",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "distractors": [
+      "lisbon",
+      "madrid",
+      "barcelona"
+    ]
   }
 ]
