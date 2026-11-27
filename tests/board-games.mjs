@@ -14,6 +14,10 @@ const reports = [],
 const browser = await chromium.launch();
 const only = process.argv.find((a) => a.startsWith("--game="))?.split("=")[1];
 async function solve(page, puzzle) {
+  if (puzzle.kind === "crossword")
+    for (let i = 0; i < puzzle.solution.length; i++)
+      if (puzzle.solution[i] !== "#")
+        await page.locator(`[data-cell="${i}"]`).fill(puzzle.solution[i]);
   if (puzzle.kind === "wordgrid") {
     for (let i = 0; i < 25; i++)
       if (puzzle.solution[i] !== "#") {
@@ -170,7 +174,9 @@ try {
           document.dispatchEvent(new Event("visibilitychange")),
         );
         await page
-          .locator(".puzzle-grid button:not(:disabled)")
+          .locator(
+            ".puzzle-grid :is(button:not(:disabled),input:not([readonly]))",
+          )
           .first()
           .waitFor();
         assert.deepEqual(errors, []);

@@ -1,6 +1,7 @@
 // Presentation names are separate from stable game IDs, URLs and saved scores.
 const names: Record<string, string> = {
   wordgrid: "Word grid",
+  crossword: "Mini crossword",
   path: "Path",
   crowns: "Crowns",
   train: "Subway",

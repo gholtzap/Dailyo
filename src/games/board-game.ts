@@ -70,6 +70,77 @@ function button(label: string, action: () => void, kind = "secondary") {
   b.onclick = action;
   return b;
 }
+let entryDirection: "Across" | "Down" = "Across";
+function drawCrossword() {
+  if (puzzle.kind !== "crossword") throw new Error("Wrong board");
+  const current = puzzle;
+  const grid = el("div", undefined, "puzzle-grid columns-5 crossword-grid");
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "Mini crossword board");
+  current.solution.forEach((target, i) => {
+    if (target === "#") {
+      grid.append(el("div", undefined, "puzzle-block"));
+      return;
+    }
+    const square = el("div", undefined, "puzzle-entry");
+    const input = el("input", undefined, "puzzle-input");
+    input.type = "text";
+    input.maxLength = 1;
+    input.autocomplete = "off";
+    input.autocapitalize = "characters";
+    input.spellcheck = false;
+    input.dataset.cell = String(i);
+    input.value = state.values[i];
+    input.readOnly = state.phase !== "playing";
+    input.setAttribute(
+      "aria-label",
+      `Row ${Math.floor(i / 5) + 1}, column ${(i % 5) + 1}`,
+    );
+    input.oninput = () => {
+      const value = input.value.slice(-1);
+      act({ type: "input", index: i, value });
+      if (value) {
+        const clue =
+          puzzle.kind === "crossword"
+            ? puzzle.clues.find(
+                (c) => c.direction === entryDirection && c.cells.includes(i),
+              )
+            : undefined;
+        const next = clue?.cells[clue.cells.indexOf(i) + 1];
+        if (next !== undefined)
+          quiz.querySelector<HTMLElement>(`[data-cell="${next}"]`)?.focus();
+      }
+    };
+    square.append(input);
+    if (current.numbers[i])
+      square.append(el("span", String(current.numbers[i]), "puzzle-number"));
+    grid.append(square);
+  });
+  return grid;
+}
+function crosswordClues() {
+  const section = el("div", undefined, "puzzle-clues");
+  if (puzzle.kind !== "crossword") return section;
+  for (const direction of ["Across", "Down"] as const) {
+    const group = el("div");
+    group.append(el("h3", direction));
+    for (const clue of puzzle.clues.filter((c) => c.direction === direction))
+      group.append(
+        button(
+          `${clue.number}. ${clue.text}`,
+          () => {
+            entryDirection = direction;
+            quiz
+              .querySelector<HTMLElement>(`[data-cell="${clue.cells[0]}"]`)
+              ?.focus();
+          },
+          "puzzle-clue",
+        ),
+      );
+    section.append(group);
+  }
+  return section;
+}
 function drawWordGrid() {
   if (puzzle.kind !== "wordgrid") throw new Error("Wrong board");
   const grid = el("div", undefined, "puzzle-grid columns-5 word-grid");
@@ -102,6 +173,7 @@ function drawWordGrid() {
   return grid;
 }
 function drawBoard() {
+  if (puzzle.kind === "crossword") return drawCrossword();
   if (puzzle.kind === "wordgrid") return drawWordGrid();
   const grid = el(
     "div",
@@ -204,11 +276,13 @@ function draw() {
   const title = el(
     "h2",
     state.phase === "playing"
-      ? puzzle.kind === "wordgrid"
-        ? "Complete six words"
-        : puzzle.kind === "crowns"
-          ? "Place six crowns"
-          : "Connect the checkpoints"
+      ? puzzle.kind === "crossword"
+        ? "Solve the crossword"
+        : puzzle.kind === "wordgrid"
+          ? "Complete six words"
+          : puzzle.kind === "crowns"
+            ? "Place six crowns"
+            : "Connect the checkpoints"
       : result(),
   );
   title.id = "puzzle-title";
@@ -218,15 +292,18 @@ function draw() {
     content.push(
       el(
         "p",
-        puzzle.kind === "wordgrid"
-          ? `${puzzle.maxMoves - state.moves} swaps left`
-          : puzzle.kind === "crowns"
-            ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
-            : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
+        puzzle.kind === "crossword"
+          ? `${state.values.filter((v) => v && v !== "#").length} of 21 letters`
+          : puzzle.kind === "wordgrid"
+            ? `${puzzle.maxMoves - state.moves} swaps left`
+            : puzzle.kind === "crowns"
+              ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
+              : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
         "puzzle-progress",
       ),
     );
   content.push(drawBoard());
+  if (puzzle.kind === "crossword") content.push(crosswordClues());
   if (state.notice) {
     const note = el("p", state.notice, "rot-feedback");
     note.setAttribute("role", "status");
@@ -240,6 +317,8 @@ function draw() {
         ? state.selected.length === 0
         : state.history.length === 0;
     actions.append(undo);
+    if (puzzle.kind === "crossword")
+      actions.append(button("Check answers", () => act({ type: "check" })));
     const reset = button("Restart", () => act({ type: "reset" }));
     reset.disabled =
       puzzle.kind === "path"
@@ -341,6 +420,11 @@ quiz.addEventListener("keydown", (e) => {
         Math.floor(n / puzzle.size) === Math.floor(i / puzzle.size))
     )
       quiz.querySelector<HTMLElement>(`[data-cell="${n}"]`)?.focus();
+  }
+  if (e.key === "Backspace" && e.target instanceof HTMLInputElement) {
+    e.preventDefault();
+    act({ type: "input", index: i, value: "" });
+    return;
   }
   if (e.key === "Backspace") {
     e.preventDefault();

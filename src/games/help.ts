@@ -1,6 +1,10 @@
 import { rushRound } from "../daily/bridge.js";
 
 const instructions: Record<string, string[]> = {
+  crossword: [
+    "Use the Across and Down clues to fill the grid. Each square holds one letter.",
+    "Select a clue to enter its answer. Arrow keys move between squares; Backspace clears a letter.",
+  ],
   wordgrid: [
     "Swap two letters to make three words across and three down. You have 15 swaps.",
     "Green letters are correct and stay in place. Select a letter, then select another to swap them.",

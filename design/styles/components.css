@@ -1258,3 +1258,9 @@ body:has(dialog[open]) .puzzle-tooltip { display: none; }
 
 .puzzle-cell[class*=region-] { font-size: var(--font-size-12); align-items: flex-end; padding-bottom: var(--space-2); }
 .puzzle-cell.letter-right { background: var(--success-surface); color: var(--success-ink); border-color: var(--success); }
+.puzzle-entry { position: relative; }
+.puzzle-input { display: block; width: 100%; min-width: 0; aspect-ratio: 1; padding: var(--space-2); text-align: center; font: inherit; font-size: var(--font-size-18); color: var(--ink); background: var(--surface-raised); border: var(--stroke-1) solid var(--line); border-radius: var(--radius-control-compact); }
+.puzzle-input[readonly] { background: var(--success-surface); }
+.puzzle-number { position: absolute; top: var(--space-2); left: var(--space-2); font-size: var(--font-size-12); color: var(--muted); pointer-events: none; }
+.puzzle-clue { display: block; width: 100%; min-height: var(--control-size); padding: var(--space-2); margin: 0 0 var(--space-2); font: inherit; font-size: var(--font-size-13); text-align: left; background: var(--surface-raised); border: var(--stroke-1) solid var(--line); border-radius: var(--radius-control); color: var(--ink); cursor: pointer; }
+.puzzle-clue:hover { background: var(--surface-hover); }

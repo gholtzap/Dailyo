@@ -131,7 +131,7 @@ export const wordClues: Record<string, string> = {
   JUICE: "Liquid squeezed from fruit",
   KNOWN: "Recognized",
   LABEL: "Tag describing an item",
-  LARGE: "Big",
+  LARGE: "Big, as a size",
   LASER: "Focused beam of light",
   LATER: "At a future time",
   LAYER: "One sheet or level",
