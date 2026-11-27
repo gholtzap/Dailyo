@@ -70,6 +70,41 @@ function button(label: string, action: () => void, kind = "secondary") {
   b.onclick = action;
   return b;
 }
+function drawGroups() {
+  if (puzzle.kind !== "groups") throw new Error("Wrong board");
+  const section = el("div");
+  for (const id of state.found) {
+    const group = puzzle.groups[id];
+    const solved = el("div", undefined, "puzzle-found");
+    solved.append(el("h3", group.name), el("p", group.words.join(" · ")));
+    section.append(solved);
+  }
+  const grid = el("div", undefined, "puzzle-grid columns-4 groups-grid");
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "Groups board");
+  puzzle.items.forEach((word, i) => {
+    if (
+      puzzle.kind !== "groups" ||
+      state.found.some(
+        (g) =>
+          puzzle.kind === "groups" && puzzle.groups[g].words.includes(word),
+      )
+    )
+      return;
+    const b = button(
+      word,
+      () => act({ type: "cell", index: i }),
+      "puzzle-cell group-word",
+    );
+    b.dataset.cell = String(i);
+    b.setAttribute("aria-pressed", String(state.selected.includes(i)));
+    b.classList.toggle("is-picked", state.selected.includes(i));
+    b.disabled = state.phase !== "playing";
+    grid.append(b);
+  });
+  section.append(grid);
+  return section;
+}
 let entryDirection: "Across" | "Down" = "Across";
 function drawCrossword() {
   if (puzzle.kind !== "crossword") throw new Error("Wrong board");
@@ -173,6 +208,7 @@ function drawWordGrid() {
   return grid;
 }
 function drawBoard() {
+  if (puzzle.kind === "groups") return drawGroups();
   if (puzzle.kind === "crossword") return drawCrossword();
   if (puzzle.kind === "wordgrid") return drawWordGrid();
   const grid = el(
@@ -276,13 +312,15 @@ function draw() {
   const title = el(
     "h2",
     state.phase === "playing"
-      ? puzzle.kind === "crossword"
-        ? "Solve the crossword"
-        : puzzle.kind === "wordgrid"
-          ? "Complete six words"
-          : puzzle.kind === "crowns"
-            ? "Place six crowns"
-            : "Connect the checkpoints"
+      ? puzzle.kind === "groups"
+        ? "Find four groups of four"
+        : puzzle.kind === "crossword"
+          ? "Solve the crossword"
+          : puzzle.kind === "wordgrid"
+            ? "Complete six words"
+            : puzzle.kind === "crowns"
+              ? "Place six crowns"
+              : "Connect the checkpoints"
       : result(),
   );
   title.id = "puzzle-title";
@@ -292,13 +330,15 @@ function draw() {
     content.push(
       el(
         "p",
-        puzzle.kind === "crossword"
-          ? `${state.values.filter((v) => v && v !== "#").length} of 21 letters`
-          : puzzle.kind === "wordgrid"
-            ? `${puzzle.maxMoves - state.moves} swaps left`
-            : puzzle.kind === "crowns"
-              ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
-              : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
+        puzzle.kind === "groups"
+          ? `${4 - state.mistakes} mistakes left`
+          : puzzle.kind === "crossword"
+            ? `${state.values.filter((v) => v && v !== "#").length} of 21 letters`
+            : puzzle.kind === "wordgrid"
+              ? `${puzzle.maxMoves - state.moves} swaps left`
+              : puzzle.kind === "crowns"
+                ? `${state.values.filter((v) => v === "C").length} of 6 crowns`
+                : `${state.selected.length} of ${puzzle.size * puzzle.size} squares`,
         "puzzle-progress",
       ),
     );
@@ -311,9 +351,18 @@ function draw() {
   }
   const actions = el("div", undefined, "rot-actions");
   if (state.phase === "playing") {
+    if (puzzle.kind === "groups") {
+      const submit = button(
+        "Submit group",
+        () => act({ type: "check" }),
+        "primary",
+      );
+      submit.disabled = state.selected.length !== 4;
+      actions.append(submit);
+    }
     const undo = button("Undo", () => act({ type: "undo" }));
     undo.disabled =
-      puzzle.kind === "path"
+      puzzle.kind === "path" || puzzle.kind === "groups"
         ? state.selected.length === 0
         : state.history.length === 0;
     actions.append(undo);
@@ -321,10 +370,10 @@ function draw() {
       actions.append(button("Check answers", () => act({ type: "check" })));
     const reset = button("Restart", () => act({ type: "reset" }));
     reset.disabled =
-      puzzle.kind === "path"
+      puzzle.kind === "path" || puzzle.kind === "groups"
         ? state.selected.length === 0
         : !state.values.some(Boolean);
-    actions.append(reset);
+    if (puzzle.kind !== "groups") actions.append(reset);
     const answer = el("details", undefined, "puzzle-assistance");
     answer.append(
       el("summary", "Help with this puzzle"),

@@ -2,6 +2,7 @@
 const names: Record<string, string> = {
   wordgrid: "Word grid",
   crossword: "Mini crossword",
+  groups: "Groups",
   path: "Path",
   crowns: "Crowns",
   train: "Subway",
