@@ -25,6 +25,29 @@ try {
       viewport: { width, height: width === 1440 ? 1000 : 844 },
       colorScheme: "dark",
     });
+    const oldDaily = [
+      "dailyo:path:v1:daily:2000-01-01",
+      "trainrot:flags:v1:daily:2000-01-01",
+      "trainrot-daily-v2:old:2000-01-01",
+      "trainrot-world-daily:world-london:2000-01-01",
+      "dailyo:daily-feed:skipped:2000-01-01",
+    ];
+    const preserved = [
+      "dailyo:path:v1:practice",
+      "trainrot-world-practice:old",
+      "other:daily:2000-01-01",
+      "dailyo:path:v1:daily:2000-02-31",
+      "dailyo:path:v1:daily:9999-01-01",
+      `dailyo:path:v1:daily:${dailyDate()}`,
+    ];
+    await page.addInitScript(
+      ({ oldDaily, preserved }) => {
+        if (window.parent !== window) return;
+        for (const key of [...oldDaily, ...preserved])
+          localStorage.setItem(key, "retention-fixture");
+      },
+      { oldDaily, preserved },
+    );
     // Keep the layout baseline stable with a saved run; fresh orders have their own browser coverage.
     await initialMixedRun(page, dailyDate());
     const errors = [];
@@ -39,6 +62,20 @@ try {
     ]) {
       await page.goto(base + route);
       await page.locator(".site-masthead .site-more summary").waitFor();
+      assert.deepEqual(
+        await page.evaluate(
+          (keys) => keys.map((key) => localStorage.getItem(key)),
+          oldDaily,
+        ),
+        oldDaily.map(() => null),
+      );
+      assert.deepEqual(
+        await page.evaluate(
+          (keys) => keys.map((key) => localStorage.getItem(key)),
+          preserved,
+        ),
+        preserved.map(() => "retention-fixture"),
+      );
       if (route === "/trainrot/" || route.startsWith("/trainrot-world/"))
         await page.locator("#reveal").waitFor();
       else if (route === "/zoomrot/") {
