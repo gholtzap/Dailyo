@@ -1,6 +1,10 @@
 import { rushRound } from "../daily/bridge.js";
 
 const instructions: Record<string, string[]> = {
+  crowns: [
+    "Place one crown in each row, column and lettered region. Crowns cannot touch, even diagonally.",
+    "Tap once to place a crown (C), again to rule out a square, and a third time to clear it. Corner letters name the regions.",
+  ],
   path: [
     "Draw one path through every square, visiting the numbered checkpoints in order. Start at 1 and finish at 7.",
     "Drag across squares or use the arrow keys to focus a square and Enter to extend the path. Select an earlier square to backtrack.",

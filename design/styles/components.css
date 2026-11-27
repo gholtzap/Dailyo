@@ -1247,3 +1247,13 @@ select:not([multiple]) { height: var(--control-size); }
 .columns-6 .puzzle-cell:nth-child(6n) .puzzle-tooltip { left: auto; right: 0; }
 
 body:has(dialog[open]) .puzzle-tooltip { display: none; }
+.puzzle-cell .puzzle-region { position: absolute; top: var(--space-2); left: var(--space-2); font-size: var(--font-size-12); color: var(--ink); }
+.puzzle-cell.region-0 { background: var(--surface-raised); }
+.puzzle-cell.region-1 { background: var(--map-park); }
+.puzzle-cell.region-2 { background: var(--error-surface); }
+.puzzle-cell.region-3 { background: var(--map-country-target); }
+.puzzle-cell.region-4 { background: var(--action-hover); }
+.puzzle-cell.region-5 { background: var(--well); }
+.puzzle-cell[class*=region-].is-picked { border-color: var(--focus); box-shadow: inset 0 0 0 var(--stroke-2) var(--focus); }
+
+.puzzle-cell[class*=region-] { font-size: var(--font-size-12); align-items: flex-end; padding-bottom: var(--space-2); }

@@ -80,28 +80,30 @@ test("browser shards cover every package command once and preserve child failure
         ).status,
         0,
       );
-    await rm(join(root, "visited"));
-    for (let shard = 1; shard <= 3; shard++)
-      assert.equal(
-        spawnSync(
-          process.execPath,
-          ["scripts/ci-browser.mjs", `--shard=${shard}/3`, "--jobs=2"],
-          { cwd: root },
-        ).status,
-        0,
+    for (const jobs of [2, 3]) {
+      await rm(join(root, "visited"));
+      for (let shard = 1; shard <= 3; shard++)
+        assert.equal(
+          spawnSync(
+            process.execPath,
+            ["scripts/ci-browser.mjs", `--shard=${shard}/3`, `--jobs=${jobs}`],
+            { cwd: root },
+          ).status,
+          0,
+        );
+      const concurrent = (await readFile(join(root, "visited"), "utf8"))
+        .trim()
+        .split("\n")
+        .map((line) => JSON.parse(line) as string[])
+        .sort();
+      assert.deepEqual(
+        concurrent,
+        visited,
+        "Concurrent execution must preserve every argument and case",
       );
-    const concurrent = (await readFile(join(root, "visited"), "utf8"))
-      .trim()
-      .split("\n")
-      .map((line) => JSON.parse(line) as string[])
-      .sort();
-    assert.deepEqual(
-      concurrent,
-      visited,
-      "Concurrent execution must preserve every argument and case",
-    );
+    }
     await writeFile(join(root, "tests/a.mjs"), "process.exitCode=7;");
-    for (const mode of [[], ["--jobs=2"]])
+    for (const mode of [[], ["--jobs=2"], ["--jobs=3"]])
       assert.notEqual(
         spawnSync(
           process.execPath,

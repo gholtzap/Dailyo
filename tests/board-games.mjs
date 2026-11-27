@@ -14,6 +14,9 @@ const reports = [],
 const browser = await chromium.launch();
 const only = process.argv.find((a) => a.startsWith("--game="))?.split("=")[1];
 async function solve(page, puzzle) {
+  if (puzzle.kind === "crowns")
+    for (const cell of puzzle.solution)
+      await page.locator(`[data-cell="${cell}"]`).click();
   if (puzzle.kind === "path")
     for (const cell of puzzle.solution)
       await page.locator(`[data-cell="${cell}"]`).click();
