@@ -94,12 +94,17 @@ async function visit(directory) {
           return `<a aria-description="${description}${rush && !board ? " in Rush" : " · Daily and Practice"}" href="${href}"><span>${gameName(name)}</span></a>`;
         })
         .join("\n          ");
+      const cities = current?.[1] === "maprot";
       const header = `<header class="site-masthead${rush || daily ? " feed-header" : ""}${daily ? " daily-header" : ""}">
     <a class="site-brand" href="/">dailyo</a>
-    <nav class="site-modes" aria-label="Play mode">
+    ${
+      cities
+        ? '<p class="site-context">Cities</p>'
+        : `<nav class="site-modes" aria-label="Play mode">
       <a href="/daily/" aria-label="Daily mix"${daily ? ' aria-current="page"' : ""}>Daily</a>
       <a href="/rush/"${rush ? ' aria-current="page"' : ""}>Rush</a>
-    </nav>
+    </nav>`
+    }
     ${daily ? '<p id="feed-progress" role="status" tabindex="-1"></p>' : ""}
     <details class="site-more${rush || daily ? " feed-directory" : ""}">
       <summary>Games</summary>
@@ -113,6 +118,21 @@ async function visit(directory) {
         /<header class="site-masthead[\s\S]*?<\/header>(?:\s*<h1 class="screen-reader-only">.*?<\/h1>)?/,
         header,
       );
+      if (cities) {
+        html = html.replace(
+          'class="main rot-main"',
+          'class="main rot-main city-main"',
+        );
+        html = html.replace(/\s*<nav class="modes[^"]*"[\s\S]*?<\/nav>/, "");
+        html = html.replace(
+          "</main>",
+          `<nav class="modes city-bottom-modes" aria-label="Game mode">
+          <button id="daily" type="button" aria-pressed="true">Daily</button>
+          <a href="/rush/maprot/">Rush</a>
+          <button id="practice" type="button" aria-pressed="false">Practice</button>
+        </nav></main>`,
+        );
+      }
       if (current) {
         const name = gameName(current[0]);
         html = html.replace(

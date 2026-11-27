@@ -100,7 +100,8 @@ let data: RotData,
     paths: [string, Path2D][];
     anchors: Record<string, Coordinate>;
   } | null;
-let mapObserver: ResizeObserver | undefined;
+const mapObservers = new Set<ResizeObserver>();
+let mapSequence = 0;
 let mapGeometry: BorderGeometry | null = null;
 let countryNames = new Map<string, string>();
 
@@ -206,6 +207,7 @@ function zoomToPins(
   for (const shift of [-360, 360]) {
     if (shift < 0 ? left >= 0 : left + width <= 360) continue;
     const wrappedLand = map.firstElementChild!.cloneNode(true) as SVGElement;
+    wrappedLand.removeAttribute("id");
     wrappedLand.setAttribute("transform", `translate(${shift} 0)`);
     wrappedLand.setAttribute("data-map-wrap", String(shift));
     map.append(wrappedLand);
@@ -289,6 +291,7 @@ function drawMap(
     tabindex: 0,
   });
   const geography = svg("g", { "aria-hidden": "true" });
+  geography.id = `city-geography-${++mapSequence}`;
   geography.append(
     svg("path", {
       d: (data as Extract<RotData, { kind: "maprot" }>).land,
@@ -317,6 +320,20 @@ function drawMap(
   labels.setAttribute("aria-hidden", "true");
   const surface = element("div", undefined, "rot-map-surface");
   surface.append(map, labels);
+  const pinPiece = element(
+    "div",
+    undefined,
+    `city-pin${reviewing ? " is-locked" : ""}`,
+  );
+  pinPiece.setAttribute("aria-hidden", "true");
+  const pinLabel = element("span", "Your pin", "city-pin-label");
+  const overviewMap = svg("svg", {
+    viewBox: "0 0 360 180",
+    "aria-hidden": "true",
+  });
+  overviewMap.append(svg("use", { href: `#${geography.id}` }));
+  const viewport = svg("rect", { class: "city-overview-viewport" });
+  overviewMap.append(viewport);
   const feedback = element("div", undefined, "rot-feedback");
   feedback.setAttribute("role", "status");
   const guess = reviewing
@@ -348,7 +365,7 @@ function drawMap(
     state.draft.length
       ? `Your pin: ${coordinates(state.draft as number[], 2)}`
       : "Tap the map to place a pin.",
-    "rot-coordinate",
+    "rot-coordinate city-instruction",
   );
   pointLabel.setAttribute("role", "status");
   pointLabel.classList.toggle(
@@ -384,8 +401,11 @@ function drawMap(
     zoom: 360 / fitted.width,
     center: { x: fitted.x + fitted.width / 2, y: fitted.y + fitted.height / 2 },
   };
-  let zoom = initial.zoom,
-    center = { ...initial.center };
+  let zoom = reviewing ? initial.zoom : 2.4,
+    center =
+      !reviewing && state.draft.length
+        ? { x: Number(state.draft[0]) + 180, y: 90 - Number(state.draft[1]) }
+        : { ...initial.center };
   const maxZoom = reviewing ? 64 : 16;
   function viewSize() {
     const box = map.getBoundingClientRect(),
@@ -419,6 +439,7 @@ function drawMap(
         }
         if (!existing) {
           const copy = geography.cloneNode(true) as SVGElement;
+          copy.removeAttribute("id");
           copy.setAttribute("transform", `translate(${shift} 0)`);
           copy.setAttribute("data-map-wrap", String(shift));
           map.insertBefore(
@@ -437,6 +458,21 @@ function drawMap(
         "r",
         String((5 * width) / (map.getBoundingClientRect().width || 360)),
       );
+    viewport.setAttribute("x", String(Math.max(0, center.x - width / 2)));
+    viewport.setAttribute("y", String(Math.max(0, center.y - height / 2)));
+    viewport.setAttribute(
+      "width",
+      String(
+        Math.min(360, center.x + width / 2) - Math.max(0, center.x - width / 2),
+      ),
+    );
+    viewport.setAttribute(
+      "height",
+      String(
+        Math.min(180, center.y + height / 2) -
+          Math.max(0, center.y - height / 2),
+      ),
+    );
     labels.replaceChildren();
     const matrix = map.getScreenCTM(),
       surfaceBox = surface.getBoundingClientRect();
@@ -446,10 +482,51 @@ function drawMap(
         : new DOMPoint();
       return { x: point.x - surfaceBox.x, y: point.y - surfaceBox.y };
     };
+    const selected = reviewing
+      ? guess
+      : pin
+        ? (sessions[mode].state.draft as number[])
+        : null;
+    if (selected?.length) {
+      const point = screenPoint(
+        reviewing
+          ? Number(map.querySelector(".rot-pin.guess")?.getAttribute("cx"))
+          : selected[0] + 180,
+        90 - selected[1],
+      );
+      if (
+        point.x >= 0 &&
+        point.x <= surfaceBox.width &&
+        point.y >= 0 &&
+        point.y <= surfaceBox.height
+      ) {
+        pinPiece.style.left = `${point.x}px`;
+        pinPiece.style.top = `${point.y}px`;
+        pinLabel.style.left = `${point.x}px`;
+        pinLabel.style.top = `${point.y}px`;
+        labels.append(pinPiece, pinLabel);
+      }
+    }
+    clear.hidden = reviewing;
+    clear.disabled = !pin;
+    const blocked = [
+      ...surface.querySelectorAll<HTMLElement>(
+        "button, .city-pin, .city-pin-label",
+      ),
+    ]
+      .filter((node) => node.getClientRects().length && !node.hidden)
+      .map((node) => node.getBoundingClientRect());
+    const labelGap = Number.parseFloat(designValue("--space-2"));
+    const overlaps = (a: DOMRect, b: DOMRect) =>
+      a.left < b.right + labelGap &&
+      a.right + labelGap > b.left &&
+      a.top < b.bottom + labelGap &&
+      a.bottom + labelGap > b.top;
     const scale = width / (map.getBoundingClientRect().width || 360),
       font = 12 * scale;
-    if (zoom >= 2 && mapGeometry) {
+    if (zoom >= (reviewing ? 2 : 4) && mapGeometry) {
       const occupied: { x: number; y: number; width: number }[] = [];
+      const candidates: HTMLElement[] = [];
       for (const [id, [x, y]] of Object.entries(mapGeometry.anchors)) {
         const name = countryNames.get(id);
         if (!name) continue;
@@ -480,8 +557,15 @@ function drawMap(
         label.style.left = `${screen.x}px`;
         label.style.top = `${screen.y}px`;
         labels.append(label);
+        candidates.push(label);
         occupied.push({ ...point, width: labelWidth });
       }
+      const bounds = candidates.map((label) => label.getBoundingClientRect());
+      candidates.forEach((label, index) => {
+        if (blocked.some((rect) => overlaps(bounds[index], rect)))
+          label.remove();
+        else blocked.push(bounds[index]);
+      });
     }
     if (reviewing) {
       const point = screenPoint(lon + 180, 90 - lat);
@@ -550,17 +634,37 @@ function drawMap(
     renderView();
     enlarge.focus({ preventScroll: true });
   });
-  tools.append(zoomIn, zoomOut, reset, enlarge);
-  const actions = element("div", undefined, "rot-actions");
-  actions.append(submit);
-  editor.append(
-    surface,
-    tools,
-    ...(reviewing ? [feedback] : [pointLabel, actions]),
+  reset.classList.add("city-overview");
+  reset.setAttribute("aria-label", reviewing ? "Fit answer" : "Reset view");
+  reset.replaceChildren(
+    overviewMap,
+    element("span", reviewing ? "Fit answer" : "Reset view"),
   );
+  enlarge.classList.add("city-expand");
+  tools.append(zoomIn, zoomOut);
+  surface.append(reset, tools, enlarge);
+  const clear = button(
+    "Clear pin",
+    () => {
+      if (!update({ type: "clear-position" }, false)) return;
+      pin?.remove();
+      pin = null;
+      submit.disabled = true;
+      pointLabel.textContent = "Tap the map to place a pin.";
+      pointLabel.classList.remove("screen-reader-only");
+      renderView();
+      map.focus({ preventScroll: true });
+    },
+    "game-icon city-clear",
+  );
+  const actions = element("div", undefined, "rot-actions");
+  actions.classList.add("city-commit");
+  actions.append(clear, submit);
+  editor.append(surface, ...(reviewing ? [feedback] : [pointLabel, actions]));
   inline.append(editor);
-  mapObserver = new ResizeObserver(() => renderView());
-  mapObserver.observe(map);
+  const observer = new ResizeObserver(() => renderView());
+  mapObservers.add(observer);
+  observer.observe(map);
 
   function move(point: number[], follow = false) {
     const bounded = point.map(
@@ -1090,6 +1194,10 @@ function questionReview(session: RotSession, scores: number[]) {
           .slice(1)
           .filter((node): node is HTMLElement | SVGElement => node !== null),
       );
+      if (mapGame)
+        panel
+          .querySelector(".rot-feedback")
+          ?.classList.add("screen-reader-only");
       details.append(panel);
     };
     row.append(details);
@@ -1163,16 +1271,17 @@ function summary(session: RotSession): Content {
         }
       }),
     );
-    actions.append(
-      button(
-        "Play practice",
-        () => {
-          selectMode("practice");
-          document.querySelector<HTMLElement>("#round-title")?.focus();
-        },
-        "primary",
-      ),
-    );
+    if (!mapGame)
+      actions.append(
+        button(
+          "Play practice",
+          () => {
+            selectMode("practice");
+            document.querySelector<HTMLElement>("#round-title")?.focus();
+          },
+          "primary",
+        ),
+      );
     footer.append(actions, status);
   } else {
     actions.append(
@@ -1198,8 +1307,8 @@ function summary(session: RotSession): Content {
 
 function draw() {
   window.frameElement?.classList.remove("feed-map-expanded");
-  mapObserver?.disconnect();
-  mapObserver = undefined;
+  for (const observer of mapObservers) observer.disconnect();
+  mapObservers.clear();
   settings?.sync(difficulty, mode === "practice");
   for (const control of modes)
     control.setAttribute("aria-pressed", String(control.id === mode));

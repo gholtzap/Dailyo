@@ -200,6 +200,9 @@ try {
           questions = makeSet(game, data, day);
         for (const [index, q] of questions.entries()) {
           if (game === "maprot") {
+            await page
+              .getByRole("button", { name: "Reset view", exact: true })
+              .click();
             const point = await page
               .locator("svg.rot-map")
               .evaluate((map, [lon, lat]) => {
