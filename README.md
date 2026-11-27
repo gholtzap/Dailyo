@@ -287,3 +287,5 @@ Word grid and Mini crossword share 1,000 crossing layouts built from 280 clued w
 Vocabulary includes 122 words, with original definitions, example sentences, and three alternative meanings for each. Daily and dated Rush puzzles through 2026-11-27 retain the original 30-word pool.
 
 Cluerot includes 72 answers, each with five progressively revealing clues and accepted aliases. Daily puzzles through 2026-11-27 retain the original 24-answer pool.
+
+Yearrot includes 200 events with distinct years, spanning ancient history, science, arts, technology, and sport. Daily puzzles issued through 2026-11-27 retain the original 54-event pool.
