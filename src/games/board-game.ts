@@ -95,13 +95,7 @@ function drawSudoku() {
   puzzle.initial.forEach((given, i) => {
     const cell = button(
       state.values[i],
-      () => {
-        sudokuCell = i;
-        draw();
-        quiz
-          .querySelector<HTMLElement>(`[data-cell="${i}"]`)
-          ?.focus({ preventScroll: true });
-      },
+      () => cell.focus({ preventScroll: true }),
       "puzzle-input sudoku-cell",
     );
     cell.dataset.cell = String(i);
