@@ -1,6 +1,6 @@
 {
   "sourceSha": "2a3ea82",
-  "measurement": "GitHub Ubuntu 24.04, 18 runners, two worker lanes; removal run 45926888746. All 76 browser commands passed. Refresh exact command durations after removing seven games; retain every remaining command, city and the unchanged one-minute gate.",
+  "measurement": "GitHub Ubuntu 24.04, 18 runners, two worker lanes; removal run 45926888746. All 76 browser commands passed. Refresh exact command durations after removing seven games; retain every remaining command, city and the unchanged one-minute gate. Partition the three longest layout and retirement journeys by their existing viewports, with each original case covered exactly once.",
   "durationsMs": {
     "node tests/puzzle-pools-browser.mjs": 113231.803143,
     "node tests/second-playtest.mjs": 24868.313645000002,
@@ -89,7 +89,14 @@
     "node tests/photo-map-motion.mjs": 53205.541585,
     "node tests/world-label-layout.mjs": 2828.087299,
     "node tests/timeline-layout.mjs": 5025.305174,
-    "node tests/world-map-context.mjs": 22390.886956
+    "node tests/world-map-context.mjs": 22390.886956,
+    "node tests/photo-map-motion.mjs --ci-width=390": 26602.7707925,
+    "node tests/photo-map-motion.mjs --ci-width=1440": 26602.7707925,
+    "node tests/app-layout.mjs --ci-width=320": 15517.713490333334,
+    "node tests/app-layout.mjs --ci-width=390": 15517.713490333334,
+    "node tests/app-layout.mjs --ci-width=1440": 15517.713490333334,
+    "node tests/retired-games.mjs --ci-width=390": 19701.688063,
+    "node tests/retired-games.mjs --ci-width=1440": 19701.688063
   },
   "additionalMeasurements": [
     {

@@ -1,3 +1,4 @@
+import { ciWidths } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium, webkit } from "playwright";
@@ -109,7 +110,7 @@ async function inspect(page, name) {
     reports.push({ name, ...(await checkPage(page, policy)) });
 }
 try {
-  for (const width of [390, 1440])
+  for (const width of ciWidths([390, 1440]))
     for (const reducedMotion of ["no-preference", "reduce"]) {
       const context = await browser.newContext({
         viewport: { width, height: width === 390 ? 620 : 1000 },
