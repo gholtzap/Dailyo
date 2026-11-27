@@ -275,3 +275,5 @@ Product image downloads use sequential attempts with these transitions. A failed
 | Requesting | Network/HTTP failure, attempts remain          | Backoff                                 |
 | Backoff    | Bounded delay expires                          | Requesting with the next attempt number |
 | Requesting | Third attempt fails                            | Failed; abort publication               |
+
+Ladderrot includes 1,000 solvable word pairs. `python3 scripts/expand-ladders.py` reproduces the expansion from the original 129 pairs and the bundled dictionary. Daily puzzles issued through 2026-11-27 retain their original pool.

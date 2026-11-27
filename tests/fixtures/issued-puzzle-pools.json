@@ -2,367 +2,108 @@
   "2026-11-17": {
     "skyrot": {
       "daily": [
-        [
-          "venice",
-          [
-            "tokyo",
-            "rio",
-            "venice",
-            "new-york"
-          ]
-        ],
-        [
-          "paris",
-          [
-            "new-york",
-            "cairo",
-            "paris",
-            "san-francisco"
-          ]
-        ],
-        [
-          "tokyo",
-          [
-            "new-york",
-            "dubai",
-            "tokyo",
-            "istanbul"
-          ]
-        ],
-        [
-          "chicago",
-          [
-            "venice",
-            "london",
-            "paris",
-            "chicago"
-          ]
-        ],
-        [
-          "singapore",
-          [
-            "singapore",
-            "cairo",
-            "istanbul",
-            "venice"
-          ]
-        ]
+        ["venice", ["tokyo", "rio", "venice", "new-york"]],
+        ["paris", ["new-york", "cairo", "paris", "san-francisco"]],
+        ["tokyo", ["new-york", "dubai", "tokyo", "istanbul"]],
+        ["chicago", ["venice", "london", "paris", "chicago"]],
+        ["singapore", ["singapore", "cairo", "istanbul", "venice"]]
       ],
-      "rush": [
-        [
-          "rio",
-          [
-            "istanbul",
-            "tokyo",
-            "san-francisco",
-            "rio"
-          ]
-        ]
-      ]
+      "rush": [["rio", ["istanbul", "tokyo", "san-francisco", "rio"]]]
     },
     "skylinerot": {
       "daily": [
-        [
-          "london",
-          [
-            "london",
-            "kuala-lumpur",
-            "san-francisco",
-            "new-york"
-          ]
-        ],
-        [
-          "paris",
-          [
-            "new-york",
-            "hong-kong",
-            "paris",
-            "singapore"
-          ]
-        ],
-        [
-          "san-francisco",
-          [
-            "san-francisco",
-            "new-york",
-            "tokyo",
-            "singapore"
-          ]
-        ],
-        [
-          "dubai",
-          [
-            "dubai",
-            "sydney",
-            "paris",
-            "chicago"
-          ]
-        ],
-        [
-          "new-york",
-          [
-            "san-francisco",
-            "london",
-            "new-york",
-            "chicago"
-          ]
-        ]
+        ["london", ["london", "kuala-lumpur", "san-francisco", "new-york"]],
+        ["paris", ["new-york", "hong-kong", "paris", "singapore"]],
+        ["san-francisco", ["san-francisco", "new-york", "tokyo", "singapore"]],
+        ["dubai", ["dubai", "sydney", "paris", "chicago"]],
+        ["new-york", ["san-francisco", "london", "new-york", "chicago"]]
       ],
-      "rush": [
-        [
-          "chicago",
-          [
-            "kuala-lumpur",
-            "new-york",
-            "paris",
-            "chicago"
-          ]
-        ]
-      ]
+      "rush": [["chicago", ["kuala-lumpur", "new-york", "paris", "chicago"]]]
     },
     "zoomrot": {
       "daily": [
-        [
-          "pencil",
-          [
-            "stapler",
-            "pencil",
-            "tennis",
-            "key"
-          ]
-        ],
-        [
-          "hammer",
-          [
-            "pencil",
-            "hammer",
-            "motherboard",
-            "banana"
-          ]
-        ],
-        [
-          "stapler",
-          [
-            "tennis",
-            "pencil",
-            "stapler",
-            "hammer"
-          ]
-        ],
-        [
-          "filter",
-          [
-            "filter",
-            "key",
-            "tennis",
-            "hammer"
-          ]
-        ],
-        [
-          "scissors",
-          [
-            "motherboard",
-            "tennis",
-            "stapler",
-            "scissors"
-          ]
-        ]
+        ["pencil", ["stapler", "pencil", "tennis", "key"]],
+        ["hammer", ["pencil", "hammer", "motherboard", "banana"]],
+        ["stapler", ["tennis", "pencil", "stapler", "hammer"]],
+        ["filter", ["filter", "key", "tennis", "hammer"]],
+        ["scissors", ["motherboard", "tennis", "stapler", "scissors"]]
       ],
-      "rush": [
-        [
-          "staples",
-          [
-            "filter",
-            "key",
-            "staples",
-            "hammer"
-          ]
-        ]
-      ]
+      "rush": [["staples", ["filter", "key", "staples", "hammer"]]]
     },
     "ladderrot": "sand-rock"
   },
   "2026-11-18": {
     "skyrot": {
       "daily": [
-        [
-          "istanbul",
-          [
-            "dubai",
-            "cairo",
-            "chicago",
-            "istanbul"
-          ]
-        ],
-        [
-          "san-francisco",
-          [
-            "rio",
-            "new-york",
-            "san-francisco",
-            "tokyo"
-          ]
-        ],
-        [
-          "london",
-          [
-            "cairo",
-            "chicago",
-            "london",
-            "san-francisco"
-          ]
-        ],
-        [
-          "chicago",
-          [
-            "cairo",
-            "chicago",
-            "rio",
-            "paris"
-          ]
-        ],
-        [
-          "paris",
-          [
-            "paris",
-            "singapore",
-            "venice",
-            "cairo"
-          ]
-        ]
+        ["istanbul", ["dubai", "cairo", "chicago", "istanbul"]],
+        ["san-francisco", ["rio", "new-york", "san-francisco", "tokyo"]],
+        ["london", ["cairo", "chicago", "london", "san-francisco"]],
+        ["chicago", ["cairo", "chicago", "rio", "paris"]],
+        ["paris", ["paris", "singapore", "venice", "cairo"]]
       ],
-      "rush": [
-        [
-          "istanbul",
-          [
-            "venice",
-            "istanbul",
-            "singapore",
-            "rio"
-          ]
-        ]
-      ]
+      "rush": [["istanbul", ["venice", "istanbul", "singapore", "rio"]]]
     },
     "skylinerot": {
       "daily": [
-        [
-          "new-york",
-          [
-            "toronto",
-            "paris",
-            "dubai",
-            "new-york"
-          ]
-        ],
+        ["new-york", ["toronto", "paris", "dubai", "new-york"]],
         [
           "san-francisco",
-          [
-            "tokyo",
-            "new-york",
-            "san-francisco",
-            "kuala-lumpur"
-          ]
+          ["tokyo", "new-york", "san-francisco", "kuala-lumpur"]
         ],
-        [
-          "dubai",
-          [
-            "dubai",
-            "paris",
-            "sydney",
-            "kuala-lumpur"
-          ]
-        ],
-        [
-          "paris",
-          [
-            "dubai",
-            "san-francisco",
-            "paris",
-            "toronto"
-          ]
-        ],
-        [
-          "chicago",
-          [
-            "chicago",
-            "dubai",
-            "toronto",
-            "paris"
-          ]
-        ]
+        ["dubai", ["dubai", "paris", "sydney", "kuala-lumpur"]],
+        ["paris", ["dubai", "san-francisco", "paris", "toronto"]],
+        ["chicago", ["chicago", "dubai", "toronto", "paris"]]
       ],
-      "rush": [
-        [
-          "new-york",
-          [
-            "sydney",
-            "tokyo",
-            "hong-kong",
-            "new-york"
-          ]
-        ]
-      ]
+      "rush": [["new-york", ["sydney", "tokyo", "hong-kong", "new-york"]]]
     },
     "zoomrot": {
       "daily": [
-        [
-          "staples",
-          [
-            "filter",
-            "motherboard",
-            "staples",
-            "key"
-          ]
-        ],
-        [
-          "key",
-          [
-            "key",
-            "stapler",
-            "staples",
-            "tape"
-          ]
-        ],
-        [
-          "banana",
-          [
-            "pencil",
-            "banana",
-            "motherboard",
-            "tennis"
-          ]
-        ],
-        [
-          "stapler",
-          [
-            "filter",
-            "pencil",
-            "stapler",
-            "motherboard"
-          ]
-        ],
-        [
-          "filter",
-          [
-            "filter",
-            "scissors",
-            "banana",
-            "pencil"
-          ]
-        ]
+        ["staples", ["filter", "motherboard", "staples", "key"]],
+        ["key", ["key", "stapler", "staples", "tape"]],
+        ["banana", ["pencil", "banana", "motherboard", "tennis"]],
+        ["stapler", ["filter", "pencil", "stapler", "motherboard"]],
+        ["filter", ["filter", "scissors", "banana", "pencil"]]
       ],
-      "rush": [
-        [
-          "tennis",
-          [
-            "motherboard",
-            "banana",
-            "tennis",
-            "pencil"
-          ]
-        ]
-      ]
+      "rush": [["tennis", ["motherboard", "banana", "tennis", "pencil"]]]
     },
     "ladderrot": "hand-foot"
+  },
+  "2026-11-27": {
+    "skyrot": {
+      "daily": [
+        ["cape-town", ["tokyo", "berlin", "lima", "cape-town"]],
+        [
+          "san-francisco",
+          ["mexico-city", "tokyo", "san-francisco", "melbourne"]
+        ],
+        ["boston", ["bangkok", "boston", "vancouver", "melbourne"]],
+        ["venice", ["mexico-city", "washington-d-c", "montreal", "venice"]],
+        ["paris", ["chicago", "tokyo", "mexico-city", "paris"]]
+      ],
+      "rush": [["new-york", ["san-francisco", "paris", "new-york", "santiago"]]]
+    },
+    "skylinerot": {
+      "daily": [
+        ["rome", ["shanghai", "rome", "singapore", "sydney"]],
+        ["bangkok", ["chicago", "dubai", "bangkok", "lima"]],
+        ["toronto", ["toronto", "shanghai", "los-angeles", "boston"]],
+        ["san-francisco", ["san-francisco", "paris", "lima", "berlin"]],
+        ["seattle", ["sydney", "seattle", "berlin", "paris"]]
+      ],
+      "rush": [["montreal", ["madrid", "vancouver", "montreal", "santiago"]]]
+    },
+    "zoomrot": {
+      "daily": [
+        ["padlock", ["screwdriver", "acorn", "padlock", "key"]],
+        ["stapler", ["stapler", "paper-clip", "acorn", "kiwifruit"]],
+        ["pencil", ["paper-clip", "toothbrush", "binder-clip", "pencil"]],
+        ["screwdriver", ["hammer", "screwdriver", "binder-clip", "padlock"]],
+        ["bottle-opener", ["corkscrew", "bottle-opener", "pliers", "comb"]]
+      ],
+      "rush": [
+        ["filter", ["comb", "bottle-opener", "filter", "computer-mouse"]]
+      ]
+    },
+    "ladderrot": "game-play"
   }
 }
