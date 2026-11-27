@@ -90,7 +90,7 @@ function drawBoard() {
     const b = button(
       puzzle.kind === "crowns"
         ? state.values[i] === "C"
-          ? "Crown"
+          ? "C"
           : state.values[i] === "x"
             ? "No"
             : ""
@@ -140,7 +140,7 @@ function drawBoard() {
       b.append(el("span", region, "puzzle-region"));
       b.setAttribute(
         "aria-label",
-        `Row ${Math.floor(i / puzzle.size) + 1}, column ${(i % puzzle.size) + 1}, region ${region}, ${state.values[i] === "C" ? "Crown" : state.values[i] === "x" ? "No crown" : "empty"}`,
+        `${state.values[i] === "C" ? "C " : state.values[i] === "x" ? "No " : ""}${region}, row ${Math.floor(i / puzzle.size) + 1}, column ${(i % puzzle.size) + 1}, region ${region}, ${state.values[i] === "C" ? "Crown" : state.values[i] === "x" ? "No crown" : "empty"}`,
       );
     }
     const tip = el("span", b.getAttribute("aria-label")!, "puzzle-tooltip");
