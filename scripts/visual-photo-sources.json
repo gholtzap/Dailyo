@@ -674,6 +674,174 @@
       "focus": [50, 50],
       "detailFocus": [50, 50],
       "distractors": ["sydney", "san-francisco", "buenos-aires"]
+    },
+    {
+      "id": "istanbul",
+      "name": "Istanbul",
+      "file": "Skyline - Istanbul, Turkey - October 11, 2025.jpg",
+      "distractors": ["athens", "vienna", "rome"],
+      "detailFocus": [50, 75]
+    },
+    {
+      "id": "vienna",
+      "name": "Vienna",
+      "file": "Vienna skyline across the Danube river.jpg",
+      "distractors": ["prague", "munich", "berlin"],
+      "detailFocus": [60, 60]
+    },
+    {
+      "id": "prague",
+      "name": "Prague",
+      "file": "Prague skyline at dawn.jpg",
+      "distractors": ["vienna", "berlin", "munich"],
+      "detailFocus": [55, 45]
+    },
+    {
+      "id": "stockholm",
+      "name": "Stockholm",
+      "file": "Stockholm Skyline (15189547020).jpg",
+      "distractors": ["oslo", "hamburg", "berlin"],
+      "detailFocus": [50, 60]
+    },
+    {
+      "id": "oslo",
+      "name": "Oslo",
+      "file": "Oslo skyline.jpg",
+      "distractors": ["stockholm", "hamburg", "berlin"],
+      "detailFocus": [55, 65]
+    },
+    {
+      "id": "rotterdam",
+      "name": "Rotterdam",
+      "file": "Skyline, Rotterdam.jpg",
+      "distractors": ["london", "frankfurt", "paris"],
+      "detailFocus": [65, 50]
+    },
+    {
+      "id": "frankfurt",
+      "name": "Frankfurt",
+      "file": "Skyline Frankfurt am Main.jpg",
+      "distractors": ["munich", "zurich", "rotterdam"],
+      "detailFocus": [50, 55]
+    },
+    {
+      "id": "hamburg",
+      "name": "Hamburg",
+      "file": "Neue Skyline Hamburg.JPG",
+      "distractors": ["berlin", "frankfurt", "rotterdam"],
+      "detailFocus": [60, 60]
+    },
+    {
+      "id": "munich",
+      "name": "Munich",
+      "file": "Munich Skyline (16946691065).jpg",
+      "distractors": ["zurich", "prague", "frankfurt"],
+      "detailFocus": [38, 55]
+    },
+    {
+      "id": "zurich",
+      "name": "Zurich",
+      "file": "Zurich skyline blue hour.jpg",
+      "distractors": ["munich", "frankfurt", "paris"],
+      "detailFocus": [45, 60]
+    },
+    {
+      "id": "doha",
+      "name": "Doha",
+      "file": "Doha Skyline 12.jpg",
+      "distractors": ["abu-dhabi", "dubai", "riyadh"],
+      "detailFocus": [60, 50]
+    },
+    {
+      "id": "abu-dhabi",
+      "name": "Abu Dhabi",
+      "file": "Abu Dhabi Skyline UAE Flag.jpg",
+      "distractors": ["dubai", "doha", "riyadh"],
+      "detailFocus": [55, 70]
+    },
+    {
+      "id": "riyadh",
+      "name": "Riyadh",
+      "file": "Riyadh Skyline.jpg",
+      "distractors": ["doha", "abu-dhabi", "dubai"],
+      "detailFocus": [50, 60]
+    },
+    {
+      "id": "tel-aviv",
+      "name": "Tel Aviv",
+      "file": "Tel Aviv Skyline 02.jpg",
+      "distractors": ["chicago", "toronto", "new-york"],
+      "detailFocus": [55, 60]
+    },
+    {
+      "id": "taipei",
+      "name": "Taipei",
+      "file": "Taipei Skyline 2015.jpg",
+      "distractors": ["shanghai", "hong-kong", "manila"],
+      "detailFocus": [30, 55]
+    },
+    {
+      "id": "osaka",
+      "name": "Osaka",
+      "file": "Skyline view of Osaka.jpg",
+      "distractors": ["yokohama", "tokyo", "seoul"],
+      "detailFocus": [50, 65]
+    },
+    {
+      "id": "yokohama",
+      "name": "Yokohama",
+      "file": "Skyline of Minato Mirai 21, Yokohama, 20150201.jpg",
+      "distractors": ["tokyo", "osaka", "seoul"],
+      "detailFocus": [50, 55]
+    },
+    {
+      "id": "manila",
+      "name": "Manila",
+      "file": "Makati Skyline and Manila Bay sunset.jpg",
+      "distractors": ["hong-kong", "taipei", "ho-chi-minh-city"],
+      "detailFocus": [50, 65]
+    },
+    {
+      "id": "jakarta",
+      "name": "Jakarta",
+      "file": "South Jakarta buildings skyline.jpg",
+      "distractors": ["singapore", "kuala-lumpur", "ho-chi-minh-city"],
+      "detailFocus": [50, 60]
+    },
+    {
+      "id": "ho-chi-minh-city",
+      "name": "Ho Chi Minh City",
+      "file": "Ho Chi Minh City Skyline at Night.jpg",
+      "distractors": ["bangkok", "kuala-lumpur", "singapore"],
+      "detailFocus": [40, 50]
+    },
+    {
+      "id": "hanoi",
+      "name": "Hanoi",
+      "file": "Hanoi Skyline.jpg",
+      "distractors": ["hong-kong", "bangkok", "ho-chi-minh-city"],
+      "detailFocus": [55, 65]
+    },
+    {
+      "id": "delhi",
+      "name": "Delhi",
+      "file": "Delhi skyline. 01.jpg",
+      "distractors": ["karachi", "mumbai", "hyderabad"],
+      "detailFocus": [50, 70]
+    },
+    {
+      "id": "hyderabad",
+      "name": "Hyderabad",
+      "file": "Financial District, Hyderabad - Wide panoramic skyline view from Nanakramguda to Gachibowli.jpg",
+      "distractors": ["mumbai", "delhi", "karachi"],
+      "detailFocus": [50, 65]
+    },
+    {
+      "id": "karachi",
+      "name": "Karachi",
+      "file": "Karachi Skyline 2025.jpg",
+      "distractors": ["mumbai", "delhi", "dubai"],
+      "detailFocus": [50, 55]
     }
   ],
   "zoomrot": [
