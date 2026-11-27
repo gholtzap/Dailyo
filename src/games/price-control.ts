@@ -27,6 +27,8 @@ export function priceControl(submitPrice: (cents: number) => void) {
       dollars.input.valueAsNumber * 100 + cents.input.valueAsNumber,
     );
   const update = () => {
+    less.disabled = dollars.input.valueAsNumber === 0;
+    more.disabled = dollars.input.valueAsNumber === Number(dollars.input.max);
     cents.input.disabled = dollars.input.valueAsNumber === 10000;
     if (cents.input.disabled) cents.input.value = "0";
     amount.value = (total() / 100).toLocaleString("en-US", {
@@ -37,6 +39,21 @@ export function priceControl(submitPrice: (cents: number) => void) {
     cents.value.textContent = cents.input.value.padStart(2, "0");
     submit.disabled = false;
   };
+  const steps = el("span", undefined, "price-stepper");
+  const less = el("button", "Less $1", "secondary");
+  const more = el("button", "More $1", "secondary");
+  less.type = more.type = "button";
+  less.disabled = true;
+  less.onclick = () => {
+    dollars.input.stepDown();
+    update();
+  };
+  more.onclick = () => {
+    dollars.input.stepUp();
+    update();
+  };
+  dollars.label.append(steps);
+  steps.append(less, dollars.input, more);
   dollars.input.oninput = update;
   cents.input.oninput = update;
   scale.onchange = () => {
@@ -52,12 +69,13 @@ export function priceControl(submitPrice: (cents: number) => void) {
 }
 
 function range(name: string, id: string, max: number) {
-  const label = el("label", undefined, "price-range");
-  label.htmlFor = id;
+  const label = el("div", undefined, "price-range");
   const heading = el("span", undefined, "price-range-heading");
   const value = el("span", name === "Cents" ? "00" : "0");
   value.setAttribute("aria-hidden", "true");
-  heading.append(el("span", name), value);
+  const text = el("label", name);
+  text.htmlFor = id;
+  heading.append(text, value);
   const input = el("input", undefined, "range-control");
   input.id = id;
   input.setAttribute("aria-label", name);

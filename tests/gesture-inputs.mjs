@@ -80,6 +80,17 @@ try {
           expected,
         );
       }
+      await setPrice(page, 9998.99);
+      await page.getByRole("button", { name: "More $1", exact: true }).click();
+      assert.equal(
+        await page.locator("#price-value").textContent(),
+        "$9,999.99",
+      );
+      await page.getByRole("button", { name: "Less $1", exact: true }).click();
+      assert.equal(
+        await page.locator("#price-value").textContent(),
+        "$9,998.99",
+      );
       await setPrice(page, 2.99);
       await page
         .getByRole("button", { name: "How to play", exact: true })
