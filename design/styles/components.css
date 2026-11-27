@@ -1271,3 +1271,161 @@ body:has(dialog[open]) .puzzle-tooltip { display: none; }
 .puzzle-input.is-given { background: var(--well); color: var(--muted); }
 .puzzle-input.box-right { border-right: var(--stroke-3) solid var(--line-strong); }
 .puzzle-input.box-bottom { border-bottom: var(--stroke-3) solid var(--line-strong); }
+
+/* Cities uses the same navigation and controls around a full atlas. */
+.site-context {
+  margin: 0 auto;
+  color: var(--ink);
+  background: var(--surface-nav);
+}
+body[data-game=maprot] > .main.city-main {
+  display: flow-root;
+  margin: 0 auto;
+  padding: 0;
+  background: var(--paper);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.city-bottom-modes {
+  align-items: center;
+  justify-content: space-around;
+  padding: var(--space-2) var(--space-4);
+  margin: 0;
+  background: var(--surface-nav);
+  border-top: var(--stroke-1) solid var(--line-quiet);
+}
+.city-bottom-modes :is(a,button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-size);
+  padding: var(--space-2) var(--space-4);
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: var(--radius-control);
+}
+.city-bottom-modes a:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+}
+.city-overview {
+  --city-overview-width: 112px;
+  display: grid;
+  gap: var(--space-1);
+  width: var(--city-overview-width);
+  padding: var(--space-2);
+  border: var(--stroke-1) solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: var(--paper);
+  color: var(--muted);
+  font-size: var(--font-size-12);
+}
+.city-overview svg {
+  width: 100%;
+  aspect-ratio: 2;
+}
+.city-overview-viewport {
+  fill: var(--angle-preview);
+  stroke: var(--accent);
+  stroke-width: var(--stroke-2);
+  vector-effect: non-scaling-stroke;
+}
+.city-pin {
+  --city-pin-size: 28px;
+  --city-pin-rotation: -45deg;
+  --city-pin-shape: 50% 50% 50% 0;
+  --city-pin-tip-offset: -120.7107%;
+  position: absolute;
+  width: var(--city-pin-size);
+  height: var(--city-pin-size);
+  border-radius: var(--city-pin-shape);
+  border: var(--stroke-2) solid var(--ink);
+  background: var(--accent);
+  transform: translate(-50%, var(--city-pin-tip-offset)) rotate(var(--city-pin-rotation));
+  transform-origin: center;
+  box-shadow: 0 var(--stroke-2) var(--stroke-3) var(--paper);
+}
+.city-pin::after {
+  content: '';
+  position: absolute;
+  inset: var(--space-2);
+  border-radius: var(--radius-round);
+  background: var(--paper);
+}
+.city-pin.is-locked {
+  background: var(--focus);
+}
+.city-pin-label {
+  position: absolute;
+  transform: translate(-50%, var(--space-2));
+  padding: var(--space-1) var(--space-2);
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-control-compact);
+  background: var(--panel);
+  color: var(--ink);
+  white-space: nowrap;
+  font-size: var(--font-size-12);
+}
+
+.site-masthead:has(.site-context) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+.site-masthead:has(.site-context) .site-more {
+  justify-self: end;
+  margin: 0;
+}
+.site-masthead:has(.site-context) .site-more[open] {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+}
+.city-expand {
+  width: auto;
+}
+.city-clear:disabled {
+  visibility: hidden;
+}
+.city-main :is(.game-progress p, #quiz > h2, .rot-feedback p) {
+  background: var(--paper);
+}
+.city-main .city-instruction {
+  background: var(--well);
+}
+
+.city-main .rot-map-dialog {
+  width: min(100%, var(--layout-map));
+  padding: 0;
+  max-height: 100dvh;
+}
+.city-main .rot-map-dialog-heading {
+  padding: var(--space-3) var(--space-4);
+  margin: 0;
+}
+body[data-game=maprot] .game-help-dialog p {
+  background: var(--panel);
+}
+/* Keep clipped geography beneath headings, actions and native dialogs. */
+body[data-game=maprot] > .site-masthead, .city-main :is(.heading, #quiz > h2, .rot-feedback, .rot-actions) {
+  position: relative;
+  z-index: var(--layer-base);
+}
+.city-main .rot-map-surface {
+  z-index: 0;
+}
+body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
+  z-index: var(--layer-help);
+}
+
+.city-main .rot-map-dialog .city-clear {
+  display: none;
+}
+
+.city-main .rot-review {
+  padding: 0 var(--space-5);
+}
+.city-main .rot-review summary {
+  position: relative;
+  z-index: var(--layer-base);
+  background: var(--paper);
+}

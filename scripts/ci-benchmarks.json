@@ -55,5 +55,69 @@
     "fullCiSeconds": 60,
     "localPrePushMilliseconds": 9000
   },
-  "measurement": "Run creation to the latest required job completion; queue, setup and cleanup included. Runner seconds sum job start-to-completion; they are not CPU time. Raw 150-run baseline and job/step receipts retained locally under test-results/ci-optimization."
+  "measurement": "Run creation to the latest required job completion; queue, setup and cleanup included. Runner seconds sum job start-to-completion; they are not CPU time. Raw 150-run baseline and job/step receipts retained locally under test-results/ci-optimization.",
+  "contentExpansionAudit": {
+    "date": "2026-11-27",
+    "runsReviewed": 150,
+    "runIds": [
+      46016346677, 46016336478, 46016003444, 46015542090, 46015510353,
+      46015285573, 46015003184, 45932504089, 45932386772, 45931941518,
+      45931803628, 45931721975, 45931576318, 45931499515, 45931389745,
+      45931304211, 45930942630, 45930787483, 45930622847, 45930012326,
+      45929647217, 45929591438, 45929512121, 45929148425, 45929039737,
+      45929025986, 45928830761, 45928775641, 45928568233, 45928455689,
+      45928356782, 45928041942, 45927991262, 45927959765, 45927906481,
+      45927875071, 45927755268, 45927550757, 45927164067, 45926888746,
+      45926464060, 45923434420, 45923181334, 45922952493, 45920266030,
+      45920002748, 45919823625, 45919601923, 45913358332, 45913118477,
+      45913031138, 45912603597, 45910968595, 45910740946, 45910676497,
+      45905287857, 45905083215, 45903718412, 45903541660, 45903435122,
+      45903119842, 45902905612, 45901924523, 45901606111, 45901480593,
+      45901368132, 45901285923, 45901262749, 45901198320, 45901097024,
+      45900762200, 45900753125, 45900739101, 45900639858, 45900552170,
+      45900256094, 45900255759, 45900253065, 45900171880, 45900052811,
+      45899767780, 45899673254, 45899641190, 45899578246, 45899549722,
+      45899544943, 45899538833, 45899501725, 45899364220, 45899315546,
+      45899187193, 45899180687, 45899150121, 45899141322, 45899089733,
+      45898975662, 45898894640, 45898774893, 45898752258, 45898714620,
+      45898681825, 45898639984, 45898508558, 45898395131, 45898376115,
+      45898069828, 45898068144, 45898065094, 45898001230, 45897730960,
+      45897598936, 45897575425, 45896944189, 45896698096, 45896445821,
+      45895765973, 45891400847, 45890786794, 45888682003, 45888441457,
+      45888195528, 45884190776, 45884022415, 45863516220, 45863250680,
+      45852710727, 45851968546, 45850504618, 45849499657, 45849282511,
+      45848166542, 45847592207, 45846961238, 45846631887, 45845914879,
+      45845761894, 45845551790, 45845078968, 45841974938, 45841774873,
+      45841576346, 45743715076, 45743574767, 45743051046, 45742893945,
+      45742406464, 45742116709, 45742044124, 45741811670, 45741127913
+    ],
+    "cohort": "Latest 150 Game checks runs before the content expansion CI adjustment; includes success, failure, cancellation and mixed branches. This is an audit baseline, not a controlled before/after comparison.",
+    "jobStartAfterRunCreation": {
+      "samples": 2700,
+      "p50Seconds": 4.0,
+      "p95Seconds": 49.0
+    },
+    "browserSetup": {
+      "samples": 2700,
+      "p50Seconds": 11.0,
+      "p95Seconds": 18.0
+    },
+    "browserExecutionIncludingProviderFinalization": {
+      "samples": 2700,
+      "p50Seconds": 30.0,
+      "p95Seconds": 46.0
+    },
+    "runElapsedIncludingFailedAndCancelled": {
+      "samples": 150,
+      "p50Seconds": 63.5,
+      "p95Seconds": 122.0
+    },
+    "notes": [
+      "Simultaneous PR workflows compete for hosted-runner slots. Validate expansion PRs serially.",
+      "Current one-minute budget remains unchanged.",
+      "Cache hit rates, aggregate compute cost, and controlled after-change percentiles are unmeasured.",
+      "All 94 browser commands and 98 city networks remain covered."
+    ],
+    "measurementRun": 46016346677
+  }
 }
