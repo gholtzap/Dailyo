@@ -88,6 +88,7 @@ let sessions: Record<"daily" | "practice", Session>;
 let draft: string[] = [];
 let imageFailed = false;
 let focusNext = false;
+let renderedQuestion: VisualQuestion | undefined;
 let difficulty = parseDifficulty(read("difficulty"));
 let settings: ReturnType<typeof practiceSettings> | undefined;
 const el = <K extends keyof HTMLElementTagNameMap>(
@@ -178,22 +179,17 @@ function commit(answer: VisualAnswer) {
   }
   const { s, q, a } = current();
   if (!q || answered(game, q, a) || !validAnswer(game, q, answer)) return;
+  // Keep this question's footprint when feedback replaces its answer controls.
+  // Releasing it belongs to the next question or a mode/difficulty change.
+  quiz.style.minHeight = `${Math.ceil(quiz.getBoundingClientRect().height)}px`;
   s.answers[s.index] = answer;
   save();
   draw();
-  if (answered(game, q, answer)) {
-    quiz
-      .querySelector<HTMLElement>("#visual-feedback")
-      ?.focus({ preventScroll: inFeed });
-    if (isRush) reportRush("answered", rushCorrect(game, q, answer));
-  } else {
-    quiz
-      .querySelector<HTMLElement>("#visual-feedback")
-      ?.focus({ preventScroll: true });
-    quiz
-      .querySelector<HTMLElement>(".visual-figure")
-      ?.scrollIntoView({ block: "start", behavior: "instant" });
-  }
+  quiz
+    .querySelector<HTMLElement>("#visual-feedback")
+    ?.focus({ preventScroll: true });
+  if (answered(game, q, answer) && isRush)
+    reportRush("answered", rushCorrect(game, q, answer));
 }
 const money = (cents: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
@@ -717,6 +713,9 @@ function drawResults() {
   reportDaily("complete", `${score} / 500 points`, day);
 }
 function draw() {
+  const question = sessions[mode].questions[sessions[mode].index];
+  if (question !== renderedQuestion) quiz.style.removeProperty("min-height");
+  renderedQuestion = question;
   settings?.sync(difficulty, mode === "practice");
   controls.forEach((control) =>
     control.setAttribute("aria-pressed", String(control.id === mode)),

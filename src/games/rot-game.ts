@@ -540,7 +540,7 @@ function drawMap(
     enlarge.hidden = true;
     dialog.showModal();
     renderView();
-    map.focus();
+    map.focus({ preventScroll: true });
   });
   dialog.addEventListener("close", () => {
     window.frameElement?.classList.remove("feed-map-expanded");
@@ -548,7 +548,7 @@ function drawMap(
     inline.append(editor);
     enlarge.hidden = false;
     renderView();
-    enlarge.focus();
+    enlarge.focus({ preventScroll: true });
   });
   tools.append(zoomIn, zoomOut, reset, enlarge);
   const actions = element("div", undefined, "rot-actions");
