@@ -155,7 +155,9 @@ function update(action: RotAction, paint = true) {
   write(session.slot!, next);
   if (paint) draw();
   if (paint && phase(next) === "review")
-    document.querySelector<HTMLElement>(".rot-next")?.focus();
+    document
+      .querySelector<HTMLElement>(".rot-next")
+      ?.focus({ preventScroll: inFeed });
   if (action.type === "next")
     document.querySelector<HTMLElement>("#round-title")?.focus();
   return true;

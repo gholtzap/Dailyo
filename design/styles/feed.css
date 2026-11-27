@@ -786,3 +786,28 @@ body:has(iframe.feed-map-expanded[title]:not([hidden])) { overflow: hidden; }
   --feed-body-paused-min-height: 320px;
   min-height: var(--feed-body-paused-min-height);
 }
+
+/* A stopped clock preserves the timed round's reference frame during feedback. */
+.rush-feed:is([data-rush-phase=feedback],[data-rush-phase=loading]) .rush-track span {
+  background: var(--muted);
+  transition: none;
+}
+.rush-feed:is([data-rush-phase=feedback],[data-rush-phase=loading]) #rush-clock { color: var(--muted); }
+.rush-feed:is([data-rush-phase=feedback],[data-rush-phase=loading]) .feed-actions:has(.rush-time[data-timed]) #rush-pause[hidden] {
+  display: block !important;
+  visibility: hidden;
+}
+
+/* Stable header columns prevent Help and Pause reflow when the streak changes. */
+.rush-feed .feed-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.rush-feed .feed-actions:has(.rush-time[data-timed]) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+.rush-feed .rush-progress { grid-column: 1; grid-row: 1; }
+.rush-feed #rush-help { grid-column: 2; grid-row: 1; }
+.rush-feed .feed-actions #rush-pause { grid-column: 3; grid-row: 1; }
+.rush-feed .rush-time { grid-column: 1 / -1; grid-row: 2; }

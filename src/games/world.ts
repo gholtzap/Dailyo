@@ -208,7 +208,9 @@ function choose(id: string, item: QuizItem) {
   }
   save();
   draw();
-  document.querySelector<HTMLElement>("#next")?.focus();
+  document
+    .querySelector<HTMLElement>("#next")
+    ?.focus({ preventScroll: inFeed });
 }
 function advance() {
   const s = modeState[mode];

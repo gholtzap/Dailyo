@@ -139,7 +139,8 @@ function move(value: ExtraMove) {
   }
   selected = undefined;
   draw();
-  if (next.phase === "complete") quiz.querySelector("h2")!.focus();
+  if (next.phase === "complete")
+    quiz.querySelector("h2")!.focus({ preventScroll: inFeed });
   else if (ladder || clue) quiz.querySelector("input")?.focus();
   else
     quiz

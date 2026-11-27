@@ -1069,47 +1069,46 @@ body:has(#app) .game-help-header h2 {
     padding-inline: var(--space-3);
   }
 }
-/* Short embedded boards share the available phone height with the host clock. */
-@media (max-height: breakpoint(mobile)) {
-  [data-rush] .prompt {
-    padding: var(--space-4);
-    margin: var(--space-2) 0 var(--space-4);
-  }
-  [data-rush] .choices {
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: var(--space-3);
-  }
-  [data-rush] .choice {
-    min-height: var(--space-14);
-    padding: var(--space-3) var(--space-2) var(--space-4);
-    font-size: var(--font-size-13);
-  }
-  [data-rush] #quiz > h2 {
-    font-size: var(--font-size-18);
-  }
-  [data-rush] .visual-price-label + .extra-form {
-    display: grid;
-    grid-template-columns: minmax(0,1fr) auto;
-    align-items: center;
-  }
-  [data-rush] .visual-price-label + .extra-form label {
-    grid-column: 1 / -1;
-  }
-  [data-rush] .visual-price-label + .extra-form input {
-    min-width: 0;
-  }
-  [data-rush] .rot-actions:empty {
-    display: none;
-  }
-  [data-rush] .split-field {
-    --split-field-compact-height: 96px;
-    height: var(--split-field-compact-height);
-    margin-block: var(--space-2);
-  }
-  [data-rush] .perception-control {
-    gap: var(--space-2);
-    margin-block: var(--space-2);
-  }
+/* Embedded game layout must not change when its content resizes the iframe. */
+
+[data-rush] .prompt {
+  padding: var(--space-4);
+  margin: var(--space-2) 0 var(--space-4);
+}
+[data-rush] .choices {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: var(--space-3);
+}
+[data-rush] .choice {
+  min-height: var(--space-14);
+  padding: var(--space-3) var(--space-2) var(--space-4);
+  font-size: var(--font-size-13);
+}
+[data-rush] #quiz > h2 {
+  font-size: var(--font-size-18);
+}
+[data-rush] .visual-price-label + .extra-form {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+}
+[data-rush] .visual-price-label + .extra-form label {
+  grid-column: 1 / -1;
+}
+[data-rush] .visual-price-label + .extra-form input {
+  min-width: 0;
+}
+[data-rush] .rot-actions:empty {
+  display: none;
+}
+[data-rush] .split-field {
+  --split-field-compact-height: 96px;
+  height: var(--split-field-compact-height);
+  margin-block: var(--space-2);
+}
+[data-rush] .perception-control {
+  gap: var(--space-2);
+  margin-block: var(--space-2);
 }
 
 @media (max-width: breakpoint(mobile)) {

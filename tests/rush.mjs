@@ -207,6 +207,8 @@ try {
       await status.filter({ hasText: "Correct" }).waitFor();
       await page.clock.fastForward(200);
       await timer.filter({ hasText: `${seconds}s` }).waitFor();
+      // A stopped result clock may already show the next round's time limit.
+      await status.filter({ hasText: `Flags · Round ${round + 2}` }).waitFor();
       assert.equal(await status.textContent(), `Flags · Round ${round + 2}`);
     }
     await flag

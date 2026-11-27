@@ -98,6 +98,12 @@ try {
       .getByRole("button", { name: "Check landing", exact: true })
       .click();
     await status.filter({ hasText: "Correct" }).waitFor();
+    await page.clock.runFor(2800);
+    assert.equal(
+      await page.locator("#rush-round").textContent(),
+      "Round 1",
+      "The landing result remains visible long enough to compare the markers",
+    );
     await page.clock.runFor(200);
     await status.filter({ hasText: "Round 2" }).waitFor();
     await child.locator(".track-countdown").waitFor();
@@ -181,6 +187,11 @@ try {
     assert.equal(await child.getByRole("slider").isVisible(), true);
     await page.clock.runFor(1);
     await status.filter({ hasText: "Correct" }).waitFor();
+    assert.equal(
+      await page.locator("#rush-clock").textContent(),
+      "0s",
+      "An estimate submitted at the deadline freezes the clock at zero",
+    );
     assert.equal(await child.getByRole("slider").count(), 0);
     assert.doesNotMatch(
       await child.locator(".perception-feedback").innerText(),
@@ -196,7 +207,7 @@ try {
       feedback,
       "Late slider events cannot change a submitted answer",
     );
-    await page.clock.runFor(200);
+    await page.clock.runFor(3000);
     await status.filter({ hasText: "Round 3" }).waitFor();
     await child.locator(".track-countdown").waitFor();
     await page.clock.runFor(4300);
