@@ -1,22 +1,29 @@
-import type {Challenge, Network, QuizItem} from '../types.js';
+import type { Challenge, Network, QuizItem } from "../types.js";
 let dailyFormatter: Intl.DateTimeFormat;
 export function dailyDate() {
-  dailyFormatter ??= new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
+  dailyFormatter ??= new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   });
   return dailyFormatter.format(new Date());
 }
 
-
 export function rushDate(value: string | null, today = dailyDate()) {
-  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value > today) return today;
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value > today)
+    return today;
   const date = new Date(`${value}T00:00:00Z`);
-  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value ? value : today;
+  return Number.isFinite(date.getTime()) &&
+    date.toISOString().slice(0, 10) === value
+    ? value
+    : today;
 }
 
 export function hash(value: string) {
   let h = 2166136261;
-  for (const char of value) h = Math.imul(h ^ char.charCodeAt(0), 16777619) >>> 0;
+  for (const char of value)
+    h = Math.imul(h ^ char.charCodeAt(0), 16777619) >>> 0;
   return h || 1;
 }
 
@@ -35,7 +42,8 @@ export function shuffle<T>(list: readonly T[], seed: string) {
 
 export function seededDeck<T>(seed: string, pool: readonly T[]) {
   let hash = 2166136261;
-  for (const char of seed) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0;
+  for (const char of seed)
+    hash = Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0;
   const deck = [...pool];
   for (let i = deck.length - 1; i > 0; i--) {
     hash = (Math.imul(hash, 1664525) + 1013904223) >>> 0;
@@ -47,31 +55,70 @@ export function seededDeck<T>(seed: string, pool: readonly T[]) {
 
 // Preserve already-issued daily journeys before expanding the rotation.
 export function dailyChallenge(challenges: Challenge[], date: string) {
-  const pinned = challenges.filter(challenge => challenge.daily === true);
-  const easy = challenges.filter(challenge => challenge.difficulty === 'easy');
-  const previous = date <= '2026-11-14' && pinned.length;
-  const deck = seededDeck(previous ? 'trainrot-daily-v2' : 'trainrot-daily-v3', previous ? pinned : easy.length ? easy : challenges);
-  const day = Math.floor(Date.parse(date + 'T00:00:00Z') / 86400000);
+  const pinned = challenges.filter((challenge) => challenge.daily === true);
+  const easy = challenges.filter(
+    (challenge) => challenge.difficulty === "easy",
+  );
+  const previous = date <= "2026-11-14" && pinned.length;
+  const deck = seededDeck(
+    previous ? "trainrot-daily-v2" : "trainrot-daily-v3",
+    previous ? pinned : easy.length ? easy : challenges,
+  );
+  const day = Math.floor(Date.parse(date + "T00:00:00Z") / 86400000);
   return deck[((day % deck.length) + deck.length) % deck.length];
 }
 
-export function quizOptions(items: QuizItem[],kind: string,item: QuizItem,seed: string){
-  if(kind==='vocabulary'){
-    const distractors=item.distractors!.map((name,index)=>({id:`${item.id}:${index+1}`,name}));
-    return shuffle([item,...distractors],`${seed}:order`);
+export function quizOptions(
+  items: QuizItem[],
+  kind: string,
+  item: QuizItem,
+  seed: string,
+) {
+  if (kind === "vocabulary") {
+    const distractors = item.distractors!.map((name, index) => ({
+      id: `${item.id}:${index + 1}`,
+      name,
+    }));
+    return shuffle([item, ...distractors], `${seed}:order`);
   }
-  const sameFlags=[['id','mc'],['ro','td'],['au','hm'],['bq','nl'],['bv','no','sj'],['fr','gf','gp','yt','re','bl','mf','pm','wf'],['sh','gb'],['um','us'],['fi','ax']];
-  const incompatible=sameFlags.find(g=>g.includes(item.id))??[];
-  const others=shuffle(items.filter(x=>x.id!==item.id&&!incompatible.includes(x.id)),`${seed}:options`).slice(0,3);
-  return shuffle([item,...others],`${seed}:order`);
+  const sameFlags = [
+    ["id", "mc"],
+    ["ro", "td"],
+    ["au", "hm"],
+    ["bq", "nl"],
+    ["bv", "no", "sj"],
+    ["fr", "gf", "gp", "yt", "re", "bl", "mf", "pm", "wf"],
+    ["sh", "gb"],
+    ["um", "us"],
+    ["fi", "ax"],
+  ];
+  const incompatible = sameFlags.find((g) => g.includes(item.id)) ?? [];
+  const others = shuffle(
+    items.filter((x) => x.id !== item.id && !incompatible.includes(x.id)),
+    `${seed}:options`,
+  ).slice(0, 3);
+  return shuffle([item, ...others], `${seed}:order`);
 }
 
-export const quizDeck=(items: QuizItem[],kind: string,day: string)=>shuffle(items,`daily:${kind}:${day}`).slice(0,5);
-export const quizPuzzle=(deck: QuizItem[])=>JSON.stringify(deck.map(item=>item.id));
-export const trainPuzzle=(network: Network,challenge: Challenge)=>JSON.stringify([network.metadata.feedVersion,challenge.from,challenge.to]);
+export const quizDeck = (items: QuizItem[], kind: string, day: string) =>
+  shuffle(items, `daily:${kind}:${day}`).slice(0, 5);
+export const quizPuzzle = (deck: QuizItem[]) =>
+  JSON.stringify(deck.map((item) => item.id));
+export const trainPuzzle = (network: Network, challenge: Challenge) =>
+  JSON.stringify([network.metadata.feedVersion, challenge.from, challenge.to]);
 
-export function worldDailyChallenge(challenges: Challenge[],date: string,slug: string){
- const deck=seededDeck(`trainrot-world-daily-v1:${slug}`,challenges);
- const day=Math.floor(Date.parse(date+'T00:00:00Z')/86400000);
- return deck[((day%deck.length)+deck.length)%deck.length];
+export function worldDailyChallenge(
+  challenges: Challenge[],
+  date: string,
+  slug: string,
+) {
+  const deck = seededDeck(`trainrot-world-daily-v1:${slug}`, challenges);
+  const day = Math.floor(Date.parse(date + "T00:00:00Z") / 86400000);
+  return deck[((day % deck.length) + deck.length) % deck.length];
+}
+
+export function languageSample(samples: string[], seed: string) {
+  const date = /^(?:daily|rush):languages:(\d{4}-\d{2}-\d{2}):/.exec(seed)?.[1];
+  const pool = date && date <= "2026-11-27" ? samples.slice(0, 8) : samples;
+  return pool[hash(`${seed}:sample`) % pool.length];
 }

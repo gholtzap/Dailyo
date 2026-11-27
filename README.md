@@ -10,7 +10,7 @@ Daily board games: [Path](https://trainrot.vercel.app/path/), [Crowns](https://t
 
 [trainrot](https://trainrot.vercel.app/trainrot/) is a subway routing game. See two stations, choose the trains you would take, then compare your route with the fastest one.
 
-The site also has [flagrot](https://trainrot.vercel.app/flags/), [langrot](https://trainrot.vercel.app/languages/), and [Vocabulary](https://trainrot.vercel.app/vocabulary/). Each has a shared five-question daily set and unlimited practice. Daily sets reset at midnight in New York; progress is stored in the browser. flagrot includes all 249 ISO country and territory codes, plus England, Scotland, Wales, and Kosovo. langrot uses 512 written excerpts across 64 languages. Vocabulary asks you to match English words to definitions and shows an example sentence after each answer.
+The site also has [flagrot](https://trainrot.vercel.app/flags/), [langrot](https://trainrot.vercel.app/languages/), and [Vocabulary](https://trainrot.vercel.app/vocabulary/). Each has a shared five-question daily set and unlimited practice. Daily sets reset at midnight in New York; progress is stored in the browser. flagrot includes all 249 ISO country and territory codes, plus England, Scotland, Wales, and Kosovo. langrot uses up to 32 written excerpts per language across 64 languages. Vocabulary asks you to match English words to definitions and shows an example sentence after each answer.
 
 - [maprot](https://trainrot.vercel.app/maprot/) asks you to pin five cities on a blank world map. Enlarge the map, zoom with the controls or pinch, drag to pan, and drag your pin for precision. Arrow keys move the pin; hold Shift for finer adjustment. Your score is the total distance from the answers.
 - [yearrot](https://trainrot.vercel.app/yearrot/) asks you to place five events on a timeline that grows with each turn.
@@ -279,3 +279,5 @@ Product image downloads use sequential attempts with these transitions. A failed
 Ladderrot includes 1,000 solvable word pairs. `python3 scripts/expand-ladders.py` reproduces the expansion from the original 129 pairs and the bundled dictionary. Daily puzzles issued through 2026-11-27 retain their original pool.
 
 Maprot includes 1,000 cities. Rebuild the expansion with `python3 scripts/expand-map-cities.py ne_10m_populated_places.geojson` using Natural Earth v5.1.2. The original 214 cities remain the pool for daily puzzles issued through 2026-11-27.
+
+Langrot retains up to 32 qualifying excerpts per language from the bundled UDHR source. Daily and dated Rush puzzles issued through 2026-11-27 retain their original eight-excerpt selection.

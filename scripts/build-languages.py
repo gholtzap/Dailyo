@@ -13,7 +13,7 @@ for code,name in codes.items():
    if 55<=len(sentence)<=180 and letters>=18 and (sentence[-1:] in '.!?。！？।።։۔' or code=='tha') and not re.search(r'\d|https?://|www\.',sentence) and sentence not in samples:
     samples.append(sentence)
  if len(samples)<3:print('short',code,len(samples));continue
- result.append({'id':code,'name':name,'samples':samples[8:16] if len(samples)>=16 else samples[-8:]})
+ result.append({'id':code,'name':name,'samples':(samples[8:16] + [s for s in samples if s not in samples[8:16]])[:32] if len(samples)>=16 else (samples[-8:] + [s for s in samples if s not in samples[-8:]])[:32]})
 target=Path(__file__).resolve().parent.parent/'dist/games/data/languages.json'
 with target.open('w',encoding='utf-8') as output:json.dump(result,output,ensure_ascii=False,separators=(',',':'))
 print(f'{len(result)} languages; {sum(len(x["samples"]) for x in result)} samples')

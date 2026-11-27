@@ -17,6 +17,11 @@ const vocabulary = JSON.parse(
     new URL("../dist/games/data/vocabulary.json", import.meta.url),
   ),
 );
+const issuedLanguageSamples = JSON.parse(
+  fs.readFileSync(
+    new URL("./fixtures/issued-language-samples.json", import.meta.url),
+  ),
+);
 const browser = await chromium.launch();
 try {
   for (const kind of ["flags", "languages", "vocabulary"])
@@ -120,6 +125,8 @@ try {
         );
         assert.equal(await page.locator(".choice").count(), 4);
         const prompt = await content(page);
+        if (kind === "languages" && i < 5 && prompts.length < 5)
+          assert.equal(prompt, issuedLanguageSamples[i]);
         assert.equal(await content(other), prompt);
         prompts.push(prompt);
         const name = await answer(page),
