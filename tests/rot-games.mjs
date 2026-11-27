@@ -253,18 +253,11 @@ assert.deepEqual(
   makeSet("maprot", mapData, "2026-11-27"),
   await read("./fixtures/issued-map-puzzle.json"),
 );
-function cityDay(name, index) {
-  for (let n = 0; n < 10000; n++) {
-    const date = new Date(Date.UTC(2026, 11, 1 + n)).toISOString().slice(0, 10);
-    if (makeSet("maprot", mapData, date)[index][0] === name) return date;
-  }
-  throw new Error(`No daily set found for ${name}`);
-}
+// These historic seeds target named-city regressions in the preserved pool.
+
 try {
   const astana = await browser.newPage();
-  await astana.clock.setFixedTime(
-    new Date(`${cityDay("Astana", 2)}T16:00:00Z`),
-  );
+  await astana.clock.setFixedTime(new Date("2020-03-29T16:00:00Z"));
   await astana.goto(`${base}/maprot/`);
   for (let i = 0; i < 2; i++) {
     await astana.locator(".rot-map").press("ArrowRight");
@@ -275,7 +268,7 @@ try {
   await astana.close();
 
   const suva = await browser.newPage();
-  await suva.clock.setFixedTime(new Date(`${cityDay("Suva", 0)}T16:00:00Z`));
+  await suva.clock.setFixedTime(new Date("2020-01-17T16:00:00Z"));
   await suva.goto(`${base}/maprot/`);
   assert.equal(await suva.locator("#round-title").innerText(), "Find Suva");
   const map = suva.locator(".rot-map");
