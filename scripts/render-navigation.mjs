@@ -180,9 +180,10 @@ async function visit(directory) {
         const root = city === "nyc" ? "/data" : `/world-data/${city}`;
         datasets = [
           "/world-data/cities.json",
-          ...["network", "boroughs", "challenges"].map(
-            (name) => `${root}/${name}.json`,
-          ),
+          ...(city === "nyc"
+            ? ["network", "boroughs", "challenges"]
+            : ["network", "challenges"]
+          ).map((name) => `${root}/${name}.json`),
         ];
       }
       if (datasets.length)
