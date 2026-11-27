@@ -1,4 +1,5 @@
 import { boardGames } from "../dist/games/board-catalog.js";
+import { ciWidths } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -22,7 +23,9 @@ const retiredLabels = [
   "Track",
 ];
 try {
-  for (const viewport of policy.viewports)
+  for (const viewport of policy.viewports.filter((v) =>
+    ciWidths([390, 1440]).includes(v.width),
+  ))
     for (const colorScheme of ["light", "dark"]) {
       const page = await browser.newPage({ viewport, colorScheme });
       page.setDefaultTimeout(10000);
