@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { makeBoard } from "../dist/games/board-state.js";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4186";
+await fs.mkdir("test-results/board-games", { recursive: true });
 const browser = await chromium.launch();
 const receipts = [];
 const day = "2026-11-26";

@@ -1358,6 +1358,7 @@ function draw() {
     current === "complete" ? "complete" : "playing",
     current === "complete" ? heading.textContent : undefined,
     day,
+    key(`daily:${day}`),
   );
 }
 
