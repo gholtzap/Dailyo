@@ -80,16 +80,19 @@ async function visit(directory) {
       const links = games
         .filter((game) =>
           rush
-            ? rushGames.some(
+            ? boardGames.some((board) => board.id === game[1]) ||
+              rushGames.some(
                 (candidate) =>
                   candidate.label.toLowerCase() === game[0].toLowerCase(),
               )
             : game !== current,
         )
-        .map(
-          ([name, slug, description]) =>
-            `<a aria-description="${description}${rush ? " in Rush" : " · Daily and Practice"}" href="${rush ? `/rush/${name.toLowerCase()}/` : `/${slug}/`}"><span>${gameName(name)}</span></a>`,
-        )
+        .map(([name, slug, description]) => {
+          const board = boardGames.some((game) => game.id === slug);
+          const href =
+            rush && !board ? `/rush/${name.toLowerCase()}/` : `/${slug}/`;
+          return `<a aria-description="${description}${rush && !board ? " in Rush" : " · Daily and Practice"}" href="${href}"><span>${gameName(name)}</span></a>`;
+        })
         .join("\n          ");
       const header = `<header class="site-masthead${rush || daily ? " feed-header" : ""}${daily ? " daily-header" : ""}">
     <a class="site-brand" href="/">dailyo</a>

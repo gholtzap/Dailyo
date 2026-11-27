@@ -67,7 +67,7 @@ try {
           assert.ok(!labels.includes(label), label);
         assert.equal(
           labels.length,
-          mix === "rush" ? 8 : 15 + boardGames.length,
+          (mix === "rush" ? 8 : 15) + boardGames.length,
         ); // Daily's directory includes Subway cities.
         reports.push({
           viewport,
