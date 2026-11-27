@@ -710,7 +710,12 @@ function drawResults() {
     quiz.insertBefore(actions, reviewTitle);
     quiz.insertBefore(status, reviewTitle);
   }
-  reportDaily("complete", `${score} / 500 points`, day);
+  reportDaily(
+    "complete",
+    `${score} / 500 points`,
+    day,
+    storageKey(`daily:${day}`),
+  );
 }
 function draw() {
   const question = sessions[mode].questions[sessions[mode].index];
@@ -725,7 +730,7 @@ function draw() {
   if (complete) drawResults();
   else {
     drawQuestion();
-    reportDaily("playing", undefined, day);
+    reportDaily("playing", undefined, day, storageKey(`daily:${day}`));
   }
   if (focusNext) {
     quiz.querySelector<HTMLElement>("#question-title")?.focus();
