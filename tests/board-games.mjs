@@ -14,6 +14,16 @@ const reports = [],
 const browser = await chromium.launch();
 const only = process.argv.find((a) => a.startsWith("--game="))?.split("=")[1];
 async function solve(page, puzzle) {
+  if (puzzle.kind === "groups")
+    for (const group of puzzle.groups) {
+      for (const word of group.words)
+        await page
+          .locator(`[data-cell="${puzzle.items.indexOf(word)}"]`)
+          .click();
+      await page
+        .getByRole("button", { name: "Submit group", exact: true })
+        .click();
+    }
   if (puzzle.kind === "crossword")
     for (let i = 0; i < puzzle.solution.length; i++)
       if (puzzle.solution[i] !== "#")

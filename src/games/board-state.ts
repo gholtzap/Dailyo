@@ -1,3 +1,4 @@
+import { makeGroups, type GroupsPuzzle } from "./boards/groups.js";
 import { makeCrossword, type CrosswordPuzzle } from "./boards/crossword.js";
 import { makeWordGrid, type WordGridPuzzle } from "./boards/word-grid.js";
 import { makeCrowns, crownsSolved, type CrownPuzzle } from "./boards/crowns.js";
@@ -9,7 +10,7 @@ import {
 } from "./boards/path.js";
 import type { BoardGame } from "./board-catalog.js";
 export type BoardPuzzle =
-  PathPuzzle | CrownPuzzle | WordGridPuzzle | CrosswordPuzzle;
+  PathPuzzle | CrownPuzzle | WordGridPuzzle | CrosswordPuzzle | GroupsPuzzle;
 export interface BoardState {
   phase: "playing" | "solved" | "revealed" | "failed";
   values: string[];
@@ -29,6 +30,8 @@ export type BoardAction =
   | { type: "check" };
 export function makeBoard(game: BoardGame, seed: string): BoardPuzzle {
   switch (game) {
+    case "groups":
+      return makeGroups(seed);
     case "crossword":
       return makeCrossword(seed);
     case "wordgrid":
@@ -64,6 +67,68 @@ export function stepBoard(
   a: BoardAction,
 ): BoardState {
   if (a.type === "reset") return initialBoard(p);
+  if (p.kind === "groups") {
+    if (a.type === "reveal" && s.phase !== "solved")
+      return {
+        ...s,
+        phase: "revealed",
+        found: [0, 1, 2, 3],
+        selected: [],
+        notice: "",
+      };
+    if (s.phase !== "playing") return s;
+    if (a.type === "undo")
+      return { ...s, selected: s.selected.slice(0, -1), notice: "" };
+    if (a.type === "cell") {
+      if (
+        !Number.isInteger(a.index) ||
+        a.index < 0 ||
+        a.index >= 16 ||
+        s.found.some((g) => p.groups[g].words.includes(p.items[a.index]))
+      )
+        return s;
+      return {
+        ...s,
+        selected: s.selected.includes(a.index)
+          ? s.selected.filter((i) => i !== a.index)
+          : s.selected.length < 4
+            ? [...s.selected, a.index]
+            : s.selected,
+        notice: "",
+      };
+    }
+    if (a.type !== "check" || s.selected.length !== 4) return s;
+    const guess = [...s.selected].sort((a, b) => a - b).map(String);
+    if (s.history.some((prior) => prior.join(",") === guess.join(",")))
+      return { ...s, notice: "You already tried that group." };
+    const group = p.groups.findIndex((g) =>
+      s.selected.every((i) => g.words.includes(p.items[i])),
+    );
+    const history = [...s.history, guess];
+    if (group >= 0) {
+      const found = [...s.found, group];
+      return {
+        ...s,
+        found,
+        history,
+        selected: [],
+        notice: "",
+        phase: found.length === 4 ? "solved" : "playing",
+      };
+    }
+    const mistakes = s.mistakes + 1;
+    const near = p.groups.some(
+      (g) =>
+        s.selected.filter((i) => g.words.includes(p.items[i])).length === 3,
+    );
+    return {
+      ...s,
+      history,
+      mistakes,
+      notice: near ? "One away." : "Those words do not form a group.",
+      phase: mistakes >= 4 ? "failed" : "playing",
+    };
+  }
   if (p.kind === "crossword") {
     if (a.type === "reveal")
       return {
@@ -224,6 +289,37 @@ export function restoreBoard(p: BoardPuzzle, raw: unknown): BoardState {
   const blank = initialBoard(p);
   if (!raw || typeof raw !== "object") return blank;
   const saved = raw as Partial<BoardState>;
+  if (p.kind === "groups") {
+    if (!Array.isArray(saved.history) || saved.history.length > 8) return blank;
+    let restored = blank;
+    for (const guess of saved.history) {
+      if (
+        !Array.isArray(guess) ||
+        guess.length !== 4 ||
+        new Set(guess).size !== 4 ||
+        !guess.every(
+          (v) => typeof v === "string" && /^(?:[0-9]|1[0-5])$/.test(v),
+        )
+      )
+        return blank;
+      restored = { ...restored, selected: [] };
+      for (const v of guess)
+        restored = stepBoard(p, restored, { type: "cell", index: Number(v) });
+      restored = stepBoard(p, restored, { type: "check" });
+    }
+    if (saved.phase === "revealed")
+      return stepBoard(p, restored, { type: "reveal" });
+    if (
+      restored.phase === "playing" &&
+      Array.isArray(saved.selected) &&
+      saved.selected.length <= 4
+    )
+      for (const i of saved.selected)
+        if (typeof i === "number")
+          restored = stepBoard(p, restored, { type: "cell", index: i });
+    return restored;
+  }
+
   if (p.kind === "crossword") {
     const valid = (v: unknown): v is string[] =>
       Array.isArray(v) &&

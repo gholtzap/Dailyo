@@ -1259,3 +1259,6 @@ body:not(.daily-feed) > .main.puzzle-main { max-width: var(--layout-dialog); }
 .puzzle-progress { color: var(--muted); margin: 0; }
 .puzzle-clues { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-4); margin-top: var(--space-4); }
 .puzzle-clues h3 { font-size: var(--font-size-14); font-weight: var(--font-weight-medium); margin: 0 0 var(--space-2); }
+.puzzle-grid.columns-4 { grid-template-columns: repeat(4,minmax(0,1fr)); }
+
+.puzzle-grid:empty { display: none; }

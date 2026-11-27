@@ -1,6 +1,10 @@
 import { rushRound } from "../daily/bridge.js";
 
 const instructions: Record<string, string[]> = {
+  groups: [
+    "Find four sets of four words that share a connection. Select four words, then submit the group.",
+    "You can make four mistakes. A repeated guess does not use another mistake.",
+  ],
   crossword: [
     "Use the Across and Down clues to fill the grid. Each square holds one letter.",
     "Select a clue to enter its answer. Arrow keys move between squares; Backspace clears a letter.",

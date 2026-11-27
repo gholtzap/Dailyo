@@ -1,4 +1,5 @@
 export const boardGames = [
+  { id: "groups", name: "Groups", description: "Find four hidden connections" },
   {
     id: "crossword",
     name: "Mini crossword",
