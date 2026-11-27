@@ -1261,3 +1261,118 @@ body:not(.daily-feed) > .main.puzzle-main { max-width: var(--layout-dialog); }
 .puzzle-clues h3 { font-size: var(--font-size-14); font-weight: var(--font-weight-medium); margin: 0 0 var(--space-2); }
 .puzzle-grid.columns-4 { grid-template-columns: repeat(4,minmax(0,1fr)); }
 .puzzle-grid:empty { display: none; }
+
+/* Atlas stage. Embedded sizing depends on width, never its resizing iframe. */
+body[data-game=maprot] > .city-main {
+  max-width: var(--layout-playfield);
+  margin: 0 auto;
+}
+.city-main > .heading {
+  padding: var(--space-4) var(--space-5) 0;
+  margin-bottom: 0;
+}
+:root:not([data-daily-feed]) .city-main .heading .game-title {
+  display: none;
+}
+.city-main #quiz > h2 {
+  margin: var(--space-4) var(--space-5);
+}
+.city-main .rot-map-surface {
+  overflow: hidden;
+}
+.city-main .rot-map {
+  --rot-map-stage-min-height: 320px;
+  --rot-map-stage-max-height: 640px;
+  --rot-map-stage-clearance: 384px;
+  height: clamp(var(--rot-map-stage-min-height), calc(100dvh - var(--rot-map-stage-clearance)), var(--rot-map-stage-max-height));
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+:root[data-daily-feed] body[data-game=maprot] > .city-main {
+  padding: 0;
+}
+[data-daily-feed] .city-main .rot-map {
+  --rot-map-embedded-height: 400px;
+  height: clamp(var(--rot-map-stage-min-height), 100vw, var(--rot-map-embedded-height));
+}
+.city-main .rot-map-dialog .rot-map {
+  --rot-map-expanded-clearance: 156px;
+  --rot-map-expanded-min-height: 240px;
+  height: max(var(--rot-map-expanded-min-height), calc(100dvh - var(--rot-map-expanded-clearance)));
+}
+.city-main .rot-map-tools {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  display: grid;
+  margin: 0;
+}
+.city-main .city-overview {
+  position: absolute;
+  bottom: var(--space-4);
+  left: var(--space-4);
+  margin: 0;
+}
+.city-main .city-expand {
+  position: absolute;
+  right: var(--space-4);
+  top: var(--space-4);
+  margin: 0;
+}
+.city-main .rot-actions {
+  padding: var(--space-4) var(--space-5);
+  margin: 0;
+}
+.city-main .city-commit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+}
+.city-main .city-commit button {
+  width: 100%;
+}
+.city-main .city-commit .city-clear {
+  justify-self: end;
+  width: auto;
+  min-height: var(--control-size-compact);
+}
+.city-main .rot-coordinate {
+  margin: var(--space-2) var(--space-5) 0;
+}
+.city-main .rot-feedback:not(.screen-reader-only) {
+  margin: 0;
+  padding: var(--space-4) var(--space-5) 0;
+}
+.city-main .rot-pin.guess {
+  opacity: 0;
+}
+.city-main .rot-country-outline {
+  stroke: var(--line);
+}
+.city-main .city-bottom-modes {
+  margin-bottom: 0;
+}
+
+.city-main .rot-map-editor {
+  position: relative;
+}
+.city-main .city-instruction:not(.screen-reader-only) {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  max-width: 50%;
+  margin: 0;
+  pointer-events: none;
+}
+.city-main .rot-country-label {
+  background: var(--panel);
+  color: var(--muted);
+}
+.city-main .rot-city-label {
+  background: var(--success-surface);
+  color: var(--success-ink);
+}
+.city-main .rot-map:focus-visible {
+  outline: var(--stroke-2) solid var(--focus);
+  outline-offset: calc(var(--stroke-2) * -1);
+}
