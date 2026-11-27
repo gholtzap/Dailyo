@@ -84,10 +84,17 @@ export function reportDaily(
   phase: DailyMessage["phase"],
   result?: string | null,
   date = dailyDate(),
+  saveKey?: string,
 ) {
+  let save: DailyMessage["save"];
+  if (inFeed && saveKey) {
+    try {
+      save = { key: saveKey, value: localStorage.getItem(saveKey) };
+    } catch {}
+  }
   if (inFeed && rushRound === null)
     window.parent.postMessage(
-      { type: "daily-game", date, phase, result },
+      { type: "daily-game", date, phase, result, save },
       location.origin,
     );
 }

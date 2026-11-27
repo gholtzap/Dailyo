@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { boardGames } from "../dist/games/board-catalog.js";
@@ -8,6 +9,24 @@ import { rushGames } from "../dist/daily/rush-games.js";
 const themeColor = JSON.parse(
   await fs.readFile(new URL("../design/tokens.json", import.meta.url), "utf8"),
 ).color.paper;
+
+// Invalidate resume hints whenever issued puzzle data or generation rules change.
+const feedHash = createHash("sha256");
+const feedFiles = [
+  ...(await fs.readdir("dist/games/data"))
+    .filter((name) => name.endsWith(".json"))
+    .map((name) => `dist/games/data/${name}`),
+  "dist/data/network.json",
+  "dist/data/challenges.json",
+  "src/daily/puzzles.ts",
+  "src/games/visual-puzzles.ts",
+  "src/games/rot-puzzles.ts",
+  "src/games/extra-puzzles.ts",
+  "src/games/pool-version.ts",
+];
+for (const file of feedFiles.sort())
+  feedHash.update(file).update(await fs.readFile(file));
+const feedVersion = feedHash.digest("hex");
 
 const games = [
   ["trainrot", "trainrot", "Subway routes"],
@@ -170,6 +189,12 @@ async function visit(directory) {
         .replace(
           /<meta name="theme-color" content="[^"]*">/g,
           `<meta name="theme-color" content="${themeColor}">`,
+        );
+      if (route === "/daily/")
+        html = html.replace(
+          /<body([^>]*)>/,
+          (_, attributes) =>
+            `<body${attributes.replace(/ data-feed-version="[^"]*"/g, "")} data-feed-version="${feedVersion}">`,
         );
       // Rebuild these hints on every run, including when a generated city page
       // starts from the Trainrot template. Rush hosts preload their child pages.

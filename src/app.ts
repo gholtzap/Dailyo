@@ -679,7 +679,7 @@ async function start() {
           });
         $("#city-map").focus({ preventScroll: true });
       };
-    reportDaily("playing", undefined, dailyDate);
+    reportDaily("playing", undefined, dailyDate, dailyKey(dailyDate));
   }
   function resultLegs(legs: Ride[]) {
     const walk = (w: Walk) =>
@@ -899,6 +899,7 @@ async function start() {
           ? "Map used"
           : `${r.score ?? 0} points`,
       dailyDate,
+      dailyKey(dailyDate),
     );
   }
   function nextJourney() {
