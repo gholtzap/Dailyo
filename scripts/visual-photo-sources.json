@@ -1139,6 +1139,233 @@
       "focus": [47, 35],
       "detailFocus": [47, 35],
       "lookalikes": ["Hazelnut", "Chestnut", "Olive"]
+    },
+    {
+      "id": "pear",
+      "name": "Pear",
+      "file": "Pears.jpg",
+      "detailFocus": [36, 55],
+      "lookalikes": ["Apple", "Avocado", "Fig"],
+      "focus": [36, 55]
+    },
+    {
+      "id": "pineapple",
+      "name": "Pineapple",
+      "file": "കൈതച്ചക്ക.jpg",
+      "detailFocus": [50, 60],
+      "lookalikes": ["Pine cone", "Artichoke", "Jackfruit"],
+      "focus": [50, 60]
+    },
+    {
+      "id": "watermelon",
+      "name": "Watermelon",
+      "file": "Taiwan 2009 Tainan City Organic Farm Watermelon FRD 7962.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Cucumber", "Pumpkin", "Zucchini"]
+    },
+    {
+      "id": "lemon",
+      "name": "Lemon",
+      "file": "P1030323.JPG",
+      "detailFocus": [84, 55],
+      "lookalikes": ["Lime", "Orange", "Grapefruit"],
+      "focus": [84, 55]
+    },
+    {
+      "id": "lime",
+      "name": "Lime",
+      "file": "Lime-Whole-Split.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Lemon", "Avocado", "Green apple"]
+    },
+    {
+      "id": "avocado",
+      "name": "Avocado",
+      "file": "Avocado Hass - single and halved.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Lime", "Pear", "Mango"]
+    },
+    {
+      "id": "pomegranate",
+      "name": "Pomegranate",
+      "file": "Pomegranate fruit - whole and piece with arils.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Apple", "Red onion", "Passion fruit"]
+    },
+    {
+      "id": "walnut",
+      "name": "Walnut",
+      "file": "Walnuts - whole and open with halved kernel.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Hazelnut", "Pecan", "Peanut"]
+    },
+    {
+      "id": "hazelnut",
+      "name": "Hazelnut",
+      "file": "Hazelnuts (Corylus avellana) - whole with kernels (cropped2).jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Walnut", "Acorn", "Chestnut"]
+    },
+    {
+      "id": "coffee-beans",
+      "name": "Coffee beans",
+      "file": "Roasted coffee beans.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Cocoa beans", "Kidney beans", "Roasted peanuts"]
+    },
+    {
+      "id": "cinnamon-sticks",
+      "name": "Cinnamon sticks",
+      "file": "Cinnamon Sticks (2426053975).jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Tree bark", "Rolled paper", "Vanilla pods"]
+    },
+    {
+      "id": "star-anise",
+      "name": "Star anise",
+      "file": "Dried Star Anise Fruit Seeds.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Clove", "Dried flower", "Seed pod"]
+    },
+    {
+      "id": "garlic",
+      "name": "Garlic",
+      "file": "Garlic bulbs and cloves.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Onion", "Shallot", "Ginger root"]
+    },
+    {
+      "id": "ginger-root",
+      "name": "Ginger root",
+      "file": "Ginger Root.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Turmeric root", "Potato", "Tree root"]
+    },
+    {
+      "id": "romanesco-broccoli",
+      "name": "Romanesco broccoli",
+      "file": "Fractal Broccoli.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Broccoli", "Cauliflower", "Artichoke"]
+    },
+    {
+      "id": "cauliflower",
+      "name": "Cauliflower",
+      "file": "Chou-fleur 02.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Broccoli", "Cabbage", "Romanesco broccoli"]
+    },
+    {
+      "id": "carrot",
+      "name": "Carrot",
+      "file": "Vegetable-Carrot-Bundle-wStalks.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Parsnip", "Sweet potato", "Radish"]
+    },
+    {
+      "id": "bell-pepper",
+      "name": "Bell pepper",
+      "file": "Green-Yellow-Red-Pepper-2009.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Chili pepper", "Tomato", "Apple"]
+    },
+    {
+      "id": "mushroom",
+      "name": "Mushroom",
+      "file": "ChampignonMushroom.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Garlic bulb", "Onion", "Turnip"]
+    },
+    {
+      "id": "seashell",
+      "name": "Seashell",
+      "file": "Hysteroconcha dione.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Walnut shell", "Coral", "Fish scale"]
+    },
+    {
+      "id": "feather",
+      "name": "Feather",
+      "file": "Feather of male Pavo cristatus (Indian peafowl).jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Fern frond", "Leaf", "Paintbrush"]
+    },
+    {
+      "id": "dandelion-seed-head",
+      "name": "Dandelion seed head",
+      "file": "Dandelion seed head (Taraxacum officinale).jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Cotton boll", "Thistle head", "Milkweed seeds"]
+    },
+    {
+      "id": "sunflower",
+      "name": "Sunflower",
+      "file": "Sunflower head 2026 G1.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Daisy", "Dandelion", "Marigold"]
+    },
+    {
+      "id": "zipper",
+      "name": "Zipper",
+      "file": "Coil plastic and metal zippers.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Velcro", "Gear rack", "Chain"]
+    },
+    {
+      "id": "button",
+      "name": "Button",
+      "file": "Reserveknapper til Hans' uniform.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Coin", "Washer", "Snap fastener"]
+    },
+    {
+      "id": "safety-pin",
+      "name": "Safety pin",
+      "file": "Safety Pin.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Paper clip", "Sewing needle", "Binder clip"]
+    },
+    {
+      "id": "sewing-needle",
+      "name": "Sewing needle",
+      "file": "A depiction of needle.JPG",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Safety pin", "Nail", "Knitting needle"]
+    },
+    {
+      "id": "thimble",
+      "name": "Thimble",
+      "file": "Fingerhut.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Bottle cap", "Grater", "Metal mesh"]
+    },
+    {
+      "id": "kitchen-sponge",
+      "name": "Kitchen sponge",
+      "file": "Éponge type 3 (1).jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Eraser", "Foam block", "Scouring pad"]
+    },
+    {
+      "id": "grater",
+      "name": "Grater",
+      "file": "Kuechenreibe (fcm).jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Colander", "Metal mesh", "Sieve"]
+    },
+    {
+      "id": "colander",
+      "name": "Colander",
+      "file": "Geëmailleerd vergiet - INDUS V08877.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Sieve", "Mixing bowl", "Grater"]
+    },
+    {
+      "id": "potato-peeler",
+      "name": "Potato peeler",
+      "file": "Peeler 01 Pengo.jpg",
+      "detailFocus": [50, 50],
+      "lookalikes": ["Razor", "Cheese slicer", "Bottle opener"]
     }
   ]
 }
