@@ -824,5 +824,581 @@
       "Chestnut",
       "Olive"
     ]
+  },
+  {
+    "id": "pear",
+    "name": "Pear",
+    "image": "/games/media/zoomrot-pear.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Pears.jpg",
+    "credit": "Keith Weller",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "detailFocus": [
+      36,
+      55
+    ],
+    "lookalikes": [
+      "Apple",
+      "Avocado",
+      "Fig"
+    ]
+  },
+  {
+    "id": "pineapple",
+    "name": "Pineapple",
+    "image": "/games/media/zoomrot-pineapple.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg",
+    "credit": "Suniltg at Malayalam Wikipedia",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "detailFocus": [
+      50,
+      60
+    ],
+    "lookalikes": [
+      "Pine cone",
+      "Artichoke",
+      "Jackfruit"
+    ]
+  },
+  {
+    "id": "watermelon",
+    "name": "Watermelon",
+    "image": "/games/media/zoomrot-watermelon.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg",
+    "credit": "Fred Hsu (Wikipedia:User:Fred Hsu on en.wikipedia)",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Cucumber",
+      "Pumpkin",
+      "Zucchini"
+    ]
+  },
+  {
+    "id": "lemon",
+    "name": "Lemon",
+    "image": "/games/media/zoomrot-lemon.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:P1030323.JPG",
+    "credit": "Elena Chochkova",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Lime",
+      "Orange",
+      "Grapefruit"
+    ]
+  },
+  {
+    "id": "lime",
+    "name": "Lime",
+    "image": "/games/media/zoomrot-lime.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Lime-Whole-Split.jpg",
+    "credit": "Evan-Amos",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Lemon",
+      "Avocado",
+      "Green apple"
+    ]
+  },
+  {
+    "id": "avocado",
+    "name": "Avocado",
+    "image": "/games/media/zoomrot-avocado.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Avocado_Hass_-_single_and_halved.jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Lime",
+      "Pear",
+      "Mango"
+    ]
+  },
+  {
+    "id": "pomegranate",
+    "name": "Pomegranate",
+    "image": "/games/media/zoomrot-pomegranate.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Pomegranate_fruit_-_whole_and_piece_with_arils.jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Apple",
+      "Red onion",
+      "Passion fruit"
+    ]
+  },
+  {
+    "id": "walnut",
+    "name": "Walnut",
+    "image": "/games/media/zoomrot-walnut.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Walnuts_-_whole_and_open_with_halved_kernel.jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Hazelnut",
+      "Pecan",
+      "Peanut"
+    ]
+  },
+  {
+    "id": "hazelnut",
+    "name": "Hazelnut",
+    "image": "/games/media/zoomrot-hazelnut.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Hazelnuts_(Corylus_avellana)_-_whole_with_kernels_(cropped2).jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Walnut",
+      "Acorn",
+      "Chestnut"
+    ]
+  },
+  {
+    "id": "coffee-beans",
+    "name": "Coffee beans",
+    "image": "/games/media/zoomrot-coffee-beans.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Roasted_coffee_beans.jpg",
+    "credit": "MarkSweep",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Cocoa beans",
+      "Kidney beans",
+      "Roasted peanuts"
+    ]
+  },
+  {
+    "id": "cinnamon-sticks",
+    "name": "Cinnamon sticks",
+    "image": "/games/media/zoomrot-cinnamon-sticks.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Cinnamon_Sticks_(2426053975).jpg",
+    "credit": "Ryan Snyder",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Tree bark",
+      "Rolled paper",
+      "Vanilla pods"
+    ]
+  },
+  {
+    "id": "star-anise",
+    "name": "Star anise",
+    "image": "/games/media/zoomrot-star-anise.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Dried_Star_Anise_Fruit_Seeds.jpg",
+    "credit": "Sanjay Acharya",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Clove",
+      "Dried flower",
+      "Seed pod"
+    ]
+  },
+  {
+    "id": "garlic",
+    "name": "Garlic",
+    "image": "/games/media/zoomrot-garlic.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Garlic_bulbs_and_cloves.jpg",
+    "credit": "Ivar Leidus",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Onion",
+      "Shallot",
+      "Ginger root"
+    ]
+  },
+  {
+    "id": "ginger-root",
+    "name": "Ginger root",
+    "image": "/games/media/zoomrot-ginger-root.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Ginger_Root.jpg",
+    "credit": "Sanjay Acharya",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Turmeric root",
+      "Potato",
+      "Tree root"
+    ]
+  },
+  {
+    "id": "romanesco-broccoli",
+    "name": "Romanesco broccoli",
+    "image": "/games/media/zoomrot-romanesco-broccoli.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Fractal_Broccoli.jpg",
+    "credit": "Jon Sullivan",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Broccoli",
+      "Cauliflower",
+      "Artichoke"
+    ]
+  },
+  {
+    "id": "cauliflower",
+    "name": "Cauliflower",
+    "image": "/games/media/zoomrot-cauliflower.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Chou-fleur_02.jpg",
+    "credit": "Coyau",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Broccoli",
+      "Cabbage",
+      "Romanesco broccoli"
+    ]
+  },
+  {
+    "id": "carrot",
+    "name": "Carrot",
+    "image": "/games/media/zoomrot-carrot.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Vegetable-Carrot-Bundle-wStalks.jpg",
+    "credit": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Parsnip",
+      "Sweet potato",
+      "Radish"
+    ]
+  },
+  {
+    "id": "bell-pepper",
+    "name": "Bell pepper",
+    "image": "/games/media/zoomrot-bell-pepper.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Green-Yellow-Red-Pepper-2009.jpg",
+    "credit": "Kham Tran - www.khamtran.com",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Chili pepper",
+      "Tomato",
+      "Apple"
+    ]
+  },
+  {
+    "id": "mushroom",
+    "name": "Mushroom",
+    "image": "/games/media/zoomrot-mushroom.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ChampignonMushroom.jpg",
+    "credit": "chris_73",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Garlic bulb",
+      "Onion",
+      "Turnip"
+    ]
+  },
+  {
+    "id": "seashell",
+    "name": "Seashell",
+    "image": "/games/media/zoomrot-seashell.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Hysteroconcha_dione.jpg",
+    "credit": "Wilfredor",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Walnut shell",
+      "Coral",
+      "Fish scale"
+    ]
+  },
+  {
+    "id": "feather",
+    "name": "Feather",
+    "image": "/games/media/zoomrot-feather.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Feather_of_male_Pavo_cristatus_(Indian_peafowl).jpg",
+    "credit": "MichaelMaggs",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Fern frond",
+      "Leaf",
+      "Paintbrush"
+    ]
+  },
+  {
+    "id": "dandelion-seed-head",
+    "name": "Dandelion seed head",
+    "image": "/games/media/zoomrot-dandelion-seed-head.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Dandelion_seed_head_(Taraxacum_officinale).jpg",
+    "credit": "Avenue",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Cotton boll",
+      "Thistle head",
+      "Milkweed seeds"
+    ]
+  },
+  {
+    "id": "sunflower",
+    "name": "Sunflower",
+    "image": "/games/media/zoomrot-sunflower.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Sunflower_head_2026_G1.jpg",
+    "credit": "George Chernilevsky",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Daisy",
+      "Dandelion",
+      "Marigold"
+    ]
+  },
+  {
+    "id": "zipper",
+    "name": "Zipper",
+    "image": "/games/media/zoomrot-zipper.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Coil_plastic_and_metal_zippers.jpg",
+    "credit": "Woodbine9",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Velcro",
+      "Gear rack",
+      "Chain"
+    ]
+  },
+  {
+    "id": "button",
+    "name": "Button",
+    "image": "/games/media/zoomrot-button.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Reserveknapper_til_Hans%27_uniform.jpg",
+    "credit": "Europeana staff photographer",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Coin",
+      "Washer",
+      "Snap fastener"
+    ]
+  },
+  {
+    "id": "safety-pin",
+    "name": "Safety pin",
+    "image": "/games/media/zoomrot-safety-pin.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Safety_Pin.jpg",
+    "credit": "Haragayato",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Paper clip",
+      "Sewing needle",
+      "Binder clip"
+    ]
+  },
+  {
+    "id": "sewing-needle",
+    "name": "Sewing needle",
+    "image": "/games/media/zoomrot-sewing-needle.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:A_depiction_of_needle.JPG",
+    "credit": "Thamizhpparithi Maari",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Safety pin",
+      "Nail",
+      "Knitting needle"
+    ]
+  },
+  {
+    "id": "thimble",
+    "name": "Thimble",
+    "image": "/games/media/zoomrot-thimble.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Fingerhut.jpg",
+    "credit": "Pavel Krok",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Bottle cap",
+      "Grater",
+      "Metal mesh"
+    ]
+  },
+  {
+    "id": "kitchen-sponge",
+    "name": "Kitchen sponge",
+    "image": "/games/media/zoomrot-kitchen-sponge.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:%C3%89ponge_type_3_(1).jpg",
+    "credit": "Lionel Allorge",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Eraser",
+      "Foam block",
+      "Scouring pad"
+    ]
+  },
+  {
+    "id": "grater",
+    "name": "Grater",
+    "image": "/games/media/zoomrot-grater.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Kuechenreibe_(fcm).jpg",
+    "credit": "Photograph:  Frank C. Müller, Baden-Baden",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Colander",
+      "Metal mesh",
+      "Sieve"
+    ]
+  },
+  {
+    "id": "colander",
+    "name": "Colander",
+    "image": "/games/media/zoomrot-colander.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Ge%C3%ABmailleerd_vergiet_-_INDUS_V08877.jpg",
+    "credit": "See source",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Sieve",
+      "Mixing bowl",
+      "Grater"
+    ]
+  },
+  {
+    "id": "potato-peeler",
+    "name": "Potato peeler",
+    "image": "/games/media/zoomrot-potato-peeler.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Peeler_01_Pengo.jpg",
+    "credit": "Pengo",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "detailFocus": [
+      50,
+      50
+    ],
+    "lookalikes": [
+      "Razor",
+      "Cheese slicer",
+      "Bottle opener"
+    ]
   }
 ]

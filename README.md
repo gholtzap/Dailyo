@@ -295,3 +295,5 @@ Orderrot includes 40 categories covering planetary measurements, atomic numbers,
 Skyrot includes 60 cities in locally bundled, attributed NASA photography. Added cities include Kuala Lumpur, Delhi, Taipei, Wellington, and Alexandria. Daily and dated Rush puzzles through 2026-11-27 retain the prior pool.
 
 Skylinerot includes 60 cities, with attributed photographs and nearby-city alternatives for Hard practice. Issued Daily and dated Rush puzzles through 2026-11-27 retain the prior 36-city pool.
+
+Zoomrot includes 68 everyday objects, with attributed photographs, focused crops, and three curated lookalikes per added object for Hard practice. Issued Daily and dated Rush puzzles through 2026-11-27 retain the prior 36-object pool.
