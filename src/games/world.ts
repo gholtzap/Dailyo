@@ -13,11 +13,11 @@ import {
   rushSeed,
 } from "../daily/bridge.js";
 import {
-  hash,
   shuffle,
   quizDeck,
   quizOptions,
   quizPuzzle,
+  languageSample,
 } from "../daily/puzzles.js";
 import { showRank } from "../daily/rank.js";
 
@@ -295,9 +295,7 @@ function result() {
     else {
       const sample = make(
         "p",
-        item.samples![
-          hash(`daily:${kind}:${day}:${index}:sample`) % item.samples!.length
-        ],
+        languageSample(item.samples!, `daily:${kind}:${day}:${index}`),
         "review-sample",
       );
       sample.dir = "auto";
@@ -397,8 +395,7 @@ function draw() {
   } else if (vocabulary) {
     prompt.append(make("h2", item.id, "vocabulary-word"));
   } else {
-    const index = hash(`${seed}:sample`) % item.samples!.length;
-    const text = make("p", item.samples![index], "sample");
+    const text = make("p", languageSample(item.samples!, seed), "sample");
     text.dir = "auto";
     prompt.append(text);
   }
