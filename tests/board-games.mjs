@@ -17,8 +17,16 @@ const only = process.argv.find((a) => a.startsWith("--game="))?.split("=")[1];
 async function solve(page, puzzle) {
   if (puzzle.kind === "sudoku")
     for (let i = 0; i < 36; i++)
-      if (!puzzle.initial[i])
-        await page.locator(`[data-cell="${i}"]`).press(puzzle.solution[i]);
+      if (!puzzle.initial[i]) {
+        const cell = page.locator(`[data-cell="${i}"]`);
+        await cell.focus();
+        await cell.press(puzzle.solution[i]);
+        assert.equal(
+          await cell.textContent(),
+          puzzle.solution[i],
+          `Sudoku cell ${i}`,
+        );
+      }
   if (puzzle.kind === "groups")
     for (const group of puzzle.groups) {
       for (const word of group.words)
