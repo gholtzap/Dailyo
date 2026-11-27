@@ -283,3 +283,5 @@ Maprot includes 1,000 cities. Rebuild the expansion with `python3 scripts/expand
 Langrot retains up to 32 qualifying excerpts per language from the bundled UDHR source. Daily and dated Rush puzzles issued through 2026-11-27 retain their original eight-excerpt selection.
 
 Word grid and Mini crossword share 1,000 crossing layouts built from 280 clued words. `python3 scripts/expand-word-boards.py` rebuilds the layouts. Issued daily puzzles through 2026-11-27 retain the original 120 layouts.
+
+Vocabulary includes 122 words, with original definitions, example sentences, and three alternative meanings for each. Daily and dated Rush puzzles through 2026-11-27 retain the original 30-word pool.

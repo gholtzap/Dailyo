@@ -15,6 +15,7 @@ import {
 import {
   shuffle,
   quizDeck,
+  quizPool,
   quizOptions,
   quizPuzzle,
   languageSample,
@@ -184,7 +185,7 @@ function question() {
   return {
     item: (mode === "daily" && rushRound === null
       ? dailyDeck()
-      : shuffle(items, seed))[s.index],
+      : shuffle(quizPool(items, kind, seed), seed))[s.index],
     seed: `${seed}:${s.index}`,
   };
 }
@@ -503,7 +504,8 @@ async function start() {
   await waitForFeedActivation();
   day = dateToday();
   if (rushRound !== null) {
-    modeState.daily = { ...blank(), index: rushRound % items.length };
+    const pool = quizPool(items, kind, rushSeed(kind));
+    modeState.daily = { ...blank(), index: rushRound % pool.length };
     onRushTimeout(() => choose("", question().item));
     draw();
     await quiz.querySelector("img")?.decode();
