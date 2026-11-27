@@ -13,6 +13,28 @@ const reports = [],
 const browser = await chromium.launch();
 const only = process.argv.find((a) => a.startsWith("--game="))?.split("=")[1];
 async function solve(page, puzzle) {
+  if (puzzle.kind === "wordgrid") {
+    for (let i = 0; i < 25; i++)
+      if (puzzle.solution[i] !== "#") {
+        const cell = page.locator(`[data-cell="${i}"]`);
+        if ((await cell.getAttribute("data-value")) === puzzle.solution[i])
+          continue;
+        const cells = await page.locator("[data-cell]").evaluateAll((ns) =>
+          ns.map((n) => ({
+            i: Number(n.dataset.cell),
+            v: n.dataset.value,
+            disabled: n.disabled,
+          })),
+        );
+        const other = cells.find(
+          (c) => !c.disabled && c.i !== i && c.v === puzzle.solution[i],
+        );
+        assert.ok(other);
+        await cell.click();
+        await page.locator(`[data-cell="${other.i}"]`).click();
+      }
+  }
+
   if (puzzle.kind === "crowns")
     for (const cell of puzzle.solution)
       await page.locator(`[data-cell="${cell}"]`).click();
