@@ -54,8 +54,11 @@ const split = {
     (width) => `--ci-width=${width}`,
   ),
   "node tests/puzzle-pools-browser.mjs": [390, 1440].flatMap((width) =>
-    ["skyrot", "skylinerot", "zoomrot"].map(
-      (game) => `--ci-width=${width} --ci-game=${game}`,
+    ["skyrot", "skylinerot", "zoomrot"].flatMap((game) =>
+      ["standard", "hard"].map(
+        (difficulty) =>
+          `--ci-width=${width} --ci-game=${game} --ci-difficulty=${difficulty}`,
+      ),
     ),
   ),
   "node tests/visual-games.mjs": [
@@ -81,6 +84,14 @@ if (scripts["test:e2e"].includes("node tests/board-games.mjs")) {
         `node tests/board-games.mjs --game=${game.id} --ci-width=${width}`
       ] ??= 6000;
 }
+for (const width of [390, 1440])
+  for (const game of ["skyrot", "skylinerot", "zoomrot"])
+    for (const difficulty of ["standard", "hard"]) {
+      const prefix = `node tests/puzzle-pools-browser.mjs --ci-width=${width} --ci-game=${game}`;
+      if (durationsMs[prefix])
+        durationsMs[`${prefix} --ci-difficulty=${difficulty}`] ??=
+          durationsMs[prefix] / 2;
+    }
 const browser = scripts["test:e2e"].split(" && ").flatMap((command) => {
   const parts = split[command];
   if (!parts) return [command];

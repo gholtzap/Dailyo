@@ -21,7 +21,7 @@ test("browser shards cover every package command once and preserve child failure
         type: "module",
         scripts: {
           "test:e2e":
-            "node tests/a.mjs && node tests/b.mjs extra && node tests/c.mjs",
+            "node tests/a.mjs && node tests/b.mjs extra && node tests/c.mjs && node tests/puzzle-pools-browser.mjs",
           "test:e2e:world": "node tests/d.mjs",
         },
       }),
@@ -41,7 +41,7 @@ test("browser shards cover every package command once and preserve child failure
         },
       }),
     );
-    for (const name of ["a", "b", "c", "d"])
+    for (const name of ["a", "b", "c", "d", "puzzle-pools-browser"])
       await writeFile(
         join(root, `tests/${name}.mjs`),
         `import {appendFileSync} from 'node:fs';appendFileSync('visited',JSON.stringify(['${name}',...process.argv.slice(2)])+'\\n');`,
@@ -61,7 +61,9 @@ test("browser shards cover every package command once and preserve child failure
       .map((line) => JSON.parse(line) as string[])
       .sort();
     assert.deepEqual(
-      visited.filter((row) => row[0] !== "d"),
+      visited.filter(
+        (row) => row[0] !== "d" && row[0] !== "puzzle-pools-browser",
+      ),
       [["a"], ["b", "extra"], ["c"]],
     );
     assert.deepEqual(
@@ -70,6 +72,23 @@ test("browser shards cover every package command once and preserve child failure
         .flatMap((row) => row.slice(1))
         .sort(),
       ["four", "one", "three", "two"],
+    );
+    assert.deepEqual(
+      visited
+        .filter((row) => row[0] === "puzzle-pools-browser")
+        .map((row) => row.slice(1).join(" "))
+        .sort(),
+      [390, 1440]
+        .flatMap((width) =>
+          ["skyrot", "skylinerot", "zoomrot"].flatMap((game) =>
+            ["standard", "hard"].map(
+              (difficulty) =>
+                `--ci-width=${width} --ci-game=${game} --ci-difficulty=${difficulty}`,
+            ),
+          ),
+        )
+        .sort(),
+      "Every photo game, viewport and difficulty must remain covered exactly once",
     );
     for (const shard of ["0/3", "4/3", "1/0", "wrong"])
       assert.notEqual(
