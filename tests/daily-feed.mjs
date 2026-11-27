@@ -100,7 +100,7 @@ try {
     const directory = page.getByText("Games", { exact: true });
     await directory.press("Enter");
     const nav = page.getByRole("navigation", { name: "Games" });
-    assert.equal(await nav.getByRole("link").count(), 22);
+    assert.equal(await nav.getByRole("link").count(), 15);
     await nav
       .getByRole("link", { name: "Subway cities", exact: true })
       .waitFor();
@@ -146,7 +146,7 @@ try {
     );
     await train.locator(".map-marker:visible").nth(1).waitFor();
     assert.equal(await train.locator(".map-marker:visible").count(), 2);
-    assert.equal(await progress.innerText(), "1 of 21");
+    assert.equal(await progress.innerText(), "1 of 14");
     assert.equal(
       await page.locator(".feed-header").evaluate((header) => {
         const children = [...header.children];
@@ -174,7 +174,7 @@ try {
         mapX = bounds.x + bounds.width / 2,
         mapY = bounds.y + bounds.height / 2;
       await swipe(touch, mapX, mapY + 65, mapY);
-      assert.equal(await progress.innerText(), "1 of 21");
+      assert.equal(await progress.innerText(), "1 of 14");
       assert.equal(await next.isVisible(), false);
     }
     const warmed = page.locator("iframe[data-feed-preload]");
@@ -182,7 +182,7 @@ try {
     await firstFlagLoad;
     assert.equal(await warmed.count(), 1);
     assert.equal(await warmed.isVisible(), false);
-    assert.equal(await progress.innerText(), "1 of 21");
+    assert.equal(await progress.innerText(), "1 of 14");
     await inspect("train-questions", "trainrot");
     await verifyHelp("trainrot");
     const standalone = await context.newPage();
@@ -225,7 +225,7 @@ try {
     }
     const flags = frame("flagrot");
     await flags.locator(".choice").first().waitFor();
-    assert.equal(await progress.innerText(), "2 of 21");
+    assert.equal(await progress.innerText(), "2 of 14");
     if (mobile) assert.equal(flagLoads, 1);
     await page.unroute("**/games/data/flags.json");
     assert.equal(
@@ -281,7 +281,7 @@ try {
 
     const languages = frame("langrot");
     await languages.locator(".choice").first().waitFor();
-    assert.equal(await progress.innerText(), "3 of 21");
+    assert.equal(await progress.innerText(), "3 of 14");
     await inspect("language-question", "langrot");
     await verifyHelp("langrot");
     await backgroundFailure;
@@ -310,7 +310,7 @@ try {
     await page.reload();
     await words.locator(".example").waitFor();
     assert.equal(await words.locator(".vocabulary-word").innerText(), word);
-    assert.equal(await progress.innerText(), "4 of 21");
+    assert.equal(await progress.innerText(), "4 of 14");
     await inspect("vocabulary-answer", "Vocabulary");
     await verifyHelp("Vocabulary");
     await words.locator("#next").click();
@@ -324,25 +324,18 @@ try {
     const geo = frame("maprot"),
       history = frame("yearrot"),
       borders = frame("borderrot");
-    const more = ["ladderrot", "cluerot", "scalerot", "swaprot"].map(frame);
+    const more = ["ladderrot", "cluerot"].map(frame);
     for (const name of [
       "maprot",
       "yearrot",
       "borderrot",
       "ladderrot",
       "cluerot",
-      "scalerot",
-      "swaprot",
       "skyrot",
       "pricerot",
       "skylinerot",
       "zoomrot",
       "orderrot",
-      "countrot",
-      "trackrot",
-      "anglerot",
-      "temporot",
-      "splitrot",
     ]) {
       await frame(name)
         .locator("#round-title,#extra-title,#question-title")
@@ -364,18 +357,11 @@ try {
       "BordersSkipped",
       "Word ladderSkipped",
       "CluesSkipped",
-      "EstimatesSkipped",
-      "SortSkipped",
       "From aboveSkipped",
       "PricesSkipped",
       "SkylinesSkipped",
       "Close-upSkipped",
       "OrderingSkipped",
-      "CountSkipped",
-      "TrackSkipped",
-      "AnglesSkipped",
-      "RhythmSkipped",
-      "SplitSkipped",
     ]);
     async function score(kind) {
       const check = await context.newPage();
@@ -397,7 +383,7 @@ try {
       exact: true,
     });
     const expectedRecap = `dailyo | Nov 16, 2026
-3 of 21 games completed
+3 of 14 games completed
 
 Subway        Answer shown
 Flags         ${flagScore.replace(" out of ", "/")}
@@ -408,18 +394,11 @@ Timeline      Skipped
 Borders       Skipped
 Word ladder   Skipped
 Clues         Skipped
-Estimates     Skipped
-Sort          Skipped
 From above    Skipped
 Prices        Skipped
 Skylines      Skipped
 Close-up      Skipped
 Ordering      Skipped
-Count         Skipped
-Track         Skipped
-Angles        Skipped
-Rhythm        Skipped
-Split         Skipped
 
 Play today’s Daily Games
 https://trainrot.vercel.app/daily/`;
@@ -453,11 +432,11 @@ https://trainrot.vercel.app/daily/`;
     );
     await inspect("recap-copy-fallback");
     await undo.click();
-    await frame("splitrot").locator("#question-title").waitFor();
+    await frame("orderrot").locator("#question-title").waitFor();
     assert.equal(await undo.isVisible(), false);
     await skip.click();
     await page.getByRole("heading", { name: "Daily recap" }).waitFor();
-    assert.equal(await rows.filter({ hasText: "Skipped" }).count(), 18);
+    assert.equal(await rows.filter({ hasText: "Skipped" }).count(), 11);
     await page.reload();
     const replay = page.getByRole("button", { name: "Play skipped games" });
     await replay.click();
@@ -543,20 +522,6 @@ https://trainrot.vercel.app/daily/`;
     await guess.fill(clue.answer);
     await guess.press("Enter");
     await next.click();
-    await more[2].getByRole("spinbutton").fill("50");
-    await more[2].getByRole("button", { name: "Check estimate" }).click();
-    await next.click();
-    const tiles = more[3].locator(".swap-tile");
-    await tiles.first().waitFor();
-    const board = (await tiles.allTextContents()).map(Number);
-    for (let pass = 0; pass < board.length; pass++)
-      for (let i = 0; i < board.length - 1; i++) {
-        if (board[i] <= board[i + 1]) continue;
-        await tiles.nth(i).click();
-        await tiles.nth(i + 1).click();
-        [board[i], board[i + 1]] = [board[i + 1], board[i]];
-      }
-    await next.click();
     for (const name of [
       "skyrot",
       "pricerot",
@@ -576,35 +541,7 @@ https://trainrot.vercel.app/daily/`;
           })
           .click();
       }
-      await next.click();
-    }
-    for (const name of [
-      "countrot",
-      "trackrot",
-      "anglerot",
-      "temporot",
-      "splitrot",
-    ]) {
-      const child = frame(name);
-      for (let round = 0; round < 5; round++) {
-        if (name === "trackrot") {
-          await child.locator(".track-countdown").waitFor();
-          await page.clock.runFor(3000);
-        } else if (name !== "anglerot" && name !== "splitrot")
-          await child
-            .getByRole("button", { name: "Start round", exact: true })
-            .click();
-        await child
-          .getByRole("button", { name: "Skip round", exact: true })
-          .click();
-        await child
-          .getByRole("button", {
-            name: round === 4 ? "See results" : "Next",
-            exact: true,
-          })
-          .click();
-      }
-      if (name !== "splitrot") await next.click();
+      if (name !== "orderrot") await next.click();
     }
     await page
       .getByRole("button", { name: "See recap", exact: true })
@@ -617,16 +554,13 @@ https://trainrot.vercel.app/daily/`;
     await page.getByRole("heading", { name: "Daily recap" }).waitFor();
     assert.equal(await replay.isVisible(), false);
     assert.equal(await rows.filter({ hasText: "Skipped" }).count(), 0);
-    assert.match(await rows.nth(9).innerText(), /Estimates.*% off/s);
-    assert.match(await rows.nth(10).innerText(), /Sort.*moves/s);
     assert.equal(await fallback.isVisible(), false);
     if (engine === chromium) {
       await copyRecap.click();
       await copyStatus.filter({ hasText: "Copied" }).waitFor();
       const full = await page.evaluate(() => navigator.clipboard.readText());
-      assert.match(full, /21 of 21 games completed/);
+      assert.match(full, /14 of 14 games completed/);
       assert.match(full, /Word ladder +Completed\nClues +Completed/);
-      assert.match(full, /Sort +\d+ moves/);
       assert.doesNotMatch(full, /Skipped| out of /);
     }
     assert.match(await rows.nth(4).innerText(), /Cities\s+[\d,]+ km off/);
@@ -643,7 +577,7 @@ https://trainrot.vercel.app/daily/`;
       document.dispatchEvent(new Event("visibilitychange")),
     );
     await frame("trainrot").locator("[data-route]").first().waitFor();
-    assert.equal(await progress.innerText(), "1 of 21");
+    assert.equal(await progress.innerText(), "1 of 14");
     assert.equal(await undo.isVisible(), false);
     await train.locator("[data-route]").first().click();
     const drafted = await train.locator(".train-sequence").innerText();
@@ -654,12 +588,12 @@ https://trainrot.vercel.app/daily/`;
     await undo.press("Enter");
     await train.locator(".train-sequence").waitFor();
     assert.equal(await train.locator(".train-sequence").innerText(), drafted);
-    assert.equal(await progress.innerText(), "1 of 21");
+    assert.equal(await progress.innerText(), "1 of 14");
     assert.equal(await undo.isVisible(), false);
     assert.deepEqual(errors, []);
     await context.close();
     console.log(
-      `${width}px Daily Feed: shared progress, all twenty-one games, skip, retry, recap, reload, and daily rollover passed`,
+      `${width}px Daily Feed: shared progress, all fourteen games, skip, retry, recap, reload, and daily rollover passed`,
     );
   }
 } finally {

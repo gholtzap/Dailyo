@@ -1,0 +1,1 @@
+export const retiredGames=["anglerot","splitrot","scalerot","temporot","countrot","swaprot","trackrot"];

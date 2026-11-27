@@ -1,3 +1,4 @@
+import { ciWidths } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium, webkit } from "playwright";
@@ -26,7 +27,7 @@ try {
     { width: 320, height: 568 },
     { width: 390, height: 620 },
     { width: 1440, height: 1000 },
-  ]) {
+  ].filter((viewport) => ciWidths([320, 390, 1440]).includes(viewport.width))) {
     for (const game of individualRushGames) {
       const page = await browser.newPage({
         viewport,

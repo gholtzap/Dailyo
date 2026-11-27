@@ -1,10 +1,7 @@
-import { setAngle } from "./angle-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { checkPage } from "lintapple";
-import { perceptionPuzzle } from "../dist/games/perception-puzzles.js";
-import { rushSeed } from "./rush-helpers.mjs";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const policy = JSON.parse(await fs.readFile("ui-policy.json", "utf8"));
 const prices = JSON.parse(
@@ -20,8 +17,6 @@ try {
     for (const [game, guess, correct] of [
       ["pricerot", 12, true],
       ["pricerot", 13.1, false],
-      ["anglerot", 27, true],
-      ["anglerot", 28, false],
     ]) {
       const page = await browser.newPage({
         viewport: { width, height: 1000 },
@@ -45,50 +40,14 @@ try {
       if (game === "pricerot") {
         await child().getByRole("spinbutton").fill(String(guess));
         await child().getByRole("button", { name: "Check price" }).click();
-      } else {
-        const q = perceptionPuzzle(
-          "anglerot",
-          await rushSeed(page, "anglerot"),
-          0,
-        );
-        if (
-          await child()
-            .getByRole("button", { name: "Start round", exact: true })
-            .count()
-        )
-          await child()
-            .getByRole("button", { name: "Start round", exact: true })
-            .click();
-        await setAngle(child(), (q.target + guess) % 360);
-        await child().getByRole("button", { name: "Check angle" }).click();
       }
       await page
         .locator("#rush-status")
         .filter({ hasText: correct ? "Correct" : "Missed" })
         .waitFor();
-      if (game === "anglerot") {
-        await page.clock.runFor(2999);
-        assert.match(
-          await page.locator("#rush-status").textContent(),
-          correct ? /Correct/ : /Missed/,
-        );
-        assert.equal(
-          await child().locator(".angle-feedback").isVisible(),
-          true,
-          "Both angle outcomes allow time to inspect the gap",
-        );
-      }
       await page
         .getByRole("button", { name: "Keep answer", exact: true })
         .click();
-      if (game === "anglerot") {
-        await page.clock.runFor(10000);
-        assert.equal(
-          await child().locator(".angle-feedback").isVisible(),
-          true,
-          "Keep answer holds the angle result beyond the automatic delay",
-        );
-      }
       await child()
         .getByRole("heading", {
           name: correct ? "Correct" : "Missed",
@@ -108,11 +67,7 @@ try {
           await child().locator(".visual-reveal").innerText(),
           /\/ 100 points/,
         );
-      } else
-        assert.match(
-          await child().locator(".perception-feedback").innerText(),
-          new RegExp(`${guess}° off`),
-        );
+      }
       await page.clock.resume();
       reports.push({
         width,
@@ -133,14 +88,6 @@ try {
           .waitFor();
         if (game === "pricerot")
           await child().getByRole("spinbutton").fill("10");
-        else {
-          const q = perceptionPuzzle(
-            "anglerot",
-            await rushSeed(page, "anglerot"),
-            1,
-          );
-          await setAngle(child(), q.target);
-        }
         await page.clock.runFor(game === "pricerot" ? 17999 : 19999);
         // Model a correct answer message crossing the host deadline before its next ticker.
         await page.evaluate(() => {
@@ -186,5 +133,5 @@ assert.deepEqual(
   [],
 );
 console.log(
-  "Rush feedback: price boundary, 31% miss, perception 69/70 boundary, timeout and UI policy at 390px and 1440px",
+  "Rush feedback: price boundary, 31% miss, timeout and UI policy at 390px and 1440px",
 );

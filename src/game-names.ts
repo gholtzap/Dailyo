@@ -12,18 +12,11 @@ const names: Record<string, string> = {
   borderrot: "Borders",
   ladderrot: "Word ladder",
   cluerot: "Clues",
-  scalerot: "Estimates",
-  swaprot: "Sort",
   skyrot: "From above",
   pricerot: "Prices",
   skylinerot: "Skylines",
   zoomrot: "Close-up",
   orderrot: "Ordering",
-  countrot: "Count",
-  trackrot: "Track",
-  anglerot: "Angles",
-  temporot: "Rhythm",
-  splitrot: "Split",
 };
 export function gameName(id: string): string {
   return names[id.toLowerCase()] ?? id;

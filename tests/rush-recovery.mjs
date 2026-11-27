@@ -1,4 +1,3 @@
-import { setAngle } from "./angle-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -146,22 +145,6 @@ try {
     await status.filter({ hasText: "Round 1" }).waitFor();
     assert.notEqual(await rushSeed(page, "flags"), firstSeed);
 
-    // The active multi-step puzzle must retain its draft, rather than only its run score.
-    await page.goto(`${base}/rush/swaprot/`);
-    await status.filter({ hasText: "Round 1" }).waitFor();
-    const swap = page.frameLocator("iframe[title=swaprot]");
-    const original = await swap.locator(".swap-tile").allTextContents();
-    await swap.locator(".swap-tile").nth(0).click();
-    await swap.locator(".swap-tile").nth(1).click();
-    const changed = await swap.locator(".swap-tile").allTextContents();
-    assert.notDeepEqual(changed, original);
-    await page.reload();
-    await status.filter({ hasText: "Round 1" }).waitFor();
-    assert.deepEqual(
-      await swap.locator(".swap-tile").allTextContents(),
-      changed,
-    );
-    await inspect("restored");
     const enter = async (name) => {
       await page.goto(`${base}/rush/${name}/`);
       await status.filter({ hasText: "Round 1" }).waitFor();
@@ -192,76 +175,6 @@ try {
     await page.reload();
     await status.filter({ hasText: "Round 1" }).waitFor();
     assert.equal(await train.locator(".sequence-row").innerText(), route);
-
-    const angle = await enter("anglerot");
-    await angle.getByRole("slider").waitFor();
-    await setAngle(
-      angle,
-      Number(
-        (await angle.locator(".angle-target").textContent()).replace("°", ""),
-      ),
-    );
-    await angle
-      .getByRole("button", { name: "Check angle", exact: true })
-      .click();
-    await status.filter({ hasText: "Correct" }).waitFor();
-    await page.clock.runFor(2999);
-    assert.match(
-      await status.textContent(),
-      /Correct/,
-      "Angle feedback stays visible for three seconds",
-    );
-    assert.equal(await angle.locator(".angle-feedback").isVisible(), true);
-    await page.clock.runFor(1);
-    await status.filter({ hasText: "Round 2" }).waitFor();
-    assert.equal(
-      await timer.textContent(),
-      "20s",
-      "Review time does not consume the next angle round clock",
-    );
-    await angle.getByRole("slider").waitFor();
-    await setAngle(angle, 42.5);
-    const boardBox = await angle.getByRole("slider").boundingBox();
-    await page.mouse.move(
-      boardBox.x + boardBox.width / 2,
-      boardBox.y + boardBox.height / 2,
-    );
-    await page.mouse.down();
-    await page.mouse.move(
-      boardBox.x + boardBox.width * 0.7,
-      boardBox.y + boardBox.height * 0.7,
-    );
-    await page
-      .getByRole("button", { name: "Pause", exact: true })
-      .press("Enter");
-    await page
-      .getByRole("button", { name: "Resume", exact: true })
-      .press("Enter");
-    await page.mouse.up();
-    assert.equal(
-      await angle.getByRole("slider").getAttribute("aria-valuenow"),
-      "42.5",
-      "A paused redraw cannot commit after resume",
-    );
-
-    await page.reload();
-    await status.filter({ hasText: "Paused" }).waitFor();
-    await page.getByRole("button", { name: "Resume", exact: true }).click();
-    assert.equal(
-      await angle.getByRole("slider").getAttribute("aria-valuenow"),
-      "42.5",
-    );
-
-    // A paused restoration with no answer draft still shows the static board.
-    await page.evaluate(() => sessionStorage.removeItem("dailyo:rush:draft"));
-    await page.reload();
-    await status.filter({ hasText: "Paused" }).waitFor();
-    await angle.locator(".angle-board").waitFor();
-    assert.equal(await page.locator("#rush-resume-panel").isVisible(), true);
-    assert.equal(
-      await angle.getByText("Starting…", { exact: true }).count(),
-      0,
-    );
 
     await seedMixedRun(page, "2026-11-20");
     await page.goto(base);

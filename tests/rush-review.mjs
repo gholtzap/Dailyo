@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { checkPage } from "lintapple";
-import { extraPuzzle, prepareExtra } from "../dist/games/extra-puzzles.js";
+import { visualSet, prepareVisual } from "../dist/games/visual-puzzles.js";
 import { rushSeed } from "./rush-helpers.mjs";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const browser = await chromium.launch(),
@@ -33,17 +33,19 @@ try {
     await page.clock.install({ time });
     await page.clock.pauseAt(new Date(+time + 1000));
     const raw = JSON.parse(
-        await fs.readFile("dist/games/data/scalerot.json", "utf8"),
+        await fs.readFile("dist/games/data/pricerot.json", "utf8"),
       ),
-      data = prepareExtra("scalerot", raw);
-    await page.goto(`${base}/rush/scalerot/`);
+      data = prepareVisual("pricerot", raw);
+    await page.goto(`${base}/rush/pricerot/`);
     const status = page.locator("#rush-status");
     await status.filter({ hasText: "Round 1" }).waitFor();
-    const seed = await rushSeed(page, "scalerot"),
-      q = extraPuzzle("scalerot", data, `${seed}:0`);
-    const child = () => page.frameLocator('iframe[title="scalerot"]');
-    await child().getByRole("spinbutton").fill(String(q.actual));
-    await child().getByRole("button", { name: "Check estimate" }).click();
+    const seed = await rushSeed(page, "pricerot"),
+      q = visualSet("pricerot", data, seed, true, 0)[0];
+    const child = () => page.frameLocator('iframe[title="pricerot"]');
+    await child()
+      .getByRole("spinbutton")
+      .fill(String(q.item.cents / 100));
+    await child().getByRole("button", { name: "Check price" }).click();
     await page
       .getByRole("button", { name: "Keep answer", exact: true })
       .click();
@@ -61,7 +63,7 @@ try {
       .click();
     await page
       .frameLocator('iframe[title="Previous answer"]')
-      .getByText(q.explanation, { exact: true })
+      .getByRole("heading", { name: q.item.name, exact: true })
       .waitFor();
     assert.equal(await page.locator("#rush-round").textContent(), "Round 1");
     await page.clock.fastForward(20000);
@@ -98,7 +100,7 @@ try {
     await status.filter({ hasText: "Paused" }).waitFor();
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     await child().getByRole("spinbutton").fill("0");
-    await child().getByRole("button", { name: "Check estimate" }).click();
+    await child().getByRole("button", { name: "Check price" }).click();
     await status.filter({ hasText: "Missed" }).waitFor();
     const result = await child().getByRole("heading").first().boundingBox();
     const touch =

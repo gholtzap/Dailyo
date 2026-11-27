@@ -14,18 +14,11 @@ const games = [
   { id: "borderrot", label: "borderrot", path: "/borderrot/" },
   { id: "ladderrot", label: "ladderrot", path: "/ladderrot/" },
   { id: "cluerot", label: "cluerot", path: "/cluerot/" },
-  { id: "scalerot", label: "scalerot", path: "/scalerot/" },
-  { id: "swaprot", label: "swaprot", path: "/swaprot/" },
   { id: "skyrot", label: "skyrot", path: "/skyrot/" },
   { id: "pricerot", label: "pricerot", path: "/pricerot/" },
   { id: "skylinerot", label: "skylinerot", path: "/skylinerot/" },
   { id: "zoomrot", label: "zoomrot", path: "/zoomrot/" },
   { id: "orderrot", label: "orderrot", path: "/orderrot/" },
-  { id: "countrot", label: "countrot", path: "/countrot/" },
-  { id: "trackrot", label: "trackrot", path: "/trackrot/" },
-  { id: "anglerot", label: "anglerot", path: "/anglerot/" },
-  { id: "temporot", label: "temporot", path: "/temporot/" },
-  { id: "splitrot", label: "splitrot", path: "/splitrot/" },
 ];
 const $ = required;
 const gamePanel = $("#feed-game"),

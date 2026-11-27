@@ -64,6 +64,76 @@
       "source": "/rush/ladderrot/:path*",
       "destination": "/ladderrot/",
       "permanent": true
+    },
+    {
+      "source": "/anglerot/:path*",
+      "destination": "/daily/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/anglerot/:path*",
+      "destination": "/rush/",
+      "permanent": true
+    },
+    {
+      "source": "/splitrot/:path*",
+      "destination": "/daily/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/splitrot/:path*",
+      "destination": "/rush/",
+      "permanent": true
+    },
+    {
+      "source": "/scalerot/:path*",
+      "destination": "/daily/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/scalerot/:path*",
+      "destination": "/rush/",
+      "permanent": true
+    },
+    {
+      "source": "/temporot/:path*",
+      "destination": "/daily/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/temporot/:path*",
+      "destination": "/rush/",
+      "permanent": true
+    },
+    {
+      "source": "/countrot/:path*",
+      "destination": "/daily/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/countrot/:path*",
+      "destination": "/rush/",
+      "permanent": true
+    },
+    {
+      "source": "/swaprot/:path*",
+      "destination": "/daily/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/swaprot/:path*",
+      "destination": "/rush/",
+      "permanent": true
+    },
+    {
+      "source": "/trackrot/:path*",
+      "destination": "/daily/",
+      "permanent": true
+    },
+    {
+      "source": "/rush/trackrot/:path*",
+      "destination": "/rush/",
+      "permanent": true
     }
   ]
 }

@@ -1,1 +1,1 @@
-export function isExtraGame(t){return["ladderrot","cluerot","scalerot","swaprot"].includes(t)}
+export function isExtraGame(t){return["ladderrot","cluerot"].includes(t)}

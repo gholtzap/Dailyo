@@ -65,7 +65,7 @@ try {
       reports.push({ width, systemPreference: colorScheme, ...actual });
       for (const route of [
         "/flags/",
-        "/anglerot/",
+        "/orderrot/",
         "/maprot/",
         "/daily/",
         "/rush/flagrot/",

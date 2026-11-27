@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { gameName } from "../dist/game-names.js";
+import { retiredGames } from "../dist/retired-games.js";
 import { rushGames } from "../dist/daily/rush-games.js";
 
 const themeColor = JSON.parse(
@@ -17,18 +18,11 @@ const games = [
   ["borderrot", "borderrot", "Country routes"],
   ["ladderrot", "ladderrot", "Word ladders"],
   ["cluerot", "cluerot", "Clues"],
-  ["scalerot", "scalerot", "Estimates"],
-  ["swaprot", "swaprot", "Number sorting"],
   ["skyrot", "skyrot", "Overhead cities"],
   ["pricerot", "pricerot", "Prices"],
   ["skylinerot", "skylinerot", "Skylines"],
   ["zoomrot", "zoomrot", "Close-up objects"],
   ["orderrot", "orderrot", "Ordering"],
-  ["countrot", "countrot", "Dot counting"],
-  ["trackrot", "trackrot", "Ball tracking"],
-  ["anglerot", "anglerot", "Angle estimation"],
-  ["temporot", "temporot", "Rhythm"],
-  ["splitrot", "splitrot", "Line proportions"],
 ];
 // Match each game's startup fetches so the HTML parser can start them early.
 const puzzleData = Object.fromEntries(
@@ -38,7 +32,6 @@ const puzzleData = Object.fromEntries(
     "vocabulary",
     "yearrot",
     "cluerot",
-    "scalerot",
     "skyrot",
     "pricerot",
     "skylinerot",
@@ -204,4 +197,24 @@ for (const slug of ["cluerot", "ladderrot"]) {
 <link rel="stylesheet" href="/design-system.css"><link rel="stylesheet" href="/components.css"></head>
 <body><a href="/${slug}/">${gameName(slug)}</a></body></html>`,
   );
+}
+
+// Replace retired entry points after navigation rendering, including local builds.
+for (const slug of retiredGames) {
+  for (const [route, destination] of [
+    [slug, "/daily/"],
+    [`rush/${slug}`, "/rush/"],
+  ]) {
+    const directory = path.join("dist", route);
+    await fs.mkdir(directory, { recursive: true });
+    await fs.writeFile(
+      path.join(directory, "index.html"),
+      `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="color-scheme" content="dark">
+<meta name="theme-color" content="${themeColor}"><meta http-equiv="refresh" content="0;url=${destination}">
+<link rel="canonical" href="${destination}"><title>dailyo</title>
+<link rel="stylesheet" href="/design-system.css"><link rel="stylesheet" href="/components.css"></head>
+<body><a href="${destination}">${destination === "/daily/" ? "Daily" : "Rush"}</a></body></html>`,
+    );
+  }
 }

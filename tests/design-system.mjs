@@ -20,7 +20,6 @@ try {
       await page.locator(".choice").first().waitFor();
       const result = await page.evaluate(async () => {
         const { designValue } = await import("/design.js");
-        const { angleBoard } = await import("/games/angle-board.js");
         const choices = [...document.querySelectorAll(".choice")];
         const styles = choices.map((node) => {
           const style = getComputedStyle(node);
@@ -38,25 +37,11 @@ try {
         root.style.setProperty("--action", "#ff00ff");
         const override = getComputedStyle(choices[0]).backgroundColor;
         root.style.removeProperty("--action");
-        root.style.setProperty("--accent", "#ff00ff");
-        const { canvas } = angleBoard({
-          target: 45,
-          value: () => 90,
-          change: () => {},
-          editable: () => false,
-          reveal: false,
-          max: 360,
-        });
-        const pixel = [
-          ...canvas.getContext("2d").getImageData(480, 200, 1, 1).data,
-        ];
-        root.style.removeProperty("--accent");
         return {
           tokenSheet,
           styles,
           normal,
           override,
-          pixel,
           scheme: getComputedStyle(root).colorScheme,
         };
       });
@@ -83,10 +68,39 @@ try {
         "rgb(255, 0, 255)",
         "CSS components consume the shared palette",
       );
-      assert.deepEqual(
-        result.pixel,
-        [255, 0, 255, 255],
-        "Canvas consumes the same palette",
+      await page.goto(`${base}/borderrot/`);
+      await page.locator("canvas.rot-map").waitFor();
+      await page.evaluate(() => {
+        for (const token of [
+          "--map-country",
+          "--map-country-selected",
+          "--map-country-target",
+        ])
+          document.documentElement.style.setProperty(token, "#ff00ff");
+      });
+      await page
+        .getByRole("button", { name: "Show shortest route", exact: true })
+        .click();
+      const canvasUsesToken = await page
+        .locator("canvas.rot-map")
+        .evaluate((canvas) => {
+          const pixels = canvas
+            .getContext("2d")
+            .getImageData(0, 0, canvas.width, canvas.height).data;
+          for (let index = 0; index < pixels.length; index += 4)
+            if (
+              pixels[index] === 255 &&
+              pixels[index + 1] === 0 &&
+              pixels[index + 2] === 255 &&
+              pixels[index + 3] === 255
+            )
+              return true;
+          return false;
+        });
+      assert.equal(
+        canvasUsesToken,
+        true,
+        "Borders canvas consumes the shared palette",
       );
       await page.screenshot({
         path: `${output}/${width}-${colorScheme}-components.png`,

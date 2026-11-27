@@ -15,7 +15,6 @@ try {
       "zoomrot",
       "skylinerot",
       "pricerot",
-      "anglerot",
       "yearrot",
       "maprot",
       "borderrot",
@@ -35,7 +34,7 @@ try {
             [...document.images].map((i) => i.decode().catch(() => null)),
           ),
         );
-      if (width === 390 && (game === "zoomrot" || game === "anglerot")) {
+      if (width === 390 && game === "zoomrot") {
         const control = p
           .locator(
             game === "zoomrot" ? ".visual-choice" : ".angle-playfield button",

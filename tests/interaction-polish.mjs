@@ -1,4 +1,3 @@
-import { setAngle } from "./angle-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -83,108 +82,10 @@ try {
     await page.getByRole("button", { name: "Next", exact: true }).click();
     await page.locator(".visual-order").waitFor();
 
-    for (const game of ["anglerot", "splitrot"]) {
-      await page.goto(`${base}/${game}/`);
-      await page
-        .getByRole(
-          game === "anglerot" || game === "splitrot" ? "slider" : "button",
-          {
-            name:
-              game === "anglerot"
-                ? "Draw angle"
-                : game === "splitrot"
-                  ? "Split position"
-                  : "Start round",
-            exact: true,
-          },
-        )
-        .waitFor();
-      await page.getByRole("button", { name: "Practice", exact: true }).click();
-      await page.getByRole("slider").waitFor();
-      assert.equal(
-        await page
-          .getByRole("button", { name: "Start round", exact: true })
-          .count(),
-        0,
-      );
-      await inspect(`${game}-practice`);
-      if (game === "anglerot") await setAngle(page, 42.5);
-      else await page.getByRole("slider").fill("42.5");
-      await page
-        .getByRole("button", {
-          name: game === "anglerot" ? "Check angle" : "Check split",
-          exact: true,
-        })
-        .click();
-      await page.getByRole("button", { name: "Next", exact: true }).click();
-      await page.getByRole("slider").waitFor();
-      assert.equal(
-        await page
-          .getByRole("button", { name: "Start round", exact: true })
-          .count(),
-        0,
-      );
-      await page.reload();
-      await page
-        .getByRole(
-          game === "anglerot" || game === "splitrot" ? "slider" : "button",
-          {
-            name:
-              game === "anglerot"
-                ? "Draw angle"
-                : game === "splitrot"
-                  ? "Split position"
-                  : "Start round",
-            exact: true,
-          },
-        )
-        .waitFor();
-      await page.getByRole("button", { name: "Practice", exact: true }).click();
-      await page.getByRole("slider").waitFor();
-      await page.getByLabel("Difficulty").selectOption("hard");
-      await page.getByRole("slider").waitFor();
-      await page.getByRole("button", { name: "Daily", exact: true }).click();
-      await page
-        .getByRole(
-          game === "anglerot" || game === "splitrot" ? "slider" : "button",
-          {
-            name:
-              game === "anglerot"
-                ? "Draw angle"
-                : game === "splitrot"
-                  ? "Split position"
-                  : "Start round",
-            exact: true,
-          },
-        )
-        .waitFor();
-    }
-    for (const game of ["countrot", "temporot"]) {
-      await page.goto(`${base}/${game}/?practice=1`);
-      await page
-        .getByRole(
-          game === "anglerot" || game === "splitrot" ? "slider" : "button",
-          {
-            name:
-              game === "anglerot"
-                ? "Draw angle"
-                : game === "splitrot"
-                  ? "Split position"
-                  : "Start round",
-            exact: true,
-          },
-        )
-        .waitFor();
-      assert.equal(
-        await page.getByRole("slider").count(),
-        0,
-        "Playback still waits for explicit readiness",
-      );
-    }
     assert.deepEqual(errors, []);
     await page.close();
     console.log(
-      `${viewport.width}px: submitted/correct orders, unchanged scoring, consistent Next, static practice, replay, and playback readiness`,
+      `${viewport.width}px: submitted/correct orders, unchanged scoring and consistent Next`,
     );
   }
 } finally {
