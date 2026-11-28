@@ -70,7 +70,10 @@ function write(
 ) {
   try {
     localStorage.setItem(storageKey(slot), JSON.stringify(value));
-  } catch {}
+    return true;
+  } catch {
+    return false;
+  }
 }
 const freshSeed = () => `practice:${crypto.randomUUID()}`;
 interface Session {
@@ -81,6 +84,7 @@ interface Session {
 }
 let rows: VisualItem[] = [];
 let day = dailyDate();
+let dailySaved = true;
 let mode: "daily" | "practice" =
   startPractice || (!inFeed && read("mode") === "practice")
     ? "practice"
@@ -148,11 +152,16 @@ function mount(
   return session;
 }
 function save() {
-  if (!isRush)
-    write(mode === "daily" ? `daily:${day}` : practiceSlot(difficulty), {
-      seed: sessions[mode].seed,
-      answers: sessions[mode].answers,
-    });
+  if (!isRush) {
+    const saved = write(
+      mode === "daily" ? `daily:${day}` : practiceSlot(difficulty),
+      {
+        seed: sessions[mode].seed,
+        answers: sessions[mode].answers,
+      },
+    );
+    if (mode === "daily") dailySaved = saved;
+  }
 }
 function resetDay() {
   if (isRush || dailyDate() === day) return false;
@@ -692,6 +701,7 @@ function drawResults() {
     `${score} / 500 points`,
     day,
     storageKey(`daily:${day}`),
+    dailySaved,
   );
 }
 function draw() {
@@ -707,7 +717,16 @@ function draw() {
   if (complete) drawResults();
   else {
     drawQuestion();
-    reportDaily("playing", undefined, day, storageKey(`daily:${day}`));
+    reportDaily(
+      "playing",
+      undefined,
+      day,
+      storageKey(`daily:${day}`),
+      dailySaved &&
+        sessions[mode].questions.some(
+          (question, i) => !answered(game, question, sessions[mode].answers[i]),
+        ),
+    );
   }
   if (focusNext) {
     quiz.querySelector<HTMLElement>("#question-title")?.focus();
