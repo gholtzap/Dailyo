@@ -139,6 +139,16 @@ try {
     const train = frame("trainrot");
     const map = train.locator("#city-map");
     await map.waitFor({ state: "visible" });
+    await skip.waitFor();
+    assert.equal(await skip.locator(".action-glyph").count(), 1);
+    if (!mobile) {
+      await skip.hover();
+      await page.locator("#feed-skip-tooltip").waitFor();
+      await inspect("skip-tooltip");
+      await skip.press("Escape");
+      assert.equal(await page.locator("#feed-skip-tooltip").isVisible(), false);
+    }
+
     assert.ok(
       (await map.getAttribute("viewBox"))
         .split(" ")
