@@ -142,7 +142,7 @@ try {
             const q = visualSet(game, prepareVisual(game, raw), seed)[1];
             await setPrice(child, q.item.cents / 100);
             await child
-              .getByRole("button", { name: "Check price", exact: true })
+              .getByRole("button", { name: "Lock in", exact: true })
               .click();
           } else {
             const q = makeSet(game, preparePuzzles(game, raw), seed)[1];

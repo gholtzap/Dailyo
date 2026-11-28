@@ -930,7 +930,7 @@ body:has(#app) .game-help-header h2 {
   margin-top: var(--space-2);
 }
 /* Embedded boards share the host's surface and hide standalone navigation. */
-[data-daily-feed] {
+[data-daily-feed]:not(:has(body[data-game=pricerot])) {
   --paper: var(--panel);
 }
 [data-daily-feed] :is(.site-masthead,.modes,.site-header,#start-practice,.standalone-only) {
@@ -1430,13 +1430,27 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
   background: var(--paper);
 }
 
-/* Gesture price entry shares native range controls and the existing action. */
-.price-picker { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
-.price-value { display: block; font-size: var(--font-size-24); font-weight: var(--font-weight-medium); font-variant-numeric: tabular-nums; text-align: center; }
-.price-range-label, .price-range-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
-.price-range-label select { width: auto; }
-.price-range { display: grid; gap: var(--space-2); }
-.price-range-heading { font-variant-numeric: tabular-nums; }
+/* One touch estimate: native sliders retain keyboard and assistive access. */
+.price-picker { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
+.price-label, .price-gesture { text-align: center; color: var(--muted); }
+.price-gesture { font-size: var(--font-size-12); }
+.price-reels {
+  --price-reels-width: 288px;
+  --price-reels-height: 104px;
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--space-2) minmax(0, 1fr);
+  width: min(100%, var(--price-reels-width)); height: var(--price-reels-height); margin-inline: auto; position: relative;
+}
+
+.price-wheel { display: grid; grid-template-rows: var(--space-7) var(--space-12) var(--space-7); align-items: center; position: relative; text-align: right; font-variant-numeric: tabular-nums; }
+.price-wheel:last-child { text-align: left; }
+.price-wheel:focus-within { outline: var(--stroke-2) solid var(--focus); outline-offset: var(--space-1); border-radius: var(--radius-control); }
+.price-number { display: flex; align-items: center; justify-content: flex-end; height: var(--space-12); padding-inline: var(--space-1); background: var(--surface-raised); border-block: var(--stroke-1) solid var(--line); font-size: var(--font-size-24); font-weight: var(--font-weight-medium); line-height: var(--leading-1); }
+.price-wheel:first-child .price-number { border-left: var(--stroke-1) solid var(--line); border-radius: var(--radius-control) 0 0 var(--radius-control); }
+.price-wheel:last-child .price-number { justify-content: flex-start; border-right: var(--stroke-1) solid var(--line); border-radius: 0 var(--radius-control) var(--radius-control) 0; }
+.price-neighbor { padding-inline: var(--space-1); color: var(--muted); font-size: var(--font-size-14); }
+.price-decimal { background: var(--surface-raised); border-block: var(--stroke-1) solid var(--line); display: flex; align-items: center; justify-content: center; margin-top: var(--space-7); height: var(--space-12); font-size: var(--font-size-24); line-height: var(--leading-1); z-index: var(--layer-base); }
+.price-reel-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; touch-action: none; cursor: ns-resize; }
+.price-submit { width: 100%; margin-top: var(--space-2); }
 .range-control { width: 100%; min-width: 0; min-height: var(--control-size); margin: 0; accent-color: var(--accent); }
 .sudoku-palette { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-4); }
 .sudoku-palette button { padding-inline: var(--space-1); }
@@ -1447,7 +1461,7 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
 .sudoku-cell:disabled:not(.is-given) { background: var(--success-surface); }
 .sudoku-cell:is(:hover,:focus-visible) + .puzzle-tooltip { display: block; }
 .sudoku-grid .puzzle-entry:nth-child(6n) .puzzle-tooltip { left: auto; right: 0; }
-.price-stepper { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-2); }
+
 
 /* Secondary navigation actions share icon sizing and linked tooltips. */
 .action-control { position: relative; display: inline-flex; align-items: center; }
@@ -1459,3 +1473,19 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
 .action-glyph[data-icon=review] { mask-image: url('/assets/nucleo/eye-2.svg'); }
 .action-glyph[data-icon=skip] { mask-image: url('/assets/nucleo/chevron-right.svg'); }
 .action-control:has(> #feed-skip) .game-tooltip { left: auto; right: 0; }
+
+/* Prices keeps the package and estimate above mobile browser controls. */
+:root[data-daily-feed] body[data-game=pricerot] > .main { padding: var(--space-3) var(--space-4); }
+body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead { min-height: var(--control-size); padding: 0 var(--space-4); gap: var(--space-4); background: var(--paper); }
+body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead .site-modes a:not([aria-current]) { display: none; }
+body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead .site-modes a[aria-current] { min-height: var(--control-size); padding: var(--space-2); background: transparent; border: 0; box-shadow: none; color: var(--muted); }
+body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead .site-more { display: none; }
+.action-glyph[data-icon=pause] { mask-image: url('/assets/lucide/pause.svg'); }
+.action-control:has(> #rush-pause) .game-tooltip { left: auto; right: 0; }
+
+body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead #rush-help { margin-left: auto; background: transparent; border: 0; box-shadow: none; }
+[data-rush] .price-submit { width: calc(100% - var(--space-13)); }
+
+.rush-feed:has(iframe[title=pricerot]:not([hidden])) .action-control:has(> #rush-next) .game-tooltip { left: auto; right: 0; }
+
+.feed-actions .action-control:has(> #rush-review) .game-tooltip { left: auto; right: 0; }

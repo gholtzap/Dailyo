@@ -40,7 +40,7 @@ try {
       const child = () => page.frameLocator(`iframe[title="${game}"]`);
       if (game === "pricerot") {
         await setPrice(child(), guess);
-        await child().getByRole("button", { name: "Check price" }).click();
+        await child().getByRole("button", { name: "Lock in" }).click();
       }
       await page
         .locator("#rush-status")
@@ -98,7 +98,7 @@ try {
         });
         await child()
           .getByRole("button", {
-            name: game === "pricerot" ? "Check price" : "Check angle",
+            name: game === "pricerot" ? "Lock in" : "Check angle",
             exact: true,
           })
           .click();

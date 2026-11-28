@@ -49,3 +49,11 @@ including its runtime and Base library helpers, under Apache License 2.0. The
 bundled license is in `src/verified/BEND-LICENSE.txt` and
 `dist/verified/BEND-LICENSE.txt`. dailyo's original lifecycle code and proofs
 retain the repository's license.
+
+## Lucide
+
+`dist/assets/lucide/pause.svg` is from Lucide v0.468.0, used under the ISC license, with its stroke set to 1.5px for a 1px stroke at the displayed 16px size. Copyright (c) 2022 Lucide Contributors. See https://github.com/lucide-icons/lucide/blob/0.468.0/LICENSE.
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

@@ -64,7 +64,7 @@ try {
       .click();
     await status.filter({ hasText: "Paused" }).waitFor({ timeout: 3000 });
     await page.clock.runFor(20000);
-    assert.equal(await timer.innerText(), "8s");
+    assert.equal(await timer.innerText(), "8");
     assert.doesNotMatch(
       await flag.locator("dialog").innerText(),
       /five daily/i,
@@ -92,9 +92,9 @@ try {
     await page.reload();
     await status.filter({ hasText: "Paused" }).waitFor();
     assert.equal(await rushSeed(page, "flags"), firstSeed);
-    assert.equal(await timer.innerText(), "8s");
+    assert.equal(await timer.innerText(), "8");
     await page.clock.runFor(12000);
-    assert.equal(await timer.innerText(), "8s");
+    assert.equal(await timer.innerText(), "8");
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     await status.filter({ hasText: "Round 2" }).waitFor();
     assert.equal(await flag.locator("#quiz").isVisible(), true);
@@ -103,7 +103,7 @@ try {
     await status.filter({ hasText: "Paused" }).waitFor();
     assert.equal(
       await timer.innerText(),
-      "6s",
+      "6",
       "Reload must preserve elapsed time",
     );
     let failReload = true;
@@ -124,7 +124,7 @@ try {
     await status.filter({ hasText: "Paused" }).waitFor();
     assert.equal(
       await timer.innerText(),
-      "6s",
+      "6",
       "A failed reload must not reset the saved time budget",
     );
     await page.getByRole("button", { name: "Resume", exact: true }).click();
@@ -200,7 +200,7 @@ try {
       .waitFor({ timeout: 3000 });
     assert.equal(
       await timer.innerText(),
-      "8s",
+      "8",
       "Skipping a failed recovery must give the next game its own budget",
     );
 

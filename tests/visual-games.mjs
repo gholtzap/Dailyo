@@ -43,7 +43,7 @@ async function solve(surface, game, q) {
   if (game === "pricerot") {
     await setPrice(surface, q.item.cents / 100);
     await surface
-      .getByRole("button", { name: "Check price", exact: true })
+      .getByRole("button", { name: "Lock in", exact: true })
       .click();
   } else if (game === "orderrot") {
     const sorted = [...q.tiles].sort((a, b) => a.value - b.value);
@@ -202,7 +202,7 @@ try {
         .locator("#rush-status")
         .filter({ hasText: `${gameName(game)} · Round 2` })
         .waitFor();
-      assert.match(await page.locator("#rush-clock").textContent(), /s$/);
+      assert.match(await page.locator("#rush-clock").textContent(), /^\d+$/);
       await page.clock.fastForward(60000);
       await page
         .getByRole("heading", { name: "Rush recap", exact: true })

@@ -146,7 +146,7 @@ try {
       await page.locator(".visual-note, .visual-figure figcaption").count(),
       0,
     );
-    assert.equal(await page.locator("#price-value").textContent(), "$0.00");
+    assert.equal(await page.locator("#price-value").textContent(), "Not set");
     await page
       .getByRole("button", { name: "How to play", exact: true })
       .click();
@@ -160,9 +160,7 @@ try {
       const row = rows.find((row) => row.image === src);
       assert.ok(row);
       await setPrice(page, row.cents / 100);
-      await page
-        .getByRole("button", { name: "Check price", exact: true })
-        .click();
+      await page.getByRole("button", { name: "Lock in", exact: true }).click();
       await page
         .locator("#visual-feedback")
         .filter({ hasText: "100 / 100 points" })
@@ -217,9 +215,7 @@ try {
     await ready(page);
     await inspect("practice");
     await setPrice(page, 0);
-    await page
-      .getByRole("button", { name: "Check price", exact: true })
-      .click();
+    await page.getByRole("button", { name: "Lock in", exact: true }).click();
     await inspect("practice-answer");
     assert.equal(await page.locator(".price-error").textContent(), "100% low");
     await page.getByRole("button", { name: "Next", exact: true }).click();
@@ -232,16 +228,12 @@ try {
     const frame = page.frameLocator("iframe:not(.feed-loading):not([hidden])");
     await ready(frame);
     await inspect("rush-prompt", frame);
-    await page
-      .getByRole("button", { name: "How to play", exact: true })
-      .click();
+    await page.getByRole("button", { name: "Help", exact: true }).click();
     assert.match(await frame.getByRole("dialog").innerText(), /within 20%/i);
     await inspect("rush-help", frame);
     await frame.getByRole("button", { name: "Close", exact: true }).click();
     await setPrice(frame, 1000);
-    await frame
-      .getByRole("button", { name: "Check price", exact: true })
-      .click();
+    await frame.getByRole("button", { name: "Lock in", exact: true }).click();
     await page
       .getByRole("button", { name: "Keep answer", exact: true })
       .click();

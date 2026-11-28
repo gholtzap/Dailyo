@@ -225,9 +225,13 @@ function updatePauseControl() {
     !["playing", "paused"].includes(run.phase) ||
     (run.phase === "playing" && !Number.isFinite(run.deadline));
   const paused = run.phase === "paused" && review.state !== "previous";
-  pause.textContent = paused ? "Resume" : "Pause";
+  setActionLabel(
+    pause,
+    paused ? "Resume" : "Pause",
+    paused ? undefined : "pause",
+  );
   pause.className = paused ? "primary" : "rush-pause-control";
-  (paused ? resumeCard : actions).append(pause);
+  (paused ? resumeCard : actions).append(pause.parentElement!);
   pauseSurface.hidden = !paused || helpOpen();
   document.body.dataset.rushPhase = paused ? "paused" : run.phase;
   pauseSurface.toggleAttribute(
@@ -592,6 +596,13 @@ function showRound() {
   next.className = "secondary rush-skip";
   const { frame } = current;
   frame.title = game.label;
+  const priceRound = game.label === "pricerot";
+  const footer = document.querySelector<HTMLElement>(".rush-controls")!;
+  (priceRound ? panel.parentElement! : document.body).append(footer);
+  (priceRound ? document.querySelector(".site-masthead")! : actions).append(
+    gameHelp,
+  );
+  gameHelp.textContent = priceRound ? "Help" : "How to play";
   frame.classList.remove("feed-loading");
   if (visible) frame.classList.add("rush-enter");
   if (visible === lastAnswer?.frame) {
@@ -607,6 +618,7 @@ function showRound() {
   );
   if (frame.contentDocument) watchAnswer(frame.contentDocument);
   updateReviewControl();
+  (priceRound ? actions : footer).append(reviewButton.parentElement!);
   status.textContent = `${gameName(game.label)} · Round ${round + 1}`;
   if (duration) {
     timeDisplay.dataset.timed = "";
@@ -663,7 +675,11 @@ function updateClock() {
     finishRound(false, true);
     return;
   }
-  clock.textContent = `${Math.ceil(remaining / 1000)}s`;
+  clock.textContent = String(Math.ceil(remaining / 1000));
+  clock.setAttribute(
+    "aria-label",
+    `${Math.ceil(remaining / 1000)} seconds remaining`,
+  );
   timeDisplay.style.setProperty(
     "--rush-remaining",
     String(Math.min(1, remaining / duration)),
@@ -701,7 +717,8 @@ function showFinish(effect: RushEffect, atDeadline = false) {
   const { correct, expired } = effect;
   stopClock(true);
   if ((expired || atDeadline) && timeDisplay.hasAttribute("data-timed")) {
-    clock.textContent = "0s";
+    clock.textContent = "0";
+    clock.setAttribute("aria-label", "0 seconds remaining");
     timeDisplay.style.setProperty("--rush-remaining", "0");
   }
   if (correct) scores[index]++;

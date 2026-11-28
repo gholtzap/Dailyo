@@ -63,7 +63,7 @@ try {
       assert.equal(await page.locator("#rush-next-tooltip").isVisible(), false);
     }
     await setPrice(child(), q.item.cents / 100);
-    await child().getByRole("button", { name: "Check price" }).click();
+    await child().getByRole("button", { name: "Lock in" }).click();
     await page
       .getByRole("button", { name: "Keep answer", exact: true })
       .click();
@@ -148,7 +148,7 @@ try {
     await status.filter({ hasText: "Paused" }).waitFor();
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     await setPrice(child(), 0);
-    await child().getByRole("button", { name: "Check price" }).click();
+    await child().getByRole("button", { name: "Lock in" }).click();
     await status.filter({ hasText: "Missed" }).waitFor();
     const result = await child().getByRole("heading").first().boundingBox();
     const touch =
