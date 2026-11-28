@@ -38,6 +38,7 @@
       "regions": ["iad1"]
     },
     "api/daily-score.ts": {
+      "excludeFiles": "dist/**",
       "includeFiles": "dist/{data/{network,challenges}.json,games/data/{flags,languages,vocabulary,maprot,yearrot,borderrot,ladderrot,ladder-words,cluerot,skyrot,pricerot,skylinerot,zoomrot,orderrot}.json,world-data/cities.json,world-data/*/{network,challenges}.json}",
       "regions": ["iad1"]
     }
