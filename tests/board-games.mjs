@@ -142,6 +142,29 @@ try {
             await page.locator(".puzzle-progress").textContent(),
             /^0 of/,
           );
+          const start = page.locator(`[data-cell="${puzzle.solution[0]}"]`);
+          await start.scrollIntoViewIfNeeded();
+          const box = await start.boundingBox();
+          await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+          await page.mouse.down();
+          const savedPath = () =>
+            page.evaluate(
+              (day) => localStorage.getItem(`dailyo:path:v1:daily:${day}`),
+              day,
+            );
+          const before = await savedPath();
+          for (let i = 0; i < 20; i++)
+            await page.mouse.move(
+              box.x + box.width / 2 + (i % 2),
+              box.y + box.height / 2,
+            );
+          await page.mouse.up();
+          assert.equal(
+            await savedPath(),
+            before,
+            "Moving within the endpoint must not save or count moves",
+          );
+          await page.getByRole("button", { name: "Undo", exact: true }).click();
           await page.locator(`[data-cell="${puzzle.solution[0]}"]`).focus();
           await page.keyboard.press("Enter");
           await page.reload();
@@ -157,6 +180,23 @@ try {
           .locator("#puzzle-title")
           .filter({ hasText: "Solved" })
           .waitFor();
+        const finishedSave = await page.evaluate(
+          ({ game, day }) =>
+            JSON.parse(localStorage.getItem(`dailyo:${game}:v1:daily:${day}`)),
+          { game: game.id, day },
+        );
+        if (puzzle.kind === "groups")
+          assert.equal(
+            finishedSave.state.history.length,
+            4,
+            "Groups must retain the guesses used to restore its result",
+          );
+        else
+          assert.deepEqual(
+            finishedSave.state.history,
+            [],
+            "Finished saves must omit unusable undo snapshots",
+          );
         await inspect("solved");
         await page.reload();
         await page
