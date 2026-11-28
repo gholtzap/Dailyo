@@ -73,7 +73,10 @@ const read = (part: string): RotState | null => {
 const write = (part: string, value: RotState | Mode | PracticeDifficulty) => {
   try {
     localStorage.setItem(key(part), JSON.stringify(value));
-  } catch {}
+    return true;
+  } catch {
+    return false;
+  }
 };
 function readMode(): Mode | null {
   try {
@@ -90,6 +93,7 @@ const mapGame = kind === "maprot";
 const yearGame = kind === "yearrot";
 const sessions = {} as Record<Mode, RotSession>;
 let loadPractice: () => RotSession;
+let dailySaved = true;
 let mode: Mode =
   startPractice || (!inFeed && readMode() === "practice")
     ? "practice"
@@ -156,7 +160,8 @@ function update(action: RotAction, paint = true) {
     }
     return true;
   }
-  write(session.slot!, next);
+  const saved = write(session.slot!, next);
+  if (mode === "daily") dailySaved = saved;
   if (paint) draw();
   if (paint && phase(next) === "review")
     document
@@ -1359,6 +1364,7 @@ function draw() {
     current === "complete" ? heading.textContent : undefined,
     day,
     key(`daily:${day}`),
+    dailySaved,
   );
 }
 

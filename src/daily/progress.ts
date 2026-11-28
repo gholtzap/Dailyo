@@ -31,7 +31,8 @@ export function readProgress(day: string, version: string): DailyProgress {
   try {
     const saved = JSON.parse(localStorage.getItem(key(day)) ?? "null");
     if (
-      saved?.version !== version ||
+      saved?.protocol !== 2 ||
+      saved.version !== version ||
       !saved.games ||
       typeof saved.games !== "object"
     )
@@ -61,6 +62,9 @@ export function saveProgress(
 ) {
   if (!version) return;
   try {
-    localStorage.setItem(key(day), JSON.stringify({ version, games }));
+    localStorage.setItem(
+      key(day),
+      JSON.stringify({ protocol: 2, version, games }),
+    );
   } catch {}
 }

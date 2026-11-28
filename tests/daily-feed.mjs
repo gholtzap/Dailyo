@@ -545,10 +545,29 @@ https://trainrot.vercel.app/daily/`;
       "orderrot",
     ]) {
       const child = frame(name);
+      let advanced = false;
       for (let round = 0; round < 5; round++) {
         await child
           .getByRole("button", { name: "Show answer", exact: true })
           .click();
+        if (name === "skyrot" && round === 4) {
+          await skip.click();
+          await page.reload();
+          await frame("pricerot").locator("#question-title").waitFor();
+          const restored = await page.evaluate(
+            () =>
+              JSON.parse(
+                localStorage.getItem("dailyo:feed:v1:daily:2026-11-16"),
+              )?.games.skyrot,
+          );
+          assert.equal(
+            restored?.phase,
+            "complete",
+            "A visual set finished before its final Next must be restored as completed, even if skipped",
+          );
+          advanced = true;
+          break;
+        }
         await child
           .getByRole("button", {
             name: round === 4 ? "See results" : "Next",
@@ -556,7 +575,7 @@ https://trainrot.vercel.app/daily/`;
           })
           .click();
       }
-      if (name !== "orderrot") await next.click();
+      if (name !== "orderrot" && !advanced) await next.click();
     }
     await page
       .getByRole("button", { name: "See recap", exact: true })
@@ -653,6 +672,50 @@ https://trainrot.vercel.app/daily/`;
     assert.equal(await train.locator(".train-sequence").innerText(), drafted);
     assert.equal(await progress.innerText(), "1 of 14");
     assert.equal(await undo.isVisible(), false);
+    await skip.click();
+    await flags.locator(".choice").first().waitFor();
+    await flags.locator("body").evaluate(() => {
+      const write = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (key, value) {
+        if (
+          key === "trainrot:flags:v1:daily:2026-11-17" &&
+          JSON.parse(value).index === 5
+        )
+          throw new DOMException(
+            "Simulated full storage",
+            "QuotaExceededError",
+          );
+        return write.call(this, key, value);
+      };
+    });
+    for (let i = 0; i < 5; i++) {
+      await flags.locator(".choice").first().click();
+      await flags.locator("#next").click();
+    }
+    await next.waitFor();
+    const cachedFinish = await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("dailyo:feed:v1:daily:2026-11-17"))
+          ?.games.flags,
+    );
+    assert.notEqual(
+      cachedFinish?.phase,
+      "complete",
+      "A failed game save must not become a durable cached finish",
+    );
+    await page.reload();
+    await flags.locator("#next").waitFor();
+    assert.equal(await progress.innerText(), "2 of 14");
+    await flags.locator("#next").click();
+    await next.waitFor();
+    assert.equal(
+      await page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("dailyo:feed:v1:daily:2026-11-17"))
+            ?.games.flags.phase,
+      ),
+      "complete",
+    );
     assert.deepEqual(errors, []);
     await context.close();
     console.log(
