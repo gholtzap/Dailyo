@@ -1,3 +1,4 @@
+import { setPrice } from "./input-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -145,7 +146,7 @@ try {
       await page.locator(".visual-note, .visual-figure figcaption").count(),
       0,
     );
-    assert.equal(await page.locator(".price-currency").textContent(), "$");
+    assert.equal(await page.locator("#price-value").textContent(), "$0.00");
     await page
       .getByRole("button", { name: "How to play", exact: true })
       .click();
@@ -158,7 +159,7 @@ try {
       const src = await page.locator("#quiz img").getAttribute("src");
       const row = rows.find((row) => row.image === src);
       assert.ok(row);
-      await page.getByLabel("Your guess").fill(String(row.cents / 100));
+      await setPrice(page, row.cents / 100);
       await page
         .getByRole("button", { name: "Check price", exact: true })
         .click();
@@ -215,8 +216,10 @@ try {
       .click();
     await ready(page);
     await inspect("practice");
-    await page.getByLabel("Your guess").fill("0");
-    await page.getByLabel("Your guess").press("Enter");
+    await setPrice(page, 0);
+    await page
+      .getByRole("button", { name: "Check price", exact: true })
+      .click();
     await inspect("practice-answer");
     assert.equal(await page.locator(".price-error").textContent(), "100% low");
     await page.getByRole("button", { name: "Next", exact: true }).click();
@@ -235,8 +238,10 @@ try {
     assert.match(await frame.getByRole("dialog").innerText(), /within 20%/i);
     await inspect("rush-help", frame);
     await frame.getByRole("button", { name: "Close", exact: true }).click();
-    await frame.getByLabel("Your guess").fill("1000");
-    await frame.getByLabel("Your guess").press("Enter");
+    await setPrice(frame, 1000);
+    await frame
+      .getByRole("button", { name: "Check price", exact: true })
+      .click();
     await page
       .getByRole("button", { name: "Keep answer", exact: true })
       .click();

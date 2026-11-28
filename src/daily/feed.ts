@@ -1,3 +1,9 @@
+import {
+  readProgress,
+  saveProgress,
+  unchanged,
+  type DailyProgress,
+} from "./progress.js";
 import { sizeFeedFrame } from "./frame-size.js";
 import { gameName } from "../game-names.js";
 import { required } from "../dom.js";
@@ -41,9 +47,11 @@ const recapDate = new Intl.DateTimeFormat("en-US", {
 });
 const recapColumn =
   Math.max(...games.map(({ label }) => gameName(label).length)) + 3;
+const version = document.body.dataset.feedVersion ?? "";
 let day = dailyDate(),
   skipped = readSkips(),
   results = new Map<string, string>();
+let savedProgress: DailyProgress = readProgress(day, version);
 type Phase = "loading" | "playing" | "complete" | "error" | "recap";
 // Loading restores completed games; a newly completed game waits for Next.
 let index = -1,
@@ -100,16 +108,38 @@ function clearPreload() {
   preload?.frame.remove();
   preload = null;
 }
+function cachedGame(position: number) {
+  const game = games[position];
+  if (!game) return;
+  const saved = savedProgress[game.id];
+  if (
+    saved &&
+    unchanged(saved, day) &&
+    (saved.phase === "complete" || skipped.has(game.id))
+  )
+    return saved;
+}
 function preloadNext() {
-  const game = games[index + 1];
+  let position = index + 1;
+  while (cachedGame(position)) position++;
+  const game = games[position];
   if (!game || preload || document.hidden || navigator.connection?.saveData)
     return;
   const child = createFrame(game);
   child.dataset.feedPreload = "";
-  preload = { position: index + 1, frame: child };
+  preload = { position, frame: child };
   gamePanel.append(child);
 }
+// Unknown/stale -> load. Unchanged Complete -> recap result. Unchanged
+// Playing + skipped -> bypass. A changed save always reloads the game's owner.
 function showGame(position: number) {
+  while (games[position]) {
+    const game = games[position],
+      saved = cachedGame(position);
+    if (!saved) break;
+    if (saved.phase === "complete") results.set(game.id, saved.result);
+    position++;
+  }
   clearTimeout(timeout);
   frame?.remove();
   index = position;
@@ -182,13 +212,14 @@ function changeDay() {
   lastSkip = undefined;
   skipped = readSkips();
   results = new Map<string, string>();
+  savedProgress = readProgress(day, version);
   clearPreload();
   showGame(0);
   return true;
 }
 window.addEventListener("message", (event: MessageEvent<DailyMessage>) => {
   if (event.origin !== location.origin) return;
-  const { type, date, phase: reported, result } = event.data ?? {};
+  const { type, date, phase: reported, result, save } = event.data ?? {};
   if (type !== "daily-game") return;
   if (preload && event.source === preload.frame.contentWindow) {
     // A failed or outdated child can report before it is activated. Try again on advance.
@@ -208,6 +239,20 @@ window.addEventListener("message", (event: MessageEvent<DailyMessage>) => {
   }
   if (!["playing", "complete"].includes(reported)) return;
   const game = games[index];
+  if (unchanged(save, day)) {
+    savedProgress[game.id] =
+      reported === "complete"
+        ? {
+            ...save,
+            phase: "complete",
+            result: typeof result === "string" ? result : "Played",
+          }
+        : { ...save, phase: "playing" };
+    saveProgress(day, version, savedProgress);
+  } else {
+    delete savedProgress[game.id];
+    saveProgress(day, version, savedProgress);
+  }
   if (reported === "complete")
     results.set(game.id, typeof result === "string" ? result : "Played");
   else results.delete(game.id);

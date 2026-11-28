@@ -167,6 +167,7 @@ export type JsonValue =
 export type JsonObject = { [key: string]: JsonValue };
 export interface DailyMessage {
   type: "daily-game";
+  save?: { key: string; value: string | null };
   date: string;
   phase: "playing" | "complete" | "error";
   result?: string | null;

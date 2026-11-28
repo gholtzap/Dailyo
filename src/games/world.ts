@@ -70,9 +70,12 @@ const blank = (): WorldState => ({
   correct: 0,
   selected: null,
 });
+let practice: WorldState | undefined;
 const modeState: Record<Mode, WorldState> = {
   daily: blank(),
-  practice: blank(),
+  get practice() {
+    return (practice ??= practiceState());
+  },
 };
 let mode: Mode = "daily",
   day = "",
@@ -353,7 +356,7 @@ function result() {
     box.append(actions, status);
   }
   quiz.replaceChildren(box);
-  reportDaily("complete", title.textContent, day);
+  reportDaily("complete", title.textContent, day, key(`daily:${day}`));
 }
 function draw() {
   for (const [id, button] of Object.entries(controls))
@@ -465,7 +468,7 @@ function draw() {
   else if (mode === "daily")
     quiz.replaceChildren(dailyProgress(), ...content, next);
   else quiz.replaceChildren(...content, next);
-  reportDaily("playing", undefined, day);
+  reportDaily("playing", undefined, day, key(`daily:${day}`));
 }
 async function start() {
   items = await loadDataset<QuizItem[]>(`/games/data/${kind}.json`);
@@ -512,7 +515,6 @@ async function start() {
     return;
   }
   modeState.daily = dailyState();
-  modeState.practice = practiceState();
   const saved = read<string>(key("mode"));
   mode =
     startPractice || (!inFeed && saved === "practice") ? "practice" : "daily";

@@ -97,7 +97,7 @@ try {
   await rush.waitForFunction(
     () =>
       [...document.querySelectorAll("iframe")].filter((frame) =>
-        frame.contentDocument?.querySelector("#price-input"),
+        frame.contentDocument?.querySelector("#price-dollars"),
       ).length >= 2,
   );
   const reads = (
@@ -119,7 +119,7 @@ try {
   await rush.locator("#rush-retry:not([hidden])").waitFor();
   await rush.unroute("**/games/data/pricerot.json");
   await rush.locator("#rush-retry").click();
-  await rush.frameLocator("iframe[title]").locator("#price-input").waitFor();
+  await rush.frameLocator("iframe[title]").locator("#price-dollars").waitFor();
   await shared.close();
   console.log(
     `${games.length} game pages: early data downloads reused once; failed preload recovers on reload.`,
