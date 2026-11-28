@@ -162,11 +162,18 @@ try {
             JSON.parse(localStorage.getItem(`dailyo:${game}:v1:daily:${day}`)),
           { game: game.id, day },
         );
-        assert.deepEqual(
-          finishedSave.state.history,
-          [],
-          "Finished saves must omit unusable undo snapshots",
-        );
+        if (puzzle.kind === "groups")
+          assert.equal(
+            finishedSave.state.history.length,
+            4,
+            "Groups must retain the guesses used to restore its result",
+          );
+        else
+          assert.deepEqual(
+            finishedSave.state.history,
+            [],
+            "Finished saves must omit unusable undo snapshots",
+          );
         await inspect("solved");
         await page.reload();
         await page
