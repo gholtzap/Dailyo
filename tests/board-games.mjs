@@ -136,6 +136,26 @@ try {
         await page.keyboard.press("Escape");
         await page.waitForFunction(() => document.activeElement?.id === "help");
         const puzzle = makeBoard(game.id, day);
+        if (puzzle.kind === "sudoku") {
+          const keptFocus = await page.evaluate(async () => {
+            const dialog = document.querySelector("#help-dialog");
+            const cell = document.querySelector(".sudoku-cell:not(:disabled)");
+            const closed = new Promise((resolve) =>
+              dialog.addEventListener("close", resolve, { once: true }),
+            );
+            dialog.showModal();
+            dialog.close();
+            cell.focus();
+            await closed;
+            return document.activeElement === cell;
+          });
+          assert.equal(
+            keptFocus,
+            true,
+            "A queued Help close event must not steal the player's new cell focus",
+          );
+        }
+
         if (puzzle.kind === "path") {
           await page.locator(`[data-cell="${puzzle.solution[1]}"]`).click();
           assert.match(
