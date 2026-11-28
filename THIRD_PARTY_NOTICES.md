@@ -52,7 +52,7 @@ retain the repository's license.
 
 ## Lucide
 
-`dist/assets/lucide/pause.svg` is from Lucide v0.468.0, used under the ISC license, with its stroke set to 1.5px for a 1px stroke at the displayed 16px size. Copyright (c) 2022 Lucide Contributors. See https://github.com/lucide-icons/lucide/blob/0.468.0/LICENSE.
+`dist/assets/lucide/pause.svg` is from Lucide v0.468.0, used under the ISC license, with its stroke set to 1.5px for a 1px stroke at the displayed 16px size. Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022. See https://github.com/lucide-icons/lucide/blob/0.468.0/LICENSE.
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
