@@ -3,7 +3,7 @@ import { rushRound } from "../daily/bridge.js";
 const instructions: Record<string, string[]> = {
   sudoku: [
     "Fill each row, column and outlined 2-by-3 box with the numbers 1 to 6, using each number once.",
-    "The starting numbers stay fixed. Type a number to fill a square; Backspace clears it.",
+    "Select a square, then choose a number. Erase clears the square. You can also use number keys and Backspace.",
   ],
   groups: [
     "Find four sets of four words that share a connection. Select four words, then submit the group.",
