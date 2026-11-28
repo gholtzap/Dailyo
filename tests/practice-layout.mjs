@@ -11,6 +11,14 @@ try {
       viewport: { width, height: 568 },
       reducedMotion: "reduce",
     });
+    await p.addInitScript(() => {
+      window.practiceReads = [];
+      const read = Storage.prototype.getItem;
+      Storage.prototype.getItem = function (key) {
+        if (/:practice(?:$|:)/.test(key)) window.practiceReads.push(key);
+        return read.call(this, key);
+      };
+    });
     for (const game of [
       "zoomrot",
       "skylinerot",
@@ -21,8 +29,38 @@ try {
     ]) {
       await p.goto(`${base}/${game}/`);
       await p.locator("#quiz button").first().waitFor();
+      assert.deepEqual(
+        await p.evaluate(() => window.practiceReads),
+        [],
+        `${game}: Daily must not restore an unused practice session`,
+      );
       await p.getByRole("button", { name: "Practice", exact: true }).click();
       await p.locator('#practice[aria-pressed="true"]').waitFor();
+      if (["yearrot", "maprot", "borderrot"].includes(game)) {
+        const initial = await p.evaluate(
+          (game) =>
+            localStorage.getItem(
+              `dailyo:${game}:${game === "borderrot" ? "v2" : "v1"}:practice`,
+            ),
+          game,
+        );
+        assert.ok(
+          initial,
+          "Opening Practice must checkpoint its initial puzzle",
+        );
+        await p.reload();
+        await p.locator('#practice[aria-pressed="true"]').waitFor();
+        assert.equal(
+          await p.evaluate(
+            (game) =>
+              localStorage.getItem(
+                `dailyo:${game}:${game === "borderrot" ? "v2" : "v1"}:practice`,
+              ),
+            game,
+          ),
+          initial,
+        );
+      }
       assert.doesNotMatch(
         await p.locator("main").innerText(),
         /Daily difficulty\./,

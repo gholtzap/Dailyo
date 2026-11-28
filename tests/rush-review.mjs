@@ -1,3 +1,4 @@
+import { setPrice } from "./input-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -42,9 +43,7 @@ try {
     const seed = await rushSeed(page, "pricerot"),
       q = visualSet("pricerot", data, seed, true, 0)[0];
     const child = () => page.frameLocator('iframe[title="pricerot"]');
-    await child()
-      .getByRole("spinbutton")
-      .fill(String(q.item.cents / 100));
+    await setPrice(child(), q.item.cents / 100);
     await child().getByRole("button", { name: "Check price" }).click();
     await page
       .getByRole("button", { name: "Keep answer", exact: true })
@@ -55,7 +54,7 @@ try {
     await page.getByRole("button", { name: "Next", exact: true }).click();
     await status.filter({ hasText: "Round 2" }).waitFor();
     assert.equal(await page.locator("#rush-round").textContent(), "Round 2");
-    await child().getByRole("spinbutton").fill("123");
+    await setPrice(child(), 123);
     await page.clock.fastForward(2000);
     const remaining = await page.getByRole("timer").innerText();
     await page
@@ -86,7 +85,10 @@ try {
     await page
       .getByRole("button", { name: "Back to puzzle", exact: true })
       .press("Enter");
-    assert.equal(await child().getByRole("spinbutton").inputValue(), "123");
+    assert.equal(
+      await child().locator("#price-value").textContent(),
+      "$123.00",
+    );
     assert.equal(await page.getByRole("timer").innerText(), remaining);
     await status.filter({ hasText: "Round 2" }).waitFor();
     assert.equal(await page.locator("#rush-round").textContent(), "Round 2");
@@ -99,7 +101,7 @@ try {
       .click();
     await status.filter({ hasText: "Paused" }).waitFor();
     await page.getByRole("button", { name: "Resume", exact: true }).click();
-    await child().getByRole("spinbutton").fill("0");
+    await setPrice(child(), 0);
     await child().getByRole("button", { name: "Check price" }).click();
     await status.filter({ hasText: "Missed" }).waitFor();
     const result = await child().getByRole("heading").first().boundingBox();

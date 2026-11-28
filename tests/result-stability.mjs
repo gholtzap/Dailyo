@@ -1,3 +1,4 @@
+import { setPrice } from "./input-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium, webkit } from "playwright";
@@ -139,9 +140,7 @@ try {
           const seed = await rushSeed(p, game);
           if (game === "pricerot") {
             const q = visualSet(game, prepareVisual(game, raw), seed)[1];
-            await child
-              .getByLabel("Your guess")
-              .fill(String(q.item.cents / 100));
+            await setPrice(child, q.item.cents / 100);
             await child
               .getByRole("button", { name: "Check price", exact: true })
               .click();
