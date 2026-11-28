@@ -7,10 +7,11 @@ const b = await engine.launch();
 await fs.mkdir("test-results/practice-layout", { recursive: true });
 try {
   for (const width of [390, 1440]) {
-    const p = await b.newPage({
+    const context = await b.newContext({
       viewport: { width, height: 568 },
       reducedMotion: "reduce",
     });
+    const p = await context.newPage();
     for (const game of [
       "zoomrot",
       "skylinerot",
@@ -136,7 +137,7 @@ try {
       3,
       "Opening a second practice tab must not invalidate later edits in the first tab",
     );
-    await p.close();
+    await context.close();
   }
 } finally {
   await b.close();
