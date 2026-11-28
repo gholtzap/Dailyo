@@ -1,3 +1,4 @@
+import { loadDataset } from "../data.js";
 import { gameName } from "../game-names.js";
 import type { Mode, QuizGame, QuizItem } from "../types.js";
 import { showGameProgress } from "./help.js";
@@ -69,9 +70,12 @@ const blank = (): WorldState => ({
   correct: 0,
   selected: null,
 });
+let practice: WorldState | undefined;
 const modeState: Record<Mode, WorldState> = {
   daily: blank(),
-  practice: blank(),
+  get practice() {
+    return (practice ??= practiceState());
+  },
 };
 let mode: Mode = "daily",
   day = "",
@@ -352,7 +356,7 @@ function result() {
     box.append(actions, status);
   }
   quiz.replaceChildren(box);
-  reportDaily("complete", title.textContent, day);
+  reportDaily("complete", title.textContent, day, key(`daily:${day}`));
 }
 function draw() {
   for (const [id, button] of Object.entries(controls))
@@ -464,12 +468,10 @@ function draw() {
   else if (mode === "daily")
     quiz.replaceChildren(dailyProgress(), ...content, next);
   else quiz.replaceChildren(...content, next);
-  reportDaily("playing", undefined, day);
+  reportDaily("playing", undefined, day, key(`daily:${day}`));
 }
 async function start() {
-  const response = await fetch(`/games/data/${kind}.json`);
-  if (!response.ok) throw new Error("Could not load game data");
-  items = await response.json();
+  items = await loadDataset<QuizItem[]>(`/games/data/${kind}.json`);
   if (
     !Array.isArray(items) ||
     items.length < 5 ||
@@ -513,7 +515,6 @@ async function start() {
     return;
   }
   modeState.daily = dailyState();
-  modeState.practice = practiceState();
   const saved = read<string>(key("mode"));
   mode =
     startPractice || (!inFeed && saved === "practice") ? "practice" : "daily";

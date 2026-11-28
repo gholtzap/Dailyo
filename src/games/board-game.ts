@@ -46,7 +46,9 @@ const read = () => {
     return null;
   }
 };
+let sudokuCell: number | null = null;
 function load() {
+  sudokuCell = null;
   const raw = read();
   seed =
     mode === "daily"
@@ -87,40 +89,64 @@ function button(label: string, action: () => void, kind = "secondary") {
 }
 function drawSudoku() {
   if (puzzle.kind !== "sudoku") throw new Error("Wrong board");
-  const current = puzzle;
+  const section = el("div");
   const grid = el("div", undefined, "puzzle-grid columns-6 sudoku-grid");
   grid.setAttribute("role", "group");
   grid.setAttribute("aria-label", "Mini Sudoku board");
-  current.initial.forEach((given, i) => {
-    const square = el("div", undefined, "puzzle-entry");
-    const input = el("input", undefined, "puzzle-input");
-    input.type = "text";
-    input.inputMode = "numeric";
-    input.pattern = "[1-6]";
-    input.maxLength = 1;
-    input.autocomplete = "off";
-    input.dataset.cell = String(i);
-    input.value = state.values[i];
-    input.readOnly = Boolean(given) || state.phase !== "playing";
-    input.setAttribute(
-      "aria-label",
-      `Row ${Math.floor(i / 6) + 1}, column ${(i % 6) + 1}${given ? ", given" : ""}`,
+  puzzle.initial.forEach((given, i) => {
+    const cell = button(
+      state.values[i],
+      () => cell.focus({ preventScroll: true }),
+      "puzzle-input sudoku-cell",
     );
-    input.classList.toggle("is-given", Boolean(given));
-    input.classList.toggle("box-right", i % 6 === 2);
-    input.classList.toggle("box-bottom", Math.floor(i / 6) % 2 === 1 && i < 30);
-    input.oninput = () => {
-      const value = input.value.slice(-1);
-      if (!/^[1-6]?$/.test(value)) {
-        input.value = state.values[i];
-        return;
-      }
-      act({ type: "input", index: i, value });
+    cell.dataset.cell = String(i);
+    cell.disabled = Boolean(given) || state.phase !== "playing";
+    cell.setAttribute(
+      "aria-label",
+      `Row ${Math.floor(i / 6) + 1}, column ${(i % 6) + 1}${given ? ", given" : ""}${state.values[i] ? `, ${state.values[i]}` : ", empty"}`,
+    );
+    cell.setAttribute("aria-pressed", String(sudokuCell === i));
+    cell.classList.toggle("is-given", Boolean(given));
+    cell.classList.toggle("box-right", i % 6 === 2);
+    cell.classList.toggle("box-bottom", Math.floor(i / 6) % 2 === 1 && i < 30);
+    cell.onfocus = () => {
+      sudokuCell = i;
+      grid
+        .querySelectorAll("[data-cell]")
+        .forEach((node) =>
+          node.setAttribute("aria-pressed", String(node === cell)),
+        );
+      section
+        .querySelectorAll<HTMLButtonElement>(".sudoku-palette button")
+        .forEach((node) => (node.disabled = false));
     };
-    square.append(input);
+    const square = el("div", undefined, "puzzle-entry");
+    const tip = el("span", cell.getAttribute("aria-label")!, "puzzle-tooltip");
+    tip.id = `sudoku-tip-${i}`;
+    tip.setAttribute("role", "tooltip");
+    tip.setAttribute("aria-hidden", "true");
+    cell.setAttribute("aria-describedby", tip.id);
+    square.append(cell, tip);
     grid.append(square);
   });
-  return grid;
+  section.append(grid);
+  if (state.phase === "playing") {
+    const palette = el("div", undefined, "sudoku-palette");
+    palette.setAttribute("role", "group");
+    palette.setAttribute("aria-label", "Number palette");
+    for (const digit of ["1", "2", "3", "4", "5", "6", ""]) {
+      const key = button(digit || "Erase", () => {
+        if (sudokuCell !== null)
+          act({ type: "input", index: sudokuCell, value: digit });
+      });
+      key.dataset.digit = digit || "erase";
+      key.setAttribute("aria-label", digit ? `Place ${digit}` : "Erase");
+      key.disabled = sudokuCell === null;
+      palette.append(key);
+    }
+    section.append(palette);
+  }
+  return section;
 }
 function drawGroups() {
   if (puzzle.kind !== "groups") throw new Error("Wrong board");
@@ -366,6 +392,7 @@ function drawBoard() {
 }
 function draw() {
   const focus = (document.activeElement as HTMLElement)?.dataset.cell;
+  const digitFocus = (document.activeElement as HTMLElement)?.dataset.digit;
   document
     .querySelectorAll<HTMLButtonElement>(".modes button")
     .forEach((b) => b.setAttribute("aria-pressed", String(b.id === mode)));
@@ -460,6 +487,10 @@ function draw() {
     quiz
       .querySelector<HTMLElement>(`[data-cell="${focus}"]`)
       ?.focus({ preventScroll: true });
+  if (digitFocus && state.phase === "playing")
+    quiz
+      .querySelector<HTMLElement>(`[data-digit="${digitFocus}"]`)
+      ?.focus({ preventScroll: true });
   reportDaily(
     state.phase === "playing" ? "playing" : "complete",
     state.phase === "playing" ? undefined : result(),
@@ -535,7 +566,17 @@ quiz.addEventListener("keydown", (e) => {
   }[e.key];
   if (delta !== undefined) {
     e.preventDefault();
-    const n = i + delta;
+    let n = i + delta;
+    if (puzzle.kind === "sudoku") {
+      while (
+        n >= 0 &&
+        n < puzzle.size * puzzle.size &&
+        (Math.abs(delta) !== 1 ||
+          Math.floor(n / puzzle.size) === Math.floor(i / puzzle.size)) &&
+        quiz.querySelector<HTMLButtonElement>(`[data-cell="${n}"]`)?.disabled
+      )
+        n += delta;
+    }
     if (
       n >= 0 &&
       n < puzzle.size * puzzle.size &&
@@ -543,6 +584,17 @@ quiz.addEventListener("keydown", (e) => {
         Math.floor(n / puzzle.size) === Math.floor(i / puzzle.size))
     )
       quiz.querySelector<HTMLElement>(`[data-cell="${n}"]`)?.focus();
+  }
+  if (puzzle.kind === "sudoku") {
+    if (/^[1-6]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {
+      e.preventDefault();
+      act({
+        type: "input",
+        index: i,
+        value: /^[1-6]$/.test(e.key) ? e.key : "",
+      });
+    }
+    return;
   }
   if (e.key === "Backspace" && e.target instanceof HTMLInputElement) {
     e.preventDefault();

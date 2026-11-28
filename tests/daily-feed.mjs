@@ -438,7 +438,21 @@ https://trainrot.vercel.app/daily/`;
     await skip.click();
     await page.getByRole("heading", { name: "Daily recap" }).waitFor();
     assert.equal(await rows.filter({ hasText: "Skipped" }).count(), 11);
+    let resumeDatasets = 0;
+    const countResumeData = (request) => {
+      if (/\/(?:games\/)?data\/.*\.json$/.test(new URL(request.url()).pathname))
+        resumeDatasets++;
+    };
+    page.on("request", countResumeData);
     await page.reload();
+    await page.getByRole("heading", { name: "Daily recap" }).waitFor();
+    page.off("request", countResumeData);
+    assert.equal(
+      resumeDatasets,
+      0,
+      "An unchanged completed/skipped feed must resume without game datasets",
+    );
+    assert.equal(await page.locator("iframe").count(), 0);
     const replay = page.getByRole("button", { name: "Play skipped games" });
     await replay.click();
     await languages.locator(".choice").first().waitFor();
@@ -573,6 +587,54 @@ https://trainrot.vercel.app/daily/`;
       ),
       false,
     );
+    const completeRows = await rows.allTextContents();
+    await page.reload();
+    await page.getByRole("heading", { name: "Daily recap" }).waitFor();
+    assert.deepEqual(await rows.allTextContents(), completeRows);
+    assert.equal(await page.locator("iframe").count(), 0);
+    await page.evaluate(() => {
+      const key = "dailyo:feed:v1:daily:2026-11-16";
+      const saved = JSON.parse(localStorage.getItem(key));
+      saved.version = "stale-build";
+      localStorage.setItem(key, JSON.stringify(saved));
+    });
+    let revalidated = 0;
+    const countRevalidation = (request) => {
+      if (request.url().includes("/games/data/")) revalidated++;
+    };
+    page.on("request", countRevalidation);
+    await page.reload();
+    await page.getByRole("heading", { name: "Daily recap" }).waitFor();
+    page.off("request", countRevalidation);
+    assert.ok(
+      revalidated > 0,
+      "A changed puzzle build must revalidate game results",
+    );
+    const flagKey = "trainrot:flags:v1:daily:2026-11-16";
+    const completedFlag = await page.evaluate(
+      (key) => localStorage.getItem(key),
+      flagKey,
+    );
+    await page.evaluate((key) => {
+      const saved = JSON.parse(localStorage.getItem(key));
+      saved.index = 0;
+      saved.answers = [];
+      localStorage.setItem(key, JSON.stringify(saved));
+    }, flagKey);
+    await page.reload();
+    await flags.locator(".choice").first().waitFor();
+    assert.equal(
+      await progress.innerText(),
+      "2 of 14",
+      "Changed standalone progress must invalidate the recap hint",
+    );
+    await page.evaluate(({ key, value }) => localStorage.setItem(key, value), {
+      key: flagKey,
+      value: completedFlag,
+    });
+    await page.reload();
+    await page.getByRole("heading", { name: "Daily recap" }).waitFor();
+    assert.deepEqual(await rows.allTextContents(), completeRows);
     await page.clock.setFixedTime(new Date("2026-11-17T16:00:00Z"));
     await page.evaluate(() =>
       document.dispatchEvent(new Event("visibilitychange")),

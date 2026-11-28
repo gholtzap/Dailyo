@@ -1,3 +1,4 @@
+import { loadDataset } from "./data.js";
 import { configureWorld, describeWorldNetwork } from "./world.js";
 import { required, recordValue } from "./dom.js";
 import type {
@@ -69,9 +70,10 @@ async function start() {
   const dataRoot =
     world && citySlug !== "nyc" ? `/world-data/${citySlug}/` : "/data/";
   async function loadData<T>(name: string): Promise<T> {
-    const response = await fetch(`${dataRoot}${name}.json`);
-    if (!response.ok) throw new Error(`Could not load ${name}`);
-    return response.json() as Promise<T>;
+    const value = await loadDataset<T>(`${dataRoot}${name}.json`);
+    return rushRound !== null && name === "network"
+      ? structuredClone(value)
+      : value;
   }
   const [network, boroughs, challenges] = await Promise.all([
     loadData<Network>("network"),
@@ -677,7 +679,7 @@ async function start() {
           });
         $("#city-map").focus({ preventScroll: true });
       };
-    reportDaily("playing", undefined, dailyDate);
+    reportDaily("playing", undefined, dailyDate, dailyKey(dailyDate));
   }
   function resultLegs(legs: Ride[]) {
     const walk = (w: Walk) =>
@@ -897,6 +899,7 @@ async function start() {
           ? "Map used"
           : `${r.score ?? 0} points`,
       dailyDate,
+      dailyKey(dailyDate),
     );
   }
   function nextJourney() {
