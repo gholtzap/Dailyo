@@ -208,15 +208,17 @@ async function start() {
       }
     | undefined;
   const checkpointKey = `${storageKey}:state`;
+  let dailySaved = true;
   function save() {
     if (rushRound !== null) return;
     try {
-      if (mode === "daily")
+      if (mode === "daily") {
         localStorage.setItem(
           dailyKey(dailyDate),
           JSON.stringify(storedState()),
         );
-      else if (
+        dailySaved = true;
+      } else if (
         practiceSnapshot?.deck === deck &&
         practiceSnapshot.seed === seed &&
         practiceSnapshot.position === position &&
@@ -248,7 +250,9 @@ async function start() {
         );
         practiceSnapshot = { deck, seed, position, revision };
       }
-    } catch {}
+    } catch {
+      if (mode === "daily") dailySaved = false;
+    }
   }
   function load() {
     const validLegs = (legs: DraftLeg[]) =>
@@ -721,7 +725,13 @@ async function start() {
           });
         $("#city-map").focus({ preventScroll: true });
       };
-    reportDaily("playing", undefined, dailyDate, dailyKey(dailyDate));
+    reportDaily(
+      "playing",
+      undefined,
+      dailyDate,
+      dailyKey(dailyDate),
+      dailySaved,
+    );
   }
   function resultLegs(legs: Ride[]) {
     const walk = (w: Walk) =>
@@ -942,6 +952,7 @@ async function start() {
           : `${r.score ?? 0} points`,
       dailyDate,
       dailyKey(dailyDate),
+      dailySaved,
     );
   }
   function nextJourney() {

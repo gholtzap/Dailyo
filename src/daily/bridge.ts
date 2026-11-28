@@ -85,9 +85,10 @@ export function reportDaily(
   result?: string | null,
   date = dailyDate(),
   saveKey?: string,
+  cacheable = true,
 ) {
   let save: DailyMessage["save"];
-  if (inFeed && saveKey) {
+  if (inFeed && saveKey && cacheable) {
     try {
       save = { key: saveKey, value: localStorage.getItem(saveKey) };
     } catch {}
