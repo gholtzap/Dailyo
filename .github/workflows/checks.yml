@@ -43,7 +43,7 @@ jobs:
       - name: Require every check and enforce the full CI budget
         env:
           GH_TOKEN: ${{ github.token }}
-          CI_BROWSER_SHARDS: 18
+          CI_BROWSER_SHARDS: 16
         run: node scripts/ci-finish.mjs
 
   proofs:
@@ -85,7 +85,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     steps:
       - name: Start fetching the exact tested source snapshot
         env:
@@ -224,7 +224,7 @@ jobs:
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
             sleep 0.1
           done
-          node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/18 --jobs=3
+          node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/16 --jobs=4
       - uses: actions/cache/save@v4
         if: success() && steps.runtime.outputs.cache-hit != 'true'
         with:
