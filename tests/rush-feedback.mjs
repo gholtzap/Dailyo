@@ -1,3 +1,4 @@
+import { setPrice } from "./input-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
@@ -38,7 +39,7 @@ try {
         .waitFor();
       const child = () => page.frameLocator(`iframe[title="${game}"]`);
       if (game === "pricerot") {
-        await child().getByRole("spinbutton").fill(String(guess));
+        await setPrice(child(), guess);
         await child().getByRole("button", { name: "Check price" }).click();
       }
       await page
@@ -86,8 +87,7 @@ try {
           .locator("#rush-status")
           .filter({ hasText: "Round 2" })
           .waitFor();
-        if (game === "pricerot")
-          await child().getByRole("spinbutton").fill("10");
+        if (game === "pricerot") await setPrice(child(), 10);
         await page.clock.runFor(game === "pricerot" ? 17999 : 19999);
         // Model a correct answer message crossing the host deadline before its next ticker.
         await page.evaluate(() => {
