@@ -11,7 +11,19 @@ async function get(url) {
     throw new Error(`CI evidence API returned ${response.status}`);
   return response.json();
 }
-const run = await get(endpoint);
+const attempt = Number(process.env.GITHUB_RUN_ATTEMPT ?? 1);
+if (!Number.isInteger(attempt) || attempt < 1)
+  throw new Error("Invalid CI run attempt");
+const attemptEndpoint = `${endpoint}/attempts/${attempt}`;
+const run = await get(attemptEndpoint);
+if (run.run_attempt !== attempt)
+  throw new Error("CI evidence belongs to another attempt");
+const startedAt = attempt === 1 ? run.created_at : run.run_started_at;
+if (
+  !Number.isFinite(Date.parse(startedAt)) ||
+  Date.parse(startedAt) > Date.now()
+)
+  throw new Error("Invalid CI attempt start time");
 const count = Number(process.env.CI_BROWSER_SHARDS ?? 18);
 if (!Number.isInteger(count) || count < 1 || count > 98)
   throw new Error("Invalid browser shard count");
@@ -23,16 +35,20 @@ const required = [
 const stopAt = Date.now() + 180000;
 let checks;
 while (Date.now() < stopAt) {
-  const { jobs } = await get(`${endpoint}/jobs?per_page=100`);
+  const { jobs } = await get(`${attemptEndpoint}/jobs?per_page=100`);
   checks = required.map((name) => jobs.find((job) => job.name === name));
+  if (checks.some((job) => job && job.run_attempt !== attempt))
+    throw new Error("CI jobs belong to another attempt");
   if (checks.every((job) => job?.status === "completed")) break;
   await new Promise((resolve) => setTimeout(resolve, 500));
 }
 if (!checks?.every((job) => job?.status === "completed"))
   throw new Error("Missing or unfinished required CI jobs");
-const elapsedMs = Date.now() - Date.parse(run.created_at);
+const elapsedMs = Date.now() - Date.parse(startedAt);
 const receipt = {
   run: run.html_url,
+  attempt,
+  startedAt,
   elapsedMs,
   budgetMs: 60000,
   finalizeReserveMs: 4000,
