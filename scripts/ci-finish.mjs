@@ -35,7 +35,7 @@ const receipt = {
   run: run.html_url,
   elapsedMs,
   budgetMs: 60000,
-  finalizeReserveMs: 2000,
+  finalizeReserveMs: 4000,
   checks: checks.map((job) => ({ name: job.name, conclusion: job.conclusion })),
 };
 mkdirSync("test-results/ci-optimization", { recursive: true });

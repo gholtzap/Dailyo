@@ -37,7 +37,12 @@ const server = createServer((req, res) => {
       JSON.stringify({
         html_url: "fixture://run",
         created_at: new Date(
-          Date.now() - (mode === "over-budget" ? 61000 : 0),
+          Date.now() -
+            (mode === "over-budget"
+              ? 61000
+              : mode === "cleanup-reserve"
+                ? 57000
+                : 0),
         ).toISOString(),
       }),
     );
@@ -78,6 +83,7 @@ try {
     "cancelled",
     "skipped",
     "over-budget",
+    "cleanup-reserve",
     "api-error",
   ])
     await probe(scenario, false);

@@ -104,40 +104,36 @@ jobs:
           (
             trap 'echo $? > "$RUNNER_TEMP/trainrot-source.exit"' EXIT
             python3 - <<'PY'
-          import hashlib, json, os, pathlib, tarfile, time, urllib.request
+          import base64, os, pathlib, re, subprocess, time
           started=time.monotonic()
-          base=os.environ['GITHUB_API_URL']; repo=os.environ['GITHUB_REPOSITORY']; sha=os.environ['GITHUB_SHA']
-          runtime=pathlib.Path(os.environ['RUNNER_TEMP'])
-          headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'}
-          def request(path): return urllib.request.Request(f'{base}/repos/{repo}/{path}',headers=headers)
-          def api(path):
-            with urllib.request.urlopen(request(path),timeout=30) as response: return json.load(response)
-          commit=api(f'git/commits/{sha}')
-          if commit['sha'] != sha: raise RuntimeError('Source commit did not match the tested SHA')
-          expected_tree=commit['tree']['sha']
-          tree=api(f'git/trees/{expected_tree}?recursive=1')
-          if tree.get('truncated') or tree['sha'] != expected_tree: raise RuntimeError('Incomplete source tree')
-          if any(entry['type'] not in ('tree','blob') or entry['type']=='blob' and entry['mode'] not in ('100644','100755') for entry in tree['tree']):
-            raise RuntimeError('Unsupported source entry type')
-          expected={entry['path']:entry for entry in tree['tree'] if entry['type']=='blob'}
-          seen=set()
-          with urllib.request.urlopen(request(f'tarball/{sha}'),timeout=30) as response, tarfile.open(fileobj=response,mode='r|gz',bufsize=1024*1024) as source:
-            for member in source:
-              if member.isdir(): continue
-              if not member.isfile() or '/' not in member.name: raise RuntimeError('Unsafe source archive entry')
-              relative=member.name.split('/',1)[1]
-              path=pathlib.PurePosixPath(relative)
-              if path.is_absolute() or '..' in path.parts or relative not in expected or relative in seen: raise RuntimeError('Unexpected source archive path')
-              content=source.extractfile(member).read()
-              digest=hashlib.sha1(f'blob {len(content)}\0'.encode()+content).hexdigest()
-              if digest != expected[relative]['sha']: raise RuntimeError('Source content does not match the tested tree: '+relative)
-              destination=pathlib.Path(relative); destination.parent.mkdir(parents=True,exist_ok=True); destination.write_bytes(content)
-              destination.chmod(0o755 if expected[relative]['mode']=='100755' else 0o644)
-              seen.add(relative)
-          if seen != set(expected): raise RuntimeError('Source archive is missing tracked files')
-          if pathlib.Path('bun.lock').read_bytes() != (runtime/'trainrot-source-bun.lock').read_bytes(): raise RuntimeError('Source lockfile changed during setup')
+          sha=os.environ['GITHUB_SHA']; runtime=pathlib.Path(os.environ['RUNNER_TEMP'])
+          if not re.fullmatch('[0-9a-f]{40}',sha): raise RuntimeError('Invalid source SHA')
+          env=os.environ.copy()
+          env.update({
+            'GIT_CONFIG_COUNT':'3',
+            'GIT_CONFIG_KEY_0':'fetch.fsckObjects','GIT_CONFIG_VALUE_0':'true',
+            'GIT_CONFIG_KEY_1':'transfer.fsckObjects','GIT_CONFIG_VALUE_1':'true',
+            'GIT_CONFIG_KEY_2':'http.extraheader',
+            'GIT_CONFIG_VALUE_2':'AUTHORIZATION: basic '+base64.b64encode(('x-access-token:'+os.environ['GH_TOKEN']).encode()).decode(),
+          })
+          def git(*args,capture=False):
+            return subprocess.run(['git',*args],env=env,check=True,text=True,stdout=subprocess.PIPE if capture else None).stdout
+          git('-c','init.defaultBranch=ci','init','--quiet')
+          git('remote','add','origin',os.environ['GITHUB_SERVER_URL']+'/'+os.environ['GITHUB_REPOSITORY']+'.git')
+          git('fetch','--quiet','--no-tags','--depth=1','origin',sha)
+          if git('rev-parse','FETCH_HEAD',capture=True).strip()!=sha: raise RuntimeError('Source commit did not match the tested SHA')
+          git('fsck','--full','--strict','--no-reflogs',sha)
+          entries=git('ls-tree','-rz','--full-tree',sha,capture=True).rstrip('\0').split('\0')
+          for entry in entries:
+            metadata,name=entry.split('\t',1); mode,kind,_=metadata.split(' ')
+            path=pathlib.PurePosixPath(name)
+            if kind!='blob' or mode not in ('100644','100755') or path.is_absolute() or '..' in path.parts:
+              raise RuntimeError('Unsupported source entry: '+name)
+          git('checkout','--quiet','--detach','--force',sha)
+          if pathlib.Path('bun.lock').read_bytes()!=(runtime/'trainrot-source-bun.lock').read_bytes(): raise RuntimeError('Source lockfile changed during setup')
+          git('diff','--exit-code','--quiet',sha)
           (runtime/'trainrot-source.sha').write_text(sha+'\n')
-          print(f'Verified {len(seen)} source files at {sha} in {time.monotonic()-started:.2f}s')
+          print(f'Verified {len(entries)} source files at {sha} in {time.monotonic()-started:.2f}s')
           PY
           ) > "$RUNNER_TEMP/trainrot-source.log" 2>&1 &
       - id: node-runtime
