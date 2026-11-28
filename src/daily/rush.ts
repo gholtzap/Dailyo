@@ -1,3 +1,4 @@
+import { setActionLabel } from "../action-control.js";
 import { enableDatasetCache } from "../data.js";
 import { sizeFeedFrame } from "./frame-size.js";
 import { RushMachine } from "../verified/rush-state.js";
@@ -287,9 +288,11 @@ function updateReviewControl() {
     run.phase === "error";
   const reviewLabel =
     run.phase === "feedback" ? "Keep answer" : "Review answer";
-  // Replacing a pressed button's text node can cancel its click in WebKit.
-  if (reviewButton.textContent !== reviewLabel)
-    reviewButton.textContent = reviewLabel;
+  setActionLabel(
+    reviewButton,
+    reviewLabel,
+    run.phase === "feedback" ? undefined : "review",
+  );
   recapReview.hidden = !lastAnswer;
 }
 function scheduleAdvance() {
@@ -435,7 +438,7 @@ function openReview() {
   pause.hidden = true;
   pauseSurface.hidden = true;
   next.removeAttribute("disabled");
-  next.textContent = from === "recap" ? "Back to recap" : "Back to puzzle";
+  setActionLabel(next, from === "recap" ? "Back to recap" : "Back to puzzle");
   next.className = "primary rush-continue";
   next.onclick = closeReview;
   updateReviewControl();
@@ -463,7 +466,7 @@ function closeReview() {
     if (visible) visible.hidden = false;
     $("#rush-game-name").textContent = gameName(games[index].label);
     roundLabel.textContent = `Round ${round + 1}`;
-    next.textContent = "Skip game";
+    setActionLabel(next, "Skip game", "skip");
     next.className = "secondary rush-skip";
     next.onclick = skipGame;
     if (from === "playing" && run.phase === "paused") resumeRound();
@@ -534,7 +537,7 @@ function openRound(
   roundLabel.textContent = `Round ${round + 1}`;
   retry.hidden = true;
   next.removeAttribute("disabled");
-  next.textContent = "Skip game";
+  setActionLabel(next, "Skip game", "skip");
   next.className = "secondary rush-skip";
   next.onclick = skipGame;
   panel.hidden = false;
@@ -585,7 +588,7 @@ function showRound() {
     return;
   updatePauseControl();
   stopClock();
-  next.textContent = "Skip game";
+  setActionLabel(next, "Skip game", "skip");
   next.className = "secondary rush-skip";
   const { frame } = current;
   frame.title = game.label;
@@ -721,11 +724,10 @@ function showFinish(effect: RushEffect, atDeadline = false) {
   status.textContent = expired ? "Time’s up" : correct ? "Correct" : "Missed";
   if (expired)
     visible?.contentWindow?.postMessage("rush-timeout", location.origin);
-  next.textContent = correct
-    ? "Next"
-    : index === games.length - 1
-      ? "See recap"
-      : "Next game";
+  setActionLabel(
+    next,
+    correct ? "Next" : index === games.length - 1 ? "See recap" : "Next game",
+  );
   next.className = "primary rush-continue";
   status.focus({ preventScroll: true });
   // Spatial results need time to compare the player's mark with the answer.

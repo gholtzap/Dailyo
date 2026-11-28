@@ -38,6 +38,7 @@ test("browser shards cover every package command once and preserve child failure
           "node tests/b.mjs extra": 60,
           "node tests/c.mjs": 40,
           "node tests/d.mjs": 20,
+          "node tests/puzzle-pools-browser.mjs": 12,
         },
       }),
     );
@@ -121,6 +122,26 @@ test("browser shards cover every package command once and preserve child failure
         "Concurrent execution must preserve every argument and case",
       );
     }
+    const heavyShards = new Set<number>();
+    for (let shard = 1; shard <= 3; shard++) {
+      const receipt = JSON.parse(
+        await readFile(
+          join(root, `test-results/ci-browser-${shard}.json`),
+          "utf8",
+        ),
+      );
+      for (const command of [
+        "node tests/a.mjs",
+        "node tests/b.mjs extra",
+        "node tests/c.mjs",
+      ])
+        if (receipt.commands.includes(command)) heavyShards.add(shard);
+    }
+    assert.equal(
+      heavyShards.size,
+      3,
+      "Spread the longest commands across runners instead of concentrating their CPU load",
+    );
     await writeFile(join(root, "tests/a.mjs"), "process.exitCode=7;");
     for (const mode of [[], ["--jobs=2"], ["--jobs=3"]])
       assert.notEqual(

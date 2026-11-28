@@ -41,7 +41,10 @@ const read = <T = WorldState>(key: string): T | null => {
 const write = (key: string, value: WorldState | Mode) => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch {}
+    return true;
+  } catch {
+    return false;
+  }
 };
 const randomSeed = () => `${Date.now()}:${Math.random()}`;
 const make = <K extends keyof HTMLElementTagNameMap>(
@@ -77,6 +80,7 @@ const modeState: Record<Mode, WorldState> = {
     return (practice ??= practiceState());
   },
 };
+let dailySaved = true;
 let mode: Mode = "daily",
   day = "",
   items: QuizItem[] = [];
@@ -121,7 +125,11 @@ function practiceState() {
   return { ...blank(), seed: randomSeed() };
 }
 function save() {
-  write(key(mode === "daily" ? `daily:${day}` : "practice"), modeState[mode]);
+  const saved = write(
+    key(mode === "daily" ? `daily:${day}` : "practice"),
+    modeState[mode],
+  );
+  if (mode === "daily") dailySaved = saved;
 }
 function resetDay() {
   const today = dateToday();
@@ -356,7 +364,13 @@ function result() {
     box.append(actions, status);
   }
   quiz.replaceChildren(box);
-  reportDaily("complete", title.textContent, day, key(`daily:${day}`));
+  reportDaily(
+    "complete",
+    title.textContent,
+    day,
+    key(`daily:${day}`),
+    dailySaved,
+  );
 }
 function draw() {
   for (const [id, button] of Object.entries(controls))
@@ -468,7 +482,7 @@ function draw() {
   else if (mode === "daily")
     quiz.replaceChildren(dailyProgress(), ...content, next);
   else quiz.replaceChildren(...content, next);
-  reportDaily("playing", undefined, day, key(`daily:${day}`));
+  reportDaily("playing", undefined, day, key(`daily:${day}`), dailySaved);
 }
 async function start() {
   items = await loadDataset<QuizItem[]>(`/games/data/${kind}.json`);

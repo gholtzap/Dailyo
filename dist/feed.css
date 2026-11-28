@@ -812,3 +812,4 @@ body:has(iframe.feed-map-expanded[title]:not([hidden])) { overflow: hidden; }
 .rush-feed #rush-help { grid-column: 2; grid-row: 1; }
 .rush-feed .feed-actions #rush-pause { grid-column: 3; grid-row: 1; }
 .rush-feed .rush-time { grid-column: 1 / -1; grid-row: 2; }
+.feed-actions > .action-control:has(#feed-skip) { margin-inline-start: auto; }
