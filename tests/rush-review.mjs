@@ -51,6 +51,13 @@ try {
     {
       await skipButton.hover();
       await page.locator("#rush-next-tooltip").waitFor();
+      const skipTipBounds = await page
+        .locator("#rush-next-tooltip")
+        .boundingBox();
+      assert.ok(
+        skipTipBounds.x >= 0 && skipTipBounds.x + skipTipBounds.width <= width,
+      );
+
       await inspect("skip-tooltip");
       await skipButton.press("Escape");
       assert.equal(await page.locator("#rush-next-tooltip").isVisible(), false);
