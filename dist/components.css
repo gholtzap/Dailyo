@@ -1437,20 +1437,23 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
 .price-gesture { font-size: var(--font-size-12); }
 .price-reels {
   --price-reels-width: 288px;
-  --price-reels-height: 104px;
+  --price-reels-height: 144px;
   display: grid; grid-template-columns: minmax(0, 1fr) var(--space-2) minmax(0, 1fr);
   width: min(100%, var(--price-reels-width)); height: var(--price-reels-height); margin-inline: auto; position: relative;
 }
 
-.price-wheel { display: grid; grid-template-rows: var(--space-7) var(--space-12) var(--space-7); align-items: center; position: relative; text-align: right; font-variant-numeric: tabular-nums; }
-.price-wheel:last-child { text-align: left; }
-.price-wheel:focus-within { outline: var(--stroke-2) solid var(--focus); outline-offset: var(--space-1); border-radius: var(--radius-control); }
-.price-number { display: flex; align-items: center; justify-content: flex-end; height: var(--space-12); padding-inline: var(--space-1); background: var(--surface-raised); border-block: var(--stroke-1) solid var(--line); font-size: var(--font-size-24); font-weight: var(--font-weight-medium); line-height: var(--leading-1); }
-.price-wheel:first-child .price-number { border-left: var(--stroke-1) solid var(--line); border-radius: var(--radius-control) 0 0 var(--radius-control); }
-.price-wheel:last-child .price-number { justify-content: flex-start; border-right: var(--stroke-1) solid var(--line); border-radius: 0 var(--radius-control) var(--radius-control) 0; }
-.price-neighbor { padding-inline: var(--space-1); color: var(--muted); font-size: var(--font-size-14); }
-.price-decimal { background: var(--surface-raised); border-block: var(--stroke-1) solid var(--line); display: flex; align-items: center; justify-content: center; margin-top: var(--space-7); height: var(--space-12); font-size: var(--font-size-24); line-height: var(--leading-1); z-index: var(--layer-base); }
-.price-reel-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; touch-action: none; cursor: ns-resize; }
+.price-wheel { --price-wheel-edge-surface: var(--panel); --price-wheel-edge-paint: inset 0 var(--space-12) 0 0 var(--price-wheel-edge-surface), inset 0 calc(var(--space-12) * -1) 0 0 var(--price-wheel-edge-surface); background: var(--surface-raised); box-shadow: var(--price-wheel-edge-paint); position: relative; z-index: var(--layer-base); height: var(--price-reels-height); overflow-y: auto; overflow-x: hidden; padding-block: var(--space-12); scroll-snap-type: y mandatory; overscroll-behavior-y: contain; scrollbar-width: none; touch-action: pan-y; font-variant-numeric: tabular-nums; overflow-anchor: none; border-radius: var(--radius-control); }
+[data-daily-feed] .price-wheel { --price-wheel-edge-surface: var(--paper); }
+.price-wheel::-webkit-scrollbar { display: none; }
+.price-wheel:focus-visible { outline: var(--stroke-2) solid var(--focus); outline-offset: var(--space-1); }
+.price-wheel[data-pointer-focus] { outline: none; }
+.price-wheel[aria-disabled=true] { overflow: hidden; }
+.price-option { display: flex; align-items: center; justify-content: flex-end; height: var(--space-12); padding-inline: var(--space-1); scroll-snap-align: center; font-size: var(--font-size-14); line-height: var(--leading-1); color: var(--muted); user-select: none; }
+.price-digit { visibility: hidden; }
+.price-option.is-visible .price-digit { visibility: inherit; }
+.price-option.is-selected { font-size: var(--font-size-24); font-weight: var(--font-weight-medium); color: var(--ink); }
+.price-wheel:last-child .price-option { justify-content: flex-start; }
+.price-decimal { background: var(--surface-raised); display: flex; align-items: center; justify-content: center; margin-top: var(--space-12); height: var(--space-12); font-size: var(--font-size-24); line-height: var(--leading-1); z-index: var(--layer-base); }
 .price-submit { width: 100%; margin-top: var(--space-2); }
 .range-control { width: 100%; min-width: 0; min-height: var(--control-size); margin: 0; accent-color: var(--accent); }
 .sudoku-palette { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-4); }

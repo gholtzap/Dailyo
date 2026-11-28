@@ -1,7 +1,9 @@
 import { element as el } from "../dom.js";
+import { designValue } from "../design.js";
 
-// One open estimate, independent of the product's actual price. Editing never
-// submits; an untouched picker remains distinct from an intentional zero.
+// Touch scroll belongs entirely to the browser: no transparent range input and
+// no touch/pointer cancellation. Keep a bounded window of real snap targets so
+// the full $10,000 domain doesn't require ten thousand mounted rows.
 export function priceControl(
   submitPrice: (cents: number) => void,
   initial?: number,
@@ -13,38 +15,31 @@ export function priceControl(
   const amount = el("output", undefined, "screen-reader-only");
   amount.id = "price-value";
   amount.setAttribute("aria-label", "Your guess");
-  amount.htmlFor = "price-dollars price-cents";
   const hint = el("span", "Flick dollars or cents", "price-gesture");
   const submit = el("button", "Lock in", "primary price-submit");
   submit.type = "submit";
   let value = initial ?? 0;
   let touched = initial !== undefined;
-  const wheels = [
-    makeWheel("Dollars", "price-dollars", 10000),
-    makeWheel("Cents", "price-cents", 99),
-  ];
+  let submitted = false;
+  const frozen = () =>
+    submitted ||
+    document.documentElement.hasAttribute("data-rush-paused") ||
+    document.hidden;
+  const wheels = [makeWheel("Dollars", 10000, 100), makeWheel("Cents", 99, 1)];
   const decimal = el("span", ".", "price-decimal");
   decimal.setAttribute("aria-hidden", "true");
-  reels.append(wheels[0].wheel, decimal, wheels[1].wheel);
-  function render() {
-    const dollars = Math.floor(value / 100),
-      cents = value % 100;
+  reels.append(wheels[0].node, decimal, wheels[1].node);
+  function render(source?: HTMLElement, preserveSource = false) {
     for (const [i, wheel] of wheels.entries()) {
-      const n = i === 0 ? dollars : cents;
-      const format = (n: number) =>
-        i === 0 ? "$" + n.toLocaleString("en-US") : String(n).padStart(2, "0");
-      wheel.input.value = String(n);
-      wheel.input.disabled = i === 1 && dollars === 10000;
-      wheel.input.setAttribute(
-        "aria-valuetext",
-        touched ? (i === 0 ? `${n} dollars` : `${n} cents`) : "Not set",
-      );
-      wheel.previous.textContent = touched && n > 0 ? format(n - 1) : "";
-      wheel.number.textContent = touched ? format(n) : i === 0 ? "$—" : "—";
-      wheel.next.textContent =
-        n < Number(wheel.input.max) && !wheel.input.disabled
-          ? format(n + 1)
-          : "";
+      const n = i === 0 ? Math.floor(value / 100) : value % 100;
+      const disabled = i === 1 && value === 1000000;
+      const preserve = source
+        ? source === wheel.node
+          ? preserveSource
+          : wheel.node.getAttribute("aria-valuenow") === String(n) &&
+            wheel.node.getAttribute("aria-disabled") === String(disabled)
+        : false;
+      wheel.sync(n, disabled, preserve);
     }
     amount.value = touched
       ? (value / 100).toLocaleString("en-US", {
@@ -52,112 +47,228 @@ export function priceControl(
           currency: "USD",
         })
       : "Not set";
-    submit.disabled = !touched;
+    submit.disabled = !touched || submitted;
   }
-  function edit(next: number) {
+  function edit(next: number, source?: HTMLElement, preserve = false) {
+    if (frozen()) return;
     value = Math.max(0, Math.min(1000000, Math.round(next)));
     touched = true;
-    render();
+    render(source, preserve);
     onChange(value);
   }
-  for (const [i, wheel] of wheels.entries()) {
-    const unit = i === 0 ? 100 : 1;
-    wheel.input.oninput = () =>
-      edit(
-        i === 0
-          ? wheel.input.valueAsNumber * 100 + (value % 100)
-          : Math.floor(value / 100) * 100 + wheel.input.valueAsNumber,
+  function makeWheel(name: string, max: number, unit: number) {
+    const node = el("div", undefined, "price-wheel");
+    node.id = name === "Dollars" ? "price-dollars" : "price-cents";
+    node.tabIndex = 0;
+    node.setAttribute("role", "spinbutton");
+    node.setAttribute("aria-label", name);
+    node.setAttribute("aria-valuemin", "0");
+    node.setAttribute("aria-valuemax", String(max));
+    const height = Number.parseFloat(designValue("--space-12"));
+    const padding = Number.parseFloat(designValue("--space-12"));
+    let start = -1,
+      selected = 0,
+      disabled = false;
+    let rows: HTMLElement[] = [];
+    let visibleRows: HTMLElement[] = [];
+    let mouse: { y: number; top: number } | undefined;
+    let dragged = false;
+    // Idle + scroll -> Scrolling; scroll continues it. End/settle -> Idle,
+    // snapping and recentering only after native momentum has finished.
+    // Key/tap -> Idle at the chosen row. Frozen/submitted rejects edits.
+    let motion:
+      | { state: "idle" }
+      | { state: "scrolling"; timer: ReturnType<typeof setTimeout> } = {
+      state: "idle",
+    };
+    const format = (n: number) =>
+      unit === 100
+        ? "$" + n.toLocaleString("en-US")
+        : String(n).padStart(2, "0");
+    function idle() {
+      if (motion.state === "scrolling") clearTimeout(motion.timer);
+      motion = { state: "idle" };
+    }
+    function windowFor(n: number) {
+      const first = Math.max(0, Math.min(max - 200, n - 100));
+      if (start === first) return;
+      start = first;
+      rows = [];
+      const fragment = document.createDocumentFragment();
+      for (let i = start; i <= Math.min(max, start + 200); i++) {
+        const row = el("span", undefined, "price-option");
+        row.append(el("span", format(i), "price-digit"));
+        row.setAttribute("aria-hidden", "true");
+        rows.push(row);
+        fragment.append(row);
+      }
+      node.replaceChildren(fragment);
+    }
+    function sync(n: number, unavailable: boolean, preserve = false) {
+      disabled = unavailable;
+      for (const row of visibleRows) row.classList.remove("is-visible");
+      visibleRows = [];
+      const previous = rows[selected - start];
+      if (previous) {
+        previous.classList.remove("is-selected");
+        previous.firstElementChild!.textContent = format(selected);
+      }
+      if (!preserve) windowFor(n);
+      selected = n;
+      for (let i = n - 1; i <= n + 1; i++) {
+        const neighbor = rows[i - start];
+        if (neighbor) {
+          neighbor.classList.add("is-visible");
+          visibleRows.push(neighbor);
+        }
+      }
+      const row = rows[n - start];
+      if (row) {
+        row.classList.add("is-selected");
+        row.firstElementChild!.textContent = touched
+          ? format(n)
+          : unit === 100
+            ? "$—"
+            : "—";
+      }
+      node.setAttribute("aria-valuenow", String(n));
+      node.setAttribute(
+        "aria-valuetext",
+        touched ? `${n} ${name.toLowerCase()}` : "Not set",
       );
-    let drag: { y: number; value: number; id: number } | undefined;
-    wheel.input.onpointerdown = (event) => {
-      if (event.button !== 0 || wheel.input.disabled) return;
-      event.preventDefault();
-      wheel.input.focus({ preventScroll: true });
-      drag = { y: event.clientY, value, id: event.pointerId };
-      wheel.input.setPointerCapture(event.pointerId);
-    };
-    wheel.input.onpointermove = (event) => {
-      if (!drag || drag.id !== event.pointerId) return;
-      const steps = Math.round((drag.y - event.clientY) / 18);
-      if (steps) edit(drag.value + steps * unit);
-    };
-    wheel.input.onpointerup = (event) => {
-      if (!drag || drag.id !== event.pointerId) return;
-      // A tap on a neighboring row is also a single precise step.
-      if (Math.abs(event.clientY - drag.y) < 6) {
-        const box = wheel.input.getBoundingClientRect();
-        const y = event.clientY - box.top;
-        edit(
-          value +
-            (y < box.height / 3 ? -unit : y > (box.height * 2) / 3 ? unit : 0),
-        );
+      node.setAttribute("aria-disabled", String(disabled || submitted));
+      if (!preserve) {
+        idle();
+        node.scrollTop = (n - start) * height;
       }
-      drag = undefined;
-      if (wheel.input.hasPointerCapture(event.pointerId))
-        wheel.input.releasePointerCapture(event.pointerId);
+    }
+    function nearest() {
+      return Math.max(
+        start,
+        Math.min(
+          start + rows.length - 1,
+          start + Math.round(node.scrollTop / height),
+        ),
+      );
+    }
+    function choose(n: number, preserve = false) {
+      if (disabled || frozen()) {
+        sync(selected, disabled);
+        return;
+      }
+      const next =
+        unit === 100
+          ? n * 100 + (value % 100)
+          : Math.floor(value / 100) * 100 + n;
+      edit(next, node, preserve);
+    }
+    function settle() {
+      idle();
+      if (mouse || !form.isConnected) return;
+      if (frozen()) {
+        sync(unit === 100 ? Math.floor(value / 100) : value % 100, disabled);
+        return;
+      }
+      const n = nearest();
+      if (n !== selected) choose(n, true);
+      windowFor(selected);
+      sync(selected, disabled);
+    }
+    node.onscroll = () => {
+      if (!form.isConnected) return;
+      if (disabled || frozen()) {
+        sync(unit === 100 ? Math.floor(value / 100) : value % 100, disabled);
+        return;
+      }
+      const n = nearest();
+      if (n !== selected) choose(n, true);
+      idle();
+      motion = { state: "scrolling", timer: setTimeout(settle, 150) };
     };
-    wheel.input.onpointercancel = () => {
-      drag = undefined;
-    };
-    wheel.input.onkeydown = (event) => {
-      const delta = {
-        ArrowUp: unit,
-        ArrowRight: unit,
-        ArrowDown: -unit,
-        ArrowLeft: -unit,
-        PageUp: unit * 10,
-        PageDown: -unit * 10,
+    node.addEventListener("scrollend", settle);
+    node.onblur = () => node.removeAttribute("data-pointer-focus");
+    node.onkeydown = (event) => {
+      node.removeAttribute("data-pointer-focus");
+      const step = {
+        ArrowUp: 1,
+        ArrowRight: 1,
+        ArrowDown: -1,
+        ArrowLeft: -1,
+        PageUp: 10,
+        PageDown: -10,
       }[event.key];
-      if (delta !== undefined) {
+      if (step !== undefined || event.key === "Home" || event.key === "End") {
         event.preventDefault();
-        edit(value + delta);
-      } else if (event.key === "Home" || event.key === "End") {
-        event.preventDefault();
-        edit(
-          i === 0
-            ? event.key === "Home"
-              ? value % 100
-              : 1000000
-            : Math.floor(value / 100) * 100 + (event.key === "Home" ? 0 : 99),
-        );
+        idle();
+        const n =
+          event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? max
+              : Math.max(0, Math.min(max, selected + (step ?? 0)));
+        choose(n);
       }
     };
-    wheel.input.addEventListener(
-      "wheel",
-      (event) => {
-        if (wheel.input.disabled) return;
-        event.preventDefault();
-        edit(value + (event.deltaY > 0 ? unit : -unit));
-      },
-      { passive: false },
-    );
+    node.onclick = (event) => {
+      if (dragged) {
+        dragged = false;
+        return;
+      }
+      const rect = node.getBoundingClientRect();
+      const n =
+        start +
+        Math.floor(
+          (node.scrollTop + event.clientY - rect.top - padding) / height,
+        );
+      idle();
+      choose(Math.max(0, Math.min(max, n)));
+    };
+    // Desktop mouse drag is separate; touch uses native pan, inertia and snap.
+    node.onpointerdown = (event) => {
+      node.setAttribute("data-pointer-focus", "");
+      dragged = false;
+      if (
+        event.pointerType !== "mouse" ||
+        event.button !== 0 ||
+        disabled ||
+        frozen()
+      )
+        return;
+      event.preventDefault();
+      node.focus({ preventScroll: true });
+      mouse = { y: event.clientY, top: node.scrollTop };
+      node.setPointerCapture(event.pointerId);
+    };
+    node.onpointermove = (event) => {
+      if (!mouse || event.pointerType !== "mouse") return;
+      if (Math.abs(event.clientY - mouse.y) > 4) dragged = true;
+      node.scrollTop = mouse.top + mouse.y - event.clientY;
+    };
+    const endMouse = () => {
+      if (!mouse) return;
+      mouse = undefined;
+      settle();
+    };
+    node.onpointerup = endMouse;
+    node.onpointercancel = endMouse;
+    return { node, sync, stop: idle };
   }
   form.append(label, reels, hint, amount, submit);
   form.onsubmit = (event) => {
     event.preventDefault();
-    if (!touched || submit.disabled) return;
-    submit.disabled = true;
+    if (!touched || frozen()) return;
+    // Read the visible row synchronously, including a tap during scrolling.
+    for (const wheel of wheels)
+      wheel.node.dispatchEvent(new Event("scrollend"));
+    submitted = true;
+    for (const wheel of wheels) wheel.stop();
+    render();
     submitPrice(value);
   };
   render();
+  // Before the caller mounts the form there is no scroll box to position.
+  queueMicrotask(() => {
+    if (form.isConnected) render();
+  });
   return form;
-}
-
-function makeWheel(name: string, id: string, max: number) {
-  const wheel = el("div", undefined, "price-wheel");
-  const previous = el("span", undefined, "price-neighbor");
-  const number = el("span", undefined, "price-number");
-  const next = el("span", undefined, "price-neighbor");
-  for (const n of [previous, number, next])
-    n.setAttribute("aria-hidden", "true");
-  const input = el("input", undefined, "price-reel-input");
-  input.id = id;
-  input.setAttribute("aria-label", name);
-  input.type = "range";
-  input.min = "0";
-  input.max = String(max);
-  input.step = "1";
-  input.value = "0";
-  wheel.append(previous, number, next, input);
-  return { wheel, input, previous, number, next };
 }

@@ -48,7 +48,7 @@ try {
         });
       };
       await page.goto(`${base}/pricerot/`);
-      const dollars = page.getByRole("slider", {
+      const dollars = page.getByRole("spinbutton", {
         name: "Dollars",
         exact: true,
       });
@@ -60,16 +60,19 @@ try {
       await inspect("price-opening");
       await dollars.focus();
       await dollars.press("ArrowRight");
-      const cents = page.getByRole("slider", { name: "Cents", exact: true });
+      const cents = page.getByRole("spinbutton", {
+        name: "Cents",
+        exact: true,
+      });
       await cents.focus();
       await cents.press("ArrowRight");
       assert.equal(await page.locator("#price-value").textContent(), "$1.01");
       const box = await dollars.boundingBox();
       await page.mouse.move(box.x + box.width / 2, box.y + 60);
       await page.mouse.down();
-      await page.mouse.move(box.x + box.width / 2, box.y + 24, { steps: 4 });
+      await page.mouse.move(box.x + box.width / 2, box.y - 36, { steps: 4 });
       await page.mouse.up();
-      assert.equal(await dollars.inputValue(), "3");
+      assert.equal(await dollars.getAttribute("aria-valuenow"), "3");
       for (const [amount, expected] of [
         [0, "$0.00"],
         [0.01, "$0.01"],

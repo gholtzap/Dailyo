@@ -1,15 +1,27 @@
-// Set the native reel inputs; gesture-inputs exercises real pointer and keys.
+// Grading fixtures use the same keyboard transitions as an accessible picker.
+// Trusted touch/pan coverage lives in price-touch.mjs.
 export async function setPrice(surface, amount) {
   const cents = Math.round(Number(amount) * 100);
-  const dollars = Math.floor(cents / 100);
-  for (const [name, value] of [
-    ["Dollars", dollars],
-    ["Cents", cents % 100],
+  for (const [name, target, maximum] of [
+    ["Dollars", Math.floor(cents / 100), 10000],
+    ["Cents", cents % 100, 99],
   ])
-    await surface
-      .getByRole("slider", { name, exact: true })
-      .evaluate((input, value) => {
-        input.value = String(value);
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-      }, value);
+    await surface.getByRole("spinbutton", { name, exact: true }).evaluate(
+      (wheel, { target, maximum }) => {
+        if (wheel.getAttribute("aria-disabled") === "true") return;
+        const fromEnd = maximum - target < target;
+        const key = (key) =>
+          wheel.dispatchEvent(
+            new KeyboardEvent("keydown", { key, bubbles: true }),
+          );
+        key(fromEnd ? "End" : "Home");
+        let distance = fromEnd ? maximum - target : target;
+        while (distance >= 10) {
+          key(fromEnd ? "PageDown" : "PageUp");
+          distance -= 10;
+        }
+        while (distance-- > 0) key(fromEnd ? "ArrowDown" : "ArrowUp");
+      },
+      { target, maximum },
+    );
 }
