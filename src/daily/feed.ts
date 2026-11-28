@@ -1,3 +1,4 @@
+import { setActionLabel } from "../action-control.js";
 import {
   readProgress,
   saveProgress,
@@ -271,6 +272,7 @@ window.addEventListener("message", (event: MessageEvent<DailyMessage>) => {
   phase = reported;
   renderActions();
 });
+setActionLabel(skip, "Skip game", "skip");
 skip.onclick = () => {
   if (changeDay() || !["playing", "error"].includes(phase)) return;
   lastSkip = index;
