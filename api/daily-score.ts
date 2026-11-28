@@ -110,14 +110,14 @@ const worldTrains = new Map<
 >();
 let lastAdmissionCleanup: number | undefined;
 
+function readJson<T>(path: string): T {
+  return JSON.parse(
+    readFileSync(new URL("../dist/" + path, import.meta.url), "utf8"),
+  ) as T;
+}
+
 function readData<T = JsonValue>(path: string): T {
-  if (!data.has(path))
-    data.set(
-      path,
-      JSON.parse(
-        readFileSync(new URL("../dist/" + path, import.meta.url), "utf8"),
-      ),
-    );
+  if (!data.has(path)) data.set(path, readJson(path));
   return data.get(path) as T;
 }
 
@@ -180,7 +180,7 @@ export function grade(
         const original =
           city.slug === "nyc"
             ? readData<Network>("data/network.json")
-            : readData<Network>(`world-data/${city.slug}/network.json`);
+            : readJson<Network>(`world-data/${city.slug}/network.json`);
         const network = {
           ...original,
           metadata: { ...original.metadata, feedVersion: city.feedVersion },
@@ -188,7 +188,7 @@ export function grade(
         const challenges =
           city.slug === "nyc"
             ? train.challenges
-            : readData<Challenge[]>(`world-data/${city.slug}/challenges.json`);
+            : readJson<Challenge[]>(`world-data/${city.slug}/challenges.json`);
         worldTrains.set(city.slug, {
           network,
           challenges,

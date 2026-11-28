@@ -1,3 +1,4 @@
+import { loadDataset } from "../data.js";
 import { releasedPool } from "./pool-version.js";
 import { designValue } from "../design.js";
 import { gameName } from "../game-names.js";
@@ -20,7 +21,6 @@ import {
   makeSet,
   newSession,
   phase,
-  preparePuzzles,
   rankingPuzzle,
   restoreSession,
   roundCount,
@@ -89,6 +89,7 @@ const number = new Intl.NumberFormat("en");
 const mapGame = kind === "maprot";
 const yearGame = kind === "yearrot";
 const sessions = {} as Record<Mode, RotSession>;
+let loadPractice: () => RotSession;
 let mode: Mode =
   startPractice || (!inFeed && readMode() === "practice")
     ? "practice"
@@ -135,6 +136,7 @@ function resetDay() {
 }
 
 function selectMode(next: Mode) {
+  if (next === "practice") sessions.practice ??= loadPractice();
   mode = next;
   write("mode", mode);
   resetDay();
@@ -1363,13 +1365,11 @@ function draw() {
 async function start() {
   const geometry: Promise<BorderGeometry | null> | null =
     kind === "borderrot" || mapGame
-      ? fetch(`/games/data/${mapGame ? "map-geometry" : "border-map"}.json`)
-          .then((response) => (response.ok ? response.json() : null))
-          .catch(() => null)
+      ? loadDataset<BorderGeometry>(
+          `/games/data/${mapGame ? "map-geometry" : "border-map"}.json`,
+        ).catch(() => null)
       : null;
-  const response = await fetch(`/games/data/${kind}.json`);
-  if (!response.ok) throw new Error("Game data unavailable");
-  data = preparePuzzles(kind, await response.json());
+  data = await loadDataset<RotData>(`/games/data/${kind}.json`, "rot");
   const rawGeometry = await geometry;
   if (mapGame && rawGeometry) {
     mapGeometry = rawGeometry;
@@ -1420,16 +1420,17 @@ async function start() {
     return;
   }
   await waitForFeedActivation();
-  const practiceSession = () => {
+  loadPractice = () => {
     const saved = read(practiceSlot(difficulty));
     const seed =
       typeof saved?.seed === "string" && saved.seed.length < 100
         ? saved.seed
         : randomSeed();
-    return mountSession(practiceSlot(difficulty), seed, difficulty);
+    const session = mountSession(practiceSlot(difficulty), seed, difficulty);
+    write(practiceSlot(difficulty), session.state);
+    return session;
   };
-  sessions.practice = practiceSession();
-  write(practiceSlot(difficulty), sessions.practice.state);
+  if (mode === "practice") sessions.practice = loadPractice();
   if (yearGame && !inFeed) {
     settings = practiceSettings(
       {
@@ -1441,8 +1442,7 @@ async function start() {
         if (next === difficulty) return;
         difficulty = next;
         write("difficulty", difficulty);
-        sessions.practice = practiceSession();
-        write(practiceSlot(difficulty), sessions.practice.state);
+        sessions.practice = loadPractice();
         draw();
       },
     );

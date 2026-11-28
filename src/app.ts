@@ -1,3 +1,4 @@
+import { loadDataset } from "./data.js";
 import { configureWorld, describeWorldNetwork } from "./world.js";
 import { required, recordValue } from "./dom.js";
 import type {
@@ -69,9 +70,10 @@ async function start() {
   const dataRoot =
     world && citySlug !== "nyc" ? `/world-data/${citySlug}/` : "/data/";
   async function loadData<T>(name: string): Promise<T> {
-    const response = await fetch(`${dataRoot}${name}.json`);
-    if (!response.ok) throw new Error(`Could not load ${name}`);
-    return response.json() as Promise<T>;
+    const value = await loadDataset<T>(`${dataRoot}${name}.json`);
+    return rushRound !== null && name === "network"
+      ? structuredClone(value)
+      : value;
   }
   const [network, boroughs, challenges] = await Promise.all([
     loadData<Network>("network"),
