@@ -154,7 +154,7 @@ jobs:
         if: steps.node-runtime.outputs.available != 'true'
         with:
           node-version: "24"
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         id: runtime
         with:
           path: |
@@ -225,6 +225,16 @@ jobs:
             sleep 0.1
           done
           node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/18 --jobs=3
+      - uses: actions/cache/save@v4
+        if: success() && steps.runtime.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules/playwright
+            node_modules/playwright-core
+            node_modules/lintapple
+            node_modules/axe-core
+            ~/.cache/ms-playwright
+          key: ${{ steps.runtime.outputs.cache-primary-key }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
