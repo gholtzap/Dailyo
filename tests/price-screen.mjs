@@ -92,17 +92,17 @@ try {
 
       await setPrice(child, 3.49);
       await child
-        .getByRole("slider", { name: "Cents", exact: true })
+        .getByRole("spinbutton", { name: "Cents", exact: true })
         .press("ArrowUp");
       assert.equal(await child.locator("#price-value").textContent(), "$3.50");
-      const dollars = child.getByRole("slider", {
+      const dollars = child.getByRole("spinbutton", {
         name: "Dollars",
         exact: true,
       });
       const box = await dollars.boundingBox();
       await page.mouse.move(box.x + box.width / 2, box.y + 60);
       await page.mouse.down();
-      await page.mouse.move(box.x + box.width / 2, box.y + 24, { steps: 3 });
+      await page.mouse.move(box.x + box.width / 2, box.y - 36, { steps: 3 });
       await page.mouse.up();
       assert.equal(await child.locator("#price-value").textContent(), "$5.50");
       await setPrice(child, 0);
@@ -110,7 +110,7 @@ try {
       await setPrice(child, 10000);
       assert.equal(
         await child
-          .getByRole("slider", { name: "Cents", exact: true })
+          .getByRole("spinbutton", { name: "Cents", exact: true })
           .isDisabled(),
         true,
       );
@@ -128,6 +128,11 @@ try {
       assert.notEqual(partial.color, full.color);
       await page.getByRole("button", { name: "Pause", exact: true }).click();
       const paused = await meter();
+      assert.equal(
+        await child.locator(".price-digit:visible").count(),
+        0,
+        "Pausing conceals the scrolling rows too",
+      );
       await page.clock.runFor(2000);
       assert.deepEqual(await meter(), paused);
 
