@@ -43,7 +43,7 @@ jobs:
       - name: Require every check and enforce the full CI budget
         env:
           GH_TOKEN: ${{ github.token }}
-          CI_BROWSER_SHARDS: 16
+          CI_BROWSER_SHARDS: 24
         run: node scripts/ci-finish.mjs
 
   proofs:
@@ -85,7 +85,33 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard:
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+          ]
     steps:
       - name: Start fetching the exact tested source snapshot
         env:
@@ -225,7 +251,7 @@ jobs:
             sleep 0.1
           done
           head -n 2 /tmp/trainrot-server.log
-          node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/16 --jobs=4
+          node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/24 --jobs=3
       - uses: actions/cache/save@v4
         if: success() && steps.runtime.outputs.cache-hit != 'true'
         with:

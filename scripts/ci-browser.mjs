@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const planning = process.argv[2] === "--plan";
-const match = (planning ? "--shard=1/16" : process.argv[2])?.match(
+const match = (planning ? "--shard=1/24" : process.argv[2])?.match(
   /^--shard=(\d+)\/(\d+)$/,
 );
 assert.ok(
