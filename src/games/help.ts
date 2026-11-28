@@ -135,7 +135,13 @@ document.querySelector<HTMLElement>("#help")!.onclick = () => {
     parent.postMessage({ type: "rush-help", open: true }, location.origin);
 };
 dialog.addEventListener("close", () => {
-  document.querySelector<HTMLElement>("#help")?.focus({ preventScroll: true });
+  const active = document.activeElement;
+  // Native dialog closing already restores focus. A queued close event must
+  // not pull it away from a control the player has selected since then.
+  if (!active || active === document.body || dialog.contains(active))
+    document
+      .querySelector<HTMLElement>("#help")
+      ?.focus({ preventScroll: true });
   if (rushRound !== null)
     parent.postMessage({ type: "rush-help", open: false }, location.origin);
 });
