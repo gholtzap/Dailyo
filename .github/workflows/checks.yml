@@ -101,12 +101,17 @@ jobs:
           (pathlib.Path(os.environ['RUNNER_TEMP'])/'trainrot-source-bun.lock').write_bytes(lock)
           PY
       - uses: actions/cache/restore@v4
-        id: source-objects
+        id: runtime
         with:
           path: |
             .git/objects
             .git/source-cache-base
-          key: verified-git-source-v1-${{ runner.os }}-${{ runner.arch }}
+            node_modules/playwright
+            node_modules/playwright-core
+            node_modules/lintapple
+            node_modules/axe-core
+            ~/.cache/ms-playwright
+          key: browser-runtime-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
       - name: Start fetching the exact tested source snapshot
         env:
           GH_TOKEN: ${{ github.token }}
@@ -135,7 +140,8 @@ jobs:
           objects=pathlib.Path('.git/objects'); cached=pathlib.Path('.git/source-cache-base')
           if objects.is_symlink() or any(p.is_symlink() for p in objects.rglob('*')): raise RuntimeError('Unsupported cached object link')
           if any((objects/'info'/name).exists() for name in ('alternates','http-alternates')): raise RuntimeError('Unsupported cached object alternate')
-          if cached.exists():
+          warm=cached.exists()
+          if warm:
             base=cached.read_text().strip()
             if not re.fullmatch('[0-9a-f]{40}',base): raise RuntimeError('Invalid cached source SHA')
             pathlib.Path('.git/shallow').write_text(base+'\n')
@@ -146,7 +152,7 @@ jobs:
           elif any(p.is_file() for p in objects.rglob('*')): raise RuntimeError('Missing cached source base')
           git('fetch','--quiet','--no-tags','--depth=1','origin',sha)
           if git('rev-parse','FETCH_HEAD',capture=True).strip()!=sha: raise RuntimeError('Source commit did not match the tested SHA')
-          git('fsck','--full','--strict','--no-reflogs',sha)
+          if not warm: git('fsck','--full','--strict','--no-reflogs',sha)
           entries=git('ls-tree','-rz','--full-tree',sha,capture=True).rstrip('\0').split('\0')
           for entry in entries:
             metadata,name=entry.split('\t',1); mode,kind,_=metadata.split(' ')
@@ -176,7 +182,8 @@ jobs:
         with:
           node-version: "24"
       - uses: actions/cache/restore@v4
-        id: runtime
+        if: steps.runtime.outputs.cache-hit != 'true'
+        id: legacy-runtime
         with:
           path: |
             node_modules/playwright
@@ -186,13 +193,13 @@ jobs:
             ~/.cache/ms-playwright
           key: browser-runtime-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
       - uses: actions/cache@v4
-        if: steps.runtime.outputs.cache-hit != 'true'
+        if: steps.runtime.outputs.cache-hit != 'true' && steps.legacy-runtime.outputs.cache-hit != 'true'
         id: dependencies
         with:
           path: node_modules
           key: dependencies-${{ runner.os }}-${{ runner.arch }}-bun-1.4.5-${{ hashFiles('bun.lock') }}
       - uses: oven-sh/setup-bun@v2
-        if: steps.runtime.outputs.cache-hit != 'true' && steps.dependencies.outputs.cache-hit != 'true'
+        if: steps.runtime.outputs.cache-hit != 'true' && steps.legacy-runtime.outputs.cache-hit != 'true' && steps.dependencies.outputs.cache-hit != 'true'
         with:
           bun-version: 1.4.5
       - name: Require successful source snapshot
@@ -213,7 +220,7 @@ jobs:
             trap 'echo $? > /tmp/trainrot-data.exit' EXIT
             node scripts/stage-data.mjs > /tmp/trainrot-data.log 2>&1
           ) > /dev/null 2>&1 &
-      - if: steps.runtime.outputs.cache-hit != 'true' && steps.dependencies.outputs.cache-hit != 'true'
+      - if: steps.runtime.outputs.cache-hit != 'true' && steps.legacy-runtime.outputs.cache-hit != 'true' && steps.dependencies.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
       - name: Require successful subway fixtures
         run: |
@@ -228,12 +235,12 @@ jobs:
           echo 'Subway fixture generation did not finish.' >&2
           exit 1
       - uses: actions/cache@v4
-        if: steps.runtime.outputs.cache-hit != 'true'
+        if: steps.runtime.outputs.cache-hit != 'true' && steps.legacy-runtime.outputs.cache-hit != 'true'
         id: chromium
         with:
           path: ~/.cache/ms-playwright
           key: chromium-shell-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
-      - if: steps.runtime.outputs.cache-hit != 'true' && steps.chromium.outputs.cache-hit != 'true'
+      - if: steps.runtime.outputs.cache-hit != 'true' && steps.legacy-runtime.outputs.cache-hit != 'true' && steps.chromium.outputs.cache-hit != 'true'
         run: node node_modules/playwright/cli.js install --only-shell chromium
       - name: Run the recorded-time shard
         env:
@@ -247,16 +254,11 @@ jobs:
           done
           node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/16 --jobs=4
       - uses: actions/cache/save@v4
-        if: success() && matrix.shard == 16 && steps.source-objects.outputs.cache-hit != 'true'
+        if: success() && matrix.shard == 16 && steps.runtime.outputs.cache-hit != 'true'
         with:
           path: |
             .git/objects
             .git/source-cache-base
-          key: ${{ steps.source-objects.outputs.cache-primary-key }}
-      - uses: actions/cache/save@v4
-        if: success() && steps.runtime.outputs.cache-hit != 'true'
-        with:
-          path: |
             node_modules/playwright
             node_modules/playwright-core
             node_modules/lintapple

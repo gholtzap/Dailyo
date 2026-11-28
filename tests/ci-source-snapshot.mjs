@@ -90,6 +90,7 @@ try {
     "success",
     "warm-cache",
     "corrupt-cache",
+    "corrupt-update",
     "invalid-cache-base",
     "missing-cache-base",
     "lock-http-error",
@@ -111,6 +112,7 @@ try {
       [
         "warm-cache",
         "corrupt-cache",
+        "corrupt-update",
         "invalid-cache-base",
         "missing-cache-base",
       ].includes(mode)
@@ -148,6 +150,17 @@ try {
         await chmod(cached, 0o644);
         await writeFile(cached, "corrupt cached object");
       }
+    }
+    if (mode === "corrupt-update") {
+      const changed = git("-C", repo, "rev-parse", "HEAD:source-marker");
+      const broken = join(
+        repo,
+        ".git/objects",
+        changed.slice(0, 2),
+        changed.slice(2),
+      );
+      await chmod(broken, 0o644);
+      await writeFile(broken, "corrupt incoming update");
     }
     const object = join(repo, ".git/objects", blob.slice(0, 2), blob.slice(2));
     if (mode === "corrupt-object") {
