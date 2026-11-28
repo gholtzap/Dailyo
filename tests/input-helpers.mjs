@@ -1,9 +1,9 @@
 // Grading fixtures use the same keyboard transitions as an accessible picker.
 // Trusted touch/pan coverage lives in price-touch.mjs.
 export async function setPrice(surface, amount) {
-  const cents = Math.round(Number(amount) * 100);
+  const cents = Math.min(10000, Math.max(0, Math.round(Number(amount) * 100)));
   for (const [name, target, maximum] of [
-    ["Dollars", Math.floor(cents / 100), 10000],
+    ["Dollars", Math.floor(cents / 100), 100],
     ["Cents", cents % 100, 99],
   ])
     await surface.getByRole("spinbutton", { name, exact: true }).evaluate(

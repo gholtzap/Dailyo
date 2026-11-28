@@ -73,7 +73,7 @@ try {
     await page.getByRole("button", { name: "Next", exact: true }).click();
     await status.filter({ hasText: "Round 2" }).waitFor();
     assert.equal(await page.locator("#rush-round").textContent(), "Round 2");
-    await setPrice(child(), 123);
+    await setPrice(child(), 23.45);
     await page.clock.fastForward(2000);
     const remaining = await page.getByRole("timer").innerText();
     const reviewControl = page.getByRole("button", {
@@ -131,10 +131,7 @@ try {
     await page
       .getByRole("button", { name: "Back to puzzle", exact: true })
       .press("Enter");
-    assert.equal(
-      await child().locator("#price-value").textContent(),
-      "$123.00",
-    );
+    assert.equal(await child().locator("#price-value").textContent(), "$23.45");
     assert.equal(await page.getByRole("timer").innerText(), remaining);
     await status.filter({ hasText: "Round 2" }).waitFor();
     assert.equal(await page.locator("#rush-round").textContent(), "Round 2");
@@ -194,7 +191,7 @@ try {
     receipts.push({
       width,
       remaining,
-      draft: "123",
+      draft: "23.45",
       correct: 1,
       checks: [
         "explicit hold",
