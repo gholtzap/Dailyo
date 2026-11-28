@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { availableParallelism, totalmem } from "node:os";
 import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
@@ -8,10 +9,10 @@ const match = (planning ? "--shard=1/18" : process.argv[2])?.match(
 );
 assert.ok(
   match && [3, 4].includes(process.argv.length),
-  "Use --shard=index/count [--jobs=1|2|3]",
+  "Use --shard=index/count [--jobs=1|2|3|4]",
 );
 const jobsArg = process.argv[3] ?? "--jobs=1";
-assert.match(jobsArg, /^--jobs=[123]$/);
+assert.match(jobsArg, /^--jobs=[1234]$/);
 const jobs = Number(jobsArg.split("=")[1]);
 const index = Number(match[1]),
   count = Number(match[2]);
@@ -155,7 +156,15 @@ if (planning) {
   process.exit(0);
 }
 mkdirSync("test-results", { recursive: true });
-const receipt = { index, count, ...shards[index - 1], results: [] };
+const receipt = {
+  index,
+  count,
+  workers: jobs,
+  cpus: availableParallelism(),
+  memoryBytes: totalmem(),
+  ...shards[index - 1],
+  results: [],
+};
 async function worker(queue) {
   for (const command of queue) {
     const [program, file, ...args] = command.split(" ");

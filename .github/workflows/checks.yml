@@ -224,7 +224,7 @@ jobs:
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
             sleep 0.1
           done
-          node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/18 --jobs=3
+          node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/18 --jobs=4
       - uses: actions/cache/save@v4
         if: success() && steps.runtime.outputs.cache-hit != 'true'
         with:

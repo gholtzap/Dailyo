@@ -100,7 +100,7 @@ test("browser shards cover every package command once and preserve child failure
         ).status,
         0,
       );
-    for (const jobs of [2, 3]) {
+    for (const jobs of [2, 3, 4]) {
       await rm(join(root, "visited"));
       for (let shard = 1; shard <= 3; shard++)
         assert.equal(
@@ -143,7 +143,7 @@ test("browser shards cover every package command once and preserve child failure
       "Spread the longest commands across runners instead of concentrating their CPU load",
     );
     await writeFile(join(root, "tests/a.mjs"), "process.exitCode=7;");
-    for (const mode of [[], ["--jobs=2"], ["--jobs=3"]])
+    for (const mode of [[], ["--jobs=2"], ["--jobs=3"], ["--jobs=4"]])
       assert.notEqual(
         spawnSync(
           process.execPath,
