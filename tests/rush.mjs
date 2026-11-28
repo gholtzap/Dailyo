@@ -379,11 +379,7 @@ try {
     await page.getByRole("button", { name: "Play again" }).click();
     await status.filter({ hasText: "Round 1" }).waitFor();
     assert.equal(await timer.isVisible(), false);
-    // A focused Prices round hides mode switching while its picker is active.
-    if (await page.locator('iframe[title="pricerot"]').count())
-      await page.goto(`${base}/daily/`);
-    else
-      await page.getByRole("link", { name: "Daily mix", exact: true }).click();
+    await page.getByRole("link", { name: "Daily mix", exact: true }).click();
     await page.waitForURL("**/daily/");
     await page.getByRole("link", { name: "Daily mix", exact: true }).waitFor();
     const sharedChallenge = new URL(share.split("\n").at(-1));

@@ -1477,9 +1477,9 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
 /* Prices keeps the package and estimate above mobile browser controls. */
 :root[data-daily-feed] body[data-game=pricerot] > .main { padding: var(--space-3) var(--space-4); }
 body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead { min-height: var(--control-size); padding: 0 var(--space-4); gap: var(--space-4); background: var(--paper); }
-body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead .site-modes a:not([aria-current]) { display: none; }
+body:has(iframe[title=pricerot]:not([hidden])):has(.rush-time[data-timed]) > .site-masthead .site-modes a:not([aria-current]) { display: none; }
 body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead .site-modes a[aria-current] { min-height: var(--control-size); padding: var(--space-2); background: transparent; border: 0; box-shadow: none; color: var(--muted); }
-body:has(iframe[title=pricerot]:not([hidden])) > .site-masthead .site-more { display: none; }
+body:has(iframe[title=pricerot]:not([hidden])):has(.rush-time[data-timed]) > .site-masthead .site-more { display: none; }
 .action-glyph[data-icon=pause] { mask-image: url('/assets/lucide/pause.svg'); }
 .action-control:has(> #rush-pause) .game-tooltip { left: auto; right: 0; }
 
