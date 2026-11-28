@@ -16,7 +16,7 @@ try {
     const page = await browser.newPage({
       viewport,
       hasTouch: true,
-      isMobile: engine === chromium,
+      isMobile: true,
     });
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
@@ -119,19 +119,23 @@ try {
       );
       await setPrice(page, 3.49);
       await settle();
+      const flickTime = Date.now() / 1000;
       await session.send("Input.dispatchTouchEvent", {
         type: "touchStart",
+        timestamp: flickTime,
         touchPoints: point(box.y + 110),
       });
       for (let i = 1; i <= 6; i++) {
         await session.send("Input.dispatchTouchEvent", {
           type: "touchMove",
           touchPoints: point(box.y + 110 - i * 12),
+          timestamp: flickTime + i * 0.01,
         });
         await page.waitForTimeout(10);
       }
       const release = await dollars.evaluate((e) => e.scrollTop);
       await session.send("Input.dispatchTouchEvent", {
+        timestamp: flickTime + 0.07,
         type: "touchEnd",
         touchPoints: [],
       });
@@ -149,6 +153,34 @@ try {
         coast,
         selected: await dollars.getAttribute("aria-valuenow"),
       });
+      await setPrice(page, 200);
+      await settle();
+      const firstRow = await dollars
+        .locator(".price-option")
+        .first()
+        .textContent();
+      await session.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: point(box.y + 110),
+      });
+      for (let i = 1; i <= 6; i++) {
+        await session.send("Input.dispatchTouchEvent", {
+          type: "touchMove",
+          touchPoints: point(box.y + 110 - i * 8),
+        });
+        await page.waitForTimeout(25);
+      }
+      await page.waitForTimeout(250);
+      assert.equal(
+        await dollars.locator(".price-option").first().textContent(),
+        firstRow,
+        "Holding a finger must not rebase the row window",
+      );
+      await session.send("Input.dispatchTouchEvent", {
+        type: "touchEnd",
+        touchPoints: [],
+      });
+      await settle();
       await setPrice(page, 10000);
       await settle();
       await session.send("Input.dispatchTouchEvent", {
@@ -181,11 +213,21 @@ try {
     } else {
       // Playwright exposes trusted taps but no WebKit touch-drag API. Wheel input
       // exercises WebKit's native scroll/snap path without synthetic touch claims.
-      await dollars.hover();
-      await page.mouse.wheel(0, 96);
-      await page.waitForTimeout(350);
-      await settle();
-      assert.ok(Number(await dollars.getAttribute("aria-valuenow")) < 100);
+      const wheelPage = await browser.newPage({ viewport });
+      await wheelPage.goto(`${base}/pricerot/`);
+      const wheel = wheelPage.getByRole("spinbutton", {
+        name: "Dollars",
+        exact: true,
+      });
+      await wheel.waitFor();
+      await wheel.hover();
+      await wheelPage.mouse.wheel(0, 96);
+      await wheelPage.waitForTimeout(350);
+      assert.ok(
+        Number(await wheel.getAttribute("aria-valuenow")) > 0 &&
+          Number(await wheel.getAttribute("aria-valuenow")) < 100,
+      );
+      await wheelPage.close();
       receipts.push({
         viewport,
         gesture: "trusted WebKit taps and native wheel scrolling",

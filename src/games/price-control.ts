@@ -73,6 +73,7 @@ export function priceControl(
     let visibleRows: HTMLElement[] = [];
     let mouse: { y: number; top: number } | undefined;
     let dragged = false;
+    let contacts = 0;
     // Idle + scroll -> Scrolling; scroll continues it. End/settle -> Idle,
     // snapping and recentering only after native momentum has finished.
     // Key/tap -> Idle at the chosen row. Frozen/submitted rejects edits.
@@ -164,7 +165,7 @@ export function priceControl(
     }
     function settle() {
       idle();
-      if (mouse || !form.isConnected) return;
+      if (mouse || contacts || !form.isConnected) return;
       if (frozen()) {
         sync(unit === 100 ? Math.floor(value / 100) : value % 100, disabled);
         return;
@@ -186,6 +187,22 @@ export function priceControl(
       motion = { state: "scrolling", timer: setTimeout(settle, 150) };
     };
     node.addEventListener("scrollend", settle);
+    node.addEventListener(
+      "touchstart",
+      (event) => {
+        contacts = event.touches.length;
+      },
+      { passive: true },
+    );
+    const endTouch = (event: TouchEvent) => {
+      contacts = event.touches.length;
+      if (!contacts) {
+        idle();
+        motion = { state: "scrolling", timer: setTimeout(settle, 150) };
+      }
+    };
+    node.addEventListener("touchend", endTouch, { passive: true });
+    node.addEventListener("touchcancel", endTouch, { passive: true });
     node.onblur = () => node.removeAttribute("data-pointer-focus");
     node.onkeydown = (event) => {
       node.removeAttribute("data-pointer-focus");
