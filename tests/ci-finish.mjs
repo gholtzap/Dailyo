@@ -21,6 +21,11 @@ const server = createServer((req, res) => {
     calls++;
     const jobs = ["proofs", "api", "browser (1)"].map((name) => ({
       name,
+      run_attempt: mode.startsWith("rerun-")
+        ? 2
+        : mode === "wrong-attempt"
+          ? 2
+          : 1,
       status: "completed",
       conclusion:
         ["failure", "cancelled", "skipped"].includes(mode) && name === "api"
@@ -36,8 +41,24 @@ const server = createServer((req, res) => {
     res.end(
       JSON.stringify({
         html_url: "fixture://run",
+        run_attempt: mode.startsWith("rerun-") ? 2 : 1,
+        run_started_at: new Date(
+          Date.now() -
+            (mode === "rerun-over-budget"
+              ? 61000
+              : mode === "rerun-cleanup-reserve"
+                ? 57000
+                : 0),
+        ).toISOString(),
         created_at: new Date(
-          Date.now() - (mode === "over-budget" ? 61000 : 0),
+          Date.now() -
+            (mode.startsWith("rerun-")
+              ? 120000
+              : mode === "over-budget"
+                ? 61000
+                : mode === "cleanup-reserve"
+                  ? 57000
+                  : 0),
         ).toISOString(),
       }),
     );
@@ -55,6 +76,7 @@ async function probe(scenario, expected) {
         GITHUB_REPOSITORY: "fixture/repo",
         GITHUB_RUN_ID: "1",
         GH_TOKEN: "fixture",
+        GITHUB_RUN_ATTEMPT: scenario.startsWith("rerun-") ? "2" : "1",
         CI_BROWSER_SHARDS: "1",
       },
       stdio: "pipe",
@@ -71,18 +93,22 @@ async function probe(scenario, expected) {
     assert.ok(calls >= 2, "A missing required job cannot pass");
 }
 try {
-  for (const scenario of ["success", "missing-then-success"])
+  for (const scenario of ["success", "missing-then-success", "rerun-success"])
     await probe(scenario, true);
   for (const scenario of [
     "failure",
     "cancelled",
     "skipped",
     "over-budget",
+    "cleanup-reserve",
+    "rerun-over-budget",
+    "rerun-cleanup-reserve",
+    "wrong-attempt",
     "api-error",
   ])
     await probe(scenario, false);
   console.log(
-    "Final CI gate: missing jobs wait; failed, cancelled, skipped, over-budget and unavailable evidence fail.",
+    "Current-attempt CI gate: valid reruns use their own start; missing, wrong-attempt, failed, cancelled, skipped, over-budget and unavailable evidence cannot pass.",
   );
 } finally {
   server.close();
