@@ -43,6 +43,18 @@ try {
     const seed = await rushSeed(page, "pricerot"),
       q = visualSet("pricerot", data, seed, true, 0)[0];
     const child = () => page.frameLocator('iframe[title="pricerot"]');
+    const skipButton = page.getByRole("button", {
+      name: "Skip game",
+      exact: true,
+    });
+    assert.equal(await skipButton.locator(".action-glyph").count(), 1);
+    {
+      await skipButton.hover();
+      await page.locator("#rush-next-tooltip").waitFor();
+      await inspect("skip-tooltip");
+      await skipButton.press("Escape");
+      assert.equal(await page.locator("#rush-next-tooltip").isVisible(), false);
+    }
     await setPrice(child(), q.item.cents / 100);
     await child().getByRole("button", { name: "Check price" }).click();
     await page
@@ -57,6 +69,33 @@ try {
     await setPrice(child(), 123);
     await page.clock.fastForward(2000);
     const remaining = await page.getByRole("timer").innerText();
+    const reviewControl = page.getByRole("button", {
+      name: "Review answer",
+      exact: true,
+    });
+    assert.equal(await reviewControl.locator(".action-glyph").count(), 1);
+    const reviewBounds = await reviewControl.boundingBox();
+    assert.ok(reviewBounds.width >= 44 && reviewBounds.height >= 44);
+    {
+      await reviewControl.hover();
+      await page.locator("#rush-review-tooltip").waitFor();
+      const tipBounds = await page
+        .locator("#rush-review-tooltip")
+        .boundingBox();
+      assert.ok(tipBounds.x >= 0 && tipBounds.x + tipBounds.width <= width);
+
+      // Keep the clock paused here: the surrounding test compares this draft's time.
+      assert.equal(
+        await page.locator("#rush-review-tooltip").textContent(),
+        "Review answer",
+      );
+      await reviewControl.press("Escape");
+      assert.equal(
+        await page.locator("#rush-review-tooltip").isVisible(),
+        false,
+      );
+    }
+
     await page
       .getByRole("button", { name: "Review answer", exact: true })
       .click();
