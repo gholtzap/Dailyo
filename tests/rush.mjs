@@ -1,3 +1,4 @@
+import { setPrice } from "./input-helpers.mjs";
 import { rushSeed, initialMixedRun, seedMixedRun } from "./rush-helpers.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -412,7 +413,7 @@ try {
       true,
       0,
     )[0];
-    await scale.getByRole("spinbutton").fill(String(puzzle.item.cents / 100));
+    await setPrice(scale, puzzle.item.cents / 100);
     await scale.getByRole("button", { name: "Check price" }).click();
     await status.filter({ hasText: "Correct" }).waitFor();
     await page.clock.fastForward(200);

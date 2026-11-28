@@ -156,6 +156,7 @@ function form(
   parse: (input: HTMLInputElement) => ExtraMove,
   feedback: HTMLElement,
   invalid: string,
+  currentWord?: string,
 ) {
   const form = el("form", undefined, "extra-form");
   const label = el("label", labelText);
@@ -171,6 +172,35 @@ function form(
     input.min = "-1000000000";
     input.max = "1000000000";
   } else input.maxLength = ladder ? 4 : 80;
+  if (currentWord) {
+    input.value = currentWord.toUpperCase();
+    input.autocapitalize = "characters";
+    const selectLetter = (index: number) => {
+      const start = Math.max(0, Math.min(input.value.length - 1, index));
+      input.setSelectionRange(start, start + 1);
+    };
+    selectLetter(0);
+    input.onpointerup = () => {
+      if (input.selectionStart === input.selectionEnd)
+        selectLetter(input.selectionStart ?? 0);
+    };
+    input.onkeydown = (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)
+        return;
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        selectLetter(
+          (input.selectionStart ?? 0) + (event.key === "ArrowRight" ? 1 : -1),
+        );
+      }
+    };
+    input.oninput = () => {
+      const start = input.selectionStart,
+        end = input.selectionEnd;
+      input.value = input.value.toUpperCase();
+      input.setSelectionRange(start, end);
+    };
+  }
   const check = el("button", submit, "primary");
   check.type = "submit";
   form.append(label, input, check);
@@ -216,6 +246,7 @@ function drawPlaying({ puzzle, state }: ExtraSession): HTMLElement[] {
         (input) => input.value.trim().toLowerCase(),
         feedback,
         "Enter a new four-letter word that changes exactly one letter.",
+        state.path.at(-1) ?? puzzle.start,
       ),
       feedback,
       actions,
