@@ -1,5 +1,5 @@
 import { loadDataset } from "../data.js";
-import { priceControl } from "./price-control.js";
+import { MAX_PRICE_CENTS, priceControl } from "./price-control.js";
 import { gameName } from "../game-names.js";
 import type { JsonValue, Mode } from "../types.js";
 import { showGameProgress } from "./help.js";
@@ -779,7 +779,7 @@ async function start() {
       saved!.priceDraft! >= 0 &&
       saved!.priceDraft! <= 1000000
     )
-      priceDraft = saved!.priceDraft;
+      priceDraft = Math.min(saved!.priceDraft!, MAX_PRICE_CENTS);
     saveRushDraft(() => ({
       seed: sessions.daily.seed,
       answers: sessions.daily.answers,

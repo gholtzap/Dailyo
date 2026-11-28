@@ -1,9 +1,10 @@
 import { element as el } from "../dom.js";
 import { designValue } from "../design.js";
 
-// Touch scroll belongs entirely to the browser: no transparent range input and
-// no touch/pointer cancellation. Keep a bounded window of real snap targets so
-// the full $10,000 domain doesn't require ten thousand mounted rows.
+export const MAX_PRICE_CENTS = 10000;
+
+// Touch scrolling belongs to the browser. The $0–$100 range fits in one fixed
+// list of real snap targets; rows never need to be recycled during a gesture.
 export function priceControl(
   submitPrice: (cents: number) => void,
   initial?: number,
@@ -18,21 +19,24 @@ export function priceControl(
   const hint = el("span", "Flick dollars or cents", "price-gesture");
   const submit = el("button", "Lock in", "primary price-submit");
   submit.type = "submit";
-  let value = initial ?? 0;
+  let value = Math.max(0, Math.min(MAX_PRICE_CENTS, Math.round(initial ?? 0)));
   let touched = initial !== undefined;
   let submitted = false;
   const frozen = () =>
     submitted ||
     document.documentElement.hasAttribute("data-rush-paused") ||
     document.hidden;
-  const wheels = [makeWheel("Dollars", 10000, 100), makeWheel("Cents", 99, 1)];
+  const wheels = [
+    makeWheel("Dollars", MAX_PRICE_CENTS / 100, 100),
+    makeWheel("Cents", 99, 1),
+  ];
   const decimal = el("span", ".", "price-decimal");
   decimal.setAttribute("aria-hidden", "true");
   reels.append(wheels[0].node, decimal, wheels[1].node);
   function render(source?: HTMLElement, preserveSource = false) {
     for (const [i, wheel] of wheels.entries()) {
       const n = i === 0 ? Math.floor(value / 100) : value % 100;
-      const disabled = i === 1 && value === 1000000;
+      const disabled = i === 1 && value === MAX_PRICE_CENTS;
       const preserve = source
         ? source === wheel.node
           ? preserveSource
@@ -51,7 +55,7 @@ export function priceControl(
   }
   function edit(next: number, source?: HTMLElement, preserve = false) {
     if (frozen()) return;
-    value = Math.max(0, Math.min(1000000, Math.round(next)));
+    value = Math.max(0, Math.min(MAX_PRICE_CENTS, Math.round(next)));
     touched = true;
     render(source, preserve);
     onChange(value);
@@ -68,16 +72,15 @@ export function priceControl(
     node.setAttribute("aria-busy", "false");
     const height = Number.parseFloat(designValue("--space-12"));
     const padding = Number.parseFloat(designValue("--space-12"));
-    let start = -1,
-      selected = 0,
+    let selected = 0,
       disabled = false;
-    let rows: HTMLElement[] = [];
+    const rows: HTMLElement[] = [];
     let visibleRows: HTMLElement[] = [];
     let mouse: { y: number; top: number } | undefined;
     let dragged = false;
     let contacts = 0;
     // Idle + scroll -> Scrolling; scroll continues it. End/settle -> Idle,
-    // snapping and recentering only after native momentum has finished.
+    // snapping only after native momentum has finished.
     // Key/tap -> Idle at the chosen row. Frozen/submitted rejects edits.
     let motion:
       | { state: "idle" }
@@ -101,40 +104,33 @@ export function priceControl(
       };
       node.setAttribute("aria-busy", "true");
     }
-    function windowFor(n: number) {
-      const first = Math.max(0, Math.min(max - 200, n - 100));
-      if (start === first) return;
-      start = first;
-      rows = [];
-      const fragment = document.createDocumentFragment();
-      for (let i = start; i <= Math.min(max, start + 200); i++) {
-        const row = el("span", undefined, "price-option");
-        row.append(el("span", format(i), "price-digit"));
-        row.setAttribute("aria-hidden", "true");
-        rows.push(row);
-        fragment.append(row);
-      }
-      node.replaceChildren(fragment);
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i <= max; i++) {
+      const row = el("span", undefined, "price-option");
+      row.append(el("span", format(i), "price-digit"));
+      row.setAttribute("aria-hidden", "true");
+      rows.push(row);
+      fragment.append(row);
     }
+    node.append(fragment);
     function sync(n: number, unavailable: boolean, preserve = false) {
       disabled = unavailable;
       for (const row of visibleRows) row.classList.remove("is-visible");
       visibleRows = [];
-      const previous = rows[selected - start];
+      const previous = rows[selected];
       if (previous) {
         previous.classList.remove("is-selected");
         previous.firstElementChild!.textContent = format(selected);
       }
-      if (!preserve) windowFor(n);
       selected = n;
       for (let i = n - 1; i <= n + 1; i++) {
-        const neighbor = rows[i - start];
+        const neighbor = rows[i];
         if (neighbor) {
           neighbor.classList.add("is-visible");
           visibleRows.push(neighbor);
         }
       }
-      const row = rows[n - start];
+      const row = rows[n];
       if (row) {
         row.classList.add("is-selected");
         row.firstElementChild!.textContent = touched
@@ -151,7 +147,7 @@ export function priceControl(
       node.setAttribute("aria-disabled", String(disabled || submitted));
       if (!preserve) {
         idle();
-        const top = (n - start) * height;
+        const top = n * height;
         if (Math.abs(node.scrollTop - top) > 0.01) {
           scrolling();
           node.scrollTo({ top, behavior: "instant" });
@@ -159,13 +155,7 @@ export function priceControl(
       }
     }
     function nearest() {
-      return Math.max(
-        start,
-        Math.min(
-          start + rows.length - 1,
-          start + Math.round(node.scrollTop / height),
-        ),
-      );
+      return Math.max(0, Math.min(max, Math.round(node.scrollTop / height)));
     }
     function choose(n: number, preserve = false) {
       if (disabled || frozen()) {
@@ -187,7 +177,6 @@ export function priceControl(
       }
       const n = nearest();
       if (n !== selected) choose(n, true);
-      windowFor(selected);
       sync(selected, disabled);
     }
     node.onscroll = () => {
@@ -244,11 +233,9 @@ export function priceControl(
         return;
       }
       const rect = node.getBoundingClientRect();
-      const n =
-        start +
-        Math.floor(
-          (node.scrollTop + event.clientY - rect.top - padding) / height,
-        );
+      const n = Math.floor(
+        (node.scrollTop + event.clientY - rect.top - padding) / height,
+      );
       idle();
       choose(Math.max(0, Math.min(max, n)));
     };

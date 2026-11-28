@@ -77,8 +77,8 @@ try {
         [0, "$0.00"],
         [0.01, "$0.01"],
         [19.99, "$19.99"],
-        [123.45, "$123.45"],
-        [10000, "$10,000.00"],
+        [99.99, "$99.99"],
+        [100, "$100.00"],
       ]) {
         await setPrice(page, amount);
         assert.equal(
@@ -86,17 +86,11 @@ try {
           expected,
         );
       }
-      await setPrice(page, 9998.99);
+      await setPrice(page, 97.99);
       await dollars.press("ArrowUp");
-      assert.equal(
-        await page.locator("#price-value").textContent(),
-        "$9,999.99",
-      );
+      assert.equal(await page.locator("#price-value").textContent(), "$98.99");
       await dollars.press("ArrowDown");
-      assert.equal(
-        await page.locator("#price-value").textContent(),
-        "$9,998.99",
-      );
+      assert.equal(await page.locator("#price-value").textContent(), "$97.99");
       await setPrice(page, 2.99);
       await page
         .getByRole("button", { name: "How to play", exact: true })

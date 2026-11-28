@@ -155,7 +155,7 @@ try {
         coast,
         selected: await dollars.getAttribute("aria-valuenow"),
       });
-      await setPrice(page, 200);
+      await setPrice(page, 50);
       await settle();
       const firstRow = await dollars
         .locator(".price-option")
@@ -176,14 +176,14 @@ try {
       assert.equal(
         await dollars.locator(".price-option").first().textContent(),
         firstRow,
-        "Holding a finger must not rebase the row window",
+        "Holding a finger must keep the scroll rows stable",
       );
       await session.send("Input.dispatchTouchEvent", {
         type: "touchEnd",
         touchPoints: [],
       });
       await settle();
-      await setPrice(page, 10000);
+      await setPrice(page, 100);
       await settle();
       await session.send("Input.dispatchTouchEvent", {
         type: "touchStart",
@@ -202,7 +202,7 @@ try {
       });
       await settle();
       assert.ok(
-        Number(await dollars.getAttribute("aria-valuenow")) < 10000,
+        Number(await dollars.getAttribute("aria-valuenow")) < 100,
         "A downward touch swipe leaves the maximum",
       );
       receipts.push({
@@ -235,8 +235,8 @@ try {
         gesture: "trusted WebKit taps and native wheel scrolling",
       });
     }
-    // Recover from both bounds and recentering a long list window.
-    for (const amount of [10000, 0, 200, 9998]) {
+    // Recover from both bounds and ordinary prices.
+    for (const amount of [100, 0, 50, 98]) {
       await setPrice(page, amount);
       await settle();
       const before = Number(await dollars.getAttribute("aria-valuenow"));
@@ -283,5 +283,5 @@ try {
   );
 }
 console.log(
-  `${engine.name()}: trusted touch taps, neighboring rows, native scrolling, bounds, window recentering and keyboard focus passed`,
+  `${engine.name()}: trusted touch taps, neighboring rows, native scrolling, bounds, stable rows and keyboard focus passed`,
 );

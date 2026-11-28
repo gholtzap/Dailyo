@@ -232,7 +232,7 @@ try {
     assert.match(await frame.getByRole("dialog").innerText(), /within 20%/i);
     await inspect("rush-help", frame);
     await frame.getByRole("button", { name: "Close", exact: true }).click();
-    await setPrice(frame, 1000);
+    await setPrice(frame, 100);
     await frame.getByRole("button", { name: "Lock in", exact: true }).click();
     await page
       .getByRole("button", { name: "Keep answer", exact: true })

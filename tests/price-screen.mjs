@@ -107,7 +107,14 @@ try {
       assert.equal(await child.locator("#price-value").textContent(), "$5.50");
       await setPrice(child, 0);
       assert.equal(await child.locator(".price-submit").isDisabled(), false);
-      await setPrice(child, 10000);
+      assert.equal(await dollars.getAttribute("aria-valuemax"), "100");
+      await dollars.press("End");
+      await dollars.press("ArrowUp");
+      assert.equal(
+        await child.locator("#price-value").textContent(),
+        "$100.00",
+      );
+      await setPrice(child, 100);
       assert.equal(
         await child
           .getByRole("spinbutton", { name: "Cents", exact: true })
@@ -146,6 +153,28 @@ try {
       await page.reload();
       await page.getByRole("button", { name: "Resume", exact: true }).click();
       assert.equal(await child.locator("#price-value").textContent(), "$3.49");
+      // A draft saved by the previous $10,000 picker must respect the new cap.
+      await page.addInitScript(() => {
+        if (
+          window.parent !== window ||
+          !sessionStorage.getItem("test:legacy-price")
+        )
+          return;
+        sessionStorage.removeItem("test:legacy-price");
+        const saved = JSON.parse(sessionStorage.getItem("dailyo:rush:draft"));
+        saved.value.priceDraft = 500049;
+        sessionStorage.setItem("dailyo:rush:draft", JSON.stringify(saved));
+      });
+      await page.evaluate(() =>
+        sessionStorage.setItem("test:legacy-price", "1"),
+      );
+      await page.reload();
+      await page.getByRole("button", { name: "Resume", exact: true }).click();
+      assert.equal(
+        await child.locator("#price-value").textContent(),
+        "$100.00",
+      );
+      await setPrice(child, 3.49);
       await page.clock.runFor(8000);
       assert.equal(await page.locator("#rush-clock").textContent(), "3");
       const low = await meter();
