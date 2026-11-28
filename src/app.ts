@@ -77,7 +77,9 @@ async function start() {
   }
   const [network, boroughs, challenges] = await Promise.all([
     loadData<Network>("network"),
-    loadData<Boroughs>("boroughs"),
+    world && citySlug !== "nyc"
+      ? Promise.resolve<Boroughs>({ type: "FeatureCollection", features: [] })
+      : loadData<Boroughs>("boroughs"),
     loadData<Challenge[]>("challenges"),
   ]);
   if (world) {

@@ -64,6 +64,11 @@ try {
         `${game}: HTML must start ${path}`,
       );
     }
+    if (game === "trainrot-world/london")
+      assert.ok(
+        !requests.some((path) => path.endsWith("/boroughs.json")),
+        "Non-NYC maps must not download unused geography",
+      );
     assert.deepEqual(errors, []);
     receipts.push({ game, hints, singleDownload: true });
     await context.close();
