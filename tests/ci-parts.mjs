@@ -18,6 +18,34 @@ export function ciGames(games) {
 export function ciShared() {
   return (
     process.argv.includes("--ci-shared") ||
-    !process.argv.some((arg) => arg.startsWith("--ci-width="))
+    !process.argv.some(
+      (arg) =>
+        arg.startsWith("--ci-width=") || arg.startsWith("--ci-viewport="),
+    )
   );
+}
+
+export const motionPreferences = ["no-preference", "reduce"];
+export function ciMotions() {
+  const part = process.argv.find((arg) => arg.startsWith("--ci-motion="));
+  if (!part) return motionPreferences;
+  const value = part.slice("--ci-motion=".length);
+  assert.ok(
+    motionPreferences.includes(value),
+    `Unknown CI motion preference: ${value}`,
+  );
+  return [value];
+}
+export function playtestViewports(viewports) {
+  return [...viewports, { width: 390, height: 600 }];
+}
+export function ciViewports(viewports) {
+  if (process.argv.includes("--ci-shared")) return [];
+  const part = process.argv.find((arg) => arg.startsWith("--ci-viewport="));
+  if (!part) return viewports;
+  const selected = viewports.filter(
+    (v) => `${v.width}x${v.height}` === part.slice("--ci-viewport=".length),
+  );
+  assert.ok(selected.length, `Unknown CI viewport: ${part}`);
+  return selected;
 }
