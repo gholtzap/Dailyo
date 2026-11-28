@@ -42,9 +42,7 @@ assert.deepEqual(
 async function solve(surface, game, q) {
   if (game === "pricerot") {
     await setPrice(surface, q.item.cents / 100);
-    await surface
-      .getByRole("button", { name: "Lock in", exact: true })
-      .click();
+    await surface.getByRole("button", { name: "Lock in", exact: true }).click();
   } else if (game === "orderrot") {
     const sorted = [...q.tiles].sort((a, b) => a.value - b.value);
     for (const [position, tile] of sorted.entries()) {
