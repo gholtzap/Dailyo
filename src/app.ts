@@ -198,15 +198,17 @@ async function start() {
     assisted: !!state.assisted,
     skipped: !!state.skipped,
   });
+  let dailySaved = true;
   function save() {
     if (rushRound !== null) return;
     try {
-      if (mode === "daily")
+      if (mode === "daily") {
         localStorage.setItem(
           dailyKey(dailyDate),
           JSON.stringify(storedState()),
         );
-      else
+        dailySaved = true;
+      } else
         localStorage.setItem(
           storageKey,
           JSON.stringify({
@@ -219,7 +221,9 @@ async function start() {
             state: storedState(),
           }),
         );
-    } catch {}
+    } catch {
+      if (mode === "daily") dailySaved = false;
+    }
   }
   function load() {
     const validLegs = (legs: DraftLeg[]) =>
@@ -679,7 +683,13 @@ async function start() {
           });
         $("#city-map").focus({ preventScroll: true });
       };
-    reportDaily("playing", undefined, dailyDate, dailyKey(dailyDate));
+    reportDaily(
+      "playing",
+      undefined,
+      dailyDate,
+      dailyKey(dailyDate),
+      dailySaved,
+    );
   }
   function resultLegs(legs: Ride[]) {
     const walk = (w: Walk) =>
@@ -900,6 +910,7 @@ async function start() {
           : `${r.score ?? 0} points`,
       dailyDate,
       dailyKey(dailyDate),
+      dailySaved,
     );
   }
   function nextJourney() {
