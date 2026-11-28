@@ -130,7 +130,12 @@ for (const command of commands.sort(
   lane.estimatedMs += duration(command);
 }
 const shards = Array.from({ length: count }, (_, i) => {
-  const workers = lanes.slice(i * jobs, (i + 1) * jobs);
+  // The first lanes contain the heaviest commands. Interleave them across
+  // runners so three CPU-heavy browsers do not all contend on runner one.
+  const workers = Array.from(
+    { length: jobs },
+    (_, lane) => lanes[lane * count + i],
+  );
   return {
     commands: workers.flatMap((lane) => lane.commands),
     lanes: workers.map((lane) => lane.commands),
