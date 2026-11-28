@@ -1,4 +1,4 @@
-import { ciWidths } from "./ci-parts.mjs";
+import { ciWidths, ciMotions } from "./ci-parts.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium, webkit } from "playwright";
@@ -6,7 +6,12 @@ import { checkPage } from "lintapple";
 import { prepareVisual, visualSet } from "../dist/games/visual-puzzles.js";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4173";
 const engine = process.argv.includes("--webkit") ? webkit : chromium;
-const out = `test-results/photo-map-motion/${engine.name()}`;
+const widths = ciWidths([390, 1440]),
+  motions = ciMotions();
+const selection = process.argv.some((arg) => arg.startsWith("--ci-"))
+  ? `/${widths.join("-")}-${motions.join("-")}`
+  : "";
+const out = `test-results/photo-map-motion/${engine.name()}${selection}`;
 const browser = await engine.launch(),
   receipts = [],
   reports = [],
@@ -110,8 +115,8 @@ async function inspect(page, name) {
     reports.push({ name, ...(await checkPage(page, policy)) });
 }
 try {
-  for (const width of ciWidths([390, 1440]))
-    for (const reducedMotion of ["no-preference", "reduce"]) {
+  for (const width of widths)
+    for (const reducedMotion of motions) {
       const context = await browser.newContext({
         viewport: { width, height: width === 390 ? 620 : 1000 },
         colorScheme: "light",
@@ -135,7 +140,28 @@ try {
         );
         await page.goto(`${base}/daily/`, { waitUntil: "domcontentloaded" });
         const child = page.frameLocator(`iframe[title=${game}]`);
-        await child.locator(".choice").first().waitFor();
+        try {
+          await child.locator(".choice").first().waitFor();
+        } catch (error) {
+          await page.screenshot({
+            path: `${out}/${width}-${reducedMotion}-${game}-load-error.png`,
+            fullPage: true,
+          });
+          console.error({
+            game,
+            width,
+            reducedMotion,
+            body: await page.locator("body").innerText(),
+            frames: await page.locator("iframe").evaluateAll((nodes) =>
+              nodes.map((n) => ({
+                title: n.title,
+                src: n.src,
+                hidden: n.hidden,
+              })),
+            ),
+          });
+          throw error;
+        }
         await child
           .locator("img")
           .evaluateAll((imgs) =>
@@ -316,5 +342,5 @@ assert.deepEqual(
 );
 assert.deepEqual(failures, []);
 console.log(
-  `${engine.name()}: Daily retries, standalone results, new-round reset, keyboard focus and map-close motion passed at both sizes and motion preferences`,
+  `${engine.name()}: Daily retries, standalone results, new-round reset, keyboard focus and map-close motion passed at ${widths.join(",")}px with ${motions.join(", ")} motion preferences`,
 );

@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
+import { motionPreferences, playtestViewports } from "../tests/ci-parts.mjs";
 import { availableParallelism, totalmem } from "node:os";
 import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const planning = process.argv[2] === "--plan";
-const match = (planning ? "--shard=1/16" : process.argv[2])?.match(
+const match = (planning ? "--shard=1/24" : process.argv[2])?.match(
   /^--shard=(\d+)\/(\d+)$/,
 );
 assert.ok(
@@ -45,9 +46,17 @@ if (actualWorld) {
   durationsMs[world.at(-1)] ??= 5000;
 }
 const split = {
-  "node tests/photo-map-motion.mjs": [390, 1440].map(
-    (width) => `--ci-width=${width}`,
+  "node tests/photo-map-motion.mjs": [390, 1440].flatMap((width) =>
+    motionPreferences.map(
+      (motion) => `--ci-width=${width} --ci-motion=${motion}`,
+    ),
   ),
+  "node tests/second-playtest.mjs": [
+    ...playtestViewports(
+      JSON.parse(readFileSync("ui-policy.json", "utf8")).viewports,
+    ).map((v) => `--ci-viewport=${v.width}x${v.height}`),
+    "--ci-shared",
+  ],
   "node tests/app-layout.mjs": [320, 390, 1440].map(
     (width) => `--ci-width=${width}`,
   ),

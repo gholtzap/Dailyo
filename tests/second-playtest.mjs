@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { ciViewports, playtestViewports, ciShared } from "./ci-parts.mjs";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { checkPage } from "lintapple";
@@ -17,9 +18,15 @@ const read = async (name) =>
 const policy = JSON.parse(
   await fs.readFile(new URL("../ui-policy.json", import.meta.url), "utf8"),
 );
+const viewports = ciViewports(playtestViewports(policy.viewports));
+const selection = process.argv.some((arg) => arg.startsWith("--ci-"))
+  ? (viewports.length
+      ? viewports.map((v) => `${v.width}x${v.height}`).join("-")
+      : "shared") + "/"
+  : "";
 const phase = process.env.PLAY_REVIEW_PHASE ?? "after";
 const output = new URL(
-  `../test-results/second-playtest/${phase}/`,
+  `../test-results/second-playtest/${phase}/${selection}`,
   import.meta.url,
 );
 await fs.mkdir(output, { recursive: true });
@@ -80,10 +87,7 @@ const ladderPaths = {
   "TALL to THIN": ["tail", "tain", "thin"],
 };
 try {
-  for (const { width, height } of [
-    ...policy.viewports,
-    { width: 390, height: 600 },
-  ]) {
+  for (const { width, height } of viewports) {
     const sizeName = `${width}x${height}`;
     const context = await browser.newContext({
       viewport: { width, height },
@@ -283,7 +287,7 @@ try {
       });
     await context.close();
   }
-  for (const game of ["cluerot", "ladderrot"])
+  for (const game of ciShared() ? ["cluerot", "ladderrot"] : [])
     await check(`${game} practice deck cycle and reload`, async () => {
       const context = await browser.newContext({
           viewport: { width: 390, height: 844 },

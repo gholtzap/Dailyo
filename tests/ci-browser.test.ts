@@ -15,13 +15,23 @@ test("browser shards cover every package command once and preserve child failure
       resolve("scripts/ci-browser.mjs"),
       join(root, "scripts/ci-browser.mjs"),
     );
+    await cp(resolve("tests/ci-parts.mjs"), join(root, "tests/ci-parts.mjs"));
+    await writeFile(
+      join(root, "ui-policy.json"),
+      JSON.stringify({
+        viewports: [
+          { width: 390, height: 844 },
+          { width: 1440, height: 1000 },
+        ],
+      }),
+    );
     await writeFile(
       join(root, "package.json"),
       JSON.stringify({
         type: "module",
         scripts: {
           "test:e2e":
-            "node tests/a.mjs && node tests/b.mjs extra && node tests/c.mjs && node tests/puzzle-pools-browser.mjs",
+            "node tests/a.mjs && node tests/b.mjs extra && node tests/c.mjs && node tests/puzzle-pools-browser.mjs && node tests/photo-map-motion.mjs && node tests/second-playtest.mjs",
           "test:e2e:world": "node tests/d.mjs",
         },
       }),
@@ -39,10 +49,20 @@ test("browser shards cover every package command once and preserve child failure
           "node tests/c.mjs": 40,
           "node tests/d.mjs": 20,
           "node tests/puzzle-pools-browser.mjs": 12,
+          "node tests/photo-map-motion.mjs": 12,
+          "node tests/second-playtest.mjs": 12,
         },
       }),
     );
-    for (const name of ["a", "b", "c", "d", "puzzle-pools-browser"])
+    for (const name of [
+      "a",
+      "b",
+      "c",
+      "d",
+      "puzzle-pools-browser",
+      "photo-map-motion",
+      "second-playtest",
+    ])
       await writeFile(
         join(root, `tests/${name}.mjs`),
         `import {appendFileSync} from 'node:fs';appendFileSync('visited',JSON.stringify(['${name}',...process.argv.slice(2)])+'\\n');`,
@@ -63,7 +83,13 @@ test("browser shards cover every package command once and preserve child failure
       .sort();
     assert.deepEqual(
       visited.filter(
-        (row) => row[0] !== "d" && row[0] !== "puzzle-pools-browser",
+        (row) =>
+          ![
+            "d",
+            "puzzle-pools-browser",
+            "photo-map-motion",
+            "second-playtest",
+          ].includes(row[0]),
       ),
       [["a"], ["b", "extra"], ["c"]],
     );
@@ -90,6 +116,33 @@ test("browser shards cover every package command once and preserve child failure
         )
         .sort(),
       "Every photo game, viewport and difficulty must remain covered exactly once",
+    );
+    assert.deepEqual(
+      visited
+        .filter((r) => r[0] === "photo-map-motion")
+        .map((r) => r.slice(1).join(" "))
+        .sort(),
+      [390, 1440]
+        .flatMap((w) =>
+          ["no-preference", "reduce"].map(
+            (m) => `--ci-width=${w} --ci-motion=${m}`,
+          ),
+        )
+        .sort(),
+      "Every width and motion preference must run exactly once",
+    );
+    assert.deepEqual(
+      visited
+        .filter((r) => r[0] === "second-playtest")
+        .map((r) => r.slice(1).join(" "))
+        .sort(),
+      [
+        "--ci-viewport=390x844",
+        "--ci-viewport=1440x1000",
+        "--ci-viewport=390x600",
+        "--ci-shared",
+      ].sort(),
+      "Every playtest viewport and shared recovery journey must run exactly once",
     );
     for (const shard of ["0/3", "4/3", "1/0", "wrong"])
       assert.notEqual(
@@ -148,7 +201,9 @@ test("browser shards cover every package command once and preserve child failure
         spawnSync(
           process.execPath,
           ["scripts/ci-browser.mjs", "--shard=1/3", ...mode],
-          { cwd: root },
+          {
+            cwd: root,
+          },
         ).status,
         0,
       );
