@@ -1430,3 +1430,22 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
   z-index: var(--layer-base);
   background: var(--paper);
 }
+
+/* Gesture price entry shares native range controls and the existing action. */
+.price-picker { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
+.price-value { display: block; font-size: var(--font-size-24); font-weight: var(--font-weight-medium); font-variant-numeric: tabular-nums; text-align: center; }
+.price-range-label, .price-range-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.price-range-label select { width: auto; }
+.price-range { display: grid; gap: var(--space-2); }
+.price-range-heading { font-variant-numeric: tabular-nums; }
+.range-control { width: 100%; min-width: 0; min-height: var(--control-size); margin: 0; accent-color: var(--accent); }
+.sudoku-palette { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-4); }
+.sudoku-palette button { padding-inline: var(--space-1); }
+.sudoku-palette button:last-child { grid-column: 1 / -1; }
+.sudoku-palette button:disabled { color: var(--muted); }
+.sudoku-cell[aria-pressed=true] { border-color: var(--accent); background: var(--action); }
+.sudoku-cell { font-size: var(--font-size-14); }
+.sudoku-cell:disabled:not(.is-given) { background: var(--success-surface); }
+.sudoku-cell:is(:hover,:focus-visible) + .puzzle-tooltip { display: block; }
+.sudoku-grid .puzzle-entry:nth-child(6n) .puzzle-tooltip { left: auto; right: 0; }
+.price-stepper { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-2); }

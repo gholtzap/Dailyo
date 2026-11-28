@@ -104,7 +104,7 @@ jobs:
           (
             trap 'echo $? > "$RUNNER_TEMP/trainrot-source.exit"' EXIT
             python3 - <<'PY'
-          import hashlib, json, os, pathlib, shutil, tarfile, time, urllib.request
+          import hashlib, json, os, pathlib, tarfile, time, urllib.request
           started=time.monotonic()
           base=os.environ['GITHUB_API_URL']; repo=os.environ['GITHUB_REPOSITORY']; sha=os.environ['GITHUB_SHA']
           runtime=pathlib.Path(os.environ['RUNNER_TEMP'])
@@ -112,19 +112,17 @@ jobs:
           def request(path): return urllib.request.Request(f'{base}/repos/{repo}/{path}',headers=headers)
           def api(path):
             with urllib.request.urlopen(request(path),timeout=30) as response: return json.load(response)
-          commit=api(f'commits/{sha}')
+          commit=api(f'git/commits/{sha}')
           if commit['sha'] != sha: raise RuntimeError('Source commit did not match the tested SHA')
-          expected_tree=commit['commit']['tree']['sha']
+          expected_tree=commit['tree']['sha']
           tree=api(f'git/trees/{expected_tree}?recursive=1')
           if tree.get('truncated') or tree['sha'] != expected_tree: raise RuntimeError('Incomplete source tree')
           if any(entry['type'] not in ('tree','blob') or entry['type']=='blob' and entry['mode'] not in ('100644','100755') for entry in tree['tree']):
             raise RuntimeError('Unsupported source entry type')
           expected={entry['path']:entry for entry in tree['tree'] if entry['type']=='blob'}
-          archive=runtime/'trainrot-source.tar.gz'
-          with urllib.request.urlopen(request(f'tarball/{sha}'),timeout=30) as response, archive.open('wb') as target: shutil.copyfileobj(response,target)
           seen=set()
-          with tarfile.open(archive,'r:gz') as source:
-            for member in source.getmembers():
+          with urllib.request.urlopen(request(f'tarball/{sha}'),timeout=30) as response, tarfile.open(fileobj=response,mode='r|gz',bufsize=1024*1024) as source:
+            for member in source:
               if member.isdir(): continue
               if not member.isfile() or '/' not in member.name: raise RuntimeError('Unsafe source archive entry')
               relative=member.name.split('/',1)[1]
@@ -139,7 +137,6 @@ jobs:
           if seen != set(expected): raise RuntimeError('Source archive is missing tracked files')
           if pathlib.Path('bun.lock').read_bytes() != (runtime/'trainrot-source-bun.lock').read_bytes(): raise RuntimeError('Source lockfile changed during setup')
           (runtime/'trainrot-source.sha').write_text(sha+'\n')
-          archive.unlink()
           print(f'Verified {len(seen)} source files at {sha} in {time.monotonic()-started:.2f}s')
           PY
           ) > "$RUNNER_TEMP/trainrot-source.log" 2>&1 &
@@ -157,7 +154,7 @@ jobs:
         if: steps.node-runtime.outputs.available != 'true'
         with:
           node-version: "24"
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         id: runtime
         with:
           path: |
@@ -228,6 +225,16 @@ jobs:
             sleep 0.1
           done
           node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/18 --jobs=3
+      - uses: actions/cache/save@v4
+        if: success() && steps.runtime.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules/playwright
+            node_modules/playwright-core
+            node_modules/lintapple
+            node_modules/axe-core
+            ~/.cache/ms-playwright
+          key: ${{ steps.runtime.outputs.cache-primary-key }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
