@@ -63,7 +63,11 @@ function load() {
 }
 function save() {
   try {
-    localStorage.setItem(slot(), JSON.stringify({ seed, state }));
+    const saved =
+      state.phase === "playing" || puzzle.kind === "groups"
+        ? state
+        : { ...state, history: [] };
+    localStorage.setItem(slot(), JSON.stringify({ seed, state: saved }));
   } catch {}
 }
 function result() {
