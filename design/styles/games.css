@@ -525,14 +525,13 @@
   height: 100%;
   object-fit: cover;
 }
-.visual-viewport[data-kind=pricerot] {
-  --visual-viewport-paint: #e9e4d9;
-  aspect-ratio: 16 / 8;
-  background: var(--visual-viewport-paint);
-}
-.visual-viewport[data-kind=pricerot] img {
-  object-fit: contain;
-}
+.price-product { --price-product-height: 192px; --price-product-photo-width: 112px; display: grid; grid-template-columns: minmax(0, 1fr) var(--price-product-photo-width); align-items: center; gap: var(--space-4); min-height: var(--price-product-height); }
+.price-description h2 { font-size: var(--font-size-18); margin: 0 0 var(--space-2); }
+.price-description p { margin: 0; color: var(--muted); font-size: var(--font-size-13); }
+.price-product .visual-figure { margin: 0; }
+.price-product .visual-viewport { height: var(--price-product-height); aspect-ratio: auto; background: transparent; border: 0; }
+.price-product .visual-viewport img { object-fit: contain; }
+@media (max-width: breakpoint(mobile)) { .price-product { --price-product-height: 144px; } }
 .visual-viewport[data-zoom="0"] img {
   transform: scale(2.5);
 }

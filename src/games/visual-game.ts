@@ -92,6 +92,7 @@ let mode: "daily" | "practice" =
 const sessions = {} as Record<"daily" | "practice", Session>;
 let loadPractice: () => Session;
 let draft: string[] = [];
+let priceDraft: number | undefined;
 let imageFailed = false;
 let focusNext = false;
 let renderedQuestion: VisualQuestion | undefined;
@@ -168,6 +169,7 @@ function resetDay() {
   day = dailyDate();
   sessions.daily = mount(day, read(`daily:${day}`));
   draft = [];
+  priceDraft = undefined;
   imageFailed = false;
   return true;
 }
@@ -177,6 +179,7 @@ function selectMode(next: "daily" | "practice") {
   resetDay();
   write("mode", mode);
   draft = [];
+  priceDraft = undefined;
   imageFailed = false;
   draw();
 }
@@ -459,14 +462,21 @@ function drawQuestion() {
     prompt.setAttribute("role", "group");
     prompt.setAttribute("aria-label", heading.textContent!);
     quiz.append(prompt);
+  } else if (game === "pricerot") {
+    const product = el("section", undefined, "price-product");
+    const description = el("div", undefined, "price-description");
+    description.append(
+      heading,
+      el("p", q.item.retailer, "price-retailer"),
+      el("p", q.item.size, "price-size"),
+    );
+    product.append(description);
+    if (q.item.image) product.append(media(q, a, complete));
+    quiz.append(product);
   } else {
     quiz.append(heading);
     if (q.item.image) quiz.append(media(q, a, complete));
   }
-  if (game === "pricerot")
-    quiz.append(
-      el("p", `${q.item.size} · ${q.item.retailer}`, "visual-price-label"),
-    );
   if (complete) {
     quiz.append(reveal(q, a));
     if (!isRush)
@@ -476,6 +486,7 @@ function drawQuestion() {
           () => {
             s.index++;
             draft = [];
+            priceDraft = undefined;
             imageFailed = false;
             save();
             focusNext = true;
@@ -546,7 +557,15 @@ function drawQuestion() {
       quiz.append(hint);
     }
   } else if (game === "pricerot") {
-    quiz.append(priceControl((price) => commit({ ...a, price })));
+    quiz.append(
+      priceControl(
+        (price) => commit({ ...a, price }),
+        priceDraft,
+        (price) => {
+          priceDraft = price;
+        },
+      ),
+    );
   } else {
     if (!draft.length) draft = q.tiles.map((x) => x.id);
     if (!/\bfirst\b/i.test(q.item.name))
@@ -686,6 +705,7 @@ function drawResults() {
             sessions.practice = mount(freshSeed(), undefined, difficulty);
             save();
             draft = [];
+            priceDraft = undefined;
             focusNext = true;
             draw();
           } else selectMode("practice");
@@ -740,6 +760,7 @@ async function start() {
       seed: string;
       answers: VisualAnswer[];
       draft: string[];
+      priceDraft?: number;
     }>();
     mode = "daily";
     sessions.daily = mount(rushSeed(game), saved as JsonValue);
@@ -753,10 +774,17 @@ async function start() {
       saved.draft.every((id) => tiles.some((t) => t.id === id))
     )
       draft = saved.draft;
+    if (
+      Number.isInteger(saved?.priceDraft) &&
+      saved!.priceDraft! >= 0 &&
+      saved!.priceDraft! <= 1000000
+    )
+      priceDraft = saved!.priceDraft;
     saveRushDraft(() => ({
       seed: sessions.daily.seed,
       answers: sessions.daily.answers,
       draft,
+      priceDraft,
     }));
     onRushTimeout(() => {
       const { q, a } = current();
@@ -802,6 +830,7 @@ async function start() {
         write("difficulty", difficulty);
         sessions.practice = loadPractice();
         draft = [];
+        priceDraft = undefined;
         imageFailed = false;
         save();
         draw();

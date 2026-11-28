@@ -26,13 +26,26 @@ try {
         available: n.parentElement.clientWidth,
       }));
       assert.ok(
-        box.height >= (width === 390 ? 140 : 300),
+        box.height >= (game === "pricerot" ? 144 : width === 390 ? 140 : 300),
         `${game}: photo retains useful height`,
       );
       assert.ok(
         box.width >= box.available - 2,
         `${game}: photo fills its board`,
       );
+      if (game === "pricerot") {
+        const product = await f.locator(".price-description").boundingBox();
+        const packagePhoto = await photo.boundingBox();
+        const submit = await f.locator(".price-submit").boundingBox();
+        assert.ok(
+          product.x + product.width <= packagePhoto.x,
+          "Product and photo form one row",
+        );
+        assert.ok(
+          submit.y + submit.height <= 844,
+          "The compact photo leaves Lock in visible",
+        );
+      }
       await p.screenshot({
         path: `test-results/photo-layout/${engine.name()}-${width}-${game}.png`,
       });
@@ -43,5 +56,5 @@ try {
   await b.close();
 }
 console.log(
-  "All three Rush photo games use the full board width on mobile and desktop.",
+  "Rush photographs fit their boards; Prices pairs its package with its description and keeps Lock in visible.",
 );

@@ -1,6 +1,6 @@
 {
   "sourceSha": "e8a0b79",
-  "measurement": "GitHub Ubuntu 24.04 run 46096062561: all 16 four-worker browser shards, API, proofs, build and source checks passed. Total workflow took 62 seconds and failed the strict one-minute gate. Refresh observed command durations to balance every existing case; independent motion preferences and playtest viewports use proportional estimates until measured.",
+  "measurement": "GitHub Ubuntu 24.04 run 46096062561: all 16 four-worker browser shards, API, proofs, build and source checks passed. Total workflow took 62 seconds and failed the strict one-minute gate. Refresh observed command durations to balance every existing case; independent motion preferences and playtest viewports use proportional estimates until measured. Prices reel journey measured in run 46154162163 attempt 2 on the same Ubuntu runners: 13,479.69321ms; all six viewport/theme combinations remain included.",
   "durationsMs": {
     "node tests/puzzle-pools-browser.mjs": 113231.803143,
     "node tests/second-playtest.mjs": 28391.858299,
@@ -141,7 +141,8 @@
     "node tests/trainrot-world.mjs seattle manchester bonn budapest brisbane mumbai --ci-cities-only": 21156.96949,
     "node tests/trainrot-world.mjs philadelphia montreal hamburg rotterdam lausanne seoul --ci-cities-only": 24020.514054,
     "node tests/trainrot-world.mjs nyc san-jose lyon barcelona oslo wellington istanbul --ci-cities-only": 31455.081648,
-    "node tests/trainrot-world.mjs los-angeles toronto berlin amsterdam geneva osaka --ci-cities-only": 25618.753668999998
+    "node tests/trainrot-world.mjs los-angeles toronto berlin amsterdam geneva osaka --ci-cities-only": 25618.753668999998,
+    "node tests/price-screen.mjs": 13479.69321
   },
   "additionalMeasurements": [
     {

@@ -87,7 +87,10 @@ for (const engine of process.argv.includes("--webkit")
             }),
       });
       await page
-        .getByRole("button", { name: "How to play", exact: true })
+        .getByRole("button", {
+          name: "How to play",
+          exact: true,
+        })
         .click();
       await child.locator("dialog[open]").waitFor();
       await child.getByRole("button", { name: "Close", exact: true }).click();
@@ -112,7 +115,10 @@ for (const engine of process.argv.includes("--webkit")
       await page.goto(`${base}/rush/${game.label.toLowerCase()}/`);
       const child = page.frameLocator(`iframe[title="${game.label}"]`);
       await page
-        .getByRole("button", { name: "How to play", exact: true })
+        .getByRole("button", {
+          name: game.label === "pricerot" ? "Help" : "How to play",
+          exact: true,
+        })
         .waitFor()
         .catch(async (error) => {
           console.error(await page.locator("body").innerText());

@@ -44,7 +44,7 @@ try {
       );
       await page.goto(`${base}/rush/${game.label.toLowerCase()}/`);
       const help = page.getByRole("button", {
-        name: "How to play",
+        name: game.label === "pricerot" ? "Help" : "How to play",
         exact: true,
       });
       await help.waitFor();

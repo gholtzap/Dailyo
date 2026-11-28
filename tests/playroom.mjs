@@ -111,7 +111,14 @@ try {
     const pausedTimer = await page
       .locator(".rush-track > span")
       .evaluate((n) => getComputedStyle(n).backgroundColor);
-    assert.equal(pausedTimer, "rgb(184, 201, 229)");
+    await page.clock.fastForward(1000);
+    assert.equal(
+      await page
+        .locator(".rush-track > span")
+        .evaluate((n) => getComputedStyle(n).backgroundColor),
+      pausedTimer,
+      "The timer retains its urgency color while paused",
+    );
     const card = await page.locator("#rush-resume-panel").boundingBox();
     const action = await resume.boundingBox();
     assert.ok(

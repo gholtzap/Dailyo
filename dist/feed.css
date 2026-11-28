@@ -425,7 +425,7 @@
   gap: var(--space-3);
 }
 .rush-track {
-  --rush-track-height: 10px;
+  --rush-track-height: 8px;
   --rush-track-shadow-ink: #02081666;
   --rush-track-box-shadow: 2px;
   background: var(--track);
@@ -434,10 +434,11 @@
   border-radius: var(--radius-control);
 }
 .rush-track span {
-  --rush-track-shadow-ink: #ffe99f;
-  --rush-track-box-shadow: 2px;
-  background: var(--focus);
-  box-shadow: inset 0 var(--rush-track-box-shadow) var(--rush-track-shadow-ink);
+  --rush-track-hue: 120;
+  --rush-track-saturation: 65%;
+  --rush-track-lightness: 60%;
+  --rush-track-fill: hsl(calc(var(--rush-remaining) * var(--rush-track-hue)) var(--rush-track-saturation) var(--rush-track-lightness));
+  background: var(--rush-track-fill);
 }
 .rush-feed #feed-recap {
   max-width: var(--layout-dialog);
@@ -643,9 +644,6 @@ body:has(.feed-actions[hidden]) .rush-controls {
     padding-inline: var(--space-4);
   }
 }
-[data-rush-phase=paused] .rush-track span {
-  background: var(--muted);
-}
 #rush-round {
   color: var(--muted);
   font-size: var(--font-size-13);
@@ -663,7 +661,7 @@ body:has(.feed-actions[hidden]) .rush-controls {
 }
 #rush-clock {
   font-size: var(--font-size-14);
-  color: var(--focus);
+  color: var(--ink);
 }
 #rush-next.rush-skip {
   color: var(--muted);
@@ -810,6 +808,20 @@ body:has(iframe.feed-map-expanded[title]:not([hidden])) { overflow: hidden; }
 }
 .rush-feed .rush-progress { grid-column: 1; grid-row: 1; }
 .rush-feed #rush-help { grid-column: 2; grid-row: 1; }
-.rush-feed .feed-actions #rush-pause { grid-column: 3; grid-row: 1; }
+.rush-feed .feed-actions > .action-control:has(#rush-pause) { grid-column: 3; grid-row: 1; }
 .rush-feed .rush-time { grid-column: 1 / -1; grid-row: 2; }
 .feed-actions > .action-control:has(#feed-skip) { margin-inline-start: auto; }
+
+.rush-feed:has(iframe[title=pricerot]:not([hidden])) > :is(.feed-actions, .feed-body) { width: min(100%, var(--layout-playfield)); margin-block: 0; border: 0; border-radius: 0; background: var(--paper); box-shadow: none; }
+.rush-feed:has(iframe[title=pricerot]:not([hidden])) .feed-actions { padding: 0 var(--space-4) var(--space-2); }
+.rush-feed:has(iframe[title=pricerot]:not([hidden])) .rush-controls { width: min(100%, var(--layout-playfield)); padding-block: var(--space-1); }
+.rush-feed:has(iframe[title=pricerot]:not([hidden])) .rush-time { gap: var(--space-2); }
+
+.rush-feed:has(iframe[title=pricerot]:not([hidden])) > :is(.feed-actions, .feed-body) { --feed-body-price-width: 520px; max-width: var(--feed-body-price-width); }
+
+
+.rush-feed:has(iframe[title=pricerot]:not([hidden]):not([data-rush-answer])) .rush-controls { position: absolute; right: var(--space-4); bottom: var(--space-4); width: var(--control-size); margin: 0; padding: 0; }
+
+.feed-actions #rush-pause { background: transparent; min-width: var(--control-size); min-height: var(--control-size); }
+
+.rush-feed:has(iframe[title=pricerot]:not([hidden])) .feed-actions > .action-control:has(#rush-review) { grid-column: 2; grid-row: 1; }

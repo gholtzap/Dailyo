@@ -1,6 +1,6 @@
 import { element as el } from "./dom.js";
 
-type ActionIcon = "review" | "skip";
+type ActionIcon = "review" | "skip" | "pause";
 
 // Keep the button alive when its meaning changes: rebuilding a pressed control
 // can cancel the click in WebKit.

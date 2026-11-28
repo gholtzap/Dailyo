@@ -65,8 +65,11 @@ try {
       await cents.press("ArrowRight");
       assert.equal(await page.locator("#price-value").textContent(), "$1.01");
       const box = await dollars.boundingBox();
-      await page.mouse.click(box.x + box.width * 0.6, box.y + box.height / 2);
-      assert.ok(Number(await dollars.inputValue()) > 1);
+      await page.mouse.move(box.x + box.width / 2, box.y + 60);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width / 2, box.y + 24, { steps: 4 });
+      await page.mouse.up();
+      assert.equal(await dollars.inputValue(), "3");
       for (const [amount, expected] of [
         [0, "$0.00"],
         [0.01, "$0.01"],
@@ -81,12 +84,12 @@ try {
         );
       }
       await setPrice(page, 9998.99);
-      await page.getByRole("button", { name: "More $1", exact: true }).click();
+      await dollars.press("ArrowUp");
       assert.equal(
         await page.locator("#price-value").textContent(),
         "$9,999.99",
       );
-      await page.getByRole("button", { name: "Less $1", exact: true }).click();
+      await dollars.press("ArrowDown");
       assert.equal(
         await page.locator("#price-value").textContent(),
         "$9,998.99",
@@ -99,9 +102,7 @@ try {
       await page.keyboard.press("Escape");
       assert.equal(await page.locator("#price-value").textContent(), "$2.99");
       await inspect("price-selected");
-      await page
-        .getByRole("button", { name: "Check price", exact: true })
-        .click();
+      await page.getByRole("button", { name: "Lock in", exact: true }).click();
       await page.locator(".visual-reveal").waitFor();
       await inspect("price-result");
       await page.goto(`${base}/sudoku/`);

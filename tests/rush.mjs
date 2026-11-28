@@ -128,7 +128,7 @@ try {
       .press("Enter");
     await status.filter({ hasText: "Correct" }).waitFor();
     await page.clock.fastForward(200);
-    await timer.filter({ hasText: "8s" }).waitFor();
+    await timer.filter({ hasText: "8" }).waitFor();
     assert.equal(
       await page.locator("iframe[title=flagrot][data-preload-check]").count(),
       1,
@@ -146,7 +146,7 @@ try {
     await page.getByRole("button", { name: "Pause", exact: true }).click();
     await status.filter({ hasText: "Paused" }).waitFor();
     await page.clock.fastForward(20000);
-    assert.equal(await timer.textContent(), "8s");
+    assert.equal(await timer.textContent(), "8");
     await flag
       .locator("body")
       .evaluate(() =>
@@ -174,7 +174,7 @@ try {
     });
     await status.filter({ hasText: "Paused" }).waitFor();
     await page.clock.fastForward(20000);
-    assert.equal(await timer.textContent(), "8s");
+    assert.equal(await timer.textContent(), "8");
     await page.evaluate(() => {
       delete document.hidden;
       document.dispatchEvent(new Event("visibilitychange"));
@@ -186,14 +186,14 @@ try {
     );
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     const full = await meter();
-    assert.ok(full.width > 30 && full.red > full.green);
+    assert.ok(full.width > 30 && full.green > full.red);
     await page.clock.fastForward(4000);
     const half = await meter();
-    assert.equal(await timer.textContent(), "4s");
+    assert.equal(await timer.textContent(), "4");
     assert.ok(half.width / full.width > 0.45 && half.width / full.width < 0.55);
     await page.clock.fastForward(3500);
     const low = await meter();
-    assert.equal(await timer.textContent(), "1s");
+    assert.equal(await timer.textContent(), "1");
     assert.ok(low.width / full.width < 0.1 && low.red > low.green);
     await page.emulateMedia({ reducedMotion: "no-preference" });
     for (const [round, seconds] of [
@@ -207,7 +207,7 @@ try {
         .click();
       await status.filter({ hasText: "Correct" }).waitFor();
       await page.clock.fastForward(200);
-      await timer.filter({ hasText: `${seconds}s` }).waitFor();
+      await timer.filter({ hasText: String(seconds) }).waitFor();
       // A stopped result clock may already show the next round's time limit.
       await status.filter({ hasText: `Flags · Round ${round + 2}` }).waitFor();
       assert.equal(await status.textContent(), `Flags · Round ${round + 2}`);
@@ -235,7 +235,7 @@ try {
     await page.clock.fastForward(2400);
 
     const language = game("langrot");
-    await timer.filter({ hasText: "8s" }).waitFor();
+    await timer.filter({ hasText: "8" }).waitFor();
     const languages = await loadJson("/games/data/languages.json");
     const firstLanguage = shuffle(
       languages,
@@ -246,7 +246,7 @@ try {
       .click();
     await status.filter({ hasText: "Correct" }).waitFor();
     await page.clock.fastForward(200);
-    await timer.filter({ hasText: "6s" }).waitFor();
+    await timer.filter({ hasText: "6" }).waitFor();
     await inspect("langrot", true);
     await page.clock.fastForward(6100);
     await status.filter({ hasText: "Time’s up" }).waitFor();
@@ -305,12 +305,12 @@ try {
     ];
     for (const [name, openingSeconds, seconds, solve] of slots) {
       if (name !== "Vocabulary") await next.click();
-      await timer.filter({ hasText: `${openingSeconds}s` }).waitFor();
+      await timer.filter({ hasText: String(openingSeconds) }).waitFor();
       await inspect(name, true);
       await solve(game(name));
       await status.filter({ hasText: "Correct" }).waitFor();
       await page.clock.fastForward(200);
-      await timer.filter({ hasText: `${seconds}s` }).waitFor();
+      await timer.filter({ hasText: String(seconds) }).waitFor();
       if (name === "yearrot") {
         for (let round = 1; round <= roundCount; round++) {
           await placeYear(game(name), round);
@@ -414,11 +414,11 @@ try {
       0,
     )[0];
     await setPrice(scale, puzzle.item.cents / 100);
-    await scale.getByRole("button", { name: "Check price" }).click();
+    await scale.getByRole("button", { name: "Lock in" }).click();
     await status.filter({ hasText: "Correct" }).waitFor();
     await page.clock.fastForward(200);
     await status.filter({ hasText: "Round 2" }).waitFor();
-    await timer.filter({ hasText: "18s" }).waitFor();
+    await timer.filter({ hasText: "18" }).waitFor();
     await page.clock.fastForward(18100);
     await scale.locator(".visual-reveal").waitFor();
     await page.clock.fastForward(2400);
