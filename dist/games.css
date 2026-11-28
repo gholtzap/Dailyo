@@ -537,6 +537,7 @@
 /* Keep Daily/Rush's compact product layout; group standalone product evidence. */
 :root:not([data-daily-feed]) body[data-game=pricerot] #quiz {
   display: grid;
+  align-content: start;
   gap: var(--space-6);
 }
 :root:not([data-daily-feed]) .price-product {
