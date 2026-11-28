@@ -1431,7 +1431,7 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
   background: var(--paper);
 }
 
-/* One touch estimate: native sliders retain keyboard and assistive access. */
+/* Browser-owned momentum, stable glyphs and position-driven wheel emphasis. */
 .price-picker { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
 .price-label, .price-gesture { text-align: center; color: var(--muted); }
 .price-gesture { font-size: var(--font-size-12); }
@@ -1448,10 +1448,25 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
 .price-wheel:focus-visible { outline: var(--stroke-2) solid var(--focus); outline-offset: var(--space-1); }
 .price-wheel[data-pointer-focus] { outline: none; }
 .price-wheel[aria-disabled=true] { overflow: hidden; }
-.price-option { display: flex; align-items: center; justify-content: flex-end; height: var(--space-12); padding-inline: var(--space-1); scroll-snap-align: center; font-size: var(--font-size-14); line-height: var(--leading-1); color: var(--muted); user-select: none; }
+.price-option { display: flex; align-items: center; justify-content: flex-end; height: var(--space-12); padding-inline: var(--space-1); scroll-snap-align: center; font-size: var(--font-size-24); font-weight: var(--font-weight-medium); line-height: var(--leading-1); color: var(--ink); user-select: none; view-timeline: --price-row block; }
 .price-digit { visibility: hidden; }
 .price-option.is-visible .price-digit { visibility: inherit; }
-.price-option.is-selected { font-size: var(--font-size-24); font-weight: var(--font-weight-medium); color: var(--ink); }
+.price-wheel[data-dragging] { scroll-snap-type: none; cursor: grabbing; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .price-option.is-visible .price-digit {
+      --price-digit-edge-scale: 0.75;
+      animation: price-wheel-roll linear both;
+      animation-timeline: --price-row;
+      transform-origin: right center;
+    }
+    .price-wheel:last-child .price-digit { transform-origin: left center; }
+    @keyframes price-wheel-roll {
+      0%, 100% { transform: scale(var(--price-digit-edge-scale)); color: var(--muted); }
+      50% { transform: scale(1); color: var(--ink); }
+    }
+  }
+}
 .price-wheel:last-child .price-option { justify-content: flex-start; }
 .price-decimal { background: var(--surface-raised); display: flex; align-items: center; justify-content: center; margin-top: var(--space-12); height: var(--space-12); font-size: var(--font-size-24); line-height: var(--leading-1); z-index: var(--layer-base); }
 .price-submit { width: 100%; margin-top: var(--space-2); }
