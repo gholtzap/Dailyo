@@ -1,3 +1,4 @@
+import { priceControl } from "./price-control.js";
 import { gameName } from "../game-names.js";
 import type { JsonValue, Mode } from "../types.js";
 import { showGameProgress } from "./help.js";
@@ -84,7 +85,8 @@ let mode: "daily" | "practice" =
   startPractice || (!inFeed && read("mode") === "practice")
     ? "practice"
     : "daily";
-let sessions: Record<"daily" | "practice", Session>;
+const sessions = {} as Record<"daily" | "practice", Session>;
+let loadPractice: () => Session;
 let draft: string[] = [];
 let imageFailed = false;
 let focusNext = false;
@@ -161,6 +163,7 @@ function resetDay() {
   return true;
 }
 function selectMode(next: "daily" | "practice") {
+  if (next === "practice") sessions.practice ??= loadPractice();
   mode = next;
   resetDay();
   write("mode", mode);
@@ -534,33 +537,7 @@ function drawQuestion() {
       quiz.append(hint);
     }
   } else if (game === "pricerot") {
-    const form = el("form", undefined, "extra-form");
-    const label = el("label", "Your guess");
-    label.htmlFor = "price-input";
-    const input = el("input", undefined, "country-search");
-    input.type = "number";
-    input.id = "price-input";
-    input.min = "0";
-    input.max = "10000";
-    input.step = "0.01";
-    input.required = true;
-    input.inputMode = "decimal";
-    input.placeholder = "0.00";
-    input.autocomplete = "off";
-    const submit = el("button", "Check price", "primary");
-    submit.type = "submit";
-    const field = el("div", undefined, "price-input");
-    const currency = el("span", "$", "price-currency");
-    currency.setAttribute("aria-hidden", "true");
-    field.append(currency, input);
-    form.append(label, field, submit);
-    form.onsubmit = (event) => {
-      event.preventDefault();
-      const price = Math.round(input.valueAsNumber * 100);
-      if (Number.isSafeInteger(price) && price >= 0 && price <= 1000000)
-        commit({ ...a, price });
-    };
-    quiz.append(form);
+    quiz.append(priceControl((price) => commit({ ...a, price })));
   } else {
     if (!draft.length) draft = q.tiles.map((x) => x.id);
     if (!/\bfirst\b/i.test(q.item.name))
@@ -710,7 +687,12 @@ function drawResults() {
     quiz.insertBefore(actions, reviewTitle);
     quiz.insertBefore(status, reviewTitle);
   }
-  reportDaily("complete", `${score} / 500 points`, day);
+  reportDaily(
+    "complete",
+    `${score} / 500 points`,
+    day,
+    storageKey(`daily:${day}`),
+  );
 }
 function draw() {
   const question = sessions[mode].questions[sessions[mode].index];
@@ -725,7 +707,7 @@ function draw() {
   if (complete) drawResults();
   else {
     drawQuestion();
-    reportDaily("playing", undefined, day);
+    reportDaily("playing", undefined, day, storageKey(`daily:${day}`));
   }
   if (focusNext) {
     quiz.querySelector<HTMLElement>("#question-title")?.focus();
@@ -743,10 +725,7 @@ async function start() {
       draft: string[];
     }>();
     mode = "daily";
-    sessions = {
-      daily: mount(rushSeed(game), saved as JsonValue),
-      practice: mount(freshSeed()),
-    };
+    sessions.daily = mount(rushSeed(game), saved as JsonValue);
     if (sessions.daily.index !== 0) sessions.daily = mount(rushSeed(game));
     const tiles = sessions.daily.questions[0].tiles;
     if (
@@ -777,7 +756,7 @@ async function start() {
   }
   await waitForFeedActivation();
   day = dailyDate();
-  const practiceSession = () => {
+  loadPractice = () => {
     const saved = read(practiceSlot(difficulty));
     const seed =
       saved &&
@@ -790,10 +769,8 @@ async function start() {
         : freshSeed();
     return mount(seed, saved, difficulty);
   };
-  sessions = {
-    daily: mount(day, read(`daily:${day}`)),
-    practice: practiceSession(),
-  };
+  sessions.daily = mount(day, read(`daily:${day}`));
+  if (mode === "practice") sessions.practice = loadPractice();
   if (photoGame && !inFeed) {
     settings = practiceSettings(
       {
@@ -806,7 +783,7 @@ async function start() {
         save();
         difficulty = next;
         write("difficulty", difficulty);
-        sessions.practice = practiceSession();
+        sessions.practice = loadPractice();
         draft = [];
         imageFailed = false;
         save();
