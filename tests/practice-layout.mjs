@@ -7,10 +7,11 @@ const b = await engine.launch();
 await fs.mkdir("test-results/practice-layout", { recursive: true });
 try {
   for (const width of [390, 1440]) {
-    const p = await b.newPage({
+    const context = await b.newContext({
       viewport: { width, height: 568 },
       reducedMotion: "reduce",
     });
+    const p = await context.newPage();
     await p.addInitScript(() => {
       window.practiceReads = [];
       const read = Storage.prototype.getItem;
@@ -107,7 +108,74 @@ try {
         path: `test-results/practice-layout/${engine.name()}-${width}-${game}.png`,
       });
     }
-    await p.close();
+    await p.goto(`${base}/trainrot/?practice=1`);
+    await p.locator("[data-route]").first().waitFor();
+    const key = await p.evaluate(() =>
+      Object.keys(localStorage).find(
+        (k) => k.startsWith("trainrot-endless-v1:") && !k.endsWith(":state"),
+      ),
+    );
+    assert.ok(key);
+    const snapshot = await p.evaluate((key) => localStorage.getItem(key), key);
+    await p.locator("[data-route]").first().click();
+    await p.locator("[data-route]").first().click();
+    assert.equal(
+      await p.evaluate((key) => localStorage.getItem(key), key),
+      snapshot,
+      "Answer edits must not rewrite the deck",
+    );
+    const checkpoint = await p.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key + ":state")),
+      key,
+    );
+    assert.equal(checkpoint.state.legs.length, 2);
+    assert.ok(!("deck" in checkpoint));
+    await p.reload();
+    await p.locator("#undo-train").waitFor();
+    assert.equal(
+      await p.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key)).state.legs.length,
+        key,
+      ),
+      2,
+    );
+    await p.evaluate(
+      (key) =>
+        localStorage.setItem(
+          key + ":state",
+          JSON.stringify({
+            revision: "stale",
+            state: { phase: "revealed", legs: [] },
+          }),
+        ),
+      key,
+    );
+    await p.reload();
+    await p.locator("#undo-train").waitFor();
+    assert.equal(
+      await p.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key)).state.legs.length,
+        key,
+      ),
+      2,
+      "Stale checkpoints must not replace a newer deck's answer",
+    );
+    const other = await p.context().newPage();
+    await other.goto(`${base}/trainrot/?practice=1`);
+    await other.locator("[data-route]").first().waitFor();
+    await p.locator("[data-route]").first().click();
+    await other.close();
+    await p.reload();
+    await p.locator("#undo-train").waitFor();
+    assert.equal(
+      await p.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key)).state.legs.length,
+        key,
+      ),
+      3,
+      "Opening a second practice tab must not invalidate later edits in the first tab",
+    );
+    await context.close();
   }
 } finally {
   await b.close();
