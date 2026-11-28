@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "cohort": "Final successful pre-merge runs for Rush PRs 54\u201358; four processes on one standard Ubuntu runner",
+    "cohort": "Final successful pre-merge runs for Rush PRs 54–58; four processes on one standard Ubuntu runner",
     "runsReviewed": 150,
     "runs": [
       {
@@ -94,23 +94,23 @@
     "cohort": "Latest 150 Game checks runs before the content expansion CI adjustment; includes success, failure, cancellation and mixed branches. This is an audit baseline, not a controlled before/after comparison.",
     "jobStartAfterRunCreation": {
       "samples": 2700,
-      "p50Seconds": 4.0,
-      "p95Seconds": 49.0
+      "p50Seconds": 4,
+      "p95Seconds": 49
     },
     "browserSetup": {
       "samples": 2700,
-      "p50Seconds": 11.0,
-      "p95Seconds": 18.0
+      "p50Seconds": 11,
+      "p95Seconds": 18
     },
     "browserExecutionIncludingProviderFinalization": {
       "samples": 2700,
-      "p50Seconds": 30.0,
-      "p95Seconds": 46.0
+      "p50Seconds": 30,
+      "p95Seconds": 46
     },
     "runElapsedIncludingFailedAndCancelled": {
       "samples": 150,
       "p50Seconds": 63.5,
-      "p95Seconds": 122.0
+      "p95Seconds": 122
     },
     "notes": [
       "Simultaneous PR workflows compete for hosted-runner slots. Validate expansion PRs serially.",
@@ -119,5 +119,42 @@
       "All 94 browser commands and 98 city networks remain covered."
     ],
     "measurementRun": 46016346677
+  },
+  "verifiedGitSourceAudit": {
+    "baseline": {
+      "runs": 150,
+      "latencyMs": {
+        "p50": 61000,
+        "p95": 95000
+      },
+      "outcomes": {
+        "success": 58,
+        "failure": 87,
+        "cancelled": 5
+      },
+      "notes": "Rolling observational audit including failures/cancellations; workloads evolved across this cohort."
+    },
+    "parallelism": {
+      "pullRequest": 142,
+      "prRun": 46092661157,
+      "prWallMs": 58000,
+      "mainRun": 46092774594,
+      "mainWallMs": 61000,
+      "requiredBrowserJobs": 16,
+      "workers": 4,
+      "retainedWorldCities": 98,
+      "notes": "Main passed the earlier reserve but missed actual one-minute wall time; this is not reported as meeting the target."
+    },
+    "sourceCacheCold": {
+      "run": 46093757115,
+      "commit": "65162d0",
+      "wallMs": 61000,
+      "cacheHits": 0,
+      "browserJobs": 16,
+      "cacheBytes": 235324532,
+      "sourceMedianSeconds": 7.41,
+      "sourceMaxSeconds": 13.02,
+      "conclusion": "All functional jobs passed; total-duration gate failed."
+    }
   }
 }
