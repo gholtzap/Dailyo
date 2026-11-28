@@ -18,9 +18,14 @@ const workflow = Bun.YAML.parse(
   await readFile(".github/workflows/checks.yml", "utf8"),
 );
 const steps = workflow.jobs.browser.steps;
-const start = steps.find(
-  (s) => s.name === "Start fetching the exact tested source snapshot",
-).run;
+const prefetch =
+  steps.find((s) => s.name === "Prefetch the frozen source lock")?.run ?? "";
+const start =
+  prefetch +
+  "\n" +
+  steps.find(
+    (s) => s.name === "Start fetching the exact tested source snapshot",
+  ).run;
 const wait = steps.find(
   (s) => s.name === "Require successful source snapshot",
 ).run;
@@ -83,6 +88,10 @@ try {
   await chmod(join(bin, "git"), 0o755);
   for (const mode of [
     "success",
+    "warm-cache",
+    "corrupt-cache",
+    "invalid-cache-base",
+    "missing-cache-base",
     "lock-http-error",
     "source-unavailable",
     "unknown-commit",
@@ -98,6 +107,48 @@ try {
     await mkdir(runtime, { recursive: true });
     await cp(original, repo, { recursive: true });
     let sha = sourceSha;
+    if (
+      [
+        "warm-cache",
+        "corrupt-cache",
+        "invalid-cache-base",
+        "missing-cache-base",
+      ].includes(mode)
+    ) {
+      await writeFile(join(repo, "source-marker"), "updated-source\n");
+      git("-C", repo, "add", ".");
+      git(
+        "-C",
+        repo,
+        "-c",
+        "user.name=Fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        "commit",
+        "--quiet",
+        "-m",
+        "updated source",
+      );
+      sha = git("-C", repo, "rev-parse", "HEAD");
+      await cp(join(original, ".git/objects"), join(cwd, ".git/objects"), {
+        recursive: true,
+      });
+      if (mode !== "missing-cache-base")
+        await writeFile(
+          join(cwd, ".git/source-cache-base"),
+          mode === "invalid-cache-base" ? "invalid" : sourceSha,
+        );
+      if (mode === "corrupt-cache") {
+        const cached = join(
+          cwd,
+          ".git/objects",
+          blob.slice(0, 2),
+          blob.slice(2),
+        );
+        await chmod(cached, 0o644);
+        await writeFile(cached, "corrupt cached object");
+      }
+    }
     const object = join(repo, ".git/objects", blob.slice(0, 2), blob.slice(2));
     if (mode === "corrupt-object") {
       await chmod(object, 0o644);
@@ -146,6 +197,7 @@ try {
             ? "0123456789abcdef0123456789abcdef01234567"
             : sha,
         RUNNER_TEMP: runtime,
+        GIT_TRACE_PACKET: join(runtime, "packets"),
       };
       const started = await run(start, cwd, env);
       if (mode === "lock-http-error") {
@@ -162,13 +214,13 @@ try {
       const result = await completed;
       assert.equal(
         result.code === 0,
-        mode === "success",
+        ["success", "warm-cache"].includes(mode),
         `${mode}: ${result.output}`,
       );
-      if (mode === "success") {
+      if (["success", "warm-cache"].includes(mode)) {
         assert.equal(
           await readFile(join(cwd, "source-marker"), "utf8"),
-          "exact-source\n",
+          mode === "warm-cache" ? "updated-source\n" : "exact-source\n",
         );
         assert.equal(
           (await readFile(join(runtime, "trainrot-source.sha"), "utf8")).trim(),
@@ -180,6 +232,12 @@ try {
           "100755",
         );
       }
+      if (mode === "warm-cache")
+        assert.match(
+          await readFile(join(runtime, "packets"), "utf8"),
+          new RegExp(`have ${sourceSha}`),
+          "Warm fetch must negotiate from the verified cached commit",
+        );
       console.log(`Source snapshot: ${mode} enforced`);
     } finally {
       server.stop(true);

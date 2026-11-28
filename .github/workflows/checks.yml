@@ -87,7 +87,7 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     steps:
-      - name: Start fetching the exact tested source snapshot
+      - name: Prefetch the frozen source lock
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -100,6 +100,18 @@ jobs:
           pathlib.Path('bun.lock').write_bytes(lock)
           (pathlib.Path(os.environ['RUNNER_TEMP'])/'trainrot-source-bun.lock').write_bytes(lock)
           PY
+      - uses: actions/cache/restore@v4
+        id: source-objects
+        with:
+          path: |
+            .git/objects
+            .git/source-cache-base
+          key: verified-git-source-v1-${{ runner.os }}-${{ runner.arch }}
+      - name: Start fetching the exact tested source snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
           rm -f "$RUNNER_TEMP/trainrot-source.exit"
           (
             trap 'echo $? > "$RUNNER_TEMP/trainrot-source.exit"' EXIT
@@ -120,6 +132,18 @@ jobs:
             return subprocess.run(['git',*args],env=env,check=True,text=True,stdout=subprocess.PIPE if capture else None).stdout
           git('-c','init.defaultBranch=ci','init','--quiet')
           git('remote','add','origin',os.environ['GITHUB_SERVER_URL']+'/'+os.environ['GITHUB_REPOSITORY']+'.git')
+          objects=pathlib.Path('.git/objects'); cached=pathlib.Path('.git/source-cache-base')
+          if objects.is_symlink() or any(p.is_symlink() for p in objects.rglob('*')): raise RuntimeError('Unsupported cached object link')
+          if any((objects/'info'/name).exists() for name in ('alternates','http-alternates')): raise RuntimeError('Unsupported cached object alternate')
+          if cached.exists():
+            base=cached.read_text().strip()
+            if not re.fullmatch('[0-9a-f]{40}',base): raise RuntimeError('Invalid cached source SHA')
+            pathlib.Path('.git/shallow').write_text(base+'\n')
+            git('fsck','--full','--strict','--no-reflogs',base)
+            if git('cat-file','-t',base,capture=True).strip()!='commit': raise RuntimeError('Cached source base must be a commit')
+            git('update-ref','refs/source-cache/base',base)
+            print('Verified cached source objects at '+base,flush=True)
+          elif any(p.is_file() for p in objects.rglob('*')): raise RuntimeError('Missing cached source base')
           git('fetch','--quiet','--no-tags','--depth=1','origin',sha)
           if git('rev-parse','FETCH_HEAD',capture=True).strip()!=sha: raise RuntimeError('Source commit did not match the tested SHA')
           git('fsck','--full','--strict','--no-reflogs',sha)
@@ -132,6 +156,7 @@ jobs:
           git('checkout','--quiet','--detach','--force',sha)
           if pathlib.Path('bun.lock').read_bytes()!=(runtime/'trainrot-source-bun.lock').read_bytes(): raise RuntimeError('Source lockfile changed during setup')
           git('diff','--exit-code','--quiet',sha)
+          cached.write_text(sha+'\n')
           (runtime/'trainrot-source.sha').write_text(sha+'\n')
           print(f'Verified {len(entries)} source files at {sha} in {time.monotonic()-started:.2f}s')
           PY
@@ -221,6 +246,13 @@ jobs:
             sleep 0.1
           done
           node scripts/ci-browser.mjs --shard=${{ matrix.shard }}/16 --jobs=4
+      - uses: actions/cache/save@v4
+        if: success() && matrix.shard == 16 && steps.source-objects.outputs.cache-hit != 'true'
+        with:
+          path: |
+            .git/objects
+            .git/source-cache-base
+          key: ${{ steps.source-objects.outputs.cache-primary-key }}
       - uses: actions/cache/save@v4
         if: success() && steps.runtime.outputs.cache-hit != 'true'
         with:
