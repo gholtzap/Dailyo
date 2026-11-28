@@ -64,6 +64,8 @@ export function priceControl(
     node.setAttribute("aria-label", name);
     node.setAttribute("aria-valuemin", "0");
     node.setAttribute("aria-valuemax", String(max));
+    const nativeScrollEnd = "onscrollend" in node;
+    node.setAttribute("aria-busy", "false");
     const height = Number.parseFloat(designValue("--space-12"));
     const padding = Number.parseFloat(designValue("--space-12"));
     let start = -1,
@@ -79,7 +81,7 @@ export function priceControl(
     // Key/tap -> Idle at the chosen row. Frozen/submitted rejects edits.
     let motion:
       | { state: "idle" }
-      | { state: "scrolling"; timer: ReturnType<typeof setTimeout> } = {
+      | { state: "scrolling"; timer?: ReturnType<typeof setTimeout> } = {
       state: "idle",
     };
     const format = (n: number) =>
@@ -89,6 +91,15 @@ export function priceControl(
     function idle() {
       if (motion.state === "scrolling") clearTimeout(motion.timer);
       motion = { state: "idle" };
+      node.setAttribute("aria-busy", "false");
+    }
+    function scrolling() {
+      if (motion.state === "scrolling") clearTimeout(motion.timer);
+      motion = {
+        state: "scrolling",
+        timer: nativeScrollEnd ? undefined : setTimeout(settle, 150),
+      };
+      node.setAttribute("aria-busy", "true");
     }
     function windowFor(n: number) {
       const first = Math.max(0, Math.min(max - 200, n - 100));
@@ -140,7 +151,11 @@ export function priceControl(
       node.setAttribute("aria-disabled", String(disabled || submitted));
       if (!preserve) {
         idle();
-        node.scrollTop = (n - start) * height;
+        const top = (n - start) * height;
+        if (Math.abs(node.scrollTop - top) > 0.01) {
+          scrolling();
+          node.scrollTo({ top, behavior: "instant" });
+        }
       }
     }
     function nearest() {
@@ -164,8 +179,8 @@ export function priceControl(
       edit(next, node, preserve);
     }
     function settle() {
-      idle();
       if (mouse || contacts || !form.isConnected) return;
+      idle();
       if (frozen()) {
         sync(unit === 100 ? Math.floor(value / 100) : value % 100, disabled);
         return;
@@ -183,8 +198,7 @@ export function priceControl(
       }
       const n = nearest();
       if (n !== selected) choose(n, true);
-      idle();
-      motion = { state: "scrolling", timer: setTimeout(settle, 150) };
+      scrolling();
     };
     node.addEventListener("scrollend", settle);
     node.addEventListener(
@@ -196,10 +210,8 @@ export function priceControl(
     );
     const endTouch = (event: TouchEvent) => {
       contacts = event.touches.length;
-      if (!contacts) {
-        idle();
-        motion = { state: "scrolling", timer: setTimeout(settle, 150) };
-      }
+      if (!contacts && !nativeScrollEnd && motion.state === "scrolling")
+        scrolling();
     };
     node.addEventListener("touchend", endTouch, { passive: true });
     node.addEventListener("touchcancel", endTouch, { passive: true });

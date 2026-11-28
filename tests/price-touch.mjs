@@ -36,7 +36,7 @@ try {
       await page.waitForFunction(() =>
         [...document.querySelectorAll(".price-wheel")].every((e) => {
           const row = e.querySelector(".price-option.is-selected");
-          if (!row) return false;
+          if (!row || e.getAttribute("aria-busy") === "true") return false;
           const r = row.getBoundingClientRect(),
             w = e.getBoundingClientRect();
           return Math.abs((r.top + r.bottom - w.top - w.bottom) / 2) < 1;
@@ -81,6 +81,8 @@ try {
     await settle();
     if (engine === chromium) {
       const session = await page.context().newCDPSession(page);
+      if (process.argv.includes("--cpu-slow"))
+        await session.send("Emulation.setCPUThrottlingRate", { rate: 4 });
       const point = (y) => [{ x: box.x + box.width * 0.9, y }];
       await session.send("Input.dispatchTouchEvent", {
         type: "touchStart",
