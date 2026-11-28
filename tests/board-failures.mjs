@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import { chromium } from "playwright";
 import { makeBoard } from "../dist/games/board-state.js";
 const base = process.env.TRAINROT_TEST_URL ?? "http://127.0.0.1:4186";
+await fs.mkdir("test-results/board-games", { recursive: true });
 const browser = await chromium.launch();
 const receipts = [];
 const day = "2026-11-26";
@@ -132,16 +133,31 @@ try {
       .waitFor();
     for (const game of ["crossword", "sudoku"]) {
       await page.goto(`${base}/${game}/`);
-      const entry = page.locator("input.puzzle-input:not([readonly])").first();
+      const entry = page
+        .locator(
+          game === "sudoku"
+            ? ".sudoku-cell:not(:disabled)"
+            : "input.puzzle-input:not([readonly])",
+        )
+        .first();
       await entry.waitFor();
-      await entry.fill(game === "sudoku" ? "9" : "9");
-      assert.equal(await entry.inputValue(), "");
-      await entry.fill(game === "sudoku" ? "1" : "A");
+      const value = () =>
+        game === "sudoku" ? entry.textContent() : entry.inputValue();
+      if (game === "sudoku") {
+        await entry.focus();
+        await entry.press("9");
+      } else await entry.fill("9");
+      assert.equal(await value(), "");
+      if (game === "sudoku") await entry.press("1");
+      else await entry.fill("A");
       await page.getByRole("button", { name: "Undo", exact: true }).click();
-      assert.equal(await entry.inputValue(), "");
-      await entry.fill(game === "sudoku" ? "2" : "B");
+      assert.equal(await value(), "");
+      if (game === "sudoku") {
+        await entry.focus();
+        await entry.press("2");
+      } else await entry.fill("B");
       await entry.press("Backspace");
-      assert.equal(await entry.inputValue(), "");
+      assert.equal(await value(), "");
       await page
         .getByRole("button", { name: "Check answers", exact: true })
         .click();

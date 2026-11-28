@@ -1,3 +1,4 @@
+import { setPrice } from "./input-helpers.mjs";
 import { assertEditorialUI } from "./editorial-helpers.mjs";
 import { gameName } from "../dist/game-names.js";
 import { ciWidths, ciShared } from "./ci-parts.mjs";
@@ -40,7 +41,7 @@ assert.deepEqual(
 );
 async function solve(surface, game, q) {
   if (game === "pricerot") {
-    await surface.getByLabel("Your guess").fill(String(q.item.cents / 100));
+    await setPrice(surface, q.item.cents / 100);
     await surface
       .getByRole("button", { name: "Check price", exact: true })
       .click();
