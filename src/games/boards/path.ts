@@ -48,6 +48,7 @@ export function pathStep(
     return route;
   if (!route.length) return cell === p.checkpoints[0] ? [cell] : route;
   const prior = route.indexOf(cell);
+  if (prior === route.length - 1) return route;
   if (prior >= 0) return route.slice(0, prior + 1);
   const last = route.at(-1)!;
   if (

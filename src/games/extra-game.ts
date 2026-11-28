@@ -50,13 +50,17 @@ const read = <T>(slot: string): T | null => {
 const write = (slot: string, value: object | Mode) => {
   try {
     localStorage.setItem(key(slot), JSON.stringify(value));
-  } catch {}
+    return true;
+  } catch {
+    return false;
+  }
 };
 const seed = () => `practice:${crypto.randomUUID?.() ?? Math.random()}`;
 const ladder = game === "ladderrot";
 const clue = game === "cluerot";
 const scale = game === "scalerot";
 const sessions = {} as Record<Mode, ExtraSession>;
+let dailySaved = true;
 let mode: Mode =
   startPractice || (!inFeed && read("mode") === "practice")
     ? "practice"
@@ -94,12 +98,13 @@ function mount(slot: string, token: string): ExtraSession {
 }
 
 function save(session: ExtraSession) {
-  write(session.slot!, {
+  const saved = write(session.slot!, {
     token: session.token,
     puzzle: session.puzzle.id,
     moves: session.state.moves,
     cycle: session.cycle,
   });
+  if (session.slot?.startsWith("daily:")) dailySaved = saved;
 }
 
 function resetDay() {
@@ -528,6 +533,7 @@ function draw() {
     complete ? content[0].textContent : undefined,
     day,
     key(`daily:${day}`),
+    dailySaved,
   );
 }
 

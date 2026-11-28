@@ -1448,3 +1448,14 @@ body[data-game=maprot] :is(.game-help-dialog, .rot-map-dialog) {
 .sudoku-cell:is(:hover,:focus-visible) + .puzzle-tooltip { display: block; }
 .sudoku-grid .puzzle-entry:nth-child(6n) .puzzle-tooltip { left: auto; right: 0; }
 .price-stepper { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-2); }
+
+/* Secondary navigation actions share icon sizing and linked tooltips. */
+.action-control { position: relative; display: inline-flex; align-items: center; }
+.action-control:has(> button[hidden]) { display: none; }
+.action-control > button[data-action-icon]:not([data-action-icon=""]) { display: inline-flex; align-items: center; justify-content: center; min-width: var(--control-size); min-height: var(--control-size); padding: var(--space-2); }
+.action-control .game-tooltip { bottom: calc(100% + var(--space-2)); right: 0; }
+.action-control[data-tooltip-dismissed] .game-tooltip { display: none; }
+.action-glyph { display: block; width: var(--space-4); height: var(--space-4); background: currentColor; mask-repeat: no-repeat; mask-position: center; mask-size: contain; }
+.action-glyph[data-icon=review] { mask-image: url('/assets/nucleo/eye-2.svg'); }
+.action-glyph[data-icon=skip] { mask-image: url('/assets/nucleo/chevron-right.svg'); }
+.action-control:has(> #rush-review) .game-tooltip { left: 0; right: auto; }

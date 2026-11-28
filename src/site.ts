@@ -1,3 +1,5 @@
+import { pruneDailySaves } from "./storage.js";
+import { dailyDate } from "./daily/puzzles.js";
 import { gameName } from "./game-names.js";
 
 for (const title of document.querySelectorAll<HTMLElement>(".game-title")) {
@@ -33,5 +35,17 @@ for (const moreGames of document.querySelectorAll<HTMLDetailsElement>(
     event.preventDefault();
     moreGames.open = false;
     toggle?.focus();
+  });
+}
+
+if (window.parent === window) {
+  let retainedDay = dailyDate();
+  pruneDailySaves(retainedDay);
+  document.addEventListener("visibilitychange", () => {
+    const today = dailyDate();
+    if (!document.hidden && today !== retainedDay) {
+      retainedDay = today;
+      pruneDailySaves(today);
+    }
   });
 }
