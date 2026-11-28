@@ -72,6 +72,7 @@ export function priceControl(
     node.setAttribute("aria-busy", "false");
     const height = Number.parseFloat(designValue("--space-12"));
     const padding = Number.parseFloat(designValue("--space-12"));
+    const glyphHeight = Number.parseFloat(designValue("--font-size-24"));
     let selected = 0,
       disabled = false;
     const rows: HTMLElement[] = [];
@@ -79,9 +80,13 @@ export function priceControl(
     let mouse: { y: number; top: number } | undefined;
     let dragged = false;
     let contacts = 0;
-    // Idle + scroll -> Scrolling; scroll continues it. End/settle -> Idle,
-    // snapping only after native momentum has finished.
-    // Key/tap -> Idle at the chosen row. Frozen/submitted rejects edits.
+    // State       Event                 Next / effect
+    // Idle        native scroll         Scrolling / track visible value
+    // Scrolling   scroll                Scrolling / continue browser momentum
+    // Scrolling   end, no held contact  Idle / finish any remaining snap
+    // Either      tap or mouse release  Scrolling / glide to the chosen row
+    // Either      key                   Idle if centered, else Scrolling / position directly
+    // Either      frozen/submitted      Reject edits / restore the committed position
     let motion:
       | { state: "idle" }
       | { state: "scrolling"; timer?: ReturnType<typeof setTimeout> } = {
@@ -115,21 +120,13 @@ export function priceControl(
     node.append(fragment);
     function sync(n: number, unavailable: boolean, preserve = false) {
       disabled = unavailable;
-      for (const row of visibleRows) row.classList.remove("is-visible");
-      visibleRows = [];
       const previous = rows[selected];
       if (previous) {
         previous.classList.remove("is-selected");
         previous.firstElementChild!.textContent = format(selected);
       }
       selected = n;
-      for (let i = n - 1; i <= n + 1; i++) {
-        const neighbor = rows[i];
-        if (neighbor) {
-          neighbor.classList.add("is-visible");
-          visibleRows.push(neighbor);
-        }
-      }
+      paintVisibleRows();
       const row = rows[n];
       if (row) {
         row.classList.add("is-selected");
@@ -154,6 +151,35 @@ export function priceControl(
         }
       }
     }
+    // Keep every glyph that can intersect the viewport painted, including both
+    // partially entering rows. Hiding only fully clipped rows also keeps UI
+    // inspection focused on the real scroll viewport.
+    function paintVisibleRows() {
+      const position = node.scrollTop / height;
+      const center = Math.round(position);
+      const radius = (node.clientHeight + glyphHeight) / 2;
+      const next: HTMLElement[] = [];
+      for (let i = center - 2; i <= center + 2; i++) {
+        if (rows[i] && Math.abs(i * height - node.scrollTop) < radius)
+          next.push(rows[i]);
+      }
+      for (const row of visibleRows)
+        if (!next.includes(row)) row.classList.remove("is-visible");
+      for (const row of next) row.classList.add("is-visible");
+      visibleRows = next;
+    }
+    function glide(n: number) {
+      if (disabled || frozen()) return;
+      choose(n, true);
+      scrolling();
+      node.scrollTo({
+        top: n * height,
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
+      if (Math.abs(node.scrollTop - n * height) < 1) idle();
+    }
     function nearest() {
       return Math.max(0, Math.min(max, Math.round(node.scrollTop / height)));
     }
@@ -177,7 +203,9 @@ export function priceControl(
       }
       const n = nearest();
       if (n !== selected) choose(n, true);
-      sync(selected, disabled);
+      // Native snap owns touch deceleration. Only finish an unsnapped mouse
+      // drag or a legacy-browser fallback, without an instantaneous correction.
+      if (Math.abs(node.scrollTop - n * height) > 1) glide(n);
     }
     node.onscroll = () => {
       if (!form.isConnected) return;
@@ -185,6 +213,7 @@ export function priceControl(
         sync(unit === 100 ? Math.floor(value / 100) : value % 100, disabled);
         return;
       }
+      paintVisibleRows();
       const n = nearest();
       if (n !== selected) choose(n, true);
       scrolling();
@@ -237,7 +266,7 @@ export function priceControl(
         (node.scrollTop + event.clientY - rect.top - padding) / height,
       );
       idle();
-      choose(Math.max(0, Math.min(max, n)));
+      glide(Math.max(0, Math.min(max, n)));
     };
     // Desktop mouse drag is separate; touch uses native pan, inertia and snap.
     node.onpointerdown = (event) => {
@@ -253,6 +282,7 @@ export function priceControl(
       event.preventDefault();
       node.focus({ preventScroll: true });
       mouse = { y: event.clientY, top: node.scrollTop };
+      node.setAttribute("data-dragging", "");
       node.setPointerCapture(event.pointerId);
     };
     node.onpointermove = (event) => {
@@ -263,7 +293,8 @@ export function priceControl(
     const endMouse = () => {
       if (!mouse) return;
       mouse = undefined;
-      settle();
+      node.removeAttribute("data-dragging");
+      glide(nearest());
     };
     node.onpointerup = endMouse;
     node.onpointercancel = endMouse;

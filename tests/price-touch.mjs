@@ -94,6 +94,25 @@ try {
           touchPoints: point(box.y + 80 - i * 10),
         });
         await page.waitForTimeout(25);
+        // Glyphs crossing the viewport must remain present and retain their
+        // layout size. Emphasis may transform continuously, never swap fonts.
+        const painted = await dollars.evaluate((wheel) => {
+          const bounds = wheel.getBoundingClientRect();
+          return [...wheel.querySelectorAll(".price-digit")]
+            .filter((digit) => {
+              const r = digit.getBoundingClientRect();
+              return r.bottom > bounds.top + 2 && r.top < bounds.bottom - 2;
+            })
+            .map((digit) => ({
+              visibility: getComputedStyle(digit).visibility,
+              size: getComputedStyle(digit).fontSize,
+            }));
+        });
+        assert.ok(painted.length >= 3);
+        for (const digit of painted) {
+          assert.equal(digit.visibility, "visible", "No blank approaching row");
+          assert.equal(digit.size, "24px", "No font-size jump during a pan");
+        }
       }
       // Reverse before release. The same finger movement must move the actual scroll position back.
       const up = await dollars.evaluate((e) => e.scrollTop);
@@ -275,6 +294,66 @@ try {
     });
     await page.close();
   }
+  // Desktop dragging must follow sub-row movements, rather than re-snapping
+  // each scrollTop assignment. Inspect real rendered transforms throughout.
+  const desktop = await browser.newPage({
+    viewport: { width: 1440, height: 1000 },
+  });
+  await desktop.goto(`${base}/pricerot/`);
+  await setPrice(desktop, 23.49);
+  const wheel = desktop.locator("#price-dollars");
+  await desktop.waitForFunction(
+    () =>
+      document.querySelector("#price-dollars").getAttribute("aria-busy") ===
+      "false",
+  );
+  const bounds = await wheel.boundingBox();
+  const start = await wheel.evaluate((e) => e.scrollTop);
+  await desktop.mouse.move(bounds.x + bounds.width / 2, bounds.y + 110);
+  await desktop.mouse.down();
+  const frames = [];
+  for (let i = 1; i <= 8; i++) {
+    await desktop.mouse.move(
+      bounds.x + bounds.width / 2,
+      bounds.y + 110 - i * 6,
+    );
+    await desktop.evaluate(() => new Promise(requestAnimationFrame));
+    const frame = await wheel.evaluate((e) => ({
+      top: e.scrollTop,
+      transform: getComputedStyle(e.children[24].firstElementChild).transform,
+    }));
+    assert.ok(Math.abs(frame.top - start - i * 6) < 1, JSON.stringify(frame));
+    frames.push(frame);
+  }
+  await desktop.mouse.up();
+  const timeline = await desktop.evaluate(() =>
+    CSS.supports("animation-timeline: view()"),
+  );
+  if (timeline)
+    assert.ok(
+      new Set(frames.map((f) => f.transform)).size >= 6,
+      "Emphasis tracks scroll continuously",
+    );
+  await desktop.waitForFunction(
+    () =>
+      document.querySelector("#price-dollars").getAttribute("aria-busy") ===
+      "false",
+  );
+  assert.equal(await wheel.getAttribute("aria-valuenow"), "24");
+  await desktop.emulateMedia({ reducedMotion: "reduce" });
+  assert.equal(
+    await wheel
+      .locator(".price-option.is-selected .price-digit")
+      .evaluate((e) => getComputedStyle(e).transform),
+    "none",
+  );
+  receipts.push({
+    gesture: "desktop sub-row drag",
+    timeline,
+    frames,
+    reducedMotion: "no scaling",
+  });
+  await desktop.close();
 } finally {
   await browser.close();
   await fs.writeFile(
